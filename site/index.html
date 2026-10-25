@@ -54,12 +54,13 @@
     <section class="card signup compact" id="alerts">
   <h2>Get restock alerts</h2>
   <p>One short email when a sold-out Hobonichi item comes back somewhere we track. No spam, unsubscribe anytime.</p>
-  <form class="signup-form" action="#" method="post" data-todo="newsletter-provider-not-connected">
+  <form class="signup-form embeddable-buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/dropwatch" method="post">
     <label class="sr" for="email1">Email address</label>
     <input id="email1" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+    <input type="hidden" value="1" name="embed">
     <button type="submit">Notify me</button>
   </form>
-  <p class="form-note" role="status" hidden></p>
+  <p class="form-note">Sent via <a href="https://buttondown.com/dropwatch" target="_blank" rel="noopener">Buttondown</a>.</p>
 </section>
     <aside class="card sponsor" aria-label="Featured shop">
   <p class="eyebrow">Featured shop</p>

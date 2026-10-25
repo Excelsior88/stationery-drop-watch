@@ -1,4 +1,4 @@
-// Stationery Drop Watch: client-side table filtering + placeholder signup.
+// Stationery Drop Watch: client-side table filtering.
 (function () {
   const LABEL = { in_stock: "In stock", preorder: "Preorder", coming_soon: "Not yet on sale", sold_out: "Sold out", unknown: "Couldn't check" };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -42,13 +42,4 @@
     Object.values(f).forEach(el => el.addEventListener("input", () => { limit = PAGE; render(); }));
     render();
   }
-  // TODO(newsletter): remove this handler once the form posts to a real provider.
-  document.querySelectorAll(".signup-form[data-todo]").forEach(form => {
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      const note = form.parentElement.querySelector(".form-note");
-      note.hidden = false;
-      note.textContent = "Alerts aren't switched on yet. This form will connect to our newsletter soon.";
-    });
-  });
 })();

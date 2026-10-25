@@ -46,17 +46,21 @@ def page(fname, title, desc, body):
 <script src="assets/app.js" defer></script>
 </body></html>"""
 
+NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatch)
+
 def signup_block(compact=False):
-    # TODO(newsletter): point action at the newsletter provider's form endpoint (e.g. Buttondown/Kit) and drop data-todo.
+    # Buttondown's standard HTML embed form (docs.buttondown.com/building-your-subscriber-base):
+    # a plain POST to embed-subscribe; don't submit via fetch, Buttondown may need to show a CAPTCHA.
     return f"""<section class="card signup{' compact' if compact else ''}" id="alerts">
   <h2>Get restock alerts</h2>
   <p>One short email when a sold-out Hobonichi item comes back somewhere we track. No spam, unsubscribe anytime.</p>
-  <form class="signup-form" action="#" method="post" data-todo="newsletter-provider-not-connected">
+  <form class="signup-form embeddable-buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}" method="post">
     <label class="sr" for="email{int(compact)}">Email address</label>
     <input id="email{int(compact)}" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+    <input type="hidden" value="1" name="embed">
     <button type="submit">Notify me</button>
   </form>
-  <p class="form-note" role="status" hidden></p>
+  <p class="form-note">Sent via <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>.</p>
 </section>"""
 
 def sponsor_block():
