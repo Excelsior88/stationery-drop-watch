@@ -1,5 +1,5 @@
 {
-  "_comment": "House ads for the owner's own books. Add another object to 'books' to show a second book; the block renders every entry in order. Only use details from the real Amazon listing.",
+  "_comment": "House ads for the owner's own books. Add another object to 'books' to show a second book; the block renders every entry in order. Only use details from the real Amazon listing. Put the plain Amazon URL in 'url'; build_site.py adds the Associates tag (AMAZON_TAG) automatically.",
   "heading": "From the editor",
   "books": [
     {
@@ -18,7 +18,6 @@
         "College-ruled, white paper"
       ],
       "url": "https://www.amazon.com/dp/B0HP85QLMS",
-      "url_todo": "TODO: swap in Amazon Associates tagged link once an Associates account exists",
       "source": "Amazon listing B0HP85QLMS, fetched 2026-10-25"
     }
   ]

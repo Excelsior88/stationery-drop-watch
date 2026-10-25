@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the static site in site/ from stores.json, data/*.json and content/*.json.
 Never invents data: every status shown comes from data/stock.json written by checker.py."""
-import json, html, datetime as dt, shutil
+import json, html, re, datetime as dt, shutil
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -9,6 +9,31 @@ ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
 ET = ZoneInfo("America/New_York")
 E = html.escape
+
+# Amazon Associates tracking ID. Every amazon.com product link on the site is rewritten to
+# https://www.amazon.com/dp/<ASIN>?tag=<AMAZON_TAG> with rel="sponsored noopener" (see tag_amazon_links).
+AMAZON_TAG = "excelsior88-20"
+AMAZON_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
+_ASIN = re.compile(r"/(?:dp|gp/product|gp/aw/d)/([A-Z0-9]{10})")
+_AMAZON_A = re.compile(r'<a\b[^>]*\bhref="https?://(?:www\.)?amazon\.com/[^"]*"[^>]*>')
+
+def amazon_link(url):
+    """Clean, tagged Amazon product URL; non-product Amazon URLs just get the tag added."""
+    m = _ASIN.search(url)
+    if m:
+        return f"https://www.amazon.com/dp/{m.group(1)}?tag={AMAZON_TAG}"
+    base = re.sub(r"([?&])tag=[^&]*&?", r"\1", url).rstrip("?&")
+    return f"{base}{'&' if '?' in base else '?'}tag={AMAZON_TAG}"
+
+def tag_amazon_links(doc):
+    """Final pass over a rendered page: tag every amazon.com link and mark it sponsored."""
+    def fix(m):
+        a = m.group(0)
+        href = html.unescape(re.search(r'href="([^"]*)"', a).group(1))
+        a = re.sub(r'href="[^"]*"', f'href="{E(amazon_link(href))}"', a)
+        a = re.sub(r'\s(rel|data-todo)="[^"]*"', "", a)
+        return a.replace("<a ", '<a rel="sponsored noopener" ', 1)
+    return _AMAZON_A.sub(fix, doc)
 
 stores = json.loads((ROOT / "stores.json").read_text())
 stock = json.loads((ROOT / "data/stock.json").read_text())
@@ -24,6 +49,9 @@ STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not ye
 NAV = [("index.html", "Restock tracker"), ("hobonichi-2027.html", "Hobonichi 2027 calendar"), ("about.html", "About")]
 
 def page(fname, title, desc, body):
+    return tag_amazon_links(_page(fname, title, desc, body))
+
+def _page(fname, title, desc, body):
     nav = "".join(f'<a href="{h}"{" aria-current=page" if h == fname else ""}>{E(t)}</a>' for h, t in NAV)
     return f"""<!doctype html>
 <html lang="en"><head>
@@ -40,6 +68,7 @@ def page(fname, title, desc, body):
 <footer class="foot"><div class="wrap">
   <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh ten tabs.</p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it. Some links may become affiliate links; we'll label them when they do.</p>
+  <p class="disclosure">{E(AMAZON_DISCLOSURE)}</p>
   <!-- TODO(affiliate): replace these with tracked links once each program approves the site -->
   <p class="partners">Notebooks we like: <a href="https://www.leuchtturm1917.com/" data-todo="affiliate-leuchtturm1917" rel="nofollow">Leuchtturm1917</a> · <a href="https://baronfig.com/" data-todo="affiliate-baronfig" rel="nofollow">Baron Fig</a> · <a href="https://stationerypal.com/" data-todo="affiliate-stationerypal" rel="nofollow">Stationery Pal</a> <span class="todo-chip" title="Affiliate links not set up yet">TODO: affiliate</span></p>
 </div></footer>
@@ -78,9 +107,8 @@ def editor_block():
     items = []
     for b in picks["books"]:
         details = "".join(f"<li>{E(d)}</li>" for d in b.get("details", []))
-        # url_todo: swap for an Associates-tagged link later
         items.append(f"""<article class="book" data-book-id="{E(b['id'])}">
-  <a class="book-cover" href="{E(b['url'])}" rel="noopener" target="_blank" data-todo="{E(b.get('url_todo',''))}">
+  <a class="book-cover" href="{E(amazon_link(b['url']))}" rel="sponsored noopener" target="_blank">
     <img src="{E(b['cover'])}" alt="{E(b['cover_alt'])}" width="200" height="300" loading="lazy"></a>
   <div class="book-body">
     <p class="eyebrow">{E(b.get('kicker',''))}</p>
@@ -88,7 +116,7 @@ def editor_block():
     <p class="book-title">{E(b['title'])} <span class="muted">· {E(b.get('format',''))}</span></p>
     <p>{E(b['blurb'])}</p>
     <ul class="book-details">{details}</ul>
-    <a class="btn" href="{E(b['url'])}" rel="noopener" target="_blank" data-todo="{E(b.get('url_todo',''))}">See it on Amazon</a>
+    <a class="btn" href="{E(amazon_link(b['url']))}" rel="sponsored noopener" target="_blank">See it on Amazon</a>
   </div>
 </article>""")
     return f"""<section class="card editor" aria-label="{E(picks['heading'])}">
