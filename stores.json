@@ -1,0 +1,843 @@
+{
+ "generated": "2026-10-25T17:39:24-0400",
+ "canonical": [
+  {
+   "id": "original-a6-en",
+   "label": "Original A6 book (English)",
+   "type": "Book"
+  },
+  {
+   "id": "cousin-a5-en",
+   "label": "Cousin A5 book (English)",
+   "type": "Book"
+  },
+  {
+   "id": "original-a6-jp",
+   "label": "Original A6 book (Japanese)",
+   "type": "Book"
+  },
+  {
+   "id": "weeks-midnight-blue",
+   "label": "Weeks · Colors: Midnight Blue",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-canaria-yellow",
+   "label": "Weeks · Colors: Canaria Yellow",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-moomin-table",
+   "label": "Weeks · Moomin: At the Table",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-white-cat",
+   "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-mega-midnight-blue",
+   "label": "Weeks Mega · Colors: Midnight Blue",
+   "type": "Weeks Mega"
+  },
+  {
+   "id": "weeks-mega-candy-dream",
+   "label": "Weeks Mega · Bow & Tie: Candy Dream",
+   "type": "Weeks Mega"
+  },
+  {
+   "id": "cover-a6-moomin",
+   "label": "A6 cover · Moomin: My Yard (Pale Mint)",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-white-cat-house",
+   "label": "A6 cover · Yumi Kitagishi: White Cat House",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-tragen-black",
+   "label": "A6 cover · TRAGEN: Black",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-mina-felice",
+   "label": "A6 cover · mina perhonen: felice (Blue)",
+   "type": "Cover"
+  }
+ ],
+ "stores": [
+  {
+   "id": "1101",
+   "name": "Hobonichi Online Store (official)",
+   "url": "https://www.1101.com/store/techo/en/",
+   "country": "JP (ships worldwide)",
+   "platform": "hobonichi",
+   "indie": false,
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/",
+     "source_key": "ob27_jan_en",
+     "source_title": "Hobonichi Techo 2027 English Original Book"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_jan_en/",
+     "source_key": "cb27_jan_en",
+     "source_title": "Hobonichi Techo 2027 English Cousin Book"
+    },
+    {
+     "canonical": "original-a6-jp",
+     "label": "Original A6 book (Japanese)",
+     "type": "Book",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan/",
+     "source_key": "ob27_jan",
+     "source_title": "Hobonichi Techo 2027 Japanese Original Book"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_colorsmblue/",
+     "source_key": "wb27_colorsmblue",
+     "source_title": "Midnight Blue"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moomintable/",
+     "source_key": "wb27_moomintable",
+     "source_title": "At the Table"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_kitagishi/",
+     "source_key": "wb27_kitagishi",
+     "source_title": "White Cat Wallpaper"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_m_tiecandy/",
+     "source_key": "wb27_m_tiecandy",
+     "source_title": "Candy Dream"
+    },
+    {
+     "canonical": "cover-a6-moomin",
+     "label": "A6 cover · Moomin: My Yard (Pale Mint)",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_moomin/",
+     "source_key": "oc27_moomin",
+     "source_title": "My Yard (Pale Mint)"
+    }
+   ]
+  },
+  {
+   "id": "papermouse",
+   "name": "The Paper Mouse",
+   "url": "https://www.thepapermouse.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "sitemap": "thepapermouse.com",
+   "cols": [
+    "hobonichi",
+    "hobonichi-techo",
+    "hobonichi-2027"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a6-original-planner-book-only-english",
+     "source_title": "Hobonichi Techo 2027 A6 Original Planner | Book Only | English"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a5-cousin-planner-book-only-english",
+     "source_title": "Hobonichi Techo 2027 A5 Cousin Planner | Book Only | English"
+    },
+    {
+     "canonical": "original-a6-jp",
+     "label": "Original A6 book (Japanese)",
+     "type": "Book",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a6-original-planner-book-only-japanese-sunday-start",
+     "source_title": "Hobonichi Techo 2027 A6 Original Planner | Book Only | Japanese Sunday Start"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-colors-midnight-blue-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Colors: Midnight Blue | English"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-colors-canaria-yellow-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Colors: Canaria Yellow | English"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-moomin-at-the-table-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Moomin: At the Table | English"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-yumi-kitagishi-white-cat-wallpaper-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Yumi Kitagishi: White Cat Wallpaper | English"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-mega-planner-colors-midnight-blue-english",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA Planner | Colors: Midnight Blue | English"
+    }
+   ]
+  },
+  {
+   "id": "atlas",
+   "name": "Atlas Stationers",
+   "url": "https://www.atlasstationers.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "evergreen": true,
+   "sitemap": "atlas",
+   "cols": [
+    "hobonichi",
+    "hobonichi-techo",
+    "hobonichi-2027",
+    "hobonichi-techo-2027"
+   ],
+   "products": [
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-midnight-blue",
+     "source_title": "Hobonichi Techo Weeks - Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-canaria-yellow",
+     "source_title": "Hobonichi Techo Weeks - Colors: Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-mega-colors-midnight-blue",
+     "source_title": "Hobonichi Techo Weeks Mega - Colors: Midnight Blue"
+    },
+    {
+     "canonical": null,
+     "label": "Hobonichi Techo Weeks - Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-sea-glass",
+     "source_title": "Hobonichi Techo Weeks - Colors: Sea Glass"
+    },
+    {
+     "canonical": null,
+     "label": "Hobonichi Techo Weeks - Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-pink-sapphire",
+     "source_title": "Hobonichi Techo Weeks - Colors: Pink Sapphire"
+    }
+   ]
+  },
+  {
+   "id": "bobo",
+   "name": "Bobo Design Studio",
+   "url": "https://bobodesignstudio.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "sitemap": "bobo",
+   "cols": [
+    "hobonichi",
+    "hobonichi-techo"
+   ],
+   "products": [
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-yumi-kitagishi-white-cat-wallpaper",
+     "source_title": "Hobonichi Techo 2027 Weeks Yumi Kitagishi: White Cat Wallpaper"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-mega-colors-midnight-blue",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-mega-weeks-bow-tie-candy-dream",
+     "source_title": "Hobonichi Techo 2027 MEGA Weeks Bow & Tie: Candy Dream"
+    },
+    {
+     "canonical": null,
+     "label": "Hobonichi Techo 2027 Weeks V&A Series: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-v-a-series-welcome-to-the-v-a",
+     "source_title": "Hobonichi Techo 2027 Weeks V&A Series: Welcome to the V&A"
+    },
+    {
+     "canonical": null,
+     "label": "Hobonichi Techo 2027 Weeks V&A Series: Leicester",
+     "type": "Weeks",
+     "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",
+     "source_title": "Hobonichi Techo 2027 Weeks V&A Series: Leicester"
+    }
+   ]
+  },
+  {
+   "id": "baum",
+   "name": "Baum-kuchen",
+   "url": "https://www.baum-kuchen.net/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "sitemap": "baum",
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-original-book-a6-english",
+     "source_title": "[Hobonichi 2027] Original Book (A6 / English)"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-cousin-a5-english",
+     "source_title": "[Hobonichi 2027] Cousin (A5 / English)"
+    },
+    {
+     "canonical": null,
+     "label": "[Hobonichi 2027] Weeks (English)",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english",
+     "source_title": "[Hobonichi 2027] Weeks (English)"
+    },
+    {
+     "canonical": null,
+     "label": "[Hobonichi 2027] Weeks MEGA (English)",
+     "type": "Weeks Mega",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english",
+     "source_title": "[Hobonichi 2027] Weeks MEGA (English)"
+    },
+    {
+     "canonical": null,
+     "label": "[Hobonichi 2027] Planner Book (A6 / English)",
+     "type": "Book",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-planner-book-a6-english",
+     "source_title": "[Hobonichi 2027] Planner Book (A6 / English)"
+    }
+   ]
+  },
+  {
+   "id": "wonder",
+   "name": "Wonder Pens",
+   "url": "https://wonderpens.ca/",
+   "country": "CA",
+   "platform": "shopify",
+   "indie": true,
+   "sitemap": "wonder",
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": null,
+     "label": "Hobonichi 2027 - Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]",
+     "type": "Book",
+     "url": "https://wonderpens.ca/products/hobonichi-2027-japanese-original-book-one-piece-edition-a6-size-daily-jan-start-mon-start",
+     "source_title": "Hobonichi 2027 - Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-colors-midnight-blue",
+     "source_title": "PREVIEW - Hobonichi 2027 - English Weeks - Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-colors-canaria-yellow",
+     "source_title": "PREVIEW - Hobonichi 2027 - English Weeks - Colors: Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-moomin-at-the-table",
+     "source_title": "PREVIEW - Hobonichi 2027 - English Weeks - Moomin: At the Table"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-yumi-kitagishi-white-cat-wallpaper",
+     "source_title": "PREVIEW - Hobonichi 2027 - English Weeks - Yumi Kitagishi: White Cat Wallpaper"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-mega-weeks-colors-midnight-blue",
+     "source_title": "PREVIEW - Hobonichi 2027 - English MEGA Weeks - Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-mega-weeks-bow-tie-candy-dream",
+     "source_title": "PREVIEW - Hobonichi 2027 - English MEGA Weeks - Bow & Tie: Candy Dream"
+    },
+    {
+     "canonical": "cover-a6-moomin",
+     "label": "A6 cover · Moomin: My Yard (Pale Mint)",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-moomin-my-yard-pale-mint",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - Moomin: My Yard (Pale Mint)"
+    }
+   ]
+  },
+  {
+   "id": "laywines",
+   "name": "Laywine's",
+   "url": "https://laywines.com/",
+   "country": "CA",
+   "platform": "shopify",
+   "indie": true,
+   "sitemap": "laywines",
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://laywines.com/products/hobonichi-a6-planner-english-book-2027",
+     "source_title": "Hobonichi A6 Planner English Book 2027"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://laywines.com/products/hobonichi-a5-cousin-english-book-2027",
+     "source_title": "Hobonichi A5 Cousin English Book 2027"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://laywines.com/products/hobonichi-weeks-colors-midnight-blue-2027",
+     "source_title": "Hobonichi Weeks Colors: Midnight Blue 2027"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://laywines.com/products/hobonichi-weeks-colors-canaria-yellow-2027",
+     "source_title": "Hobonichi Weeks Colors: Canaria Yellow 2027"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://laywines.com/products/hobonichi-weeks-mega-colors-midnight-blue-2027",
+     "source_title": "Hobonichi Weeks MEGA Colors: Midnight Blue 2027"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://laywines.com/products/hobonichi-weeks-mega-bow-and-tie-candy-dream-2027",
+     "source_title": "Hobonichi Weeks MEGA Bow & Tie: Candy Dream 2027"
+    }
+   ]
+  },
+  {
+   "id": "penboutique",
+   "name": "Pen Boutique",
+   "url": "https://www.penboutique.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "sitemap": "penboutique",
+   "cols": [
+    "hobonichi",
+    "hobonichi-techo"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://www.penboutique.com/products/hobonichi-techo-2027-english-original-book-a6-daily",
+     "source_title": "Hobonichi Techo 2027 English Original Refill Book - A6 (Daily - January Start - Monday Start)"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://www.penboutique.com/products/hobonichi-techo-2027-english-cousin-book-a5-daily",
+     "source_title": "Hobonichi Techo 2027 English Cousin Refill Book - A5 (Daily - January Start - Monday Start)"
+    },
+    {
+     "canonical": "original-a6-jp",
+     "label": "Original A6 book (Japanese)",
+     "type": "Book",
+     "url": "https://www.penboutique.com/products/hobonichi-techo-2027-japanese-original-book-a6-daily",
+     "source_title": "Hobonichi Techo 2027 Japanese Original Refill Book - A6 (Daily - January Start - Monday Start)"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-colors-midnight-blue-english-january-start",
+     "source_title": "Hobonichi 2027 Light Hardcover Book - Colors: Midnight Blue - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-colors-canaria-yellow-english-january-start",
+     "source_title": "Hobonichi 2027 Light Hardcover Book - Colors: Canaria Yellow - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-moomin-at-the-table-english-january-start",
+     "source_title": "Hobonichi 2027 Light Hardcover Book - Moomin: At the Table - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-yumi-kitagishi-white-cat-wallpaper",
+     "source_title": "Hobonichi 2027 Light Hardcover Book - Yumi Kitagishi: White Cat Wallpaper - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://www.penboutique.com/products/hobonichi-techo-2027-weeks-mega-midnight-blue",
+     "source_title": "Hobonichi 2027 Mega Light Hard Cover English Book - Colors: Midnight Blue - Tall & Slim (Weeks - January Start)"
+    }
+   ]
+  },
+  {
+   "id": "yoseka",
+   "name": "Yoseka Stationery",
+   "url": "https://yosekastationery.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "sitemap": "yoseka",
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-original-2027-english-edition-a6",
+     "source_title": "Hobonichi Techo Original 2027 - English Edition - A6"
+    },
+    {
+     "canonical": "original-a6-jp",
+     "label": "Original A6 book (Japanese)",
+     "type": "Book",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-original-2027-japanese-edition-a6",
+     "source_title": "Hobonichi Techo Original 2027 - Japanese Edition - A6"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-midnight-blue",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-canaria-yellow",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors: Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-moomin-at-the-table",
+     "source_title": "Hobonichi Techo Weeks 2027 - Moomin: At the Table"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-yumi-kitagishi-white-cat-wallpaper",
+     "source_title": "Hobonichi Techo Weeks 2027 - Yumi Kitagishi: White Cat Wallpaper"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-mega-2027-colors-midnight-blue",
+     "source_title": "Hobonichi Techo Weeks Mega 2027 - Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-mega-2027-bow-tie-candy-dream",
+     "source_title": "Hobonichi Techo Weeks Mega 2027 - Bow & Tie: Candy Dream"
+    }
+   ]
+  },
+  {
+   "id": "jennibick",
+   "name": "Jenni Bick",
+   "url": "https://www.jennibick.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "sitemap": "jennibick",
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-2027-english-original-book-a6-size-daily-jan-start-mon-start",
+     "source_title": "Hobonichi Techo 2027 Original Book A6 - ENGLISH"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-2027-english-cousin-book-a5-size-daily-jan-start-mon-start",
+     "source_title": "Hobonichi Techo 2027 Cousin Book A5 - ENGLISH"
+    },
+    {
+     "canonical": "original-a6-jp",
+     "label": "Original A6 book (Japanese)",
+     "type": "Book",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-2027-japanese-original-book-a6-size-daily-jan-start-sun-start",
+     "source_title": "Hobonichi Techo 2027 Original Book A6 - JAPANESE"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-midnight-blue",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-canaria-yellow",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors: Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-moomin-at-the-table",
+     "source_title": "Hobonichi Techo Weeks 2027 - Moomin: At the Table"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-yumi-kitagishi-white-cat-wallpaper",
+     "source_title": "Hobonichi Techo Weeks 2027 - Yumi Kitagishi: White Cat Wallpaper"
+    }
+   ]
+  },
+  {
+   "id": "kinousa",
+   "name": "Kinokuniya USA",
+   "url": "https://usa.kinokuniya.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": false,
+   "cols": [
+    "hobonichi-techo"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://usa.kinokuniya.com/products/4580812710381",
+     "source_title": "Hobonichi Techo 2027 English Original Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://usa.kinokuniya.com/products/4580812710428",
+     "source_title": "Hobonichi Techo 2027 English Cousin Book [A5 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": null,
+     "label": "Hobonichi Techo 2027 Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]",
+     "type": "Book",
+     "url": "https://usa.kinokuniya.com/products/4580812710374",
+     "source_title": "Hobonichi Techo 2027 Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "cover-a6-moomin",
+     "label": "A6 cover · Moomin: My Yard (Pale Mint)",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812708852",
+     "source_title": "Moomin: My Yard (Pale Mint) Cover - A6 Size (Original) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a6-white-cat-house",
+     "label": "A6 cover · Yumi Kitagishi: White Cat House",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812708791",
+     "source_title": "Yumi Kitagishi: White Cat House Cover - A6 Size (Original) - Hobonichi 2027"
+    }
+   ]
+  },
+  {
+   "id": "kinosg",
+   "name": "Kinokuniya Singapore",
+   "url": "https://kinokuniya.com.sg/",
+   "country": "SG",
+   "platform": "shopify",
+   "indie": false,
+   "cols": [
+    "hobonichi-techo"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://kinokuniya.com.sg/products/4580812710381",
+     "source_title": "Hobonichi Techo 2027 English Original Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://kinokuniya.com.sg/products/4580812710428",
+     "source_title": "Hobonichi Techo 2027 English Cousin Book [A5 size/Daily/Jan start/Mon start]"
+    }
+   ]
+  },
+  {
+   "id": "omoi",
+   "name": "Omoi Zakka Shop",
+   "url": "https://omoionline.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://omoionline.com/products/hobonichi-techo-2027-weeks-mega-colors-planner-midnight-blue",
+     "source_title": "Hobonichi Techo 2027 WEEKS MEGA Colors Planner Midnight Blue"
+    },
+    {
+     "canonical": null,
+     "label": "Hobonichi Techo 2027 HON A5 Slash Planner Navy",
+     "type": "HON",
+     "url": "https://omoionline.com/products/hobonichi-techo-2027-hon-a5-slash-planner-navy",
+     "source_title": "Hobonichi Techo 2027 HON A5 Slash Planner Navy"
+    },
+    {
+     "canonical": null,
+     "label": "Hobonichi Techo 2027 HON A6 Slash Planner Navy",
+     "type": "HON",
+     "url": "https://omoionline.com/products/hobonichi-techo-2027-hon-a6-slash-planner-navy",
+     "source_title": "Hobonichi Techo 2027 HON A6 Slash Planner Navy"
+    },
+    {
+     "canonical": null,
+     "label": "Hobonichi Techo 2027 WEEKS Shirt Fabric Planner Graph Plaid",
+     "type": "Weeks",
+     "url": "https://omoionline.com/products/hobonichi-techo-2027-weeks-shirt-fabric-planner-graph-plaid",
+     "source_title": "Hobonichi Techo 2027 WEEKS Shirt Fabric Planner Graph Plaid"
+    },
+    {
+     "canonical": null,
+     "label": "Hobonichi Techo 2027 WEEKS Paper Series Planner Jade",
+     "type": "Weeks",
+     "url": "https://omoionline.com/products/hobonichi-techo-2027-weeks-paper-series-planner-jade",
+     "source_title": "Hobonichi Techo 2027 WEEKS Paper Series Planner Jade"
+    }
+   ]
+  },
+  {
+   "id": "jetpens",
+   "name": "JetPens",
+   "url": "https://www.jetpens.com/",
+   "country": "US",
+   "platform": "blocked",
+   "indie": false,
+   "note": "Returns HTTP 403 to non-browser requests (bot protection). Listed as a link only; not checked.",
+   "products": []
+  },
+  {
+   "id": "nanami",
+   "name": "Nanami Paper",
+   "url": "https://www.nanamipaper.com/",
+   "country": "US",
+   "platform": "robots-disallow",
+   "indie": true,
+   "note": "robots.txt disallows all crawling (User-agent: * / Disallow: /). Listed as a link only; not checked.",
+   "products": []
+  }
+ ]
+}

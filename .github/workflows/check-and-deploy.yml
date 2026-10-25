@@ -1,0 +1,64 @@
+name: Check stock and deploy site
+
+on:
+  schedule:
+    - cron: "0 * * * *"     # hourly
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore: ["data/**"]
+
+permissions:
+  contents: write    # commit data/ changes
+  pages: write       # deploy to GitHub Pages
+  id-token: write
+
+concurrency:
+  group: drop-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      # Same polite checker as local: robots.txt respected, 2.5 s/host, one worker per host.
+      - name: Run stock checker
+        run: python scripts/checker.py
+
+      - name: Build site
+        run: python scripts/build_site.py
+
+      - name: Commit data changes (skip timestamp-only updates)
+        run: |
+          if python scripts/status_changed.py; then
+            git config user.name  "drop-watch-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/ site/
+            git commit -m "data: stock update $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+          else
+            echo "No status changes; not committing."
+          fi
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

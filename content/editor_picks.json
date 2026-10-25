@@ -1,0 +1,25 @@
+{
+  "_comment": "House ads for the owner's own books. Add another object to 'books' to show a second book; the block renders every entry in order. Only use details from the real Amazon listing.",
+  "heading": "From the editor",
+  "books": [
+    {
+      "id": "B0HP85QLMS",
+      "kicker": "Gift pick",
+      "pitch": "A journal for the kids in your life",
+      "title": "Journal: Lined Notebook, 6 x 9 Inches, 120 Pages",
+      "author": "Excelsior",
+      "format": "Paperback",
+      "cover": "assets/books/B0HP85QLMS.jpg",
+      "cover_alt": "Journal cover: a hand-drawn orange goldfish on a light aqua background with bubbles",
+      "blurb": "A cheerful orange goldfish on a light aqua cover, a \"this journal belongs to\" page up front, and college-ruled pages with a date line at the top. Room for daily thoughts, to-do lists, class notes, ideas, or a reading log.",
+      "details": [
+        "120 pages",
+        "6 x 9 in paperback",
+        "College-ruled, white paper"
+      ],
+      "url": "https://www.amazon.com/dp/B0HP85QLMS",
+      "url_todo": "TODO: swap in Amazon Associates tagged link once an Associates account exists",
+      "source": "Amazon listing B0HP85QLMS, fetched 2026-10-25"
+    }
+  ]
+}
