@@ -137,3 +137,14 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 /* Amazon affiliate links: deliberately quiet so the stock status stays the focus */
 a.az{color:inherit;opacity:.75;font-size:.85em;text-decoration:underline dotted;text-underline-offset:2px}
 a.az:hover{opacity:1}
+
+/* Amazon as main action, only for products unavailable at every tracked shop */
+.oe-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.oe-item{display:flex;align-items:center;gap:14px;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff}
+.oe-item h3{font-size:1.02rem;margin:0}
+.oe-note{margin:2px 0 0;font-size:.82rem;color:var(--rose)}
+.oe-shops{margin:.3em 0 0;padding-left:1.1em}
+.btn-amz{background:var(--accent);border-color:var(--accent);color:#fff!important;white-space:nowrap;flex:none}
+.btn-amz:hover{background:var(--accent-2);border-color:var(--accent-2)}
+.btn-sm{display:inline-block;margin-top:6px;padding:4px 12px;font-size:.8rem;min-height:0}
+@media (max-width:560px){.oe-item{flex-direction:column;align-items:stretch}.oe-item .btn-amz{text-align:center}}

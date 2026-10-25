@@ -138,6 +138,45 @@ def editor_block():
   <p class="muted small">Made by the person who runs this site.</p>
 </section>"""
 
+BUYABLE = ("in_stock", "preorder")
+NOT_BUYABLE = ("sold_out", "coming_soon")  # coming_soon = preview page, no preorder
+
+def product_key(p):
+    """Group listings of the same product across stores: canonical id, else a normalized title."""
+    if p.get("canonical"):
+        return p["canonical"]
+    t = re.sub(r"\[[^\]]*\]", " ", p["label"].lower())
+    t = re.sub(r"\b(hobonichi|techo|2027|planner)\b", " ", t)
+    return "t:" + " ".join(re.findall(r"[a-z0-9&]+", t))
+
+def amazon_main(prods):
+    """Products that no tracked shop can sell right now (every listing sold out / not yet on sale).
+    Recomputed from data/stock.json on every build. A product with any listing we couldn't
+    check ('unknown') is left out, since we can't honestly say it's unavailable everywhere."""
+    groups = {}
+    for p in prods:
+        groups.setdefault(product_key(p), []).append(p)
+    out = {}
+    for k, ls in groups.items():
+        sts = {l["status"] for l in ls}
+        if not sts <= set(NOT_BUYABLE):
+            continue
+        hit = next((amz["products"].get(l.get("canonical") or "") or amz.get("listings", {}).get(l["url"]) for l in ls
+                    if amz["products"].get(l.get("canonical") or "") or amz.get("listings", {}).get(l["url"])), None)
+        if hit:
+            url, label, exact = amazon_link(f"https://www.amazon.com/dp/{hit['asin']}"), "Buy on Amazon", True
+        else:
+            url, label, exact = amazon_link(amz["brands"]["hobonichi"]["url"]), "Check Hobonichi on Amazon", False
+        n = len({l["store_id"] for l in ls})
+        if sts == {"sold_out"}:
+            note = "Sold out at every shop we track" if n > 1 else "Sold out at the only shop we track"
+        elif sts == {"coming_soon"}:
+            note = "Not on sale yet at any shop we track" if n > 1 else "Not on sale yet at the only shop we track"
+        else:
+            note = "Sold out or not yet on sale at every shop we track"
+        out[k] = dict(url=url, label=label, exact=exact, note=f"{note} ({n} shops)" if n > 1 else note, listings=ls)
+    return out
+
 def build_index():
     prods = stock["products"]
     s = stock["summary"]
@@ -158,10 +197,27 @@ def build_index():
 
     # table data (embedded so the page works without fetch)
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
-    rows = [dict(p=p["label"], c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], st=p["status"],
+    out_everywhere = amazon_main(prods)
+    rows = [dict(g=product_key(p), p=p["label"], c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], st=p["status"],
                  u=p["url"], at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
                  va=p.get("available_variants"), tv=p.get("total_variants"),
                  az=amazon_for(p.get("canonical"), p["url"])[0], azl=amazon_for(p.get("canonical"), p["url"])[1]) for p in prods]
+    for r in rows:  # product unavailable at every tracked shop: Amazon becomes the main action
+        m = out_everywhere.get(r["g"])
+        if m:
+            r.update(az=m["url"], azl=m["label"], azm=1)
+    def oe_card(m):
+        l0 = m["listings"][0]
+        name = canon.get(l0.get("canonical") or "", l0["label"])
+        shops = "".join(f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(l["store"])}</a> <span class="badge {E(l["status"])}">{E(STATUS[l["status"]])}</span></li>' for l in m["listings"])
+        return f"""<li class="oe-item"><div class="oe-text"><h3>{E(name)}</h3><p class="oe-note">{E(m['note'])}</p>
+  <details class="muted small"><summary>Shops we checked</summary><ul class="oe-shops">{shops}</ul></details></div>
+  <a class="btn btn-amz" href="{E(m['url'])}" target="_blank">{E(m['label'])}</a></li>"""
+    oe_html = (f"""<section class="card" id="sold-out-everywhere">
+      <div class="section-head"><h2>Sold out at every shop we track</h2></div>
+      <p class="muted small">None of the shops we check can sell these right now. Amazon may still have them, so we link there. A product leaves this list as soon as any shop we track has it in stock or on preorder.</p>
+      <ul class="oe-list">{"".join(oe_card(m) for m in sorted(out_everywhere.values(), key=lambda m: not m["exact"]))}</ul>
+    </section>""" if out_everywhere else "")
     store_opts = "".join(f'<option value="{E(x["id"])}">{E(x["name"])}</option>' for x in stores["stores"] if x["platform"] in ("shopify", "hobonichi"))
     prod_opts = "".join(f'<option value="{E(k)}">{E(v)}</option>' for k, v in canon.items() if any(p.get("canonical") == k for p in prods))
     type_opts = "".join(f'<option value="{E(t)}">{E(t)}</option>' for t in sorted({p["type"] for p in prods}))
@@ -189,6 +245,8 @@ def build_index():
       <h2>Restocked recently</h2>
       {feed_html}
     </section>
+
+    {oe_html}
 
     <section class="card" id="tracker">
       <div class="section-head"><h2>Every listing we track</h2><p class="muted small" id="count"></p></div>

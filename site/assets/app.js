@@ -32,7 +32,7 @@
       more.hidden = out.length <= limit;
       more.textContent = `Show all ${out.length} listings`;
       $("rows").innerHTML = shown.length ? shown.map(r => `<tr>
-        <td><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.p)}</a><span class="sub">${esc(r.t)}${r.az ? ` · <a class="az" href="${esc(r.az)}" target="_blank" rel="sponsored noopener">${esc(r.azl)}</a>` : ""}</span></td>
+        <td><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.p)}</a><span class="sub">${esc(r.t)}${r.az && !r.azm ? ` · <a class="az" href="${esc(r.az)}" target="_blank" rel="sponsored noopener">${esc(r.azl)}</a>` : ""}</span>${r.azm ? `<a class="btn btn-amz btn-sm" href="${esc(r.az)}" target="_blank" rel="sponsored noopener">${esc(r.azl)}</a>` : ""}</td>
         <td>${esc(r.s)}</td>
         <td><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></td>
         <td class="hide-sm"><time datetime="${esc(r.at)}" title="${esc(new Date(r.at).toLocaleString())}">${ago(r.at)}</time></td>
