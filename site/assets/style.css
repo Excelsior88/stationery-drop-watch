@@ -133,3 +133,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 }
 .more{margin-top:12px;background:none;cursor:pointer;font-family:var(--sans)}
 .stock td:last-child{white-space:nowrap}
+
+/* Amazon affiliate links: deliberately quiet so the stock status stays the focus */
+a.az{color:inherit;opacity:.75;font-size:.85em;text-decoration:underline dotted;text-underline-offset:2px}
+a.az:hover{opacity:1}

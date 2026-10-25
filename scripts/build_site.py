@@ -39,6 +39,19 @@ stores = json.loads((ROOT / "stores.json").read_text())
 stock = json.loads((ROOT / "data/stock.json").read_text())
 changes = json.loads((ROOT / "data/changes.json").read_text())
 picks = json.loads((ROOT / "content/editor_picks.json").read_text())
+amz = json.loads((ROOT / "content/amazon_links.json").read_text())  # links only; never fetched by the checker
+
+def amazon_for(canonical, listing_url=""):
+    """(tagged url, label) for a tracked listing: exact verified ASIN, else the Hobonichi brand link."""
+    m = amz["products"].get(canonical or "") or amz.get("listings", {}).get(listing_url)
+    if m:
+        return amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "Also on Amazon"
+    b = amz["brands"]["hobonichi"]
+    return amazon_link(b["url"]), b["label"]
+
+def brand_amazon(key):
+    b = amz["brands"][key]
+    return f'<a class="az" target="_blank" href="{E(b["url"])}">{E(b["label"])}</a>'
 
 def fmt_et(iso):
     t = dt.datetime.fromisoformat(iso).astimezone(ET)
@@ -147,7 +160,8 @@ def build_index():
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
     rows = [dict(p=p["label"], c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], st=p["status"],
                  u=p["url"], at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
-                 va=p.get("available_variants"), tv=p.get("total_variants")) for p in prods]
+                 va=p.get("available_variants"), tv=p.get("total_variants"),
+                 az=amazon_for(p.get("canonical"), p["url"])[0], azl=amazon_for(p.get("canonical"), p["url"])[1]) for p in prods]
     store_opts = "".join(f'<option value="{E(x["id"])}">{E(x["name"])}</option>' for x in stores["stores"] if x["platform"] in ("shopify", "hobonichi"))
     prod_opts = "".join(f'<option value="{E(k)}">{E(v)}</option>' for k, v in canon.items() if any(p.get("canonical") == k for p in prods))
     type_opts = "".join(f'<option value="{E(t)}">{E(t)}</option>' for t in sorted({p["type"] for p in prods}))
@@ -200,7 +214,7 @@ def build_index():
     {editor_block()}
     <section class="card soon">
       <p class="eyebrow">Coming to the tracker</p>
-      <ul><li>Traveler's Company limited editions</li><li>MIDORI MD seasonal releases</li><li>Leuchtturm1917 special editions</li></ul>
+      <ul><li>Traveler's Company limited editions <span class="muted small">· {brand_amazon("travelers")}</span></li><li>MIDORI MD seasonal releases <span class="muted small">· {brand_amazon("midori")}</span></li><li>Leuchtturm1917 special editions <span class="muted small">· {brand_amazon("leuchtturm1917")}</span></li></ul>
     </section>
   </aside>
 </div>

@@ -1,0 +1,100 @@
+{
+  "_comment": "Amazon links shown beside tracker items. Links only: the hourly checker never fetches Amazon. Each ASIN was opened on amazon.com and its title matched to the tracked product on the 'verified' date. build_site.py adds the Associates tag. Tracked products with no verified match fall back to their brand link. 'listings' maps a tracked store listing URL (for items without a canonical product id) to its verified Amazon ASIN.",
+  "verified": "2026-10-25",
+  "products": {
+    "original-a6-en": {
+      "asin": "B0H6P98KGJ",
+      "amazon_title": "Hobonichi Techo 2027 Original Book – A6, English, Daily, January Start, Monday Start, Planner",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "cousin-a5-en": {
+      "asin": "B0H6P5FK8X",
+      "amazon_title": "Hobonichi Techo 2027 Cousin Book – A5, English, Daily, Weekly, Jan Start, Mon Start, Planner",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "original-a6-jp": {
+      "asin": "B0H6PD3YTD",
+      "amazon_title": "Hobonichi Techo 2027 Original Book – A6, Japanese, Daily, January Start, Monday Start, Planner",
+      "seller_at_check": "Global land (third-party seller)"
+    },
+    "weeks-midnight-blue": {
+      "asin": "B0H6PBGMMX",
+      "amazon_title": "Hobonichi Techo 2027 Weeks – Colors: Midnight Blue (English, Tall & Slim, January Start)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "weeks-canaria-yellow": {
+      "asin": "B0H6PHFBDP",
+      "amazon_title": "Hobonichi Techo 2027 Weeks – Colors: Canaria Yellow (English, Tall & Slim, January Start)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "weeks-moomin-table": {
+      "asin": "B0H7H56VWC",
+      "amazon_title": "Hobonichi Techo 2027 Weeks – Moomin: At the Table (English, Tall & Slim, January Start)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "weeks-white-cat": {
+      "asin": "B0H6PCFTQD",
+      "amazon_title": "Hobonichi Techo 2027 Weeks – Yumi Kitagishi: White Cat Wallpaper (English, Tall & Slim, January Start)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "weeks-mega-midnight-blue": {
+      "asin": "B0H7H68XH4",
+      "amazon_title": "Hobonichi Techo 2027 Weeks MEGA – Colors: Midnight Blue (English, Tall & Slim, January Start)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "weeks-mega-candy-dream": {
+      "asin": "B0H7H69G8M",
+      "amazon_title": "Hobonichi Techo 2027 Weeks MEGA – Bow & Tie: Candy Dream (English, Tall & Slim, January Start)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "cover-a6-moomin": {
+      "asin": "B0H6PDMPL2",
+      "amazon_title": "Hobonichi Techo A6 Planner Cover – Moomin: My Yard (Pale Mint) (Original Size,Cover Only)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "cover-a6-white-cat-house": {
+      "asin": "B0H8J88PW6",
+      "amazon_title": "Hobonichi Techo A6 Planner Cover – Yumi Kitagishi: White Cat House (Original Size,Cover Only)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "cover-a6-tragen-black": {
+      "asin": "B0D9PNHP4M",
+      "amazon_title": "Hobonichi Techo Original/Planner Cover [A6 Cover Only] Tragen (Black)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    }
+  },
+  "brands": {
+    "hobonichi": {
+      "label": "Hobonichi on Amazon",
+      "url": "https://www.amazon.com/stores/Hobonichi/page/AA9716DC-6CFB-4F11-8E27-D83747AA188D",
+      "note": "Official Hobonichi brand store"
+    },
+    "leuchtturm1917": {
+      "label": "on Amazon",
+      "url": "https://www.amazon.com/stores/LEUCHTTURM1917/page/3814C42F-C628-4196-8A18-FE50215AB3DF",
+      "note": "Official LEUCHTTURM1917 brand store"
+    },
+    "midori": {
+      "label": "on Amazon",
+      "url": "https://www.amazon.com/s?k=Midori+MD+Notebook",
+      "note": "No official Amazon brand store found; search link"
+    },
+    "travelers": {
+      "label": "on Amazon",
+      "url": "https://www.amazon.com/s?k=Traveler%27s+Company+Traveler%27s+Notebook",
+      "note": "No official Amazon brand store found; search link"
+    }
+  },
+  "listings": {
+    "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-pink-sapphire": {
+      "asin": "B0H6P9F2S9",
+      "amazon_title": "Hobonichi Techo 2027 Weeks – Colors: Pink Sapphire (English, Tall & Slim, January Start)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "https://omoionline.com/products/hobonichi-techo-2027-hon-a5-slash-planner-navy": {
+      "asin": "B0H6P9NDDP",
+      "amazon_title": "Hobonichi Techo HON A5 2027 – Slash (Navy) (English, January Start Planner)",
+      "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    }
+  }
+}
