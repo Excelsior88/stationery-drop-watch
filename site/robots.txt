@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://excelsior88.github.io/stationery-drop-watch/sitemap.xml

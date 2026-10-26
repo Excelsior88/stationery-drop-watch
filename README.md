@@ -9,6 +9,13 @@
 - TODOs: grep for `TODO` / `data-todo` (newsletter form action, affiliate links, Associates tag).
 - The checker only reports what stores return. Failed checks show as "Couldn't check" and are never guessed.
 
+## SEO
+
+- `build_site.py` also writes one restock page per product group (`GROUPS`): `site/<slug>/index.html`, e.g. `hobonichi-weeks-2027/`. Statuses are exactly what `data/stock.json` says.
+- Every page gets a canonical URL, Open Graph/Twitter tags (`assets/brand/og-image.png`, made by `scripts/brand/make_og.py`) and JSON-LD (WebSite + FAQPage on home, BreadcrumbList + ItemList on product pages). No Product markup: we have no prices or ratings to put in it.
+- `site/sitemap.xml` (lastmod = last status change on that page) and `site/robots.txt` are regenerated on every build, so the hourly workflow keeps them current.
+- GitHub Pages serves this as a project site, so crawlers won't read `/stationery-drop-watch/robots.txt` (robots.txt only counts at the host root). Submit the sitemap in Google Search Console instead.
+
 ## Hosting (GitHub Pages)
 
 `.github/workflows/check-and-deploy.yml` runs hourly (and on demand): checker -> build -> commit `data/` only when a status changed -> deploy `site/` to Pages.
