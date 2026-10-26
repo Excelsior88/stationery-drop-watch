@@ -120,6 +120,19 @@ def sponsor_block():
 def editor_block():
     items = []
     for b in picks["books"]:
+        if b.get("hidden"):
+            continue
+        if b.get("coming_soon"):
+            items.append(f"""<article class="book coming-soon" data-book-id="{E(b['id'])}">
+  <div class="book-cover placeholder" aria-hidden="true"><span>Coming soon</span></div>
+  <div class="book-body">
+    <p class="eyebrow">{E(b.get('kicker',''))}</p>
+    <h3>{E(b['pitch'])}</h3>
+    <p>{E(b['blurb'])}</p>
+    <a class="btn" href="#alerts">{E(b.get('cta','Get notified'))}</a>
+  </div>
+</article>""")
+            continue
         details = "".join(f"<li>{E(d)}</li>" for d in b.get("details", []))
         items.append(f"""<article class="book" data-book-id="{E(b['id'])}">
   <a class="book-cover" href="{E(amazon_link(b['url']))}" rel="sponsored noopener" target="_blank">
