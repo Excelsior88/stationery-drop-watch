@@ -68,8 +68,9 @@ STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not ye
           "sold_out": "Sold out", "unknown": "Couldn't check"}
 NAV = [("index.html", "Restock tracker"), ("hobonichi-2027.html", "Hobonichi 2027 calendar"), ("about.html", "About")]
 
-# Public URL of the GitHub Pages site. Used for canonical/OG URLs, JSON-LD and sitemap.xml.
-BASE = "https://excelsior88.github.io/stationery-drop-watch/"
+# Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
+BASE = "https://stationerydropwatch.com/"
+CNAME = "stationerydropwatch.com"
 OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
@@ -123,9 +124,9 @@ def _page(fname, title, desc, body, ld=(), og_type="website"):
 </div></footer>
 <script src="assets/app.js" defer></script>
 </body></html>"""
-    depth = fname.count("/")
-    if depth:  # page lives in a sub-folder (e.g. hobonichi-weeks-2027/): make site-relative links work from there
-        doc = LOCAL_LINK.sub(lambda m: f'{m.group(1)}="{"../" * depth}{m.group(2)}"', doc)
+    # The site is served at the domain root, so make every local link root-relative ("assets/x" -> "/assets/x").
+    # "index.html" becomes "/" so internal links match the canonical home URL.
+    doc = LOCAL_LINK.sub(lambda m: f'{m.group(1)}="/{re.sub(r"^index\.html", "", m.group(2))}"', doc)
     return doc
 
 NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatch)
@@ -615,7 +616,8 @@ def main():
         (SITE / fname / "index.html").write_text(doc)
     (SITE / "sitemap.xml").write_text(build_sitemap())
     (SITE / "robots.txt").write_text(ROBOTS)
-    print("built", sorted(str(p.relative_to(SITE)) for p in SITE.rglob("*.html")), "+ sitemap.xml, robots.txt")
+    (SITE / "CNAME").write_text(CNAME + "\n")
+    print("built", sorted(str(p.relative_to(SITE)) for p in SITE.rglob("*.html")), "+ sitemap.xml, robots.txt, CNAME")
 
 if __name__ == "__main__":
     main()

@@ -31,7 +31,7 @@ def build():
     sub = "Hobonichi Techo 2027 planners & covers, checked hourly across 13 shops."
     p3, w3 = text_path(SERIF, sub, 28, X + 2, 306, {"wght": 420, "opsz": 24})
     parts.append(f'<path d="{p3}" fill="{INK2}"/>')
-    url = "excelsior88.github.io/stationery-drop-watch"
+    url = "stationerydropwatch.com"
     p4, w4 = text_path(SANS, url, 19, X + 2 + 30, 368, {"wght": 500}, tracking=0.01)
     # small bell before the url (logo motif), sage clock hands
     s, bx, by = 1.25, X + 14, 356
