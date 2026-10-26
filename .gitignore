@@ -4,3 +4,7 @@ __pycache__/
 server.log
 screenshots/
 items*.js
+
+# Local-only working files (never pushed)
+social/
+ledger.csv
