@@ -1,1 +1,11 @@
-[]
+[
+ {
+  "at": "2026-10-26T13:53:05+00:00",
+  "store_id": "penboutique",
+  "store": "Pen Boutique",
+  "label": "Original A6 book (Japanese)",
+  "url": "https://www.penboutique.com/products/hobonichi-techo-2027-japanese-original-book-a6-daily",
+  "from": "sold_out",
+  "to": "in_stock"
+ }
+]
