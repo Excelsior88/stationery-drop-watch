@@ -107,6 +107,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website"):
 <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png" sizes="180x180">
 <meta name="theme-color" content="#fbf6ec">
 <meta name="google-site-verification" content="ehGQbmQs5JxWElUIdG8edUxqUYenrSKHsw-bf0v0YzU" />
+<meta name="google-site-verification" content="TIX916oAoBcBQiw9fOlEYtdMJCR7GQYKtW67hfrmcA8" />
 {ld_html}
 </head><body>
 <header class="masthead"><div class="wrap">
