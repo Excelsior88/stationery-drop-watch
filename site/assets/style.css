@@ -25,6 +25,10 @@ h3{font-size:1.15rem;margin:.1em 0 .4em}
 .masthead .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:62px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
 .brand{font:600 1.25rem var(--serif);color:var(--ink);text-decoration:none}
 .brand-mark{color:var(--accent)}
+.brand{display:inline-flex;align-items:center;line-height:0}
+.brand-logo{display:block;height:44px;width:auto}
+@media (max-width:560px){.brand-logo{height:40px}}
+@media (max-width:340px){.brand-logo{height:44px}}
 nav{display:flex;gap:4px;flex-wrap:wrap}
 nav a{color:var(--ink-2);text-decoration:none;padding:6px 12px;border-radius:999px;font-size:.93rem}
 nav a:hover{background:var(--paper-2);color:var(--ink)}
