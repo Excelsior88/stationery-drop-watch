@@ -6,7 +6,7 @@
 
 - `stores.json`: tracked retailers and product URLs (built by build_stores.py).
 - `content/editor_picks.json`: the "From the editor" house ad. Add another object to `books` to show a second book.
-- TODOs: grep for `TODO` / `data-todo` (newsletter form action, affiliate links, sponsor contact, Associates tag, checker contact email in User-Agent).
+- TODOs: grep for `TODO` / `data-todo` (newsletter form action, affiliate links, Associates tag).
 - The checker only reports what stores return. Failed checks show as "Couldn't check" and are never guessed.
 
 ## Hosting (GitHub Pages)

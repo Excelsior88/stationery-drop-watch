@@ -17,7 +17,7 @@ from urllib.parse import urlparse
 import requests
 
 ROOT = Path(__file__).resolve().parent.parent
-UA = "Mozilla/5.0 (compatible; StationeryDropWatch/0.1; restock tracker; contact: TODO-add-email)"
+UA = "Mozilla/5.0 (compatible; StationeryDropWatch/0.1; restock tracker; +https://excelsior88.github.io/stationery-drop-watch/; contact: stationerydropwatch@gmail.com)"
 DELAY = 2.5          # seconds between requests to one host
 TIMEOUT = 25
 PREORDER_RX = re.compile(r"pre[- ]?order|preorder", re.I)
