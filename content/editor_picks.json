@@ -1,14 +1,24 @@
 {
-  "_comment": "House ads for the owner's own books. Add another object to 'books' to show a second book; the block renders every entry in order. Only use details from the real Amazon listing. Put the plain Amazon URL in 'url'; build_site.py adds the Associates tag (AMAZON_TAG) automatically. Set \"hidden\": true on a book to keep its data but not show it. An entry with \"coming_soon\": true renders a teaser card (no link, no cover) with a button to the newsletter signup.",
+  "_comment": "House ads for the owner's own books. Add another object to 'books' to show a second book; the block renders every entry in order. Only use details from the real Amazon listing. Put the plain Amazon URL in 'url'; These are the owner's own books, so build_site.py links them to the plain amazon.com/dp/<ASIN> URL with NO Associates tag. Set \"hidden\": true on a book to keep its data but not show it. An entry with \"coming_soon\": true renders a teaser card (no link, no cover) with a button to the newsletter signup.",
   "heading": "From the editor",
   "books": [
     {
-      "id": "mens-planner-coming-soon",
-      "coming_soon": true,
+      "id": "B0HP9PXSR1",
       "kicker": "Gift pick",
-      "pitch": "Coming soon",
-      "blurb": "A planner designed to help the men in your life get organized.",
-      "cta": "Get notified when it drops"
+      "pitch": "A planner designed to help the men in your life get organized",
+      "title": "2027 Planner: January - December",
+      "author": "Excelsior, Arden Lis",
+      "format": "Paperback",
+      "cover": "assets/books/B0HP9PXSR1.jpg",
+      "cover_alt": "2027 Planner cover: bold white \"2027 PLANNER\" on charcoal with a copper rule and a slate-blue band reading weekly, monthly, goals, habits, money",
+      "blurb": "A dated 2027 planner built for structure, not decoration: weekly spreads with a top 3 and a to-do box, monthly goals and habit trackers, plus pages for money, training and projects. Plan the week in five minutes and get on with it.",
+      "details": [
+        "172 pages",
+        "8.5 x 11 in paperback",
+        "Dated weekly pages, Dec 27, 2026 to Jan 1, 2028"
+      ],
+      "url": "https://www.amazon.com/dp/B0HP9PXSR1",
+      "source": "Amazon listing B0HP9PXSR1, fetched 2026-10-26"
     },
     {
       "id": "B0HP85QLMS",

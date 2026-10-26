@@ -17,6 +17,11 @@ AMAZON_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
 _ASIN = re.compile(r"/(?:dp|gp/product|gp/aw/d)/([A-Z0-9]{10})")
 _AMAZON_A = re.compile(r'<a\b[^>]*\bhref="https?://(?:www\.)?amazon\.com/[^"]*"[^>]*>')
 
+def own_amazon_link(url):
+    """Plain amazon.com/dp/<ASIN> URL with no tag or ref params (for the owner's own products)."""
+    m = _ASIN.search(url)
+    return f"https://www.amazon.com/dp/{m.group(1)}" if m else url.split("?")[0]
+
 def amazon_link(url):
     """Clean, tagged Amazon product URL; non-product Amazon URLs just get the tag added."""
     m = _ASIN.search(url)
@@ -29,6 +34,8 @@ def tag_amazon_links(doc):
     """Final pass over a rendered page: tag every amazon.com link and mark it sponsored."""
     def fix(m):
         a = m.group(0)
+        if "data-own-product" in a:  # owner's own books: plain link, no Associates tag
+            return a
         href = html.unescape(re.search(r'href="([^"]*)"', a).group(1))
         a = re.sub(r'href="[^"]*"', f'href="{E(amazon_link(href))}"', a)
         a = re.sub(r'\s(rel|data-todo)="[^"]*"', "", a)
@@ -135,7 +142,7 @@ def editor_block():
             continue
         details = "".join(f"<li>{E(d)}</li>" for d in b.get("details", []))
         items.append(f"""<article class="book" data-book-id="{E(b['id'])}">
-  <a class="book-cover" href="{E(amazon_link(b['url']))}" rel="sponsored noopener" target="_blank">
+  <a class="book-cover" href="{E(own_amazon_link(b['url']))}" data-own-product rel="noopener" target="_blank">
     <img src="{E(b['cover'])}" alt="{E(b['cover_alt'])}" width="200" height="300" loading="lazy"></a>
   <div class="book-body">
     <p class="eyebrow">{E(b.get('kicker',''))}</p>
@@ -143,7 +150,7 @@ def editor_block():
     <p class="book-title">{E(b['title'])} <span class="muted">· {E(b.get('format',''))}</span></p>
     <p>{E(b['blurb'])}</p>
     <ul class="book-details">{details}</ul>
-    <a class="btn" href="{E(amazon_link(b['url']))}" rel="sponsored noopener" target="_blank">See it on Amazon</a>
+    <a class="btn" href="{E(own_amazon_link(b['url']))}" data-own-product rel="noopener" target="_blank">See it on Amazon</a>
   </div>
 </article>""")
     return f"""<section class="card editor" aria-label="{E(picks['heading'])}">
