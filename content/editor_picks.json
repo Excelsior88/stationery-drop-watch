@@ -1,5 +1,5 @@
 {
-  "_comment": "House ads for the owner's own books. Add another object to 'books' to show a second book; the block renders every entry in order. Only use details from the real Amazon listing. Put the plain Amazon URL in 'url'; These are the owner's own books, so build_site.py links them to the plain amazon.com/dp/<ASIN> URL with NO Associates tag. Set \"hidden\": true on a book to keep its data but not show it. An entry with \"coming_soon\": true renders a teaser card (no link, no cover) with a button to the newsletter signup.",
+  "_comment": "House ads for the owner's own books. Add another object to 'books' to show a second book; the block renders every entry in order. Only use details from the real Amazon listing. Put the plain Amazon URL in 'url'; These are the owner's own books, so build_site.py links them to the plain amazon.com/dp/<ASIN> URL with NO Associates tag. Set \"hidden\": true on a book to keep its data but not show it. An entry with \"coming_soon\": true renders a teaser card (no link, no cover) with a button to the newsletter signup. Optional \"pages\" picks where a book shows: [\"home\"] (Hobonichi side, the default when missing) or [\"dotgrid\"] (the dot grid journaling page). Leave out \"cover\" when no verified cover image is available; the card then shows a plain title tile. \"blurb\" is optional.",
   "heading": "From the editor",
   "books": [
     {
@@ -38,6 +38,22 @@
       "url": "https://www.amazon.com/dp/B0HP85QLMS",
       "source": "Amazon listing B0HP85QLMS, fetched 2026-10-25",
       "hidden": true
+    },
+    {
+      "id": "B0HPBDNS7F",
+      "pages": [
+        "dotgrid"
+      ],
+      "kicker": "Gift pick",
+      "pitch": "Our own 2027 planner",
+      "title": "2027 Planner: January - December",
+      "format": "Paperback",
+      "cover_text": "2027 Planner",
+      "details": [
+        "ISBN 9798165030901"
+      ],
+      "url": "https://www.amazon.com/dp/B0HPBDNS7F",
+      "source": "Title, format and ISBN as given by the owner, 2026-10-26. The listing could not be fetched (Amazon blocks automated agents; ISBN not in Google Books or Open Library), so no cover, description or page count is shown."
     }
   ]
 }

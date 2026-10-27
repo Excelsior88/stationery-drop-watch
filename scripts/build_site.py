@@ -186,10 +186,11 @@ def sponsor_block():
   </div>
 </aside>"""
 
-def editor_block():
+def editor_block(page="home"):
+    """Owner's own books for one page: "home" (Hobonichi side, the default) or "dotgrid"."""
     items = []
     for b in picks["books"]:
-        if b.get("hidden"):
+        if b.get("hidden") or page not in b.get("pages", ["home"]):
             continue
         if b.get("coming_soon"):
             items.append(f"""<article class="book coming-soon" data-book-id="{E(b['id'])}">
@@ -203,18 +204,26 @@ def editor_block():
 </article>""")
             continue
         details = "".join(f"<li>{E(d)}</li>" for d in b.get("details", []))
+        if b.get("cover"):
+            cover = f'<img src="{E(b["cover"])}" alt="{E(b["cover_alt"])}" width="200" height="300" loading="lazy">'
+            cover_cls = "book-cover"
+        else:  # no verified cover image: a plain title tile, never an invented cover
+            cover = f'<span>{E(b.get("cover_text", b["title"]))}</span>'
+            cover_cls = "book-cover placeholder"
         items.append(f"""<article class="book" data-book-id="{E(b['id'])}">
-  <a class="book-cover" href="{E(own_amazon_link(b['url']))}" data-own-product rel="noopener" target="_blank">
-    <img src="{E(b['cover'])}" alt="{E(b['cover_alt'])}" width="200" height="300" loading="lazy"></a>
+  <a class="{cover_cls}" href="{E(own_amazon_link(b['url']))}" data-own-product rel="noopener" target="_blank">
+    {cover}</a>
   <div class="book-body">
     <p class="eyebrow">{E(b.get('kicker',''))}</p>
     <h3>{E(b['pitch'])}</h3>
     <p class="book-title">{E(b['title'])} <span class="muted">· {E(b.get('format',''))}</span></p>
-    <p>{E(b['blurb'])}</p>
+    {f"<p>{E(b['blurb'])}</p>" if b.get('blurb') else ""}
     <ul class="book-details">{details}</ul>
     <a class="btn" href="{E(own_amazon_link(b['url']))}" data-own-product rel="noopener" target="_blank">See it on Amazon</a>
   </div>
 </article>""")
+    if not items:
+        return ""
     return f"""<section class="card editor" aria-label="{E(picks['heading'])}">
   <p class="eyebrow">{E(picks['heading'])}</p>
   <div class="books">{''.join(items)}</div>
@@ -628,6 +637,7 @@ def build_group(g, oe):
   </div>
   <aside class="side-col">
     {signup_block(compact=True)}
+    {editor_block("dotgrid") if g.get("dotgrid") else ""}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
   </aside>
 </div>
