@@ -646,6 +646,7 @@ def build_group(g, oe):
   </div>
   <aside class="side-col">
     {signup_block(compact=True)}
+    {sponsor_block() if g.get("dotgrid") else ""}
     {editor_block("dotgrid") if g.get("dotgrid") else ""}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
   </aside>
