@@ -56,8 +56,9 @@ HOBO_SHOPS = {s["id"] for s in stores["stores"] if not s.get("brand")}
 def amazon_for(canonical, listing_url=""):
     """(tagged url, label) for a tracked listing: exact verified ASIN, else the Hobonichi brand link.
     ("", "") for other brands' products."""
-    if canonical in OTHER_BRAND:
-        return "", ""
+    if canonical in OTHER_BRAND:  # exact verified listing only; no brand fallback for other brands
+        m = amz.get("listings", {}).get(listing_url)
+        return (amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "Also on Amazon") if m else ("", "")
     m = amz["products"].get(canonical or "") or amz.get("listings", {}).get(listing_url)
     if m:
         return amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "Also on Amazon"
@@ -74,8 +75,10 @@ def fmt_et(iso):
 
 STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not yet on sale",
           "sold_out": "Sold out", "unknown": "Couldn't check"}
-BUJO_SLUG = "archer-and-olive-bullet-journal"
-NAV = [("index.html", "Restock tracker"), ("hobonichi-2027.html", "Hobonichi 2027 calendar"), (BUJO_SLUG + "/", "Bullet journal"), ("about.html", "About")]
+DOTGRID_SLUG = "archer-and-olive-dot-grid-journal"
+# Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
+REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG}
+NAV = [("index.html", "Restock tracker"), ("hobonichi-2027.html", "Hobonichi 2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journaling"), ("about.html", "About")]
 
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
@@ -220,16 +223,21 @@ def amazon_main(prods):
     check ('unknown') is left out, since we can't honestly say it's unavailable everywhere."""
     groups = {}
     for p in prods:
-        groups.setdefault(product_key(p), []).append(p)
+        # Other brands are tracked size by size, so each listing is its own product here.
+        groups.setdefault(p["url"] if p.get("canonical") in OTHER_BRAND else product_key(p), []).append(p)
     out = {}
     for k, ls in groups.items():
-        if k in OTHER_BRAND:  # sold only at the maker's own store; no Amazon fallback to offer
-            continue
+        other = ls[0].get("canonical") in OTHER_BRAND
         sts = {l["status"] for l in ls}
         if not sts <= set(NOT_BUYABLE):
             continue
-        hit = next((amz["products"].get(l.get("canonical") or "") or amz.get("listings", {}).get(l["url"]) for l in ls
-                    if amz["products"].get(l.get("canonical") or "") or amz.get("listings", {}).get(l["url"])), None)
+        if other:  # match the exact size/paper listing only
+            hit = amz.get("listings", {}).get(ls[0]["url"])
+        else:
+            hit = next((amz["products"].get(l.get("canonical") or "") or amz.get("listings", {}).get(l["url"]) for l in ls
+                        if amz["products"].get(l.get("canonical") or "") or amz.get("listings", {}).get(l["url"])), None)
+        if other and not hit:  # no verified Amazon listing of this exact item: offer nothing rather than a stand-in
+            continue
         if hit:
             url, label, exact = amazon_link(f"https://www.amazon.com/dp/{hit['asin']}"), "Buy on Amazon", True
         else:
@@ -297,7 +305,7 @@ def build_index():
 <section class="hero">
   <p class="eyebrow">Hobonichi Techo 2027 · Archer and Olive · {len({p['store_id'] for p in prods})} stores checked</p>
   <h1>Know the moment your planner is back.</h1>
-  <p class="lede">We check the official Hobonichi store and independent shops for sold-out planners and covers, plus <a href="{BUJO_SLUG}/">Archer and Olive's dot-grid notebooks</a> for bullet journaling, and tell you when they come back.</p>
+  <p class="lede">We check the official Hobonichi store and independent shops for sold-out planners and covers, plus <a href="{DOTGRID_SLUG}/">Archer and Olive's dot-grid notebooks</a> for dot grid journaling, and tell you when they come back.</p>
   <div class="stats">
     <div><b>{s['in_stock']}</b><span>in stock</span></div>
     <div><b>{s['preorder']}</b><span>preorder</span></div>
@@ -461,18 +469,18 @@ GROUPS = [
          desc="Restock tracker for Hobonichi Techo 2027 A6 covers like Moomin: My Yard and Yumi Kitagishi: White Cat House. Live status from {shops} shops, checked about every hour.",
          intro="Popular Hobonichi covers can sell out within minutes of a drop. "
                "We track a handful of 2027 A6 covers; here's what each shop reported at its last check."),
-    dict(slug=BUJO_SLUG, short="Archer and Olive notebooks",
+    dict(slug=DOTGRID_SLUG, short="Archer and Olive notebooks",
          match=lambda p: p.get("canonical") in OTHER_BRAND and p["store_id"] == "archerolive",
-         eyebrow="Bullet journaling · Archer and Olive", unit="sizes",
+         eyebrow="Dot grid journaling · Archer and Olive", unit="sizes",
          open_hint="Open a row to go straight to that size on Archer and Olive's site",
          guide="Archer and Olive sells each notebook design in several sizes and paper types, and each one sells out on its own. "
                "We check the exact size listed in each row, so \"In stock\" means that size, not just some size of the design.",
          title="Archer and Olive dot-grid notebook restock tracker (A5, B5)",
          h1="Archer and Olive dot-grid notebook stock",
          desc="Is your Archer and Olive dot-grid notebook back in stock? Live status for A5 and B5 dot-grid notebooks and refills, checked about every hour on archerandolive.com. Real status only.",
-         intro="Archer and Olive makes the thick-paper dot-grid notebooks a lot of bullet journalers swear by, and popular sizes sell out. "
+         intro="Archer and Olive makes the thick-paper dot-grid notebooks a lot of dot grid journalers swear by, and popular sizes sell out. "
                "We track a focused set of their notebooks and refills, size by size, straight from their own store. "
-               "This covers bullet journaling notebooks only; we don't track pens or other paper."),
+               "This covers dot grid journaling notebooks only; we don't track pens or other paper."),
 ]
 
 def latest(*isos):
@@ -481,6 +489,11 @@ def latest(*isos):
 def group_listings(g):
     return [p for p in stock["products"] if g["match"](p)]
 
+def row_amz(l, oe):
+    """Per-size Amazon button for other brands' listings (their oe entries are keyed by listing URL)."""
+    m = oe.get(l["url"]) if l.get("canonical") in OTHER_BRAND else None
+    return f'<a class="btn btn-amz btn-sm" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a>' if m else ""
+
 def status_rows(ls, oe):
     order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
     rows = []
@@ -488,7 +501,7 @@ def status_rows(ls, oe):
         since = l.get("status_since")
         since_html = f'<span class="sub">since {E(fmt_et(since).rsplit(",", 1)[0])}</span>' if since and l["status"] != "unknown" else ""
         rows.append(f"""<tr><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a><span class="sub">{E(l.get('title') or l['label'])}</span></td>
-  <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}</td>
+  <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td>
   <td class="hide-sm"><time datetime="{E(l['checked_at'])}">{E(fmt_et(l['checked_at']))}</time></td></tr>""")
     return "".join(rows)
 
@@ -510,7 +523,7 @@ def build_group(g, oe):
         amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
                    f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
         az_url, az_label = amazon_for(cid, sl[0]["url"])
-        az_sub = "" if m or not az_url else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
+        az_sub = "" if m or not az_url or cid in OTHER_BRAND else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
         tracker = f' · <a href="index.html?product={E(cid)}#tracker">Filter in the tracker</a>' if cid else ""
         parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
   <div class="section-head"><h2>{E(name)}</h2><p class="muted small">{n_buy} of {len(sl)} {g.get('unit', 'listings')} in stock or on preorder</p></div>
@@ -581,7 +594,7 @@ FAQ = [
     ("Which shops do you check?",
      "{n} shops, including the official Hobonichi Online Store, independent stationery shops, and Archer and Olive's own store. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
-     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 covers. For bullet journaling, we also track a small set of Archer and Olive dot-grid notebooks and refills, size by size. We don't track pens, other paper, or other brands yet."),
+     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 covers. For dot grid journaling, we also track a small set of Archer and Olive dot-grid notebooks and refills, size by size. We don't track pens, other paper, or other brands yet."),
     ("What does \"Couldn't check\" mean?",
      "Our check of that listing failed, for example because the shop's site didn't respond. We show that instead of guessing whether it's in stock."),
     ("What does \"Not yet on sale\" mean?",
@@ -620,6 +633,17 @@ def build_sitemap():
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}</urlset>\n'
 
+def redirect_page(target):
+    u = BASE + target
+    return f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Moved: {E(u)}</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="{E(u)}">
+<meta http-equiv="refresh" content="0; url={E(u)}">
+</head><body><p>This page moved to <a href="{E(u)}">{E(u)}</a>.</p></body></html>
+"""
+
 ROBOTS = f"""User-agent: *
 Allow: /
 
@@ -638,6 +662,9 @@ def main():
         fname, doc = build_group(g, oe)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
+    for old, new in REDIRECTS.items():
+        (SITE / old).mkdir(parents=True, exist_ok=True)
+        (SITE / old / "index.html").write_text(redirect_page(new + "/"))
     (SITE / "sitemap.xml").write_text(build_sitemap())
     (SITE / "robots.txt").write_text(ROBOTS)
     (SITE / "CNAME").write_text(CNAME + "\n")
