@@ -48,7 +48,6 @@
       "pitch": "The hand-drawn dot grid look, without the drawing.",
       "title": "2027 Planner: January - December",
       "format": "Paperback",
-      "cover_text": "2027 Planner",
       "details": [
         "Dated Jan 1 to Dec 31, 2027",
         "Sunday start",
@@ -56,14 +55,16 @@
         "Soft blush cover"
       ],
       "url": "https://www.amazon.com/dp/B0HPBDNS7F",
-      "source": "Owner-approved listing copy, content/gift-pick-B0HPBDNS7F-copy.md (received 2026-10-26). Cover image to come: add \"cover\" and \"cover_alt\" when it arrives.",
+      "source": "Owner-approved listing copy, content/gift-pick-B0HPBDNS7F-copy.md (received 2026-10-26). Cover from the owner's 1200px front-cover web preview, resized to 600px JPG.",
       "blurb": "Love the calm, tidy look of a dot grid journal but not the hours with a ruler? Every page in this 2027 planner is already laid out and dated, so you just open it and write.",
       "inside": [
         "How-to-use page with the symbol key and a sample day",
         "A two-page weekly spread for every week",
         "Monthly calendar, goals page and habit tracker every month",
         "Dot grid notes pages at the back"
-      ]
+      ],
+      "cover": "assets/books/B0HPBDNS7F.jpg",
+      "cover_alt": "2027 Planner cover: soft blush arch design reading \"2027 planner, January - December\""
     }
   ]
 }
