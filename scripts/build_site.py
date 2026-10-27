@@ -327,6 +327,22 @@ def tracker_rows(prods, out_everywhere):
             r.update(az=m["url"], azl=m["label"], azm=1)
     return rows
 
+def tracking_start(ls):
+    """When we started tracking these listings: the earliest first_seen in the data (never the current run)."""
+    return min((l["first_seen"] for l in ls if l.get("first_seen")), default=stock["run_started"])
+
+def count_line(ls, unit="listings"):
+    """'X of N in stock or on preorder', counting only listings we actually checked this run.
+    Failed checks are reported as their own number; we never fold them into "not in stock"."""
+    n = len(ls)
+    u = sum(l["status"] == "unknown" for l in ls)
+    b = sum(l["status"] in BUYABLE for l in ls)
+    if not u:
+        return f"{b} of {n} {unit} in stock or on preorder"
+    if u == n:
+        return f"couldn't check {'this listing' if n == 1 else f'these {n} {unit}'} this run"
+    return f"{b} of {n - u} checked {unit} in stock or on preorder · {u} couldn't be checked this run"
+
 def stock_data(rows):
     return f'<script id="stock-data" type="application/json">{json.dumps(rows, ensure_ascii=False).replace("</", "<\\/")}</script>'
 
@@ -345,9 +361,11 @@ def build_index():
   <time datetime="{E(c['at'])}">{E(fmt_et(c['at']))}</time></li>""" for c in recent)
         feed_html = f'<ol class="feed">{feed}</ol>'
     else:
-        feed_html = f"""<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started {E(fmt_et(stock['run_started']))}.
+        start = tracking_start(prods)
+        lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."
+        feed_html = f"""<div class="empty"><p><strong>{lead}</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
   A restock shows up here the moment a sold-out item flips back to in stock or preorder between two checks.</p>
-  <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet. Those are the ones we're watching.</p></div>"""
+  <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet. Those are the ones we're watching.{f" {s['unknown']} couldn't be checked this run." if s['unknown'] else ""}</p></div>"""
 
     # table data (embedded so the page works without fetch)
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
@@ -376,11 +394,12 @@ def build_index():
   <h1>Know the moment your planner is back.</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
   <p class="small section-switch">Also tracked: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">· {E(dotgrid_names())}</span></p>
-  <div class="stats">
+  <div class="stats{' five' if s['unknown'] else ''}">
     <div><b>{s['in_stock']}</b><span>in stock</span></div>
     <div><b>{s['preorder']}</b><span>preorder</span></div>
     <div><b>{s['sold_out']}</b><span>sold out</span></div>
     <div><b>{s['coming_soon']}</b><span>not yet on sale</span></div>
+    {f'<div class="unk"><b>{s["unknown"]}</b><span>couldn' + "'" + 't check this run</span></div>' if s['unknown'] else ''}
   </div>
   <p class="muted small">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time> · {checked} of {len(prods)} listings checked successfully.</p>
 </section>
@@ -553,7 +572,7 @@ def status_rows(ls, oe):
         since_html = f'<span class="sub">since {E(fmt_et(since).rsplit(",", 1)[0])}</span>' if since and l["status"] != "unknown" else ""
         rows.append(f"""<tr><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a><span class="sub">{E(l.get('title') or l['label'])}</span></td>
   <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td>
-  <td class="hide-sm"><time datetime="{E(l['checked_at'])}">{E(fmt_et(l['checked_at']))}</time></td></tr>""")
+  <td class="hide-sm">{"Tried " if l["status"] == "unknown" else ""}<time datetime="{E(l['checked_at'])}">{E(fmt_et(l['checked_at']))}</time></td></tr>""")
     return "".join(rows)
 
 def build_group(g, oe):
@@ -573,7 +592,6 @@ def build_group(g, oe):
     for cid in order:
         sl = sections[cid]
         name = canon.get(cid) or ("Other designs and editions" if len(order) > 1 else "Listings")
-        n_buy = sum(l["status"] in BUYABLE for l in sl)
         m = oe.get(cid) if cid else None
         amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
                    f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
@@ -589,9 +607,9 @@ def build_group(g, oe):
             sls = [l for l in ls if l["store_id"] == sid]
             feat = ' <span class="badge featured">Featured</span>' if not parts else ""
             parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a></span>{feat}
-  <span class="muted small">{sum(l['status'] in BUYABLE for l in sls)} of {len(sls)} tracked listings in stock</span></h2>""")
+  <span class="muted small">{E(count_line(sls).capitalize())}</span></h2>""")
         parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
-  <div class="section-head"><{hx}>{E(name)}</{hx}><p class="muted small">{n_buy} of {len(sl)} {g.get('unit', 'listings')} in stock or on preorder</p></div>
+  <div class="section-head"><{hx}>{E(name)}</{hx}><p class="muted small">{E(count_line(sl, g.get('unit', 'listings')).capitalize())}</p></div>
   {amz_btn}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th><th class="hide-sm">Checked</th></tr></thead>
@@ -599,6 +617,13 @@ def build_group(g, oe):
   </table></div>
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}</p>
 </section>""")
+    unk = [l for l in ls if l["status"] == "unknown"]
+    if len(unk) == len(ls):
+        right_now = f"we couldn't check any of these {len(ls)} listings this run, so we're not showing a status."
+    else:
+        right_now = (f"{len(buy)} of {len(ls) - len(unk) if unk else len(ls)} {'checked ' if unk else ''}listings are in stock or on preorder "
+                     f"at {len({l['store_id'] for l in buy})} of {shops} shops."
+                     + (f" {len(unk)} couldn't be checked this run." if unk else ""))
     lead_n = 2 if g.get("dotgrid") else 1  # dot grid: first shop heading + its first card
     urls = {l["url"] for l in ls}
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
@@ -609,7 +634,9 @@ def build_group(g, oe):
   <time datetime="{E(c['at'])}">{E(fmt_et(c['at']))}</time></li>""" for c in rs)
         restock_html = f'<ol class="feed">{feed}</ol>'
     else:
-        restock_html = '<p class="muted">No restocks spotted for these listings since tracking started. When a sold-out listing flips back to in stock or preorder between two checks, it shows up here.</p>'
+        start = tracking_start(ls)
+        restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
+  A restock shows up here the moment a sold-out listing flips back to in stock or preorder between two checks.</p></div>'''
     others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and bool(x.get("dotgrid")) == bool(g.get("dotgrid")))
     if g.get("dotgrid"):
         others += '<li><a href="#tracker">Every dot grid listing we track</a></li>'
@@ -626,7 +653,7 @@ def build_group(g, oe):
   <p class="eyebrow">{E(g.get('eyebrow', 'Hobonichi Techo 2027'))} · {shops} {'shop' if shops == 1 else 'shops'} checked</p>
   <h1>{E(g['h1'])}</h1>
   <p class="lede">{E(g['intro'])}</p>
-  <p><strong>Right now:</strong> {len(buy)} of {len(ls)} listings are in stock or on preorder at {len({l['store_id'] for l in buy})} of {shops} shops.
+  <p><strong>Right now:</strong> {right_now}
   <span class="muted small">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time>.</span></p>
 </section>
 <div class="layout">
@@ -698,8 +725,7 @@ def product_links_block():
         if g.get("dotgrid"):
             continue
         ls = group_listings(g)
-        n = sum(l["status"] in BUYABLE for l in ls)
-        items.append(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a> <span class="muted small">· {n} of {len(ls)} listings in stock or on preorder</span></li>')
+        items.append(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a> <span class="muted small">· {E(count_line(ls))}</span></li>')
     return f'<section class="card" id="by-product"><h2>Restock pages by product</h2><ul class="link-list">{"".join(items)}</ul></section>'
 
 STATIC_LASTMOD = {"hobonichi-2027.html": "2026-10-27", "about.html": "2026-10-27"}

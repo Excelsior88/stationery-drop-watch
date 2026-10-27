@@ -42,6 +42,7 @@ nav a[aria-current]{background:var(--ink);color:var(--paper)}
 .stats span{font-size:.82rem;color:var(--ink-2)}
 .stats div:nth-child(1) b{color:var(--sage)} .stats div:nth-child(2) b{color:var(--plum)}
 .stats div:nth-child(3) b{color:var(--rose)} .stats div:nth-child(4) b{color:var(--mustard)}
+.stats.five{grid-template-columns:repeat(5,minmax(0,1fr))} .stats div.unk b{color:var(--ink-2)}
 
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start;padding-bottom:40px}
 .main-col,.side-col{display:grid;gap:24px;min-width:0}
@@ -135,6 +136,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
   .wrap{padding:0 14px}
   .hero{padding:26px 0 14px}
   .stats{grid-template-columns:repeat(2,1fr)}
+  .stats.five{grid-template-columns:repeat(2,1fr)} .stats.five div.unk{grid-column:1/-1}
   .card{padding:18px 16px}
   .hide-sm{display:none}
   .filters label{flex:1 1 45%}
