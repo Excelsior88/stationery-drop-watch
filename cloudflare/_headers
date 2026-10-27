@@ -1,0 +1,7 @@
+# Cloudflare Pages only (copied into the upload by .github/workflows/cloudflare-pages.yml).
+# Keep the *.pages.dev copies of the site out of search results; stationerydropwatch.com is the only indexed host.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex

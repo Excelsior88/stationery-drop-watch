@@ -1,0 +1,4 @@
+# Cloudflare Pages only (copied into the upload by .github/workflows/cloudflare-pages.yml; GitHub Pages ignores it).
+# Keep in sync with REDIRECTS in scripts/build_site.py. The meta-refresh stub stays in site/ for GitHub Pages.
+/archer-and-olive-bullet-journal/  /archer-and-olive-dot-grid-journal/  301
+/archer-and-olive-bullet-journal   /archer-and-olive-dot-grid-journal/  301

@@ -1,0 +1,106 @@
+name: Deploy to Cloudflare Pages
+
+# Uploads the exact site/ artifact that "Check stock and deploy site" built (push + hourly runs)
+# to Cloudflare Pages by Direct Upload (no Cloudflare build, so the 500 builds/month cap doesn't apply).
+# Inert until both repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID exist: the job
+# prints a notice and succeeds. The GitHub Pages workflow is not touched or blocked by this one.
+
+on:
+  workflow_run:
+    workflows: ["Check stock and deploy site"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read        # download the artifact from the triggering run
+  deployments: write
+
+concurrency:
+  group: cloudflare-pages
+  cancel-in-progress: false
+
+env:
+  CF_PROJECT: stationery-drop-watch
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion != 'cancelled' && github.event.workflow_run.conclusion != 'skipped')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Check Cloudflare secrets
+        id: gate
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set; skipping Cloudflare Pages deploy."
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.enabled == 'true'
+
+      # Hourly runs: reuse the site artifact the checker run built (it has the fresh "last checked" time,
+      # which isn't committed on timestamp-only runs).
+      - name: Download site artifact from the checker run
+        if: steps.gate.outputs.enabled == 'true' && github.event_name == 'workflow_run'
+        id: artifact
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: artifact
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: Unpack artifact
+        if: steps.gate.outputs.enabled == 'true' && steps.artifact.outcome == 'success'
+        run: |
+          mkdir -p out
+          tar -xf artifact/artifact.tar -C out
+
+      # Manual runs, or a checker run that produced no artifact: build from main.
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.enabled == 'true' && steps.artifact.outcome != 'success'
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Build site from main
+        if: steps.gate.outputs.enabled == 'true' && steps.artifact.outcome != 'success'
+        run: |
+          pip install -r requirements.txt
+          python scripts/build_site.py
+          rm -rf out && cp -r site out
+
+      - name: Add Cloudflare-only config (_redirects, _headers)
+        if: steps.gate.outputs.enabled == 'true'
+        run: |
+          cp cloudflare/_redirects cloudflare/_headers out/
+          test -f out/index.html && test -f out/404.html
+          ls -la out
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.enabled == 'true'
+        with:
+          node-version: "22"
+
+      - name: Create Pages project if missing
+        if: steps.gate.outputs.enabled == 'true'
+        run: |
+          if npx --yes wrangler@4 pages project list --json | grep -q "\"$CF_PROJECT\""; then
+            echo "Project $CF_PROJECT exists."
+          else
+            npx --yes wrangler@4 pages project create "$CF_PROJECT" --production-branch=main
+          fi
+
+      - name: Deploy (Direct Upload)
+        if: steps.gate.outputs.enabled == 'true'
+        run: |
+          npx --yes wrangler@4 pages deploy out \
+            --project-name="$CF_PROJECT" --branch=main \
+            --commit-hash="${{ github.event.workflow_run.head_sha || github.sha }}" --commit-dirty=true
