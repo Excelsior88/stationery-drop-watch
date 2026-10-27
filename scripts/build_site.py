@@ -112,9 +112,17 @@ LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data
 def page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
     return tag_amazon_links(_page(fname, title, desc, body, ld, og_type, og_image, og_alt, noindex))
 
+def pretty(path):
+    """Public form of a local page path: 'index.html' -> '', 'about.html#x' -> 'about#x', 'slug/' unchanged.
+    Files are still written as about.html etc.; GitHub Pages and Cloudflare Pages both serve /about from about.html,
+    and Cloudflare 308-redirects /about.html -> /about, so canonicals, sitemap and links use the extensionless form."""
+    if re.match(r"index\.html(?=[?#]|$)", path):
+        return path[len("index.html"):]
+    return re.sub(r"^([^?#]*?)\.html(?=[?#]|$)", r"\1", path)
+
 def url_for(fname):
-    """Absolute public URL: index.html -> BASE, 'slug/' -> BASE + 'slug/'."""
-    return BASE if fname == "index.html" else BASE + fname
+    """Absolute public URL: index.html -> BASE, 'slug/' -> BASE + 'slug/', 'about.html' -> BASE + 'about'."""
+    return BASE + pretty(fname)
 
 def jsonld(obj):
     return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False).replace("</", "<\\/") + "</script>"
@@ -162,8 +170,8 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <script src="assets/app.js" defer></script>
 </body></html>"""
     # The site is served at the domain root, so make every local link root-relative ("assets/x" -> "/assets/x").
-    # "index.html" becomes "/" so internal links match the canonical home URL.
-    doc = LOCAL_LINK.sub(lambda m: f'{m.group(1)}="/{re.sub(r"^index\.html", "", m.group(2))}"', doc)
+    # "index.html" becomes "/" and "about.html" becomes "/about" so internal links match the canonical URLs.
+    doc = LOCAL_LINK.sub(lambda m: f'{m.group(1)}="/{pretty(m.group(2))}"', doc)
     return doc
 
 NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatch)
