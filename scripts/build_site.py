@@ -76,10 +76,10 @@ def amazon_for(canonical, listing_url=""):
     ("", "") for other brands' products."""
     if canonical in OTHER_BRAND:  # exact verified listing only; no brand fallback for other brands
         m = amz.get("listings", {}).get(listing_url)
-        return (amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "Also on Amazon") if m else ("", "")
+        return (amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "View on Amazon") if m else ("", "")
     m = amz["products"].get(canonical or "") or amz.get("listings", {}).get(listing_url)
     if m:
-        return amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "Also on Amazon"
+        return amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "View on Amazon"
     b = amz["brands"]["hobonichi"]
     return amazon_link(b["url"]), b["label"]
 
@@ -232,7 +232,7 @@ def editor_block(page="home"):
     <p class="book-title">{E(b['title'])} <span class="muted">· {E(b.get('format',''))}</span></p>
     {f"<p>{E(b['blurb'])}</p>" if b.get('blurb') else ""}
     <ul class="book-details">{details}</ul>{inside}
-    <a class="btn" href="{E(own_amazon_link(b['url']))}" data-own-product rel="noopener" target="_blank">See it on Amazon</a>
+    <a class="btn" href="{E(own_amazon_link(b['url']))}" data-own-product rel="noopener" target="_blank">View on Amazon</a>
   </div>
 </article>""")
     if not items:
@@ -276,9 +276,9 @@ def amazon_main(prods):
         if other and not hit:  # no verified Amazon listing of this exact item: offer nothing rather than a stand-in
             continue
         if hit:
-            url, label, exact = amazon_link(f"https://www.amazon.com/dp/{hit['asin']}"), "Buy on Amazon", True
+            url, label, exact = amazon_link(f"https://www.amazon.com/dp/{hit['asin']}"), "View on Amazon", True
         else:
-            url, label, exact = amazon_link(amz["brands"]["hobonichi"]["url"]), "Check Hobonichi on Amazon", False
+            url, label, exact = amazon_link(amz["brands"]["hobonichi"]["url"]), amz["brands"]["hobonichi"]["label"], False
         n = len({l["store_id"] for l in ls})
         if sts == {"sold_out"}:
             note = "Sold out at every shop we track" if n > 1 else "Sold out at the only shop we track"
