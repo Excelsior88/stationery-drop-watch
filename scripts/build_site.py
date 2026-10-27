@@ -167,10 +167,13 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 
 NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatch)
 
+# Tracker pages share one sidebar, in this order: signup, Featured shop, gift pick, then page links.
+# On one-column screens (<=900px, see style.css) the same elements are re-ordered with CSS, no duplicates:
+# signup right after the hero stats (.m-top), then the first main section (.m-lead), then the Featured shop.
 def signup_block(compact=False):
     # Buttondown's standard HTML embed form (docs.buttondown.com/building-your-subscriber-base):
     # a plain POST to embed-subscribe; don't submit via fetch, Buttondown may need to show a CAPTCHA.
-    return f"""<section class="card signup{' compact' if compact else ''}" id="alerts">
+    return f"""<section class="card signup{' compact m-top' if compact else ''}" id="alerts">
   <h2>Get restock alerts</h2>
   <p>One short email when a sold-out item comes back somewhere we track. No spam, unsubscribe anytime.</p>
   <form class="signup-form embeddable-buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}" method="post">
@@ -384,10 +387,12 @@ def build_index():
 
 <div class="layout">
   <div class="main-col">
+    <div class="m-lead">
     <section class="card" id="restocked">
       <h2>Recent restocks</h2>
       {feed_html}
     </section>
+    </div>
 
     {oe_html}
 
@@ -594,6 +599,7 @@ def build_group(g, oe):
   </table></div>
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}</p>
 </section>""")
+    lead_n = 2 if g.get("dotgrid") else 1  # dot grid: first shop heading + its first card
     urls = {l["url"] for l in ls}
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
                 key=lambda c: c["at"], reverse=True)[:10]
@@ -625,8 +631,8 @@ def build_group(g, oe):
 </section>
 <div class="layout">
   <div class="main-col">
-    {shop_nav}
-    {''.join(parts)}
+    <div class="m-lead">{shop_nav}{''.join(parts[:lead_n])}</div>
+    {''.join(parts[lead_n:])}
     {dg_tracker}
     <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
     <section class="card"><h2>Good to know</h2>
@@ -640,8 +646,8 @@ def build_group(g, oe):
   </div>
   <aside class="side-col">
     {signup_block(compact=True)}
-    {sponsor_block() if g.get("dotgrid") else ""}
-    {editor_block("dotgrid") if g.get("dotgrid") else ""}
+    {sponsor_block()}
+    {editor_block("dotgrid" if g.get("dotgrid") else "home")}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
   </aside>
 </div>

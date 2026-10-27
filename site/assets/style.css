@@ -118,9 +118,18 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .foot{border-top:1px solid var(--line);background:var(--paper-2);padding:28px 0;font-size:.92rem}
 .foot p{margin:.4em 0;max-width:760px}
 
+.m-lead{display:contents}
 @media (max-width:900px){
-  .layout{grid-template-columns:1fr}
-  .side-col{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  /* one column: flatten both columns and re-order (signup after the stats, Featured shop after the first section) */
+  .layout{display:flex;flex-direction:column}
+  .main-col,.side-col{display:contents}
+  .m-top{order:-3}
+  .m-lead>*{order:-2}
+  .layout .sponsor{order:-1}
+  .signup.m-top{padding:14px 16px}
+  .signup.m-top h2{font-size:1.2rem;margin:0 0 .2em}
+  .signup.m-top>p:not(.form-note){font-size:.9rem;margin:0}
+  .signup.m-top .form-note{margin:.4em 0 0;font-size:.78rem}
 }
 @media (max-width:560px){
   .wrap{padding:0 14px}
