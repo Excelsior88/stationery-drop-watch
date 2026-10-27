@@ -166,3 +166,13 @@ a.az:hover{opacity:1}
 .faq-item summary{font-weight:600}
 .faq-item p{margin:.5em 0 .2em;color:var(--ink-2)}
 .foot-links a{white-space:nowrap}
+
+/* Dot grid journaling page: per-shop blocks */
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 18px}
+.chip{display:inline-block;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fffdf8;color:#2d2a32;text-decoration:none;font-size:.9rem}
+.chip:hover{border-color:#c1553b;color:#c1553b}
+.shop-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:26px 0 10px;font-size:1.35rem}
+.shop-head a{color:#2d2a32;text-decoration:none}
+.shop-head a:hover{color:#c1553b}
+.badge.featured{color:#7a5a12;background:#f7ecd0;border-color:#c99a2e}
+.section-switch{margin-top:-.2em}

@@ -1,6 +1,6 @@
 {
-  "_comment": "Amazon links shown beside tracker items. Links only: the hourly checker never fetches Amazon. Each ASIN was opened on amazon.com and its title matched to the tracked product on the 'verified' date. build_site.py adds the Associates tag. Tracked products with no verified match fall back to their brand link. 'listings' maps a tracked store listing URL (for items without a canonical product id) to its verified Amazon ASIN.",
-  "verified": "2026-10-25",
+  "_comment": "Amazon links shown beside tracker items. Links only: the hourly checker never fetches Amazon. Each ASIN was checked (opened on amazon.com, or for entries with 'verified_via', read from the Amazon listing through web search) and its title, color, size and ruling matched to the tracked product on the 'verified' date. build_site.py adds the Associates tag. Tracked products with no verified match fall back to their brand link. 'listings' maps a tracked store listing URL (for items without a canonical product id) to its verified Amazon ASIN. Dot grid brands (Archer and Olive, Leuchtturm1917, Scribbles That Matter, Notebook Therapy) get exact listing matches only, never a brand fallback.",
+  "verified": "2026-10-26",
   "products": {
     "original-a6-en": {
       "asin": "B0H6P98KGJ",
@@ -95,6 +95,31 @@
       "asin": "B0H6P9NDDP",
       "amazon_title": "Hobonichi Techo HON A5 2027 – Slash (Navy) (English, January Start Planner)",
       "seller_at_check": "Hobonichi Co., Ltd. [Official]"
+    },
+    "https://www.leuchtturm1917.us/products/hardcover-notebook?variant=48072862597365": {
+      "asin": "B002TSIMW4",
+      "amazon_title": "LEUCHTTURM1917 - Notebook Hardcover Medium A5-251 Numbered Pages (Black, Dotted)",
+      "verified_via": "web search of the Amazon listing (title/color/size/ruling), 2026-10-26"
+    },
+    "https://www.leuchtturm1917.us/products/hardcover-notebook?variant=48072862990581": {
+      "asin": "B0095FFUM4",
+      "amazon_title": "LEUCHTTURM1917 - Notebook Hardcover Medium A5-251 Numbered Pages (Navy, Dotted)",
+      "verified_via": "web search of the Amazon listing (title/color/size/ruling), 2026-10-26"
+    },
+    "https://www.leuchtturm1917.us/products/120g-edition?variant=48150351347957": {
+      "asin": "B096WK45W7",
+      "amazon_title": "LEUCHTTURM1917 - 120G Special Edition - Medium A5 Dotted Hardcover Notebook (Black) - 203 Numbered Pages",
+      "verified_via": "web search of the Amazon listing (title/color/size/ruling), 2026-10-26"
+    },
+    "https://www.leuchtturm1917.us/products/bullet-journal-edition-2?variant=48072859189493": {
+      "asin": "B08ZDNBX2P",
+      "amazon_title": "LEUCHTTURM1917 The Official Bullet Journal Edition 2, Medium A5, 120gsm (Black)",
+      "verified_via": "web search of the Amazon listing (title/color/size/ruling), 2026-10-26"
+    },
+    "https://scribblesthatmatter.com/products/dotted-journal-pro?variant=42136311070896": {
+      "asin": "B072883ZYG",
+      "amazon_title": "Scribbles That Matter Pro A5 Dotted Journal, 160gsm, Bottle Green",
+      "verified_via": "web search of the Amazon listing (title/color/size/ruling), 2026-10-26"
     }
   }
 }

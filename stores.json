@@ -95,6 +95,66 @@
    "label": "Archer and Olive · A5 dot-grid refills",
    "type": "Dot-grid refill",
    "brand": "archerandolive"
+  },
+  {
+   "id": "lt-hardcover-a5",
+   "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+   "type": "Dot-grid notebook",
+   "brand": "leuchtturm1917"
+  },
+  {
+   "id": "lt-120g-a5",
+   "label": "Leuchtturm1917 · Medium (A5) 120G dotted notebook",
+   "type": "Dot-grid notebook",
+   "brand": "leuchtturm1917"
+  },
+  {
+   "id": "lt-bullet-journal-ed2",
+   "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+   "type": "Dot-grid notebook",
+   "brand": "leuchtturm1917"
+  },
+  {
+   "id": "stm-pro",
+   "label": "Scribbles That Matter · Dotted Journal Pro",
+   "type": "Dot-grid notebook",
+   "brand": "scribblesthatmatter"
+  },
+  {
+   "id": "stm-iconic",
+   "label": "Scribbles That Matter · Dotted Journal Iconic",
+   "type": "Dot-grid notebook",
+   "brand": "scribblesthatmatter"
+  },
+  {
+   "id": "stm-starry-night",
+   "label": "Scribbles That Matter · Starry Night black-paper dotted journal",
+   "type": "Dot-grid notebook",
+   "brand": "scribblesthatmatter"
+  },
+  {
+   "id": "nt-tsuki-160",
+   "label": "Notebook Therapy · Tsuki 160GSM Bullet Journal",
+   "type": "Dot-grid notebook",
+   "brand": "notebooktherapy"
+  },
+  {
+   "id": "nt-tsuki-dark-academia",
+   "label": "Notebook Therapy · Tsuki 'Dark Academia' Limited Edition",
+   "type": "Dot-grid notebook",
+   "brand": "notebooktherapy"
+  },
+  {
+   "id": "nt-tsuki-violet-nocturne",
+   "label": "Notebook Therapy · Tsuki 'Violet Nocturne' Limited Edition A5",
+   "type": "Dot-grid notebook",
+   "brand": "notebooktherapy"
+  },
+  {
+   "id": "nt-tsuki-ravens-secret",
+   "label": "Notebook Therapy · Tsuki 'Raven's Secret' Limited Edition",
+   "type": "Dot-grid notebook",
+   "brand": "notebooktherapy"
   }
  ],
  "stores": [
@@ -942,6 +1002,170 @@
      "url": "https://www.archerandolive.com/products/dot-grid-notepad-refill?variant=47927601889435",
      "variant_id": 47927601889435,
      "source_title": "A5 Notepad Refill | Dot Grid · White: Dot Grid"
+    }
+   ]
+  },
+  {
+   "id": "leuchtturm-us",
+   "name": "Leuchtturm1917 US",
+   "url": "https://www.leuchtturm1917.us/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": false,
+   "brand": "leuchtturm1917",
+   "note": "Leuchtturm1917's own US store. Checked per size/ruling/color variant.",
+   "products": [
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Hardcover Medium (A5) · dotted · Black",
+     "type": "Dot-grid notebook",
+     "url": "https://www.leuchtturm1917.us/products/hardcover-notebook?variant=48072862597365",
+     "variant_id": 48072862597365,
+     "source_title": "Hardcover Notebook · Medium (A5) / Dotted / Black"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Hardcover Medium (A5) · dotted · Navy",
+     "type": "Dot-grid notebook",
+     "url": "https://www.leuchtturm1917.us/products/hardcover-notebook?variant=48072862990581",
+     "variant_id": 48072862990581,
+     "source_title": "Hardcover Notebook · Medium (A5) / Dotted / Navy"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Hardcover Medium (A5) · dotted · Sage",
+     "type": "Dot-grid notebook",
+     "url": "https://www.leuchtturm1917.us/products/hardcover-notebook?variant=48072863842549",
+     "variant_id": 48072863842549,
+     "source_title": "Hardcover Notebook · Medium (A5) / Dotted / Sage"
+    },
+    {
+     "canonical": "lt-120g-a5",
+     "label": "Medium (A5) 120G · dotted · Black",
+     "type": "Dot-grid notebook",
+     "url": "https://www.leuchtturm1917.us/products/120g-edition?variant=48150351347957",
+     "variant_id": 48150351347957,
+     "source_title": "Notebook Medium (A5), 120G, Hardcover, 203 numbered pages · Dotted / Black"
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Bullet Journal Edition 2 · Black",
+     "type": "Dot-grid notebook",
+     "url": "https://www.leuchtturm1917.us/products/bullet-journal-edition-2?variant=48072859189493",
+     "variant_id": 48072859189493,
+     "source_title": "Bullet Journal Edition 2 · Black"
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Bullet Journal Edition 2 · Purple26",
+     "type": "Dot-grid notebook",
+     "url": "https://www.leuchtturm1917.us/products/bullet-journal-edition-2?variant=48501811151093",
+     "variant_id": 48501811151093,
+     "source_title": "Bullet Journal Edition 2 · Purple26"
+    }
+   ]
+  },
+  {
+   "id": "scribbles",
+   "name": "Scribbles That Matter",
+   "url": "https://scribblesthatmatter.com/",
+   "country": "UK",
+   "platform": "shopify",
+   "indie": true,
+   "brand": "scribblesthatmatter",
+   "note": "Scribbles That Matter's own store. Checked per size/paper/color variant.",
+   "products": [
+    {
+     "canonical": "stm-pro",
+     "label": "Dotted Journal Pro · A5 160gsm · Charcoal",
+     "type": "Dot-grid notebook",
+     "url": "https://scribblesthatmatter.com/products/dotted-journal-pro?variant=42136311300272",
+     "variant_id": 42136311300272,
+     "source_title": "Dotted Journal - Pro · A5 / 160gsm / Charcoal"
+    },
+    {
+     "canonical": "stm-pro",
+     "label": "Dotted Journal Pro · B5 160gsm · Charcoal",
+     "type": "Dot-grid notebook",
+     "url": "https://scribblesthatmatter.com/products/dotted-journal-pro?variant=42136311955632",
+     "variant_id": 42136311955632,
+     "source_title": "Dotted Journal - Pro · B5 / 160gsm / Charcoal"
+    },
+    {
+     "canonical": "stm-pro",
+     "label": "Dotted Journal Pro · A5 160gsm · Bottle Green",
+     "type": "Dot-grid notebook",
+     "url": "https://scribblesthatmatter.com/products/dotted-journal-pro?variant=42136311070896",
+     "variant_id": 42136311070896,
+     "source_title": "Dotted Journal - Pro · A5 / 160gsm / Bottle Green"
+    },
+    {
+     "canonical": "stm-iconic",
+     "label": "Dotted Journal Iconic · A5 160gsm · Bottle Green",
+     "type": "Dot-grid notebook",
+     "url": "https://scribblesthatmatter.com/products/dotted-journal-iconic?variant=42136293048496",
+     "variant_id": 42136293048496,
+     "source_title": "Dotted Journal - Iconic · A5 / 160gsm / Bottle Green"
+    },
+    {
+     "canonical": "stm-starry-night",
+     "label": "Starry Night · A5 · black paper",
+     "type": "Dot-grid notebook",
+     "url": "https://scribblesthatmatter.com/products/starry-night-black-paper-dotted-journal?variant=40012118360240",
+     "variant_id": 40012118360240,
+     "source_title": "Dotted Journal - Starry Night · A5 / Black"
+    }
+   ]
+  },
+  {
+   "id": "notebooktherapy",
+   "name": "Notebook Therapy",
+   "url": "https://notebooktherapy.com/",
+   "country": "UK",
+   "platform": "shopify",
+   "indie": true,
+   "brand": "notebooktherapy",
+   "note": "Notebook Therapy's own store (Tsuki bullet journals). Checked per variant; limited editions often sell out.",
+   "products": [
+    {
+     "canonical": "nt-tsuki-160",
+     "label": "Tsuki 160GSM Bullet Journal · Pink Sakura",
+     "type": "Dot-grid notebook",
+     "url": "https://notebooktherapy.com/products/notebooktherapy-tsuki-bullet-journal?variant=30591991545971",
+     "variant_id": 30591991545971,
+     "source_title": "Tsuki 160GSM Bullet Journal ☾ · Pink Sakura"
+    },
+    {
+     "canonical": "nt-tsuki-160",
+     "label": "Tsuki 160GSM Bullet Journal · Mint Matcha",
+     "type": "Dot-grid notebook",
+     "url": "https://notebooktherapy.com/products/notebooktherapy-tsuki-bullet-journal?variant=30591988203635",
+     "variant_id": 30591988203635,
+     "source_title": "Tsuki 160GSM Bullet Journal ☾ · Mint Matcha"
+    },
+    {
+     "canonical": "nt-tsuki-dark-academia",
+     "label": "Tsuki 'Dark Academia' · A5 (176 pages)",
+     "type": "Dot-grid notebook",
+     "url": "https://notebooktherapy.com/products/tsuki-dark-academia-limited-edition-bullet-journal?variant=64102240420209",
+     "variant_id": 64102240420209,
+     "source_title": "Tsuki ‘Dark Academia’ Limited Edition Bullet Journal ☾ · A5 (176 pages)"
+    },
+    {
+     "canonical": "nt-tsuki-violet-nocturne",
+     "label": "Tsuki 'Violet Nocturne' · A5 white paper",
+     "type": "Dot-grid notebook",
+     "url": "https://notebooktherapy.com/products/tsuki-violet-nocturne-limited-edition-a5-bullet-journal?variant=67663472492913",
+     "variant_id": 67663472492913,
+     "source_title": "Tsuki ‘Violet Nocturne’ Limited Edition A5 Bullet Journal ☾ · White Paper"
+    },
+    {
+     "canonical": "nt-tsuki-ravens-secret",
+     "label": "Tsuki 'Raven's Secret' · A5 (176 pages)",
+     "type": "Dot-grid notebook",
+     "url": "https://notebooktherapy.com/products/tsuki-ravens-secret-limited-edition-bullet-journal?variant=67663484322161",
+     "variant_id": 67663484322161,
+     "source_title": "Tsuki ‘Raven’s Secret’ Limited Edition Bullet Journal ☾ · A5 (176 pages)"
     }
    ]
   }
