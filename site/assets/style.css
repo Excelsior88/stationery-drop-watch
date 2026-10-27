@@ -1,7 +1,10 @@
+/* Newsreader (Production Type, SIL Open Font License 1.1: assets/fonts/OFL.txt), self-hosted.
+   Variable weight 500-700 with optical sizes, Latin subset. */
+@font-face{font-family:"Newsreader";src:url(fonts/newsreader-var.woff2) format("woff2");font-weight:500 700;font-style:normal;font-display:swap}
 :root{
   --paper:#fbf6ec; --paper-2:#f4ecdc; --card:#fffdf8; --ink:#2d2a32; --ink-2:#5b5560; --line:#e6dccb;
   --accent:#c1553b; --accent-2:#9e3f29; --sage:#5f8a6b; --mustard:#c99a2e; --plum:#7a5c8a; --rose:#b34a4a;
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --serif:"Newsreader","Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --r:14px;
 }
@@ -185,6 +188,8 @@ a.az:hover{opacity:1}
 .shop-head a{color:#2d2a32;text-decoration:none}
 .shop-head a:hover{color:#c1553b}
 .badge.featured{color:#7a5a12;background:#f7ecd0;border-color:#c99a2e}
+.shop-head .badge,.shop-head .small{font-family:var(--sans)}
+.notfound{padding-bottom:8px} .notfound .btn-ghost{margin-left:6px}
 .section-switch{margin-top:-.2em}
 
 .book-inside-h{font:600 .72rem var(--sans);letter-spacing:.08em;text-transform:uppercase;color:#5f8a6b;margin:.2em 0 .3em}

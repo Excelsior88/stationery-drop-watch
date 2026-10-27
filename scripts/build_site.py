@@ -109,8 +109,8 @@ CONTENT_LASTMOD = "2026-10-27"  # last copy/structure change on the home and res
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
 
-def page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT):
-    return tag_amazon_links(_page(fname, title, desc, body, ld, og_type, og_image, og_alt))
+def page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
+    return tag_amazon_links(_page(fname, title, desc, body, ld, og_type, og_image, og_alt, noindex))
 
 def url_for(fname):
     """Absolute public URL: index.html -> BASE, 'slug/' -> BASE + 'slug/'."""
@@ -119,7 +119,7 @@ def url_for(fname):
 def jsonld(obj):
     return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False).replace("</", "<\\/") + "</script>"
 
-def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT):
+def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
     url = url_for(fname)
     hobo_page = fname.startswith("hobonichi-techo-") or fname.startswith("hobonichi-weeks-")  # Hobonichi product pages sit under the tracker
     nav = "".join(f'<a href="{h}"{" aria-current=page" if h == fname or (hobo_page and h == "index.html") else ""}>{E(t)}</a>' for h, t in NAV)
@@ -128,7 +128,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name="description" content="{E(desc)}">
-<link rel="canonical" href="{E(url)}">
+{'<meta name="robots" content="noindex">' if noindex else f'<link rel="canonical" href="{E(url)}">'}
 <meta property="og:type" content="{og_type}"><meta property="og:site_name" content="Stationery Drop Watch">
 <meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}">
 <meta property="og:url" content="{E(url)}"><meta property="og:locale" content="en_US">
@@ -136,6 +136,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <meta property="og:image:alt" content="{E(og_alt)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="{X_HANDLE}">
 <meta name="twitter:title" content="{E(title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:image" content="{og_image}"><meta name="twitter:image:alt" content="{E(og_alt)}">
+<link rel="preload" href="assets/fonts/newsreader-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/favicon-32.png" type="image/png" sizes="32x32">
@@ -757,6 +758,28 @@ Allow: /
 Sitemap: {BASE}sitemap.xml
 """
 
+def build_404():
+    """GitHub Pages serves this for any unknown path, so every link is root-relative (see _page)."""
+    hobo = "".join(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a></li>' for g in GROUPS if not g.get("dotgrid"))
+    body = f"""
+<section class="hero notfound">
+  <p class="eyebrow">404 · page not found</p>
+  <h1>This page sold out. Or it never existed.</h1>
+  <p class="lede">The link may be old or mistyped. Every tracker is still here and checked hourly.</p>
+  <p><a class="btn" href="index.html">Go to the Hobonichi tracker</a> <a class="btn-ghost" href="{DOTGRID_SLUG}/">Dot grid journals</a></p>
+</section>
+<div class="layout">
+  <div class="main-col">
+    <section class="card"><h2>Restock pages</h2>
+      <p class="eyebrow">Hobonichi Techo 2027</p><ul class="link-list"><li><a href="index.html">All listings</a></li>{hobo}<li><a href="hobonichi-2027.html">2027 calendar</a></li></ul>
+      <p class="eyebrow">Dot grid journaling</p><ul class="link-list"><li><a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted small">· {E(dotgrid_names())}</span></li></ul>
+    </section>
+  </div>
+  <aside class="side-col">{signup_block(compact=True)}</aside>
+</div>"""
+    return page("404.html", "Page not found · Stationery Drop Watch",
+                "This page doesn't exist. Find the Hobonichi Techo 2027 and dot grid journal restock trackers here.", body, noindex=True)
+
 def main():
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
@@ -764,6 +787,7 @@ def main():
     (SITE / "index.html").write_text(build_index())
     (SITE / "hobonichi-2027.html").write_text(build_hobonichi())
     (SITE / "about.html").write_text(build_about())
+    (SITE / "404.html").write_text(build_404())
     oe = amazon_main(stock["products"])
     for g in GROUPS:
         fname, doc = build_group(g, oe)
