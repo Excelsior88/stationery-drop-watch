@@ -96,7 +96,7 @@ STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not ye
 DOTGRID_SLUG = "archer-and-olive-dot-grid-journal"
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG}
-NAV = [("index.html", "Hobonichi tracker"), ("hobonichi-2027.html", "Hobonichi 2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journaling"), ("about.html", "About")]
+NAV = [("index.html", "Hobonichi"), ("hobonichi-2027.html", "2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journals"), ("about.html", "About")]
 
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
@@ -105,7 +105,7 @@ OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand
 OG_ALT = "Stationery Drop Watch: Hobonichi Techo 2027 restock tracker, books, Weeks and covers checked hourly across 13 shops"
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
 OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked hourly"
-CONTENT_LASTMOD = "2026-10-26"  # last copy/structure change on the home and restock pages (sitemap lastmod floor)
+CONTENT_LASTMOD = "2026-10-27"  # last copy/structure change on the home and restock pages (sitemap lastmod floor)
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
 
@@ -152,8 +152,8 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <main class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
   <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
-  <p class="foot-links">Hobonichi: <a href="index.html">Tracker</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
-  <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journal tracker</a> <span class="muted">({E(dotgrid_names())})</span></p>
+  <p class="foot-links">Hobonichi: <a href="index.html">All listings</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
+  <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
   <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
@@ -372,7 +372,7 @@ def build_index():
   <p class="eyebrow">Hobonichi Techo 2027 · {len({p['store_id'] for p in prods})} shops checked</p>
   <h1>Know the moment your planner is back.</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
-  <p class="small section-switch">Looking for dot grid journals? <a href="{DOTGRID_SLUG}/">Dot grid journaling tracker</a> <span class="muted">· {E(dotgrid_names())}</span></p>
+  <p class="small section-switch">Also tracked: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">· {E(dotgrid_names())}</span></p>
   <div class="stats">
     <div><b>{s['in_stock']}</b><span>in stock</span></div>
     <div><b>{s['preorder']}</b><span>preorder</span></div>
@@ -385,7 +385,7 @@ def build_index():
 <div class="layout">
   <div class="main-col">
     <section class="card" id="restocked">
-      <h2>Restocked recently</h2>
+      <h2>Recent restocks</h2>
       {feed_html}
     </section>
 
@@ -416,7 +416,7 @@ def build_index():
                              "description": "Independent restock tracker for Hobonichi Techo 2027 planners and covers, and dot grid journals. Statuses come straight from each shop's public product data.",
                              "logo": BASE + "assets/brand/icon-512.png", "email": "stationerydropwatch@gmail.com",
                              "sameAs": ["https://x.com/stationerydrop"]}}
-    return page("index.html", "Hobonichi Techo 2027 restock tracker + dot grid journals · Stationery Drop Watch",
+    return page("index.html", "Hobonichi Techo 2027 & dot grid journal restock tracker · Stationery Drop Watch",
                 f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked hourly. Plus a separate dot grid journal restock tracker.",
                 body, ld=(site_ld, faq_ld))
 
@@ -424,7 +424,7 @@ def build_hobonichi():
     body = """
 <article class="prose">
 <p class="eyebrow">Guide · updated Oct 25, 2026</p>
-<h1>Hobonichi Techo 2027: launch &amp; restock calendar</h1>
+<h1>Hobonichi Techo 2027 launch &amp; restock calendar</h1>
 <p class="lede">Hobonichi sells its planners in two big drops a year, and popular covers can sell out within minutes. Here's how the 2027 season has gone so far and when stock usually comes back.</p>
 
 <ol class="timeline">
@@ -455,8 +455,8 @@ def build_hobonichi():
 </ol>
 </article>"""
     crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Restock tracker", "item": BASE},
-        {"@type": "ListItem", "position": 2, "name": "Hobonichi Techo 2027 launch & restock calendar", "item": url_for("hobonichi-2027.html")}]}
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
+        {"@type": "ListItem", "position": 2, "name": "2027 calendar", "item": url_for("hobonichi-2027.html")}]}
     return page("hobonichi-2027.html", "Hobonichi Techo 2027 launch & restock calendar · Stationery Drop Watch",
                 "When Hobonichi Techo 2027 planners launch, sell out and restock: launch times, the October wave, and when restocks usually land, with sources.", body, ld=(crumbs,))
 
@@ -467,7 +467,7 @@ def build_about():
 <h1>About Stationery Drop Watch</h1>
 <p class="lede">Limited planners sell out fast, and every shop only posts its own restocks. This site checks them all in one place.</p>
 <h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores on a schedule, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. The site has two sections: <a href="index.html">Hobonichi</a> (the official store and independent shops) and <a href="{DOTGRID_SLUG}/">dot grid journaling</a> ({E(dotgrid_names())}, each checked on its own store). When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Restocked recently</a> and goes out to the alert list.</p>
+<p>A small script visits the public product pages of {n_checked} stores on a schedule, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. The site has two sections: <a href="index.html">Hobonichi</a> (the official store and independent shops) and <a href="{DOTGRID_SLUG}/">dot grid journaling</a> ({E(dotgrid_names())}, each checked on its own store). When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email <a href="mailto:stationerydropwatch@gmail.com?subject=Featured%20restock%20slot">stationerydropwatch@gmail.com</a> for rates and dates.</p>
@@ -476,7 +476,7 @@ def build_about():
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
 </article>"""
-    return page("about.html", "About · Stationery Drop Watch", "How Stationery Drop Watch checks shops about every hour for Hobonichi Techo 2027 and dot grid journal restocks, and why it never guesses stock.", body)
+    return page("about.html", "About Stationery Drop Watch: how we check stock", "How Stationery Drop Watch checks shops hourly for Hobonichi Techo 2027 and dot grid journal restocks, and why it never guesses stock.", body)
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
 # Every status on these pages comes from data/stock.json exactly as the checker wrote it.
@@ -485,56 +485,46 @@ def _is_a6_book(p):
                                      or (not p.get("canonical") and "a6" in p["label"].lower()))
 
 GROUPS = [
-    dict(slug="hobonichi-techo-2027-original-a6", short="Original A6 books",
+    dict(slug="hobonichi-techo-2027-original-a6", short="Original A6", product="Hobonichi Techo 2027 Original (A6)",
          match=_is_a6_book,
-         title="Hobonichi Techo 2027 Original A6 in stock? Live restock tracker",
-         h1="Hobonichi Techo 2027 Original (A6) stock",
-         desc="Is the Hobonichi Techo 2027 Original A6 book in stock? Live status for the English and Japanese A6 books at {shops} shops, checked about every hour.",
+         desc="Is the Hobonichi Techo 2027 Original A6 book in stock? Live status for the English and Japanese A6 books at {shops} shops, checked hourly.",
          intro="The Original is Hobonichi's A6 one-page-a-day book, sold in an English and a Japanese edition. "
                "Below is what each shop we track reported at its last check: in stock, on preorder, sold out, or not on sale yet. "
                "If a check failed we say \"Couldn't check\" rather than guess."),
-    dict(slug="hobonichi-techo-2027-cousin-a5", short="Cousin A5 books",
+    dict(slug="hobonichi-techo-2027-cousin-a5", short="Cousin A5", product="Hobonichi Techo 2027 Cousin (A5)",
          match=lambda p: p.get("canonical") == "cousin-a5-en",
-         title="Hobonichi Techo 2027 Cousin A5 restock & stock tracker",
-         h1="Hobonichi Techo 2027 Cousin (A5) stock",
-         desc="Live stock status for the Hobonichi Techo 2027 Cousin A5 book (English) at {shops} shops. See who has it in stock or on preorder and when sold-out listings come back.",
+         desc="Is the Hobonichi Techo 2027 Cousin A5 book in stock? Live status for the English Cousin at {shops} shops, checked hourly, with every restock we spot.",
          intro="The Cousin is the A5 version of the Techo, with a page a day and more room to write. "
                "Here's what each shop we track reported for the English Cousin at its last check."),
-    dict(slug="hobonichi-weeks-2027", short="Weeks",
+    dict(slug="hobonichi-weeks-2027", short="Weeks", product="Hobonichi Weeks 2027",
          match=lambda p: p["type"] == "Weeks",
-         title="Hobonichi Weeks 2027 restock tracker: which shops have it in stock",
-         h1="Hobonichi Weeks 2027 restock tracker",
-         desc="Hobonichi Techo Weeks 2027 stock across {shops} shops, checked about every hour: Midnight Blue, Canaria Yellow, Moomin, White Cat Wallpaper and more. Real status only.",
+         desc="Is Hobonichi Weeks 2027 in stock? Live status for Midnight Blue, Canaria Yellow, Moomin, White Cat Wallpaper and more at {shops} shops, checked hourly.",
          intro="Weeks is Hobonichi's slim, wallet-size weekly planner, and the popular covers sell out fast. "
                "These are the 2027 Weeks listings we track, grouped by design, with the status each shop reported at its last check."),
-    dict(slug="hobonichi-weeks-mega-2027", short="Weeks Mega",
+    dict(slug="hobonichi-weeks-mega-2027", short="Weeks Mega", product="Hobonichi Weeks Mega 2027",
          match=lambda p: p["type"] == "Weeks Mega",
-         title="Hobonichi Weeks Mega 2027 in stock? Live restock tracker",
-         h1="Hobonichi Weeks Mega 2027 stock",
-         desc="Live stock status for Hobonichi Techo Weeks Mega 2027 (Midnight Blue, Bow & Tie: Candy Dream and more) at {shops} shops, checked about every hour.",
+         desc="Is Hobonichi Weeks Mega 2027 in stock? Live status for Midnight Blue, Bow & Tie: Candy Dream and more at {shops} shops, checked hourly.",
          intro="Weeks Mega is the Weeks planner with extra blank pages at the back. "
                "Here's what each shop we track reported for the 2027 Weeks Mega listings at its last check."),
-    dict(slug="hobonichi-techo-2027-covers", short="A6 covers",
+    dict(slug="hobonichi-techo-2027-covers", short="A6 covers", product="Hobonichi Techo 2027 A6 cover",
          match=lambda p: p["type"] == "Cover",
-         title="Hobonichi Techo 2027 cover restock tracker (A6 covers)",
-         h1="Hobonichi Techo 2027 cover restocks",
-         desc="Restock tracker for Hobonichi Techo 2027 A6 covers like Moomin: My Yard and Yumi Kitagishi: White Cat House. Live status from {shops} shops, checked about every hour.",
+         desc="Are Hobonichi Techo 2027 A6 covers like Moomin: My Yard and Yumi Kitagishi: White Cat House in stock? Live status at {shops} shops, checked hourly.",
          intro="Popular Hobonichi covers can sell out within minutes of a drop. "
                "We track a handful of 2027 A6 covers; here's what each shop reported at its last check."),
-    dict(slug=DOTGRID_SLUG, short="Dot grid journals", dotgrid=True,
+    dict(slug=DOTGRID_SLUG, short="Dot grid journals", product="Dot grid journal", dotgrid=True,
          match=is_dotgrid,
          eyebrow="Dot grid journaling", unit="listings",
          open_hint="Open a row to go straight to that exact size and color on the shop's site",
          guide="Dot grid journals come in several sizes, papers and colors, and each one sells out on its own. "
                "We check the exact variant named in each row, so \"In stock\" means that size and color, not just some version of the journal.",
-         title="Dot grid journal restock alerts: Archer and Olive, Leuchtturm1917, Scribbles That Matter, Tsuki",
-         h1="Dot grid journal restock tracker",
-         desc="Archer and Olive restock? Leuchtturm1917 dotted A5 in stock? Live size-by-size status at Archer and Olive, Leuchtturm1917 US, Scribbles That Matter and Notebook Therapy (Tsuki), checked hourly.",
+         desc="Are Archer and Olive, Leuchtturm1917, Scribbles That Matter and Tsuki dot grid journals in stock? Live size-by-size status, checked hourly.",
          og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
                "We track a focused set of flagship dot grid notebooks straight from each maker's own store, size by size and color by color. "
                "Archer and Olive is featured first. This covers dot grid journals only; we don't track pens or other paper here, and Hobonichi has its own section."),
 ]
+for _g in GROUPS:  # one name per page: H1 is "<product> restock tracker"; the <title> adds the live shop count
+    _g["h1"] = _g["product"] + " restock tracker"
 for _g in GROUPS:  # Hobonichi pages never pick up dot grid listings
     if not _g.get("dotgrid"):
         _g["match"] = (lambda m: lambda p: not is_dotgrid(p) and m(p))(_g["match"])
@@ -593,7 +583,7 @@ def build_group(g, oe):
             st = next(x for x in stores["stores"] if x["id"] == sid)
             sls = [l for l in ls if l["store_id"] == sid]
             feat = ' <span class="badge featured">Featured</span>' if not parts else ""
-            parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a> restocks</span>{feat}
+            parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a></span>{feat}
   <span class="muted small">{sum(l['status'] in BUYABLE for l in sls)} of {len(sls)} tracked listings in stock</span></h2>""")
         parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
   <div class="section-head"><{hx}>{E(name)}</{hx}><p class="muted small">{n_buy} of {len(sl)} {g.get('unit', 'listings')} in stock or on preorder</p></div>
@@ -614,7 +604,7 @@ def build_group(g, oe):
         restock_html = f'<ol class="feed">{feed}</ol>'
     else:
         restock_html = '<p class="muted">No restocks spotted for these listings since tracking started. When a sold-out listing flips back to in stock or preorder between two checks, it shows up here.</p>'
-    others = "".join(f'<li><a href="{x["slug"]}/">{E(x["h1"])}</a></li>' for x in GROUPS if x is not g and bool(x.get("dotgrid")) == bool(g.get("dotgrid")))
+    others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and bool(x.get("dotgrid")) == bool(g.get("dotgrid")))
     if g.get("dotgrid"):
         others += '<li><a href="#tracker">Every dot grid listing we track</a></li>'
         shop_nav = "".join(f'<a class="chip" href="#shop-{E(x["id"])}">{E(x["name"])}</a>' for x in DOTGRID_SHOPS if any(l["store_id"] == x["id"] for l in ls))
@@ -638,7 +628,7 @@ def build_group(g, oe):
     {shop_nav}
     {''.join(parts)}
     {dg_tracker}
-    <section class="card"><h2>Restocks spotted</h2>{restock_html}</section>
+    <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
     <section class="card"><h2>Good to know</h2>
       <ul>
         <li>Statuses are exactly what each shop's public product data said at the time shown. Always confirm on the shop's page before you buy.</li>
@@ -659,12 +649,12 @@ def build_group(g, oe):
     fname = g["slug"] + "/"
     crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
-        {"@type": "ListItem", "position": 2, "name": g["h1"], "item": url_for(fname)}]}
+        {"@type": "ListItem", "position": 2, "name": g["short"], "item": url_for(fname)}]}
     items = {"@context": "https://schema.org", "@type": "ItemList", "name": g["h1"] + ": listings we track",
              "numberOfItems": len(ls), "itemListElement": [
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: (l.get("canonical") or "~", l["store"])))]}
-    return fname, page(fname, g["title"] + " · Stationery Drop Watch", g["desc"].format(shops=shops), body, ld=(crumbs, items),
+    return fname, page(fname, f'{g["h1"]}: live stock at {shops} {"shop" if shops == 1 else "shops"} · Stationery Drop Watch', g["desc"].format(shops=shops), body, ld=(crumbs, items),
                        og_image=g.get("og_image", OG_IMAGE), og_alt=g.get("og_alt", OG_ALT))
 
 def group_lastmod(g):
@@ -694,7 +684,7 @@ def faq_block():
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{E(a)}</p></details>" for q, a in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
-    return f'<section class="card faq" id="faq"><h2>Questions</h2>{html_}</section>', ld
+    return f'<section class="card faq" id="faq"><h2>Good to know</h2>{html_}</section>', ld
 
 def product_links_block():
     items = []
@@ -703,10 +693,10 @@ def product_links_block():
             continue
         ls = group_listings(g)
         n = sum(l["status"] in BUYABLE for l in ls)
-        items.append(f'<li><a href="{g["slug"]}/">{E(g["h1"])}</a> <span class="muted small">· {n} of {len(ls)} listings available</span></li>')
+        items.append(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a> <span class="muted small">· {n} of {len(ls)} listings in stock or on preorder</span></li>')
     return f'<section class="card" id="by-product"><h2>Restock pages by product</h2><ul class="link-list">{"".join(items)}</ul></section>'
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-10-26", "about.html": "2026-10-26"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-10-27", "about.html": "2026-10-27"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
