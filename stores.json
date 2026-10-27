@@ -65,6 +65,36 @@
    "id": "cover-a6-mina-felice",
    "label": "A6 cover · mina perhonen: felice (Blue)",
    "type": "Cover"
+  },
+  {
+   "id": "ao-storybook-navy",
+   "label": "Archer and Olive · Storybook in Navy dot-grid notebook",
+   "type": "Dot-grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-songbird-blue",
+   "label": "Archer and Olive · Songbird in Blue dot-grid notebook",
+   "type": "Dot-grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-majestic-skies",
+   "label": "Archer and Olive · Majestic Skies dot-grid notebook",
+   "type": "Dot-grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-apothecary-shelf",
+   "label": "Archer and Olive · Apothecary Shelf notebook (Halloween 2026)",
+   "type": "Dot-grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-refills",
+   "label": "Archer and Olive · A5 dot-grid refills",
+   "type": "Dot-grid refill",
+   "brand": "archerandolive"
   }
  ],
  "stores": [
@@ -838,6 +868,82 @@
    "indie": true,
    "note": "robots.txt disallows all crawling (User-agent: * / Disallow: /). Listed as a link only; not checked.",
    "products": []
+  },
+  {
+   "id": "archerolive",
+   "name": "Archer and Olive",
+   "url": "https://www.archerandolive.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "brand": "archerandolive",
+   "note": "Bullet journal maker's own store. Checked per size/paper variant, because each notebook design is one listing with many sizes.",
+   "products": [
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · A5 white dot grid",
+     "type": "Dot-grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48885118566555",
+     "variant_id": 48885118566555,
+     "source_title": "Storybook in Navy · White Dot Grid / A5: 192 Pages"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · B5 white dot grid",
+     "type": "Dot-grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48885118501019",
+     "variant_id": 48885118501019,
+     "source_title": "Storybook in Navy · White Dot Grid / B5: 160 Pages"
+    },
+    {
+     "canonical": "ao-songbird-blue",
+     "label": "Songbird in Blue · A5 dot grid",
+     "type": "Dot-grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128956928155",
+     "variant_id": 47128956928155,
+     "source_title": "Songbird in Blue Notebook · A5: 192 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-blue",
+     "label": "Songbird in Blue · B5 dot grid",
+     "type": "Dot-grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128956862619",
+     "variant_id": 47128956862619,
+     "source_title": "Songbird in Blue Notebook · B5: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-majestic-skies",
+     "label": "Majestic Skies · A5 dot grid",
+     "type": "Dot-grid notebook",
+     "url": "https://www.archerandolive.com/products/majestic-skies-dot-grid-notebook?variant=47314844123291",
+     "variant_id": 47314844123291,
+     "source_title": "Majestic Skies: Notebook · A5: 192 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-apothecary-shelf",
+     "label": "Apothecary Shelf (Halloween 2026) · B5 white dot grid",
+     "type": "Dot-grid notebook",
+     "url": "https://www.archerandolive.com/products/apothecary-shelf-notebook?variant=49143523803291",
+     "variant_id": 49143523803291,
+     "source_title": "Apothecary Shelf | Notebook · B5: 160 Page / White Dot Grid"
+    },
+    {
+     "canonical": "ao-refills",
+     "label": "A5 Soft Cover Refill Notebook · white dot grid",
+     "type": "Dot-grid refill",
+     "url": "https://www.archerandolive.com/products/a5-soft-cover-refill-notebook-copy?variant=48885168668827",
+     "variant_id": 48885168668827,
+     "source_title": "A5 Soft Cover Refill Notebook · White Dot Grid"
+    },
+    {
+     "canonical": "ao-refills",
+     "label": "A5 Notepad Refill · white dot grid",
+     "type": "Dot-grid refill",
+     "url": "https://www.archerandolive.com/products/dot-grid-notepad-refill?variant=47927601889435",
+     "variant_id": 47927601889435,
+     "source_title": "A5 Notepad Refill | Dot Grid · White: Dot Grid"
+    }
+   ]
   }
  ]
 }

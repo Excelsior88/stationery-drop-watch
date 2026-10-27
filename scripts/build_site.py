@@ -48,8 +48,16 @@ changes = json.loads((ROOT / "data/changes.json").read_text())
 picks = json.loads((ROOT / "content/editor_picks.json").read_text())
 amz = json.loads((ROOT / "content/amazon_links.json").read_text())  # links only; never fetched by the checker
 
+# Canonical products from other brands (e.g. Archer and Olive). They get no Amazon fallback link:
+# the only Amazon brand link we have is Hobonichi's, and we don't link a brand to a product it isn't.
+OTHER_BRAND = {c["id"] for c in stores["canonical"] if c.get("brand")}
+HOBO_SHOPS = {s["id"] for s in stores["stores"] if not s.get("brand")}
+
 def amazon_for(canonical, listing_url=""):
-    """(tagged url, label) for a tracked listing: exact verified ASIN, else the Hobonichi brand link."""
+    """(tagged url, label) for a tracked listing: exact verified ASIN, else the Hobonichi brand link.
+    ("", "") for other brands' products."""
+    if canonical in OTHER_BRAND:
+        return "", ""
     m = amz["products"].get(canonical or "") or amz.get("listings", {}).get(listing_url)
     if m:
         return amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "Also on Amazon"
@@ -66,7 +74,8 @@ def fmt_et(iso):
 
 STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not yet on sale",
           "sold_out": "Sold out", "unknown": "Couldn't check"}
-NAV = [("index.html", "Restock tracker"), ("hobonichi-2027.html", "Hobonichi 2027 calendar"), ("about.html", "About")]
+BUJO_SLUG = "archer-and-olive-bullet-journal"
+NAV = [("index.html", "Restock tracker"), ("hobonichi-2027.html", "Hobonichi 2027 calendar"), (BUJO_SLUG + "/", "Bullet journal"), ("about.html", "About")]
 
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
@@ -137,7 +146,7 @@ def signup_block(compact=False):
     # a plain POST to embed-subscribe; don't submit via fetch, Buttondown may need to show a CAPTCHA.
     return f"""<section class="card signup{' compact' if compact else ''}" id="alerts">
   <h2>Get restock alerts</h2>
-  <p>One short email when a sold-out Hobonichi item comes back somewhere we track. No spam, unsubscribe anytime.</p>
+  <p>One short email when a sold-out item comes back somewhere we track. No spam, unsubscribe anytime.</p>
   <form class="signup-form embeddable-buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}" method="post">
     <label class="sr" for="email{int(compact)}">Email address</label>
     <input id="email{int(compact)}" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
@@ -214,6 +223,8 @@ def amazon_main(prods):
         groups.setdefault(product_key(p), []).append(p)
     out = {}
     for k, ls in groups.items():
+        if k in OTHER_BRAND:  # sold only at the maker's own store; no Amazon fallback to offer
+            continue
         sts = {l["status"] for l in ls}
         if not sts <= set(NOT_BUYABLE):
             continue
@@ -284,9 +295,9 @@ def build_index():
     noscript_rows = "".join(f'<tr><td>{E(r["p"])}</td><td>{E(r["s"])}</td><td><span class="badge {r["st"]}">{STATUS[r["st"]]}</span></td></tr>' for r in rows)
     body = f"""
 <section class="hero">
-  <p class="eyebrow">Hobonichi Techo 2027 · {len({p['store_id'] for p in prods})} stores checked</p>
+  <p class="eyebrow">Hobonichi Techo 2027 · Archer and Olive · {len({p['store_id'] for p in prods})} stores checked</p>
   <h1>Know the moment your planner is back.</h1>
-  <p class="lede">We check the official Hobonichi store and independent shops for sold-out planners and covers, and tell you when they come back.</p>
+  <p class="lede">We check the official Hobonichi store and independent shops for sold-out planners and covers, plus <a href="{BUJO_SLUG}/">Archer and Olive's dot-grid notebooks</a> for bullet journaling, and tell you when they come back.</p>
   <div class="stats">
     <div><b>{s['in_stock']}</b><span>in stock</span></div>
     <div><b>{s['preorder']}</b><span>preorder</span></div>
@@ -339,14 +350,14 @@ def build_index():
 </div>
 <script id="stock-data" type="application/json">{json.dumps(rows, ensure_ascii=False).replace('</', '<\\/')}</script>
 """
-    n_shops = len({p['store_id'] for p in prods})
+    n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
-               "description": "Hourly restock checks for Hobonichi Techo 2027 planners and covers across the official store and independent shops.",
+               "description": "Hourly restock checks for Hobonichi Techo 2027 planners and covers across the official store and independent shops, plus Archer and Olive dot-grid notebooks.",
                "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
                              "logo": BASE + "assets/brand/icon-512.png", "email": "stationerydropwatch@gmail.com",
                              "sameAs": ["https://x.com/stationerydrop"]}}
     return page("index.html", "Hobonichi Techo 2027 restock tracker: books, Weeks & covers · Stationery Drop Watch",
-                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked about every hour. Real status, never guessed.",
+                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, plus Archer and Olive dot-grid notebooks, checked about every hour. Real status, never guessed.",
                 body, ld=(site_ld, faq_ld))
 
 def build_hobonichi():
@@ -405,7 +416,7 @@ def build_about():
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
 </article>"""
-    return page("about.html", "About · Stationery Drop Watch", "How Stationery Drop Watch checks shops about every hour for Hobonichi Techo 2027 restocks, and why it never guesses stock.", body)
+    return page("about.html", "About · Stationery Drop Watch", "How Stationery Drop Watch checks shops about every hour for Hobonichi Techo 2027 and Archer and Olive notebook restocks, and why it never guesses stock.", body)
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
 # Every status on these pages comes from data/stock.json exactly as the checker wrote it.
@@ -450,6 +461,18 @@ GROUPS = [
          desc="Restock tracker for Hobonichi Techo 2027 A6 covers like Moomin: My Yard and Yumi Kitagishi: White Cat House. Live status from {shops} shops, checked about every hour.",
          intro="Popular Hobonichi covers can sell out within minutes of a drop. "
                "We track a handful of 2027 A6 covers; here's what each shop reported at its last check."),
+    dict(slug=BUJO_SLUG, short="Archer and Olive notebooks",
+         match=lambda p: p.get("canonical") in OTHER_BRAND and p["store_id"] == "archerolive",
+         eyebrow="Bullet journaling · Archer and Olive", unit="sizes",
+         open_hint="Open a row to go straight to that size on Archer and Olive's site",
+         guide="Archer and Olive sells each notebook design in several sizes and paper types, and each one sells out on its own. "
+               "We check the exact size listed in each row, so \"In stock\" means that size, not just some size of the design.",
+         title="Archer and Olive dot-grid notebook restock tracker (A5, B5)",
+         h1="Archer and Olive dot-grid notebook stock",
+         desc="Is your Archer and Olive dot-grid notebook back in stock? Live status for A5 and B5 dot-grid notebooks and refills, checked about every hour on archerandolive.com. Real status only.",
+         intro="Archer and Olive makes the thick-paper dot-grid notebooks a lot of bullet journalers swear by, and popular sizes sell out. "
+               "We track a focused set of their notebooks and refills, size by size, straight from their own store. "
+               "This covers bullet journaling notebooks only; we don't track pens or other paper."),
 ]
 
 def latest(*isos):
@@ -487,16 +510,16 @@ def build_group(g, oe):
         amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
                    f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
         az_url, az_label = amazon_for(cid, sl[0]["url"])
-        az_sub = "" if m else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
+        az_sub = "" if m or not az_url else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
         tracker = f' · <a href="index.html?product={E(cid)}#tracker">Filter in the tracker</a>' if cid else ""
         parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
-  <div class="section-head"><h2>{E(name)}</h2><p class="muted small">{n_buy} of {len(sl)} listings in stock or on preorder</p></div>
+  <div class="section-head"><h2>{E(name)}</h2><p class="muted small">{n_buy} of {len(sl)} {g.get('unit', 'listings')} in stock or on preorder</p></div>
   {amz_btn}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th><th class="hide-sm">Checked</th></tr></thead>
     <tbody>{status_rows(sl, oe)}</tbody>
   </table></div>
-  <p class="muted small">Open a shop's name to go straight to its listing{az_sub}{tracker}</p>
+  <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}</p>
 </section>""")
     urls = {l["url"] for l in ls}
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
@@ -513,7 +536,7 @@ def build_group(g, oe):
 <div class="product-page">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Restock tracker</a> <span aria-hidden="true">›</span> <span aria-current="page">{E(g['short'])}</span></nav>
 <section class="hero">
-  <p class="eyebrow">Hobonichi Techo 2027 · {shops} shops checked</p>
+  <p class="eyebrow">{E(g.get('eyebrow', 'Hobonichi Techo 2027'))} · {shops} {'shop' if shops == 1 else 'shops'} checked</p>
   <h1>{E(g['h1'])}</h1>
   <p class="lede">{E(g['intro'])}</p>
   <p><strong>Right now:</strong> {len(buy)} of {len(ls)} listings are in stock or on preorder at {len({l['store_id'] for l in buy})} of {shops} shops.
@@ -528,7 +551,7 @@ def build_group(g, oe):
         <li>Statuses are exactly what each shop's public product data said at the time shown. Always confirm on the shop's page before you buy.</li>
         <li>"Not yet on sale" means the shop has a preview page up but isn't taking orders yet. "Couldn't check" means our check failed, so we don't know.</li>
         <li>We don't show prices, because they change and differ by shop. Check the shop's page.</li>
-        <li>For launch dates and how restocks usually go, see the <a href="hobonichi-2027.html">Hobonichi 2027 launch &amp; restock calendar</a>.</li>
+        <li>{g.get('guide', 'For launch dates and how restocks usually go, see the <a href="hobonichi-2027.html">Hobonichi 2027 launch &amp; restock calendar</a>.')}</li>
       </ul>
     </section>
   </div>
@@ -556,9 +579,9 @@ FAQ = [
     ("How often do you check the shops?",
      "About once an hour. A scheduled job reads each shop's public product data, then rebuilds this site with what it found."),
     ("Which shops do you check?",
-     "{n} shops, including the official Hobonichi Online Store and independent stationery shops. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
+     "{n} shops, including the official Hobonichi Online Store, independent stationery shops, and Archer and Olive's own store. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
-     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 covers. We don't track other brands yet."),
+     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 covers. For bullet journaling, we also track a small set of Archer and Olive dot-grid notebooks and refills, size by size. We don't track pens, other paper, or other brands yet."),
     ("What does \"Couldn't check\" mean?",
      "Our check of that listing failed, for example because the shop's site didn't respond. We show that instead of guessing whether it's in stock."),
     ("What does \"Not yet on sale\" mean?",
@@ -566,7 +589,7 @@ FAQ = [
     ("Do you sell planners?",
      "No. We link you to the shops. Some Amazon links on the site are affiliate links, and we say so on every page."),
     ("How do restock alerts work?",
-     "Sign up with your email and you'll get one short email when a sold-out Hobonichi item comes back somewhere we track. It's free and you can unsubscribe anytime."),
+     "Sign up with your email and you'll get one short email when a sold-out item comes back somewhere we track. It's free and you can unsubscribe anytime."),
 ]
 
 def faq_block():

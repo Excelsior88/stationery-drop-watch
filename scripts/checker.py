@@ -54,6 +54,18 @@ def classify_shopify(js):
         status = "coming_soon" if COMING_RX.search(text) else "sold_out"
     return status, len(avail), len(variants), re.sub(r"<[^>]+>", "", js.get("title", ""))
 
+def classify_shopify_variant(js, vid):
+    """One size/paper option of a multi-variant product (e.g. a notebook sold in A5 and B5).
+    Returns None if the variant id isn't on the product any more."""
+    v = next((v for v in js.get("variants") or [] if v.get("id") == vid), None)
+    if v is None: return None
+    title = re.sub(r"<[^>]+>", "", js.get("title", "")) + " · " + (v.get("public_title") or v.get("title") or "")
+    if v.get("available"):
+        status = "preorder" if PREORDER_RX.search(title) else "in_stock"
+    else:
+        status = "coming_soon" if COMING_RX.search(title) else "sold_out"
+    return status, int(bool(v.get("available"))), 1, title
+
 def classify_html(html):
     """Fallback: schema.org availability in JSON-LD / microdata."""
     m = re.findall(r'schema\.org/(InStock|OutOfStock|SoldOut|PreOrder|BackOrder|LimitedAvailability)', html)
@@ -69,10 +81,17 @@ def check_shopify_store(store):
                    type=p["type"], url=p["url"], checked_at=None, status="unknown", method=None,
                    available_variants=None, total_variants=None, title=p.get("source_title"), error=None)
         try:
-            r = h.get(p["url"] + ".js"); rec["checked_at"] = now()
+            vid = p.get("variant_id")   # optional: track one size/paper option, not the whole product
+            r = h.get(p["url"].split("?")[0] + ".js"); rec["checked_at"] = now()
             if r.ok and r.headers.get("content-type", "").startswith(("application/json", "text/javascript", "application/javascript")):
-                st, a, t, title = classify_shopify(r.json())
-                rec.update(status=st, available_variants=a, total_variants=t, title=title, method="shopify .js")
+                res = classify_shopify_variant(r.json(), vid) if vid else classify_shopify(r.json())
+                if res:
+                    st, a, t, title = res
+                    rec.update(status=st, available_variants=a, total_variants=t, title=title, method="shopify .js variant" if vid else "shopify .js")
+                else:
+                    rec["error"] = f"variant {vid} no longer on this product"
+            elif vid:
+                rec["error"] = f"HTTP {r.status_code} on .js"  # page markup can't say which size is in stock
             else:
                 r2 = h.get(p["url"]); rec["checked_at"] = now()
                 st = classify_html(r2.text) if r2.ok else None
