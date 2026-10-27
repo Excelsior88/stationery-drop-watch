@@ -16,7 +16,7 @@ AMAZON_TAG = "excelsior88-20"
 AMAZON_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
 # One affiliate statement, used in the footer and on About. Keep it true to how tag_amazon_links works.
 AFFILIATE_NOTE = ("Amazon links on this site are affiliate links. " + AMAZON_DISCLOSURE +
-                  " Links to the shops we track, and to my own books on Amazon, are plain links that earn nothing.")
+                  " Links to the shops we track, and to my own books on Amazon, are plain links.")
 _ASIN = re.compile(r"/(?:dp|gp/product|gp/aw/d)/([A-Z0-9]{10})")
 _AMAZON_A = re.compile(r'<a\b[^>]*\bhref="https?://(?:www\.)?amazon\.com/[^"]*"[^>]*>')
 
