@@ -204,8 +204,10 @@ def editor_block(page="home"):
 </article>""")
             continue
         details = "".join(f"<li>{E(d)}</li>" for d in b.get("details", []))
+        inside = ("<p class=\"book-inside-h\">What's inside</p><ul class=\"book-inside\">"
+                  + "".join(f"<li>{E(x)}</li>" for x in b["inside"]) + "</ul>") if b.get("inside") else ""
         if b.get("cover"):
-            cover = f'<img src="{E(b["cover"])}" alt="{E(b["cover_alt"])}" width="200" height="300" loading="lazy">'
+            cover = f'<img src="{E(b["cover"])}" alt="{E(b.get("cover_alt") or b["title"] + " cover")}" width="200" height="300" loading="lazy">'
             cover_cls = "book-cover"
         else:  # no verified cover image: a plain title tile, never an invented cover
             cover = f'<span>{E(b.get("cover_text", b["title"]))}</span>'
@@ -218,7 +220,7 @@ def editor_block(page="home"):
     <h3>{E(b['pitch'])}</h3>
     <p class="book-title">{E(b['title'])} <span class="muted">· {E(b.get('format',''))}</span></p>
     {f"<p>{E(b['blurb'])}</p>" if b.get('blurb') else ""}
-    <ul class="book-details">{details}</ul>
+    <ul class="book-details">{details}</ul>{inside}
     <a class="btn" href="{E(own_amazon_link(b['url']))}" data-own-product rel="noopener" target="_blank">See it on Amazon</a>
   </div>
 </article>""")

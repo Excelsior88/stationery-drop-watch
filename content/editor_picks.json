@@ -1,5 +1,5 @@
 {
-  "_comment": "House ads for the owner's own books. Add another object to 'books' to show a second book; the block renders every entry in order. Only use details from the real Amazon listing. Put the plain Amazon URL in 'url'; These are the owner's own books, so build_site.py links them to the plain amazon.com/dp/<ASIN> URL with NO Associates tag. Set \"hidden\": true on a book to keep its data but not show it. An entry with \"coming_soon\": true renders a teaser card (no link, no cover) with a button to the newsletter signup. Optional \"pages\" picks where a book shows: [\"home\"] (Hobonichi side, the default when missing) or [\"dotgrid\"] (the dot grid journaling page). Leave out \"cover\" when no verified cover image is available; the card then shows a plain title tile. \"blurb\" is optional.",
+  "_comment": "House ads for the owner's own books. Add another object to 'books' to show a second book; the block renders every entry in order. Only use details from the real Amazon listing. Put the plain Amazon URL in 'url'; These are the owner's own books, so build_site.py links them to the plain amazon.com/dp/<ASIN> URL with NO Associates tag. Set \"hidden\": true on a book to keep its data but not show it. An entry with \"coming_soon\": true renders a teaser card (no link, no cover) with a button to the newsletter signup. Optional \"pages\" picks where a book shows: [\"home\"] (Hobonichi side, the default when missing) or [\"dotgrid\"] (the dot grid journaling page). Leave out \"cover\" when no verified cover image is available; the card then shows a plain title tile. \"blurb\" is optional. Optional \"inside\" is a short list of highlights shown under the details. To add a cover later, set \"cover\" (e.g. \"assets/books/<ASIN>.jpg\") and \"cover_alt\"; nothing else needs to change.",
   "heading": "From the editor",
   "books": [
     {
@@ -45,15 +45,25 @@
         "dotgrid"
       ],
       "kicker": "Gift pick",
-      "pitch": "Our own 2027 planner",
+      "pitch": "The hand-drawn dot grid look, without the drawing.",
       "title": "2027 Planner: January - December",
       "format": "Paperback",
       "cover_text": "2027 Planner",
       "details": [
-        "ISBN 9798165030901"
+        "Dated Jan 1 to Dec 31, 2027",
+        "Sunday start",
+        "8.5 x 11 in paperback, 172 pages",
+        "Soft blush cover"
       ],
       "url": "https://www.amazon.com/dp/B0HPBDNS7F",
-      "source": "Title, format and ISBN as given by the owner, 2026-10-26. The listing could not be fetched (Amazon blocks automated agents; ISBN not in Google Books or Open Library), so no cover, description or page count is shown."
+      "source": "Owner-approved listing copy, content/gift-pick-B0HPBDNS7F-copy.md (received 2026-10-26). Cover image to come: add \"cover\" and \"cover_alt\" when it arrives.",
+      "blurb": "Love the calm, tidy look of a dot grid journal but not the hours with a ruler? Every page in this 2027 planner is already laid out and dated, so you just open it and write.",
+      "inside": [
+        "How-to-use page with the symbol key and a sample day",
+        "A two-page weekly spread for every week",
+        "Monthly calendar, goals page and habit tracker every month",
+        "Dot grid notes pages at the back"
+      ]
     }
   ]
 }
