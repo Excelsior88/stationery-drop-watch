@@ -104,7 +104,6 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .book-details li{font-size:.76rem;background:var(--paper-2);border-radius:999px;padding:2px 9px;color:var(--ink-2)}
 .soon ul{margin:0;padding-left:1.1em} .soon li{margin:.2em 0}
 
-.todo-chip{display:inline-block;font:600 .7rem var(--sans);letter-spacing:.04em;color:#8a5a00;background:#fff1c9;border:1px dashed #d8a93a;border-radius:6px;padding:1px 6px;vertical-align:middle}
 
 .prose{max-width:760px;padding:40px 0 50px}
 .prose h2{margin-top:1.6em}

@@ -14,6 +14,9 @@ E = html.escape
 # https://www.amazon.com/dp/<ASIN>?tag=<AMAZON_TAG> with rel="sponsored noopener" (see tag_amazon_links).
 AMAZON_TAG = "excelsior88-20"
 AMAZON_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
+# One affiliate statement, used in the footer and on About. Keep it true to how tag_amazon_links works.
+AFFILIATE_NOTE = ("Amazon links on this site are affiliate links. " + AMAZON_DISCLOSURE +
+                  " Links to the shops we track, and to my own books on Amazon, are plain links that earn nothing.")
 _ASIN = re.compile(r"/(?:dp|gp/product|gp/aw/d)/([A-Z0-9]{10})")
 _AMAZON_A = re.compile(r'<a\b[^>]*\bhref="https?://(?:www\.)?amazon\.com/[^"]*"[^>]*>')
 
@@ -55,6 +58,8 @@ HOBO_SHOPS = {s["id"] for s in stores["stores"] if not s.get("brand")}
 # The site has two separate sections: Hobonichi (home tracker, calendar, Hobonichi product pages)
 # and dot grid journaling (one page, every shop whose store entry has a "brand"). Never mixed.
 DOTGRID_SHOPS = [s for s in stores["stores"] if s.get("brand")]
+
+N_STORES = len({p["store_id"] for p in stock["products"]})  # stores the checker actually checks
 
 def is_dotgrid(p):
     return p.get("canonical") in OTHER_BRAND or p["store_id"] not in HOBO_SHOPS
@@ -146,13 +151,12 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 </div></header>
 <main class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
-  <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh ten tabs.</p>
+  <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
   <p class="foot-links">Hobonichi: <a href="index.html">Tracker</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
   <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journal tracker</a> <span class="muted">({E(dotgrid_names())})</span></p>
-  <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it. Some links may become affiliate links; we'll label them when they do.</p>
-  <p class="disclosure">{E(AMAZON_DISCLOSURE)}</p>
-  <!-- TODO(affiliate): replace these with tracked links once each program approves the site -->
-  <p class="partners">Notebooks we like: <a href="https://www.leuchtturm1917.com/" data-todo="affiliate-leuchtturm1917" rel="nofollow">Leuchtturm1917</a> · <a href="https://baronfig.com/" data-todo="affiliate-baronfig" rel="nofollow">Baron Fig</a> · <a href="https://stationerypal.com/" data-todo="affiliate-stationerypal" rel="nofollow">Stationery Pal</a> <span class="todo-chip" title="Affiliate links not set up yet">TODO: affiliate</span></p>
+  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
+  <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
+  <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
 </div></footer>
 <script src="assets/app.js" defer></script>
 </body></html>"""
@@ -468,7 +472,7 @@ def build_about():
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email <a href="mailto:stationerydropwatch@gmail.com?subject=Featured%20restock%20slot">stationerydropwatch@gmail.com</a> for rates and dates.</p>
 <h2>Affiliate links</h2>
-<p>Some links to notebook brands may become affiliate links. If you buy through one, the site may earn a small commission at no extra cost to you. Store listings in the tracker are plain links.</p>
+<p>{E(AFFILIATE_NOTE)} Buying through an Amazon link costs you nothing extra, and it never changes what the tracker shows.</p>
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
 </article>"""
@@ -679,7 +683,7 @@ FAQ = [
     ("What does \"Not yet on sale\" mean?",
      "The shop has a preview page up for the product but isn't taking orders yet. That's different from sold out."),
     ("Do you sell planners?",
-     "No. We link you to the shops. Some Amazon links on the site are affiliate links, and we say so on every page."),
+     "No. We link you to the shops. Amazon links on the site are affiliate links, and we say so on every page; links to the shops themselves are plain links."),
     ("How do restock alerts work?",
      "Sign up with your email and you'll get one short email when a sold-out item comes back somewhere we track. It's free and you can unsubscribe anytime."),
 ]
