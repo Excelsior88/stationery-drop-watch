@@ -96,12 +96,16 @@ NAV = [("index.html", "Hobonichi tracker"), ("hobonichi-2027.html", "Hobonichi 2
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
 CNAME = "stationerydropwatch.com"
-OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py
+OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (Hobonichi side)
+OG_ALT = "Stationery Drop Watch: Hobonichi Techo 2027 restock tracker, books, Weeks and covers checked hourly across 13 shops"
+OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
+OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked hourly"
+CONTENT_LASTMOD = "2026-10-26"  # last copy/structure change on the home and restock pages (sitemap lastmod floor)
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
 
-def page(fname, title, desc, body, ld=(), og_type="website"):
-    return tag_amazon_links(_page(fname, title, desc, body, ld, og_type))
+def page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT):
+    return tag_amazon_links(_page(fname, title, desc, body, ld, og_type, og_image, og_alt))
 
 def url_for(fname):
     """Absolute public URL: index.html -> BASE, 'slug/' -> BASE + 'slug/'."""
@@ -110,7 +114,7 @@ def url_for(fname):
 def jsonld(obj):
     return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False).replace("</", "<\\/") + "</script>"
 
-def _page(fname, title, desc, body, ld=(), og_type="website"):
+def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT):
     url = url_for(fname)
     hobo_page = fname.startswith("hobonichi-techo-") or fname.startswith("hobonichi-weeks-")  # Hobonichi product pages sit under the tracker
     nav = "".join(f'<a href="{h}"{" aria-current=page" if h == fname or (hobo_page and h == "index.html") else ""}>{E(t)}</a>' for h, t in NAV)
@@ -123,10 +127,10 @@ def _page(fname, title, desc, body, ld=(), og_type="website"):
 <meta property="og:type" content="{og_type}"><meta property="og:site_name" content="Stationery Drop Watch">
 <meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}">
 <meta property="og:url" content="{E(url)}"><meta property="og:locale" content="en_US">
-<meta property="og:image" content="{OG_IMAGE}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Stationery Drop Watch logo: Hobonichi Techo 2027 restock tracker, books, Weeks and covers checked hourly across 13 shops">
+<meta property="og:image" content="{og_image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{E(og_alt)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="{X_HANDLE}">
-<meta name="twitter:title" content="{E(title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:image" content="{OG_IMAGE}">
+<meta name="twitter:title" content="{E(title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:image" content="{og_image}"><meta name="twitter:image:alt" content="{E(og_alt)}">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/favicon-32.png" type="image/png" sizes="32x32">
@@ -405,10 +409,11 @@ def build_index():
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
                "description": f"Hourly restock checks for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in a separate section, dot grid journals from {dotgrid_names()}.",
                "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
+                             "description": "Independent restock tracker for Hobonichi Techo 2027 planners and covers, and dot grid journals. Statuses come straight from each shop's public product data.",
                              "logo": BASE + "assets/brand/icon-512.png", "email": "stationerydropwatch@gmail.com",
                              "sameAs": ["https://x.com/stationerydrop"]}}
-    return page("index.html", "Hobonichi Techo 2027 restock tracker: books, Weeks & covers · Stationery Drop Watch",
-                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked about every hour. Real status, never guessed.",
+    return page("index.html", "Hobonichi Techo 2027 restock tracker + dot grid journals · Stationery Drop Watch",
+                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked hourly. Plus a separate dot grid journal restock tracker.",
                 body, ld=(site_ld, faq_ld))
 
 def build_hobonichi():
@@ -518,9 +523,10 @@ GROUPS = [
          open_hint="Open a row to go straight to that exact size and color on the shop's site",
          guide="Dot grid journals come in several sizes, papers and colors, and each one sells out on its own. "
                "We check the exact variant named in each row, so \"In stock\" means that size and color, not just some version of the journal.",
-         title="Dot grid journal restock tracker: Archer and Olive, Leuchtturm1917, Tsuki & more",
-         h1="Dot grid journal stock",
-         desc="Is your dot grid journal back in stock? Live status for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy Tsuki notebooks at {shops} shops, checked about every hour. Real status only.",
+         title="Dot grid journal restock alerts: Archer and Olive, Leuchtturm1917, Scribbles That Matter, Tsuki",
+         h1="Dot grid journal restock tracker",
+         desc="Archer and Olive restock? Leuchtturm1917 dotted A5 in stock? Live size-by-size status at Archer and Olive, Leuchtturm1917 US, Scribbles That Matter and Notebook Therapy (Tsuki), checked hourly.",
+         og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
                "We track a focused set of flagship dot grid notebooks straight from each maker's own store, size by size and color by color. "
                "Archer and Olive is featured first. This covers dot grid journals only; we don't track pens or other paper here, and Hobonichi has its own section."),
@@ -577,15 +583,16 @@ def build_group(g, oe):
         tracker = (f' · <a href="?product={E(cid)}#tracker">Filter below</a>' if g.get("dotgrid") else
                    f' · <a href="index.html?product={E(cid)}#tracker">Filter in the tracker</a>') if cid else ""
         sid = sl[0]["store_id"]
+        hx = "h3" if g.get("dotgrid") else "h2"  # dot grid page: shop is the h2, its products are h3
         if g.get("dotgrid") and sid not in seen_shop:
             seen_shop.add(sid)
             st = next(x for x in stores["stores"] if x["id"] == sid)
             sls = [l for l in ls if l["store_id"] == sid]
             feat = ' <span class="badge featured">Featured</span>' if not parts else ""
-            parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a>{feat}
+            parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a> restocks</span>{feat}
   <span class="muted small">{sum(l['status'] in BUYABLE for l in sls)} of {len(sls)} tracked listings in stock</span></h2>""")
         parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
-  <div class="section-head"><h2>{E(name)}</h2><p class="muted small">{n_buy} of {len(sl)} {g.get('unit', 'listings')} in stock or on preorder</p></div>
+  <div class="section-head"><{hx}>{E(name)}</{hx}><p class="muted small">{n_buy} of {len(sl)} {g.get('unit', 'listings')} in stock or on preorder</p></div>
   {amz_btn}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th><th class="hide-sm">Checked</th></tr></thead>
@@ -648,15 +655,16 @@ def build_group(g, oe):
     crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
         {"@type": "ListItem", "position": 2, "name": g["h1"], "item": url_for(fname)}]}
-    items = {"@context": "https://schema.org", "@type": "ItemList", "name": g["h1"] + ": shops we track",
+    items = {"@context": "https://schema.org", "@type": "ItemList", "name": g["h1"] + ": listings we track",
              "numberOfItems": len(ls), "itemListElement": [
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: (l.get("canonical") or "~", l["store"])))]}
-    return fname, page(fname, g["title"] + " · Stationery Drop Watch", g["desc"].format(shops=shops), body, ld=(crumbs, items))
+    return fname, page(fname, g["title"] + " · Stationery Drop Watch", g["desc"].format(shops=shops), body, ld=(crumbs, items),
+                       og_image=g.get("og_image", OG_IMAGE), og_alt=g.get("og_alt", OG_ALT))
 
 def group_lastmod(g):
     ls = group_listings(g)
-    return latest(*[l.get("status_since") for l in ls], *[l.get("first_seen") for l in ls])
+    return latest(*[l.get("status_since") for l in ls], *[l.get("first_seen") for l in ls], CONTENT_LASTMOD)
 
 FAQ = [
     ("How often do you check the shops?",
@@ -696,7 +704,7 @@ def product_links_block():
 STATIC_LASTMOD = {"hobonichi-2027.html": "2026-10-26", "about.html": "2026-10-26"}
 
 def build_sitemap():
-    home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes])
+    home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
     urls = [(url_for("index.html"), home_mod)]
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
