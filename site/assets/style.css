@@ -196,3 +196,9 @@ a.az:hover{opacity:1}
 .book-inside{margin:0 0 12px;padding-left:1.1em;font-size:.84rem;color:var(--ink-2)}
 .book-inside li{margin:.15em 0}
 .section-head h3{font-size:1.3rem;margin:0 0 .6em}
+.wtb-items{list-style:none;margin:0;padding:0}
+.wtb-items li{margin:.2rem 0}
+.wtb-items .badge{margin-left:.35rem}
+.compare th[scope=row]{text-align:left;white-space:nowrap;font-weight:600}
+.compare td,.compare th{vertical-align:top}
+.vs-page .signup{margin:1.25rem 0}

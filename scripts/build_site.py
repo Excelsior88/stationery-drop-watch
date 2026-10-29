@@ -129,7 +129,7 @@ def jsonld(obj):
 
 def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
     url = url_for(fname)
-    hobo_page = fname.startswith("hobonichi-techo-") or fname.startswith("hobonichi-weeks-")  # Hobonichi product pages sit under the tracker
+    hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-", "where-to-buy-hobonichi-"))  # Hobonichi product pages sit under the tracker
     nav = "".join(f'<a href="{h}"{" aria-current=page" if h == fname or (hobo_page and h == "index.html") else ""}>{E(t)}</a>' for h, t in NAV)
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
@@ -162,6 +162,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <footer class="foot"><div class="wrap">
   <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
   <p class="foot-links">Hobonichi: <a href="index.html">All listings</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
+  <p class="foot-links">Guides: <a href="where-to-buy-hobonichi-2027/">Where to buy the Hobonichi Techo 2027</a> · <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a></p>
   <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
   <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
@@ -477,6 +478,7 @@ def build_hobonichi():
   <li>Check several shops. When one store sells out, another often still has stock. That's the whole point of the <a href="index.html#tracker">tracker</a>.</li>
   <li>Live stock by product: """ + " · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS) + """.</li>
   <li>Buying direct from Hobonichi is the only way to get store-exclusive extras, but it ships from Japan and tariffs may apply in the US <a href="#s-papermouse">[Paper Mouse]</a>.</li>
+  <li>Which shops have it right now: <a href="where-to-buy-hobonichi-2027/">where to buy the Hobonichi Techo 2027</a>. Choosing a size: <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a>.</li>
   <li><a href="#alerts">Sign up for alerts</a> and we'll email you when something flips back to in stock.</li>
 </ul>
 """ + signup_block() + """
@@ -685,6 +687,7 @@ def build_group(g, oe):
     {sponsor_block()}
     {editor_block("dotgrid" if g.get("dotgrid") else "home")}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
+    {"" if g.get("dotgrid") else guides_block()}
   </aside>
 </div>
 </div>"""
@@ -735,7 +738,9 @@ def product_links_block():
             continue
         ls = group_listings(g)
         items.append(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a> <span class="muted small">· {E(count_line(ls))}</span></li>')
-    return f'<section class="card" id="by-product"><h2>Restock pages by product</h2><ul class="link-list">{"".join(items)}</ul></section>'
+    guides = "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES)
+    return (f'<section class="card" id="by-product"><h2>Restock pages by product</h2><ul class="link-list">{"".join(items)}</ul>'
+            f'<p class="eyebrow">Guides</p><ul class="link-list">{guides}</ul></section>')
 
 STATIC_LASTMOD = {"hobonichi-2027.html": "2026-10-27", "about.html": "2026-10-27"}
 
@@ -744,6 +749,8 @@ def build_sitemap():
     urls = [(url_for("index.html"), home_mod)]
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
+    hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD)]
     def w3c(iso):
         return iso if len(iso) == 10 else dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
@@ -788,6 +795,274 @@ def build_404():
     return page("404.html", "Page not found · Stationery Drop Watch",
                 "This page doesn't exist. Find the Hobonichi Techo 2027 and dot grid journal restock trackers here.", body, noindex=True)
 
+# --- SEO guides (Hobonichi section) -------------------------------------------------------------
+# Two editorial pages. Every stock status on them comes from data/stock.json (rebuilt hourly by the
+# workflow); product facts come only from the sources listed on each page. No prices: the checker
+# doesn't record them.
+WTB_SLUG = "where-to-buy-hobonichi-2027"
+VS_SLUG = "hobonichi-techo-vs-cousin-vs-weeks"
+GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks")]
+GUIDES_LASTMOD = "2026-10-29"  # last copy change on the guide pages (sitemap lastmod floor)
+H_SRC = {  # official Hobonichi pages used for product facts
+    "orig": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6 (2027), specifications"),
+    "cousin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_jan_en/", "English Cousin Book A5 (2027), specifications"),
+    "weeks": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_colorsmblue/", "Weeks, Colors: Midnight Blue (2027), specifications"),
+    "mega": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_m_tiecandy/", "Weeks Mega, Bow & Tie: Candy Dream (2027), specifications"),
+    "g_orig": ("https://www.1101.com/store/techo/en/2027/all_about/original/", "Techo Type Guide: Original"),
+    "g_cousin": ("https://www.1101.com/store/techo/en/2027/all_about/cousin/", "Techo Type Guide: Cousin"),
+    "g_weeks": ("https://www.1101.com/store/techo/en/2027/all_about/weeks/", "Techo Type Guide: Weeks"),
+    "shop": ("https://www.1101.com/store/techo/en/2027/pc/shopping_guide/", "Hobonichi Techo 2027 shopping guide"),
+}
+
+def guides_block():
+    return ('<section class="card"><p class="eyebrow">Guides</p><ul class="link-list">'
+            + "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES) + "</ul></section>")
+
+def _group(slug):
+    return next(g for g in GROUPS if g["slug"] == slug)
+
+def _buy_shops(ls):
+    return sorted({l["store"] for l in ls if l["status"] in BUYABLE})
+
+def _names(xs):
+    xs = list(xs)
+    return ", ".join(xs[:-1]) + " and " + xs[-1] if len(xs) > 1 else "".join(xs)
+
+def _exact_amazon(ls):
+    """Exact, verified Amazon listings for these tracked listings (never the brand-store fallback)."""
+    canon = {c["id"]: c["label"] for c in stores["canonical"]}
+    out = {}
+    for l in ls:
+        m = amz["products"].get(l.get("canonical") or "")
+        name = canon.get(l.get("canonical") or "")
+        if not m:
+            m = amz.get("listings", {}).get(l["url"])
+            name = m and m["amazon_title"]
+        if m and m["asin"] not in out:
+            out[m["asin"]] = name
+    return out
+
+def _shop_table(ls):
+    rank = {s["id"]: i for i, s in enumerate(stores["stores"])}
+    canon = {c["id"]: c["label"] for c in stores["canonical"]}
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    by = {}
+    for l in ls:
+        by.setdefault(l["store_id"], []).append(l)
+    rows = []
+    for sid in sorted(by, key=lambda s: (min(order[l["status"]] for l in by[s]), rank.get(s, 99))):
+        items = "".join(
+            f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(canon.get(l.get("canonical") or "") or l.get("title") or l["label"])}</a> '
+            f'<span class="badge {E(l["status"])}">{E(STATUS[l["status"]])}</span></li>'
+            for l in sorted(by[sid], key=lambda l: (order[l["status"]], l["label"])))
+        rows.append(f'<tr><td>{E(by[sid][0]["store"])}</td><td><ul class="wtb-items">{items}</ul></td></tr>')
+    return f'''<div class="table-wrap"><table class="stock"><thead><tr><th>Shop</th><th>What we track there · status at last check</th></tr></thead>
+<tbody>{"".join(rows)}</tbody></table></div>'''
+
+def build_where_to_buy():
+    fname = WTB_SLUG + "/"
+    hobo = hobo_products()
+    groups = [g for g in GROUPS if not g.get("dotgrid")]
+    last = f'<time datetime="{E(stock["run_finished"])}">{E(fmt_et(stock["run_finished"]))}</time>'
+    quick, secs = [], []
+    for g in groups:
+        ls = group_listings(g)
+        if not ls:
+            continue
+        shops = len({l["store_id"] for l in ls})
+        buy = _buy_shops(ls)
+        quick.append(f'<li><a href="#{E(g["slug"])}">{E(g["short"])}</a>: in stock or on preorder at '
+                     f'<strong>{len(buy)} of {shops}</strong> {"shop" if shops == 1 else "shops"} we track'
+                     f'{" (" + E(_names(buy)) + ")" if 0 < len(buy) <= 4 else ""}.</li>')
+        az = _exact_amazon(ls)
+        az_html = ("<p class=\"small\">Also on Amazon (exact listings, affiliate links): " + " · ".join(
+            f'<a class="az" href="https://www.amazon.com/dp/{E(a)}" target="_blank">{E(n)}</a>' for a, n in az.items()) + "</p>") if az else ""
+        secs.append(f'''<section class="card" id="{E(g["slug"])}">
+  <div class="section-head"><h2>{E(g["product"])}</h2><p class="muted small">{E(count_line(ls).capitalize())}</p></div>
+  {_shop_table(ls)}
+  {az_html}
+  <p class="small"><a href="{g["slug"]}/">Full {E(g["short"])} restock page</a> <span class="muted">· every listing, when it last changed, and recent restocks</span></p>
+</section>''')
+    not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a> <span class="muted">· {E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
+    # Live, data-driven tip: products sold out at one shop we track while another shop has them.
+    split = {}
+    for l in hobo:
+        if l.get("canonical"):
+            split.setdefault(l["canonical"], set()).add(l["status"])
+    n_split = sum(1 for s in split.values() if "sold_out" in s and s & set(BUYABLE))
+    tip_split = (f" Right now, {n_split} of the products we track are sold out at one shop but still available at another." if n_split else "")
+    n_buy_shops = len(_buy_shops(hobo))
+    n_shops = len({l["store_id"] for l in hobo})
+    faq = [
+        ("Where can I buy the Hobonichi Techo 2027?",
+         f"At the official Hobonichi Online Store and at independent stationery shops. At our last check ({fmt_et(stock['run_finished'])}), "
+         f"{n_buy_shops} of the {n_shops} shops we track had at least one 2027 Hobonichi item in stock or on preorder. This page lists them by book and edition."),
+        ("Is the Hobonichi Techo 2027 sold out?",
+         "It depends on the book, the cover design and the shop. A listing that's sold out at one shop is often still available at another, so check the tables on this page or the restock pages for each book."),
+        ("Does Hobonichi send restock emails?",
+         "Yes, on its own store: you can sign up for a restock notification email when a product is sold out. Hobonichi says the service covers the Hobonichi Techo and the Drawer Pouch only, not accessories, and that the email doesn't guarantee you'll be able to buy one."),
+        ("Will sold-out 2027 books come back?",
+         "Often, but not always. The Paper Mouse says almost all items have been restocked at least once after launch in past years, and that it doesn't usually restock dated planners after December."),
+        ("How do I get told when something restocks?",
+         "Sign up for Stationery Drop Watch alerts. We check the shops about once an hour and send one short email when a sold-out item comes back somewhere we track."),
+    ]
+    faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
+    body = f"""
+<div class="product-page">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Where to buy</span></nav>
+<section class="hero">
+  <p class="eyebrow">Guide · Hobonichi Techo 2027 · {n_shops} shops checked hourly</p>
+  <h1>Where to buy the Hobonichi Techo 2027</h1>
+  <p class="lede">Which shops have the 2027 Original A6, Cousin A5, Weeks, Weeks Mega and A6 covers right now, edition by edition. Every status below is what the shop's own product data said at our last check, {last}.</p>
+</section>
+<div class="layout">
+  <div class="main-col">
+    <div class="m-lead">
+    <section class="card" id="quick">
+      <h2>Quick answer</h2>
+      <ul>{"".join(quick)}</ul>
+      <p class="muted small">"Not yet on sale" means a preview page is up but the shop isn't taking orders. "Couldn't check" means our check failed, so we don't know. Always confirm on the shop's page before you buy. We don't show prices; check the shop.</p>
+    </section>
+    </div>
+    {signup_block()}
+    {"".join(secs)}
+    <section class="card"><h2>Shops we list but can't check</h2>
+      <p class="muted small">Their sites block automated checks, so we link to them without a status.</p>
+      <ul>{not_checked}</ul></section>
+    <section class="card" id="tips"><h2>Tips for catching a restock</h2>
+      <ul>
+        <li><strong>Check more than one shop.</strong> When one store sells out, another often still has it.{tip_split} The <a href="index.html#tracker">full tracker</a> puts every shop side by side.</li>
+        <li><strong>Watch for preorders.</strong> Restocks don't always show up as "in stock". At the October 1 wave, some shops took preorders for earlier sell-outs. We count preorders as available. <a href="hobonichi-2027.html">See the 2027 calendar</a>.</li>
+        <li><strong>Don't mistake "not yet on sale" for sold out.</strong> Shops put up preview pages before items go on sale.</li>
+        <li><strong>Sign up at the official store too.</strong> Hobonichi's restock notification emails cover the Techo books and the Drawer Pouch, not accessories, and don't guarantee you'll get one <a href="#src-shop">[Hobonichi]</a>. Many independent shops offer their own restock sign-ups on product pages <a href="#src-pm">[Paper Mouse]</a>.</li>
+        <li><strong>Don't wait past December for a dated book.</strong> The Paper Mouse says it doesn't usually restock dated planners after December <a href="#src-pm">[Paper Mouse]</a>. Spring (April-start) books launch in February; see the <a href="hobonichi-2027.html">calendar</a>.</li>
+        <li><strong>Get our alerts.</strong> We check about once an hour and email you when a sold-out item comes back. <a href="#alerts">Sign up above</a>.</li>
+      </ul>
+    </section>
+    <section class="card"><h2>Which one should you get?</h2>
+      <p>Not sure between the A6 Original, the A5 Cousin and the slim Weeks? Read <a href="{VS_SLUG}/">Hobonichi Techo vs Cousin vs Weeks</a>: sizes, layouts and who each one suits, from Hobonichi's own specs.</p>
+    </section>
+    <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
+    <section class="card"><h2>Sources</h2><ol class="sources">
+      <li id="src-shop"><a href="{H_SRC['shop'][0]}" rel="noopener" target="_blank">{E(H_SRC['shop'][1])}</a>, Hobonichi (official). Restock notification emails.</li>
+      <li id="src-pm"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Restock history, product-page restock sign-ups, no restocks of dated planners after December.</li>
+      <li>Stock statuses: each shop's public product data, read by our checker; see <a href="about.html">how it works</a>.</li>
+    </ol></section>
+  </div>
+  <aside class="side-col">
+    {sponsor_block()}
+    {guides_block()}
+    <section class="card"><p class="eyebrow">Restock pages</p><ul class="link-list">{"".join(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a></li>' for g in groups)}<li><a href="index.html#tracker">Every listing we track</a></li><li><a href="hobonichi-2027.html">2027 calendar</a></li></ul></section>
+  </aside>
+</div>
+</div>"""
+    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
+        {"@type": "ListItem", "position": 2, "name": "Where to buy the Hobonichi Techo 2027", "item": url_for(fname)}]}
+    art = {"@context": "https://schema.org", "@type": "Article", "headline": "Where to buy the Hobonichi Techo 2027",
+           "dateModified": stock["run_finished"], "url": url_for(fname), "image": OG_IMAGE,
+           "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
+           "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
+    return fname, page(fname, "Where to buy the Hobonichi Techo 2027: live stock by shop · Stationery Drop Watch",
+                       f"Where to buy the Hobonichi Techo 2027 Original A6, Cousin A5, Weeks and Weeks Mega: which of {n_shops} shops have each one in stock, checked hourly, plus restock tips.",
+                       body, ld=(crumbs, art, faq_ld))
+
+def build_vs():
+    fname = VS_SLUG + "/"
+    def s(k, label=None):
+        return f'<a href="#src-{k}">[{E(label or "Hobonichi")}]</a>'
+    def avail(slug):
+        ls = group_listings(_group(slug))
+        b = _buy_shops(ls)
+        return f'{len(b)} of {len({l["store_id"] for l in ls})} shops we track · <a href="{slug}/">live stock</a>'
+    rows = [
+        ("Size", "A6: 148 × 105 × 15 mm (5.8 × 4.1 × 0.6 in)", "A5: 210 × 148 × 18 mm (8.3 × 5.8 × 0.7 in)", "Tall and slim: 188 × 94 × 10 mm (7.4 × 3.7 × 0.4 in)"),
+        ("Weight", "About 195 g", "About 445 g", "About 134 g (Colors cover; varies by cover)"),
+        ("Main layout", "One page per day", "One page per day, plus vertical weekly pages", "Weekly: the week on the left page, grid memo page on the right"),
+        ("Daily pages", "377 (Jan 1 – Dec 31, 2027)", "377 (Jan 1 – Dec 31, 2027)", "None"),
+        ("Weekly pages", "Not included", "106 (vertical timeline)", "114 (Nov 30, 2026 – Jan 2, 2028)"),
+        ("Monthly calendar", "Dec 2026 – Mar 2028 (32 pages)", "Dec 2026 – Mar 2028 (32 pages)", "Dec 2026 – Mar 2028 (32 pages)"),
+        ("Memo pages", "17", "6", "75 (Weeks Mega: 219)"),
+        ("Total pages", "464", "544", "240 (Weeks Mega: 384)"),
+        ("Grid", "3.7 mm", "3.7 mm", "3.55 mm"),
+        ("Paper and binding", "Tomoe River paper, thread-stitched, opens flat", "Tomoe River paper, thread-stitched, opens flat", "Tomoe River paper, thread-stitched"),
+        ("Cover", "Book is meant to go in a separate A6 cover", "Book is meant to go in a separate A5 (Cousin) cover", "Comes as a light hardcover book; Weeks covers are optional"),
+        ("Editions", "English (Monday start); Japanese (Monday or Sunday start); Avec two-book set", "English and Japanese", "English and Japanese; Weeks Mega with extra memo pages"),
+    ]
+    rows_html = "".join(f"<tr><th scope=\"row\">{E(r[0])}</th><td>{E(r[1])}</td><td>{E(r[2])}</td><td>{E(r[3])}</td></tr>" for r in rows)
+    rows_html += f'<tr><th scope="row">In stock now</th><td>{avail("hobonichi-techo-2027-original-a6")}</td><td>{avail("hobonichi-techo-2027-cousin-a5")}</td><td>{avail("hobonichi-weeks-2027")}<br><span class="muted small">Weeks Mega: {avail("hobonichi-weeks-mega-2027")}</span></td></tr>'
+    faq = [
+        ("What's the difference between the Hobonichi Techo Original and the Cousin?",
+         "Size and weekly pages. Both have one page per day for 2027. The Original is A6 (148 × 105 mm, about 195 g) and has no weekly pages. The Cousin is A5 (210 × 148 mm, about 445 g) and adds 106 pages of vertical weekly spreads, according to Hobonichi's specifications."),
+        ("Is the Hobonichi Weeks a daily planner?",
+         "No. Weeks has a weekly layout: each spread shows the week on the left page and a grid memo page on the right. It has no daily pages, plus 75 memo pages at the back in the English edition (219 in Weeks Mega)."),
+        ("Which Hobonichi is the most portable?",
+         "Weeks. Hobonichi describes it as a slim, long wallet-sized planner: 188 × 94 × 10 mm and about 134 g for the Colors version."),
+        ("Do I need a cover?",
+         "For the Original and the Cousin, Hobonichi says the book is designed to be used with a cover, sold separately in matching sizes. Weeks comes as a light hardcover book, and Weeks covers are optional."),
+        ("What paper do they use?",
+         "All three use Tomoe River paper, which Hobonichi describes as thin, light and durable, holding ink well. Hobonichi notes some inks may bleed through or dry slowly, and suggests testing pens first."),
+    ]
+    faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
+    src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, Hobonichi (official).</li>' for k, (u, t) in H_SRC.items() if k != "shop")
+    body = f"""
+<article class="prose vs-page">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Techo vs Cousin vs Weeks</span></nav>
+<p class="eyebrow">Guide · Hobonichi Techo 2027 · updated Oct 29, 2026</p>
+<h1>Hobonichi Techo vs Cousin vs Weeks: which 2027 planner fits you?</h1>
+<p class="lede">The three most popular Hobonichi books differ in size, layout and how much you carry. Here's an honest side-by-side from Hobonichi's own 2027 specifications, with live stock for each.</p>
+
+<h2>The short version</h2>
+<ul>
+  <li><strong>Original (A6)</strong>: one page per day in a paperback-size book. The classic. {s("g_orig")}</li>
+  <li><strong>Cousin (A5)</strong>: one page per day with twice the page size, plus vertical weekly pages. Hobonichi says many people use it as a desk planner. {s("g_cousin")}</li>
+  <li><strong>Weeks</strong>: a slim, wallet-size weekly planner with a memo page beside every week and extra memo pages at the back. Lightest of the three. {s("g_weeks")}</li>
+</ul>
+
+<h2>Side by side</h2>
+<p class="muted small">2027 English, January-start books. Specs from Hobonichi's product pages {s("orig", "Original")} {s("cousin", "Cousin")} {s("weeks", "Weeks")} {s("mega", "Weeks Mega")}; Hobonichi says specifications may vary slightly.</p>
+<div class="table-wrap"><table class="stock compare">
+<thead><tr><th></th><th>Original (A6)</th><th>Cousin (A5)</th><th>Weeks</th></tr></thead>
+<tbody>{rows_html}</tbody></table></div>
+<p class="muted small">Stock counts are what each shop's product data said at our last check, <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time>.</p>
+
+<h2>Who each one suits</h2>
+<h3>Original (A6): a page a day you can carry</h3>
+<p>Pick the Original if you want daily room to write, plan, sketch or paste in tickets, but still want something you can carry every day. Each day gets a full page with a to-do list and a 24-hour timetable {s("g_orig")}. The trade-off: there are no weekly pages, so week-at-a-glance planning happens on the monthly calendars. You'll also want a cover, since the book is designed to go in one.</p>
+<p><a href="hobonichi-techo-2027-original-a6/">Live Original A6 stock</a> · <a href="hobonichi-techo-2027-covers/">A6 covers</a></p>
+<h3>Cousin (A5): the most room</h3>
+<p>Pick the Cousin if a daily page in A6 feels cramped. Hobonichi made it for people who wanted more space to write and paste, or who write in larger letters, and suggests it for work notes, a parenting diary, a shared journal, or a desk planner {s("g_cousin")} {s("cousin", "Cousin")}. It's the only one of the three with both daily pages and vertical weekly pages. The trade-off is weight: at about 445 g it's more than twice the Original, so it's less of an everyday carry.</p>
+<p><a href="hobonichi-techo-2027-cousin-a5/">Live Cousin A5 stock</a></p>
+<h3>Weeks: light and weekly</h3>
+<p>Pick Weeks if you plan by the week and mostly want your schedule and short notes with you. It's slim and light, and each weekly spread pairs the week with a grid memo page {s("g_weeks")}. Weeks books come as a light hardcover in many designs, so you don't need a separate cover {s("weeks", "Weeks")}. The trade-off: there's no daily page, so it isn't for long daily entries. If you want more blank pages, Weeks Mega has about three times the memo pages (219 in English) at the same height and width {s("mega", "Weeks Mega")}.</p>
+<p><a href="hobonichi-weeks-2027/">Live Weeks stock</a> · <a href="hobonichi-weeks-mega-2027/">Weeks Mega</a></p>
+
+<h2>Where to buy</h2>
+<p>Stock changes by the hour, and one shop is often sold out while another has it. See <a href="{WTB_SLUG}/">where to buy the Hobonichi Techo 2027</a> for every shop we track, edition by edition, or sign up below and we'll email you when a sold-out one comes back.</p>
+{signup_block()}
+
+<section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
+
+<h2>Sources</h2>
+<ol class="sources">{src_items}</ol>
+<p class="muted small">Hobonichi makes other types too, such as the A5 and A6 HON. This guide covers only the three above.</p>
+</article>"""
+    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
+        {"@type": "ListItem", "position": 2, "name": "Hobonichi Techo vs Cousin vs Weeks", "item": url_for(fname)}]}
+    art = {"@context": "https://schema.org", "@type": "Article", "headline": "Hobonichi Techo vs Cousin vs Weeks: which 2027 planner fits you?",
+           "dateModified": GUIDES_LASTMOD, "url": url_for(fname), "image": OG_IMAGE,
+           "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
+           "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
+    return fname, page(fname, "Hobonichi Techo vs Cousin vs Weeks (2027): sizes, layouts, who each suits · Stationery Drop Watch",
+                       "Hobonichi Techo Original A6 vs Cousin A5 vs Weeks for 2027: size, weight, daily vs weekly layout, pages and paper from Hobonichi's specs, plus live stock.",
+                       body, ld=(crumbs, art, faq_ld))
+
+
 def main():
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
@@ -799,6 +1074,10 @@ def main():
     oe = amazon_main(stock["products"])
     for g in GROUPS:
         fname, doc = build_group(g, oe)
+        (SITE / fname).mkdir(parents=True, exist_ok=True)
+        (SITE / fname / "index.html").write_text(doc)
+    for build in (build_where_to_buy, build_vs):
+        fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for old, new in REDIRECTS.items():
