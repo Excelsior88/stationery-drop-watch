@@ -16,5 +16,14 @@
   "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-mega-weeks-bow-tie-candy-dream",
   "from": "coming_soon",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-10-29T04:27:02+00:00",
+  "store_id": "kinosg",
+  "store": "Kinokuniya Singapore",
+  "label": "Original A6 book (English)",
+  "url": "https://kinokuniya.com.sg/products/4580812710381",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
