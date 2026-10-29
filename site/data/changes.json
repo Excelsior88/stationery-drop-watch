@@ -25,5 +25,14 @@
   "url": "https://kinokuniya.com.sg/products/4580812710381",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-10-29T11:19:03+00:00",
+  "store_id": "scribbles",
+  "store": "Scribbles That Matter",
+  "label": "Dotted Journal Iconic · A5 160gsm · Bottle Green",
+  "url": "https://scribblesthatmatter.com/products/dotted-journal-iconic?variant=42136293048496",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
