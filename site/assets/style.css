@@ -202,3 +202,6 @@ a.az:hover{opacity:1}
 .compare th[scope=row]{text-align:left;white-space:nowrap;font-weight:600}
 .compare td,.compare th{vertical-align:top}
 .vs-page .signup{margin:1.25rem 0}
+.guide-list{list-style:none;padding:0}
+.guide-list li{margin:0 0 1rem}
+@media (max-width:420px){nav{justify-content:center;gap:2px}nav a{padding:5px 7px;font-size:.82rem}}
