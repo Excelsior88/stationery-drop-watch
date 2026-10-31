@@ -43,5 +43,23 @@
   "url": "https://laywines.com/products/hobonichi-weeks-mega-colors-midnight-blue-2027",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-10-31T19:06:20+00:00",
+  "store_id": "wonder",
+  "store": "Wonder Pens",
+  "label": "Hobonichi 2027 - Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]",
+  "url": "https://wonderpens.ca/products/hobonichi-2027-japanese-original-book-one-piece-edition-a6-size-daily-jan-start-mon-start",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-10-31T19:06:36+00:00",
+  "store_id": "wonder",
+  "store": "Wonder Pens",
+  "label": "Weeks Mega · Bow & Tie: Candy Dream",
+  "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-mega-weeks-bow-tie-candy-dream",
+  "from": "in_stock",
+  "to": "coming_soon"
  }
 ]
