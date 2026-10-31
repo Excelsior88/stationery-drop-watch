@@ -96,7 +96,7 @@ STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not ye
 DOTGRID_SLUG = "archer-and-olive-dot-grid-journal"
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG}
-NAV = [("index.html", "Hobonichi"), ("hobonichi-2027.html", "2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journals"), ("guides/", "Guides"), ("shop/", "Our planners"), ("about.html", "About")]
+NAV = [("index.html", "Hobonichi"), ("hobonichi-2027.html", "2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journals"), ("guides/", "Guides"), ("shop/", "Our planners"), ("follow/", "Follow us"), ("about.html", "About")]
 
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
@@ -164,6 +164,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
   <p class="foot-links">Hobonichi: <a href="index.html">All listings</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
   <p class="foot-links">Shop: <a href="shop/">Our planners</a> (Amazon paperbacks and printable PDFs on Etsy)</p>
+  <p class="foot-links">Follow: <a href="follow/">X, Instagram, Threads, Bluesky, Pinterest, YouTube and Reddit</a></p>
   <p class="foot-links">Guides: <a href="where-to-buy-hobonichi-2027/">Where to buy the Hobonichi Techo 2027</a> · <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a></p>
   <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
   <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
@@ -452,7 +453,7 @@ def build_index():
                "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
                              "description": "Independent restock tracker for Hobonichi Techo 2027 planners and covers, and dot grid journals. Statuses come straight from each shop's public product data.",
                              "logo": BASE + "assets/brand/icon-512.png", "email": "stationerydropwatch@gmail.com",
-                             "sameAs": ["https://x.com/stationerydrop"]}}
+                             "sameAs": [s[2] for s in SOCIALS]}}
     return page("index.html", "Hobonichi Techo 2027 & dot grid journal restock tracker · Stationery Drop Watch",
                 f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked hourly. Plus a separate dot grid journal restock tracker.",
                 body, ld=(site_ld, faq_ld))
@@ -753,7 +754,7 @@ def build_sitemap():
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for("guides/"), GUIDES_LASTMOD), (url_for("shop/"), "2026-10-30")]
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for("guides/"), GUIDES_LASTMOD), (url_for("shop/"), "2026-10-30"), (url_for("follow/"), "2026-10-31")]
     def w3c(iso):
         return iso if len(iso) == 10 else dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
@@ -1142,6 +1143,37 @@ def build_shop():
                        "Planners made by Stationery Drop Watch: 2027 paperback planners and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy.",
                        body, ld=(crumbs,))
 
+SOCIALS = [  # (platform, handle, url, note, icon letter)
+    ("X", "@stationerydrop", "https://x.com/stationerydrop", "Restock alerts the moment we confirm them, plus planner news.", "X"),
+    ("Instagram", "@stationerydropwatch", "https://www.instagram.com/stationerydropwatch/", "Planner photos and restock alerts.", "IG"),
+    ("Threads", "@stationerydropwatch", "https://www.threads.com/@stationerydropwatch", "Restock alerts and planner chat.", "@"),
+    ("Bluesky", "@stationerydropwatch.com", "https://bsky.app/profile/stationerydropwatch.com", "Restock alerts and planner news.", "B"),
+    ("Pinterest", "@stationerydropwatch", "https://www.pinterest.com/stationerydropwatch/", "Planner pins and guides to save for later.", "P"),
+    ("YouTube", "@stationerydropwatch", "https://www.youtube.com/@stationerydropwatch", "Our channel for planner videos.", "▶"),
+    ("Reddit", "u/stationerydropwatch", "https://www.reddit.com/user/stationerydropwatch/", "Where we join planner conversations.", "r/"),
+]
+
+def build_follow():
+    fname = "follow/"
+    rows = "".join(f"""<li class="follow-card"><span class="follow-ico" aria-hidden="true">{E(ic)}</span>
+  <div class="follow-text"><h3>{E(n)}</h3><p class="muted small">{E(h)}</p><p class="small">{E(note)}</p></div>
+  <a class="btn" href="{E(u)}" rel="noopener" target="_blank">Follow on {E(n)}</a></li>""" for n, h, u, note, ic in SOCIALS)
+    body = f"""
+<article class="prose follow">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Follow us</span></nav>
+<p class="eyebrow">Socials</p>
+<h1>Follow us</h1>
+<p class="lede">We post restock alerts and planner news. Pick the app you already use.</p>
+<ul class="follow-list">{rows}</ul>
+{signup_block()}
+</article>"""
+    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
+        {"@type": "ListItem", "position": 2, "name": "Follow us", "item": url_for(fname)}]}
+    return fname, page(fname, "Follow us · Stationery Drop Watch",
+                       "Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest, YouTube and Reddit for restock alerts and planner news.",
+                       body, ld=(crumbs,))
+
 def main():
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
@@ -1155,7 +1187,7 @@ def main():
         fname, doc = build_group(g, oe)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_guides_index, build_shop):
+    for build in (build_where_to_buy, build_vs, build_guides_index, build_shop, build_follow):
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
