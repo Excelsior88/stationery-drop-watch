@@ -1105,7 +1105,7 @@ def build_shop():
     def srcset(img):  # Etsy mockups ship 600w + 1200w copies; Amazon covers use their single file
         if img.startswith("assets/shop/") and img.endswith("-planner.jpg"):
             b = img[:-4]
-            return f' srcset="{E(b)}-600.jpg 600w, {E(b)}-1200.jpg 1200w"'
+            return f' srcset="/{E(b)}-600.jpg 600w, /{E(b)}-1200.jpg 1200w"'
         return ""
     def card(img, alt, title, sub, blurb, details, href, btn, own):
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
