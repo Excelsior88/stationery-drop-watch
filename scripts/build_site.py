@@ -164,7 +164,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
   <p class="foot-links">Hobonichi: <a href="index.html">All listings</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
   <p class="foot-links">Shop: <a href="shop/">Our planners</a> (Amazon paperbacks and printable PDFs on Etsy)</p>
-  <p class="foot-links">Follow: <a href="follow/">X, Instagram, Threads, Bluesky, Pinterest, YouTube and Reddit</a></p>
+  <p class="foot-links">Follow: <a href="follow/">X, Instagram, Threads, Bluesky, Pinterest and Reddit</a></p>
   <p class="foot-links">Guides: <a href="where-to-buy-hobonichi-2027/">Where to buy the Hobonichi Techo 2027</a> · <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a></p>
   <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
   <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
@@ -1149,7 +1149,6 @@ SOCIALS = [  # (platform, handle, url, note, icon letter)
     ("Threads", "@stationerydropwatch", "https://www.threads.com/@stationerydropwatch", "Restock alerts and planner chat.", "@"),
     ("Bluesky", "@stationerydropwatch.com", "https://bsky.app/profile/stationerydropwatch.com", "Restock alerts and planner news.", "B"),
     ("Pinterest", "@stationerydropwatch", "https://www.pinterest.com/stationerydropwatch/", "Planner pins and guides to save for later.", "P"),
-    ("YouTube", "@stationerydropwatch", "https://www.youtube.com/@stationerydropwatch", "Our channel for planner videos.", "▶"),
     ("Reddit", "u/stationerydropwatch", "https://www.reddit.com/user/stationerydropwatch/", "Where we join planner conversations.", "r/"),
 ]
 
@@ -1171,7 +1170,7 @@ def build_follow():
         {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
         {"@type": "ListItem", "position": 2, "name": "Follow us", "item": url_for(fname)}]}
     return fname, page(fname, "Follow us · Stationery Drop Watch",
-                       "Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest, YouTube and Reddit for restock alerts and planner news.",
+                       "Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest and Reddit for restock alerts and planner news.",
                        body, ld=(crumbs,))
 
 def main():
