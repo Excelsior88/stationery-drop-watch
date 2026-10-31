@@ -96,7 +96,7 @@ STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not ye
 DOTGRID_SLUG = "archer-and-olive-dot-grid-journal"
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG}
-NAV = [("index.html", "Hobonichi"), ("hobonichi-2027.html", "2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journals"), ("guides/", "Guides"), ("about.html", "About")]
+NAV = [("index.html", "Hobonichi"), ("hobonichi-2027.html", "2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journals"), ("guides/", "Guides"), ("shop/", "Our planners"), ("about.html", "About")]
 
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
@@ -163,6 +163,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <footer class="foot"><div class="wrap">
   <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
   <p class="foot-links">Hobonichi: <a href="index.html">All listings</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
+  <p class="foot-links">Shop: <a href="shop/">Our planners</a> (Amazon paperbacks and printable PDFs on Etsy)</p>
   <p class="foot-links">Guides: <a href="where-to-buy-hobonichi-2027/">Where to buy the Hobonichi Techo 2027</a> · <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a></p>
   <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
   <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
@@ -404,6 +405,7 @@ def build_index():
   <p class="eyebrow">Hobonichi Techo 2027 · {len({p['store_id'] for p in prods})} shops checked</p>
   <h1>Know the moment your planner is back.</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
+  <p class="shop-cta"><a class="btn-ghost" href="shop/">Our planners →</a> <span class="muted small">2027 planners and a kids' journal we make, on Amazon and Etsy</span></p>
   <p class="small section-switch">Also tracked: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">· {E(dotgrid_names())}</span></p>
   <div class="stats{' five' if s['unknown'] else ''}">
     <div><b>{s['in_stock']}</b><span>in stock</span></div>
@@ -751,7 +753,7 @@ def build_sitemap():
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for("guides/"), GUIDES_LASTMOD)]
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for("guides/"), GUIDES_LASTMOD), (url_for("shop/"), "2026-10-30")]
     def w3c(iso):
         return iso if len(iso) == 10 else dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
@@ -1087,6 +1089,51 @@ def build_guides_index():
                        "Stationery Drop Watch guides: where to buy the Hobonichi Techo 2027 with live stock by shop, and Hobonichi Techo vs Cousin vs Weeks compared.",
                        body, ld=(crumbs, lst))
 
+SHOP_ETSY = [
+    dict(title="2027 Printable Planner, Blush", img="assets/shop/womens-2027-printable-planner.jpg",
+         alt="2027 printable planner in blush, shown as printed pages", url="https://www.etsy.com/listing/4606759241",
+         blurb="The same dated 2027 planner as a PDF you print at home. Sunday start, weekly and monthly pages, dot grid notes."),
+    dict(title="2027 Printable Planner for Men", img="assets/shop/mens-2027-printable-planner.jpg",
+         alt="2027 printable planner for men in charcoal, shown as printed pages", url="https://www.etsy.com/listing/4606781258",
+         blurb="The men's 2027 planner as a PDF you print at home. Weekly and monthly pages, dot grid notes, workout log and budget pages."),
+]
+
+def build_shop():
+    fname = "shop/"
+    books = {b["id"]: b for b in json.loads((ROOT / "content/editor_picks.json").read_text())["books"]}
+    labels = {"B0HPBDNS7F": "2027 Planner, Blush", "B0HP9PXSR1": "2027 Planner for Men", "B0HP85QLMS": "Kids' Goldfish Journal"}
+    def card(img, alt, title, sub, blurb, details, href, btn, own):
+        dl = "".join(f"<li>{E(d)}</li>" for d in details)
+        attr = ' data-own-product' if own else ''
+        return f"""<li class="shop-card">
+  <a class="shop-img" href="{E(href)}"{attr} rel="noopener" target="_blank"><img src="{E(img)}" alt="{E(alt)}" loading="lazy"></a>
+  <div><h3>{E(title)}</h3><p class="muted small">{E(sub)}</p><p>{E(blurb)}</p><ul class="small">{dl}</ul>
+  <a class="btn" href="{E(href)}"{attr} rel="noopener" target="_blank">{E(btn)}</a></div></li>"""
+    amz = "".join(card(books[a]["cover"], books[a]["cover_alt"], labels[a], books[a]["title"] + " · " + books[a]["format"],
+                       books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True)
+                  for a in ("B0HPBDNS7F", "B0HP9PXSR1", "B0HP85QLMS"))
+    etsy = "".join(card(e["img"], e["alt"], e["title"], "Printable PDF · instant download", e["blurb"],
+                        ["US Letter 8.5 x 11 in", "172 pages", "$6.99, 20% off launch sale Oct 31 to Nov 30"], e["url"], "View on Etsy", False)
+                   for e in SHOP_ETSY)
+    body = f"""
+<article class="prose shop">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Our planners</span></nav>
+<p class="eyebrow">Shop</p>
+<h1>Our planners</h1>
+<p class="lede">Planners and journals made by Stationery Drop Watch. Get a printed paperback on Amazon or a printable PDF on Etsy.</p>
+<h2>Paperbacks on Amazon</h2>
+<ul class="shop-list">{amz}</ul>
+<h2>Printable PDFs on Etsy</h2>
+<ul class="shop-list">{etsy}</ul>
+{signup_block()}
+</article>"""
+    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
+        {"@type": "ListItem", "position": 2, "name": "Our planners", "item": url_for(fname)}]}
+    return fname, page(fname, "Our planners: 2027 planners on Amazon and Etsy · Stationery Drop Watch",
+                       "Planners made by Stationery Drop Watch: 2027 paperback planners and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy.",
+                       body, ld=(crumbs,))
+
 def main():
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
@@ -1100,7 +1147,7 @@ def main():
         fname, doc = build_group(g, oe)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_guides_index):
+    for build in (build_where_to_buy, build_vs, build_guides_index, build_shop):
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
