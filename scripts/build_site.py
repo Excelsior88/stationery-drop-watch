@@ -146,7 +146,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="{X_HANDLE}">
 <meta name="twitter:title" content="{E(title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:image" content="{og_image}"><meta name="twitter:image:alt" content="{E(og_alt)}">
 <link rel="preload" href="assets/fonts/newsreader-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v={ASSET_V['style.css']}">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png" sizes="180x180">
@@ -170,7 +170,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
 </div></footer>
-<script src="assets/app.js" defer></script>
+<script src="assets/app.js?v={ASSET_V['app.js']}" defer></script>
 </body></html>"""
     # The site is served at the domain root, so make every local link root-relative ("assets/x" -> "/assets/x").
     # "index.html" becomes "/" and "about.html" becomes "/about" so internal links match the canonical URLs.
@@ -1097,6 +1097,9 @@ SHOP_ETSY = [
          alt="2027 printable planner for men in charcoal, shown as printed pages", url="https://www.etsy.com/listing/4606781258",
          blurb="The men's 2027 planner as a PDF you print at home. Weekly and monthly pages, dot grid notes, workout log and budget pages."),
 ]
+
+import hashlib as _hl
+ASSET_V = {n: _hl.md5((SITE / 'assets' / n).read_bytes()).hexdigest()[:8] for n in ('style.css', 'app.js')}
 
 def build_shop():
     fname = "shop/"
