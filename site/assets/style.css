@@ -207,7 +207,8 @@ a.az:hover{opacity:1}
 @media (max-width:420px){nav{justify-content:center;gap:2px}nav a{padding:5px 7px;font-size:.82rem}}
 .shop-cta{margin:10px 0}
 .shop-list{list-style:none;padding:0;display:grid;gap:22px}
-.shop-card{display:grid;grid-template-columns:180px 1fr;gap:18px;align-items:start;padding:16px;border:1px solid #e6dccb;border-radius:12px;background:#fff}
+.shop-card{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start;padding:16px;border:1px solid #e6dccb;border-radius:12px;background:#fff}
 .shop-card h3{margin:0 0 2px}.shop-card ul{padding-left:18px}
-.shop-img img{width:100%;height:auto;display:block;border-radius:6px}
-@media(max-width:560px){.shop-card{grid-template-columns:1fr}.shop-img img{max-width:240px}}
+.shop-img{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;width:100%;background:#f6efe3;border-radius:10px;padding:12px;box-sizing:border-box;overflow:hidden}
+.shop-img img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;border-radius:4px;box-shadow:0 6px 14px -8px rgba(60,40,20,.45)}
+@media(max-width:600px){.shop-card{grid-template-columns:1fr;gap:14px;padding:14px}.shop-img{max-width:300px;margin:0 auto}.shop-card .btn{display:block;text-align:center}}

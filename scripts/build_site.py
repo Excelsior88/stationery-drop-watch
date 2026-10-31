@@ -1102,11 +1102,16 @@ def build_shop():
     fname = "shop/"
     books = {b["id"]: b for b in json.loads((ROOT / "content/editor_picks.json").read_text())["books"]}
     labels = {"B0HPBDNS7F": "2027 Planner, Blush", "B0HP9PXSR1": "2027 Planner for Men", "B0HP85QLMS": "Kids' Goldfish Journal"}
+    def srcset(img):  # Etsy mockups ship 600w + 1200w copies; Amazon covers use their single file
+        if img.startswith("assets/shop/") and img.endswith("-planner.jpg"):
+            b = img[:-4]
+            return f' srcset="{E(b)}-600.jpg 600w, {E(b)}-1200.jpg 1200w"'
+        return ""
     def card(img, alt, title, sub, blurb, details, href, btn, own):
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
         attr = ' data-own-product' if own else ''
         return f"""<li class="shop-card">
-  <a class="shop-img" href="{E(href)}"{attr} rel="noopener" target="_blank"><img src="{E(img)}" alt="{E(alt)}" loading="lazy"></a>
+  <a class="shop-img" href="{E(href)}"{attr} rel="noopener" target="_blank"><img src="{E(img)}"{srcset(img)} sizes="(max-width:600px) 300px, 200px" alt="{E(alt)}" loading="lazy" decoding="async"></a>
   <div><h3>{E(title)}</h3><p class="muted small">{E(sub)}</p><p>{E(blurb)}</p><ul class="small">{dl}</ul>
   <a class="btn" href="{E(href)}"{attr} rel="noopener" target="_blank">{E(btn)}</a></div></li>"""
     amz = "".join(card(books[a]["cover"], books[a]["cover_alt"], labels[a], books[a]["title"] + " · " + books[a]["format"],
