@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "0 * * * *"     # hourly
   workflow_dispatch:
+    inputs:
+      test_ping:
+        description: "Send a test in-stock ping to the drop-alert webhook (no real alert)"
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths-ignore: ["data/**"]
@@ -36,6 +41,11 @@ jobs:
       - name: Build site
         run: python scripts/build_site.py
 
+      # Find this run's new in_stock changes before the commit moves HEAD.
+      - name: Collect new in-stock changes
+        id: fresh
+        run: echo "count=$(python scripts/new_in_stock.py /tmp/new_in_stock.json)" >> "$GITHUB_OUTPUT"
+
       - name: Commit data changes (skip timestamp-only updates)
         run: |
           if python scripts/status_changed.py; then
@@ -47,6 +57,36 @@ jobs:
           else
             echo "No status changes; not committing."
           fi
+
+      # Ping the drop-alert webhook only when there's a new in-stock change (or a manual test).
+      # URL and key live in repo secrets; never in code. A failed ping never fails the run.
+      - name: Ping drop-alert webhook
+        if: steps.fresh.outputs.count != '0' || inputs.test_ping
+        continue-on-error: true
+        env:
+          DROP_WEBHOOK_URL: ${{ secrets.DROP_WEBHOOK_URL }}
+          DROP_WEBHOOK_KEY: ${{ secrets.DROP_WEBHOOK_KEY }}
+          TEST_PING: ${{ inputs.test_ping && 'true' || 'false' }}
+        run: |
+          if [ -z "$DROP_WEBHOOK_URL" ] || [ -z "$DROP_WEBHOOK_KEY" ]; then
+            echo "::notice::Drop webhook secrets not set; skipping ping."; exit 0
+          fi
+          python - <<'PY' > /tmp/ping.json
+          import json, os, datetime
+          changes = json.load(open("/tmp/new_in_stock.json"))
+          body = {"source": "stationery-drop-watch",
+                  "run_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+                  "changes": changes}
+          if os.environ["TEST_PING"] == "true":
+              body["test"] = True
+          print(json.dumps(body))
+          PY
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 10 -X POST "$DROP_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $DROP_WEBHOOK_KEY" \
+            -H "X-Automation-Key: $DROP_WEBHOOK_KEY" \
+            --data @/tmp/ping.json)
+          echo "Webhook responded HTTP $code"
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
