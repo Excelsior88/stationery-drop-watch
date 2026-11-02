@@ -470,7 +470,6 @@ def build_hobonichi():
   <li><time>Aug 31, 2026 · 10 PM ET</time><div><h3>Worldwide launch (January-start planners)</h3><p>Everything goes live at the same moment worldwide: 11 AM on September 1 in Japan, 10 PM ET / 9 PM CT the night before in the US. Atlas Stationers warned that popular styles and collaborations "often sell out within minutes." <a href="#s-papermouse">[Paper Mouse]</a> <a href="#s-atlas">[Atlas]</a></p></div></li>
   <li><time>Sep 30 – Oct 1, 2026</time><div><h3>Second fall wave</h3><p>Hobonichi notes that some products begin sales on October 1. At US shops that meant the ONE PIECE magazine collection and the Weeksdays 2027 desk calendar, plus a large restock of earlier sell-outs (as preorders at some shops). <a href="#s-1101">[Hobonichi]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
   <li><time>Early–mid Oct 2026</time><div><h3>First restocks land at indie shops</h3><p>Atlas expected its first restock in early October. Paper Mouse's shipment arrived October 15 and preorders began shipping. <a href="#s-atlas">[Atlas]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
-  <li><time>Through December</time><div><h3>Last call for dated 2027 books</h3><p>Paper Mouse says it doesn't usually restock dated planners after December, so whatever is left is all that's left. <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
   <li><time>February 2027</time><div><h3>Spring launch (April-start planners)</h3><p>The second yearly release, timed to Japan's April academic and fiscal year. Expect another rush on new covers. <a href="#s-papermouse">[Paper Mouse]</a> <a href="#s-1101">[Hobonichi]</a></p></div></li>
 </ol>
 
@@ -908,7 +907,7 @@ def build_where_to_buy():
         ("Does Hobonichi send restock emails?",
          "Yes, on its own store: you can sign up for a restock notification email when a product is sold out. Hobonichi says the service covers the Hobonichi Techo and the Drawer Pouch only, not accessories, and that the email doesn't guarantee you'll be able to buy one."),
         ("Will sold-out 2027 books come back?",
-         "Often, but not always. The Paper Mouse says almost all items have been restocked at least once after launch in past years, and that it doesn't usually restock dated planners after December."),
+         "Often, but not always. The Paper Mouse says almost all items have been restocked at least once after launch in past years, but it can't guarantee restocks."),
         ("How do I get told when something restocks?",
          "Sign up for Stationery Drop Watch alerts. We check the shops about once an hour and send one short email when a sold-out item comes back somewhere we track."),
     ]
@@ -941,7 +940,6 @@ def build_where_to_buy():
         <li><strong>Watch for preorders.</strong> Restocks don't always show up as "in stock". At the October 1 wave, some shops took preorders for earlier sell-outs. We count preorders as available. <a href="hobonichi-2027.html">See the 2027 calendar</a>.</li>
         <li><strong>Don't mistake "not yet on sale" for sold out.</strong> Shops put up preview pages before items go on sale.</li>
         <li><strong>Sign up at the official store too.</strong> Hobonichi's restock notification emails cover the Techo books and the Drawer Pouch, not accessories, and don't guarantee you'll get one <a href="#src-shop">[Hobonichi]</a>. Many independent shops offer their own restock sign-ups on product pages <a href="#src-pm">[Paper Mouse]</a>.</li>
-        <li><strong>Don't wait past December for a dated book.</strong> The Paper Mouse says it doesn't usually restock dated planners after December <a href="#src-pm">[Paper Mouse]</a>. Spring (April-start) books launch in February; see the <a href="hobonichi-2027.html">calendar</a>.</li>
         <li><strong>Get our alerts.</strong> We check about once an hour and email you when a sold-out item comes back. <a href="#alerts">Sign up above</a>.</li>
       </ul>
     </section>
@@ -951,7 +949,7 @@ def build_where_to_buy():
     <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
     <section class="card"><h2>Sources</h2><ol class="sources">
       <li id="src-shop"><a href="{H_SRC['shop'][0]}" rel="noopener" target="_blank">{E(H_SRC['shop'][1])}</a>, Hobonichi (official). Restock notification emails.</li>
-      <li id="src-pm"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Restock history, product-page restock sign-ups, no restocks of dated planners after December.</li>
+      <li id="src-pm"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Restock history (restocks not guaranteed; almost all items restocked at least once after launch in past years), product-page restock sign-ups.</li>
       <li>Stock statuses: each shop's public product data, read by our checker; see <a href="about.html">how it works</a>.</li>
     </ol></section>
   </div>
