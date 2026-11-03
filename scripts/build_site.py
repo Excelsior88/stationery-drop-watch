@@ -62,11 +62,11 @@ HOBO_SHOPS = {s["id"] for s in stores["stores"] if not s.get("brand") and not s.
 DOTGRID_SHOPS = [s for s in stores["stores"] if s.get("brand")]
 SECTIONS = {  # non-Hobonichi sections in nav/footer order; each has one page (the GROUPS entry with that section)
     "dotgrid": dict(slug="archer-and-olive-dot-grid-journal", nav="Dot grid journals", name="dot grid journals",
-                    foot="Dot grid journaling", count="dot grid journals", amazon=None),
+                    foot="Dot grid journaling", link="Dot grid journals", count="dot grid journals", amazon=None),
     "travelers": dict(slug="travelers-company-limited-edition", nav="Traveler's Company", name="Traveler's Company limited editions",
-                      foot="Traveler's Company", count="Traveler's Company", amazon="travelers"),
+                      foot="Traveler's Company", link="Limited editions", count="Traveler's Company", amazon="travelers"),
     "midori": dict(slug="midori-md-limited-edition", nav="MIDORI MD", name="MIDORI MD seasonal releases",
-                   foot="MIDORI MD", count="MIDORI MD", amazon="midori"),
+                   foot="MIDORI MD", link="Seasonal releases", count="MIDORI MD", amazon="midori"),
 }
 
 def g_sec(g):
@@ -224,7 +224,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p class="foot-links">Shop: <a href="shop/">{SHOP_NAME}</a> (printed on Amazon, printable PDFs on Etsy)</p>
   <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
   <p class="foot-links">Guides: {" · ".join(f'<a href="{h}">{E(t)}</a>' for h, t in GUIDES)}</p>
-{"".join(f'  <p class="foot-links">{E(SECTIONS[k]["foot"])}: <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a> <span class="muted">({E(shop_names(k))})</span></p>' + chr(10) for k in LIVE)}  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
+{"".join(f'  <p class="foot-links">{E(SECTIONS[k]["foot"])}: <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["link"])}</a> <span class="muted">({E(shop_names(k))})</span></p>' + chr(10) for k in LIVE)}  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
 </div></footer>
@@ -684,6 +684,17 @@ GROUPS = [
          intro="Traveler's Company limited editions come in small runs: the yearly diary accessories, anniversary sets and shop exclusives. "
                "We check the official Traveler's Company USA shop and independent shops, item by item. "
                "This covers Traveler's Company limited editions only; Hobonichi and our other sections have their own pages."),
+    dict(slug=SECTIONS["midori"]["slug"], short="MIDORI MD", product="MIDORI MD seasonal release", section="midori",
+         match=lambda p: section_of(p) == "midori", eyebrow="MIDORI MD", search_hint="Diary 2027, 1 Day 1 Page, Stickers…",
+         guide="MIDORI makes the dated MD diaries and diary stickers once a year, so when a shop's allocation is gone it is usually gone until the next year's edition. "
+               "The plain MD notebooks stay in the catalog all year, so we don't track them here.",
+         title=f"MIDORI MD seasonal release restock tracker",
+         desc="Are the MIDORI MD Notebook Diary 2027, the 1 Day 1 Page diary and the 2027 diary stickers in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
+         og_image=BASE + "assets/brand/og-midori.png",
+         og_alt="Stationery Drop Watch: MIDORI MD seasonal release tracker, checked " + CHECK_FREQ,
+         intro="MIDORI's MD line is sold as MD PRODUCT in 2026. The dated 2027 diaries, diary stickers and online store limited editions come once a year, in set quantities. "
+               "We check the official MD PRODUCT USA store and independent shops, size by size. "
+               "This covers MIDORI MD seasonal releases only; Hobonichi and our other sections have their own pages."),
 ]
 for _g in GROUPS:  # one name per page: H1 is "<product> restock tracker"; the <title> adds the live shop count
     _g["h1"] = _g["product"] + " restock tracker"
@@ -786,7 +797,7 @@ def build_group(g, oe):
             shop_nav = "".join(f'<a class="chip" href="#shop-{E(sid)}">{E(next(x["name"] for x in stores["stores"] if x["id"] == sid))}</a>' for sid in shop_ids)
             shop_nav = f'<nav class="chips" aria-label="Shops on this page"><span class="muted small">Jump to a shop:</span> {shop_nav}</nav>'
         else:  # products span several shops: jump by product instead
-            shop_nav = "".join(f'<a class="chip" href="#{E(cid)}">{E(canon[cid].removeprefix("Traveler\'s notebook ").removeprefix("MD "))}</a>' for cid in order if cid)
+            shop_nav = "".join(f'<a class="chip" href="#{E(cid)}">{E(canon[cid].removeprefix("Traveler\'s notebook "))}</a>' for cid in order if cid)
             shop_nav = f'<nav class="chips" aria-label="Products on this page"><span class="muted small">Jump to:</span> {shop_nav}</nav>'
         dg_tracker = tracker_block(ls, tracker_rows(ls, oe), g["search_hint"]) + stock_data(tracker_rows(ls, oe))
     else:

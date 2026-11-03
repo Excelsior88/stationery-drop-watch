@@ -6,7 +6,8 @@ Live at https://stationerydropwatch.com/. A restock tracker, checked about every
 - **Dot grid journaling** (`/archer-and-olive-dot-grid-journal/`): Archer and Olive, Leuchtturm1917 US, Scribbles That Matter and Notebook Therapy (Tsuki), size by size and color by color. The old `/archer-and-olive-bullet-journal/` URL is a noindex redirect. This page also shows the owner's own 2027 Planner as a gift pick, with a plain Amazon link (no tag, not sponsored).
 
 - **Traveler's Company limited editions** (`/travelers-company-limited-edition/`): yearly diary accessories (sticker set, clear folder, plastic sheet), 20th anniversary sets and shop exclusives at the official Traveler's Company USA shop and independent shops. Sold-out items fall back to an Amazon brand search with the Associates tag.
-- **MIDORI MD seasonal releases** (planned, `/midori-md-limited-edition/`; MIDORI sells MD as "MD PRODUCT" in 2026). Until it has listings it shows only in the home page's "Coming to the tracker" box, which disappears once every section is live.
+- **MIDORI MD seasonal releases** (`/midori-md-limited-edition/`; MIDORI sells MD as "MD PRODUCT" in 2026): the dated 2027 MD diaries, 2027 diary stickers and online store limited editions at the official MD PRODUCT USA store and independent shops. Sold-out items fall back to an Amazon MD search with the Associates tag.
+- A new section is added in `SECTIONS` (`build_site.py`); until it has listings it shows only in the home page's "Coming to the tracker" box, which disappears when every section is live.
 
 Pens, inks and other paper are not tracked.
 

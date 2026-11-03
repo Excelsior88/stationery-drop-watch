@@ -197,6 +197,34 @@
    "type": "Notebook",
    "brand": "travelers",
    "section": "travelers"
+  },
+  {
+   "id": "md-diary-2027-a5",
+   "label": "MD Notebook Diary 2027 · A5",
+   "type": "Diary",
+   "brand": "midori",
+   "section": "midori"
+  },
+  {
+   "id": "md-diary-1day-2027-a5",
+   "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+   "type": "Diary",
+   "brand": "midori",
+   "section": "midori"
+  },
+  {
+   "id": "md-diary-sticker-2027-l",
+   "label": "MD Diary Stickers 2027 · Large",
+   "type": "Sticker set",
+   "brand": "midori",
+   "section": "midori"
+  },
+  {
+   "id": "md-paper-block-200",
+   "label": "MD PAPER Block 200×200 · online store limited",
+   "type": "Paper block",
+   "brand": "midori",
+   "section": "midori"
   }
  ],
  "stores": [
@@ -367,6 +395,15 @@
      "url": "https://www.thepapermouse.com/products/traveler-s-notebook-20th-anniversary-customization-set-limited-edition",
      "section": "travelers",
      "source_title": "TRAVELER'S notebook 20th Anniversary Customization Set | Limited Edition"
+    },
+    {
+     "canonical": "md-diary-sticker-2027-l",
+     "label": "MD Diary Stickers 2027 · Large",
+     "type": "Sticker set",
+     "url": "https://www.thepapermouse.com/products/midori-md-monthly-diary-sticker?variant=52779201396965",
+     "variant_id": 52779201396965,
+     "section": "midori",
+     "source_title": "Midori 2027 MD Monthly Diary Sticker · Large (7.9\" x 5.4\")"
     }
    ]
   },
@@ -494,6 +531,22 @@
      "type": "Weeks",
      "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",
      "source_title": "Hobonichi Techo 2027 Weeks V&A Series: Leicester"
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://bobodesignstudio.com/products/md-diary-2027-a5",
+     "section": "midori",
+     "source_title": "MD Diary 2027 A5"
+    },
+    {
+     "canonical": "md-diary-sticker-2027-l",
+     "label": "MD Diary Stickers 2027 · Large",
+     "type": "Sticker set",
+     "url": "https://bobodesignstudio.com/products/md-diary-sticker-2027-size-l",
+     "section": "midori",
+     "source_title": "MD Diary Sticker -2027 Size L"
     }
    ]
   },
@@ -567,6 +620,24 @@
      "url": "https://www.baum-kuchen.net/products/trc-2027-plastic-sheet",
      "section": "travelers",
      "source_title": "[TRC 2027] Plastic Sheet"
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://www.baum-kuchen.net/products/md-2027-diary-4-sizes?variant=43571655934019",
+     "variant_id": 43571655934019,
+     "section": "midori",
+     "source_title": "[MD 2027] Diary (4 sizes) · A5"
+    },
+    {
+     "canonical": "md-diary-1day-2027-a5",
+     "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+     "type": "Diary",
+     "url": "https://www.baum-kuchen.net/products/md-2027-1-day-1-page?variant=43571640303683",
+     "variant_id": 43571640303683,
+     "section": "midori",
+     "source_title": "[MD 2027] 1-Day 1-Page · A5"
     }
    ]
   },
@@ -637,6 +708,22 @@
      "type": "Cover",
      "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-moomin-my-yard-pale-mint",
      "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - Moomin: My Yard (Pale Mint)"
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://wonderpens.ca/products/midori-md-notebook-diary-2027-a5",
+     "section": "midori",
+     "source_title": "Midori MD Notebook Diary 2027 - A5"
+    },
+    {
+     "canonical": "md-diary-1day-2027-a5",
+     "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+     "type": "Diary",
+     "url": "https://wonderpens.ca/products/midori-md-notebook-diary-1-day-1-page-2027-a5",
+     "section": "midori",
+     "source_title": "Midori MD Notebook Diary 1 Day 1 Page 2027 - A5"
     }
    ]
   },
@@ -834,6 +921,31 @@
      "type": "Weeks Mega",
      "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-mega-2027-bow-tie-candy-dream",
      "source_title": "Hobonichi Techo Weeks Mega 2027 - Bow & Tie: Candy Dream"
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://yosekastationery.com/products/md-notebook-diary-2027-a5",
+     "section": "midori",
+     "source_title": "MD Notebook Diary 2027 - A5"
+    },
+    {
+     "canonical": "md-diary-1day-2027-a5",
+     "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+     "type": "Diary",
+     "url": "https://yosekastationery.com/products/md-notebook-diary-1day-1page-2027-a5",
+     "section": "midori",
+     "source_title": "MD Notebook Diary 1Day 1Page - 2027 - A5"
+    },
+    {
+     "canonical": "md-diary-sticker-2027-l",
+     "label": "MD Diary Stickers 2027 · Large",
+     "type": "Sticker set",
+     "url": "https://yosekastationery.com/products/md-diary-sticker-2027?variant=54255882764501",
+     "variant_id": 54255882764501,
+     "section": "midori",
+     "source_title": "MD Diary Sticker - 2027 · Large"
     }
    ]
   },
@@ -921,6 +1033,22 @@
      "url": "https://www.jennibick.com/products/travelers-notebook-2027-plastic-sheet-regular-size",
      "section": "travelers",
      "source_title": "TRAVELER'S Notebook 2027 Plastic Sheet - Regular Size"
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://www.jennibick.com/products/md-notebook-diary-a5-2027",
+     "section": "midori",
+     "source_title": "MD Notebook Monthly Diary A5 2027"
+    },
+    {
+     "canonical": "md-diary-1day-2027-a5",
+     "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+     "type": "Diary",
+     "url": "https://www.jennibick.com/products/md-notebook-diary-1-day-1-page-2027-a5",
+     "section": "midori",
+     "source_title": "MD Notebook Diary 1 Day 1 Page 2027 - A5"
     }
    ]
   },
@@ -1044,6 +1172,24 @@
      "type": "Weeks",
      "url": "https://omoionline.com/products/hobonichi-techo-2027-weeks-paper-series-planner-jade",
      "source_title": "Hobonichi Techo 2027 WEEKS Paper Series Planner Jade"
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://omoionline.com/products/md-notebook-2027-monthly-planners?variant=67760093626672",
+     "variant_id": 67760093626672,
+     "section": "midori",
+     "source_title": "MD Notebook 2027 Monthly Planners · A5"
+    },
+    {
+     "canonical": "md-diary-1day-2027-a5",
+     "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+     "type": "Diary",
+     "url": "https://omoionline.com/products/md-notebook-2027-page-a-day-planners?variant=67760199106864",
+     "variant_id": 67760199106864,
+     "section": "midori",
+     "source_title": "MD Notebook 2027 Page-A-Day Planners · A5"
     }
    ]
   },
@@ -1127,6 +1273,59 @@
      "url": "https://www.tokyopenshop.com/products/2027-clear-folder-for-travelers-notebook",
      "section": "travelers",
      "source_title": "2027 Clear Folder for Traveler's Notebook"
+    },
+    {
+     "canonical": "md-diary-sticker-2027-l",
+     "label": "MD Diary Stickers 2027 · Large",
+     "type": "Sticker set",
+     "url": "https://www.tokyopenshop.com/products/midori-md-calendar-stickers-2027-l",
+     "section": "midori",
+     "source_title": "Midori MD Calendar Stickers 2027 L"
+    }
+   ]
+  },
+  {
+   "id": "mdproductusa",
+   "name": "MD PRODUCT USA (official)",
+   "url": "https://md-product-usa.com/",
+   "platform": "shopify",
+   "section": "midori",
+   "note": "Official US online store for MIDORI's MD line, sold as MD PRODUCT.",
+   "products": [
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://md-product-usa.com/products/md-notebook-diary-2027?variant=45534944952455",
+     "variant_id": 45534944952455,
+     "section": "midori",
+     "source_title": "MD Notebook Diary 2027 · A5"
+    },
+    {
+     "canonical": "md-diary-1day-2027-a5",
+     "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+     "type": "Diary",
+     "url": "https://md-product-usa.com/products/md-notebook-diary-1day1page-2027?variant=45534945083527",
+     "variant_id": 45534945083527,
+     "section": "midori",
+     "source_title": "MD Notebook Diary 1 Day 1 Page 2027 · A5"
+    },
+    {
+     "canonical": "md-diary-sticker-2027-l",
+     "label": "MD Diary Stickers 2027 · Large",
+     "type": "Sticker set",
+     "url": "https://md-product-usa.com/products/md-diary-sticker?variant=45534955864199",
+     "variant_id": 45534955864199,
+     "section": "midori",
+     "source_title": "MD Diary Stickers 2027 [Dated Monthly] · L"
+    },
+    {
+     "canonical": "md-paper-block-200",
+     "label": "MD PAPER Block 200×200 · online store limited",
+     "type": "Paper block",
+     "url": "https://md-product-usa.com/products/online-store-limited-md-paper-block-200-200",
+     "section": "midori",
+     "source_title": "MD PAPER Block [200×200]"
     }
    ]
   },
