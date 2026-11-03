@@ -79,5 +79,41 @@
   "url": "https://scribblesthatmatter.com/products/dotted-journal-pro?variant=42136311300272",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-03T04:58:49+00:00",
+  "store_id": "atlas",
+  "store": "Atlas Stationers",
+  "label": "Weeks · Colors: Midnight Blue",
+  "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-midnight-blue",
+  "from": "preorder",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-03T04:58:51+00:00",
+  "store_id": "atlas",
+  "store": "Atlas Stationers",
+  "label": "Weeks · Colors: Canaria Yellow",
+  "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-canaria-yellow",
+  "from": "preorder",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-03T04:58:54+00:00",
+  "store_id": "atlas",
+  "store": "Atlas Stationers",
+  "label": "Weeks Mega · Colors: Midnight Blue",
+  "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-mega-colors-midnight-blue",
+  "from": "preorder",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-03T04:58:59+00:00",
+  "store_id": "atlas",
+  "store": "Atlas Stationers",
+  "label": "Hobonichi Techo Weeks - Colors: Pink Sapphire",
+  "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-pink-sapphire",
+  "from": "preorder",
+  "to": "in_stock"
  }
 ]
