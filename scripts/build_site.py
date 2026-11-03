@@ -164,7 +164,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
   <p class="foot-links">Hobonichi: <a href="index.html">All listings</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
   <p class="foot-links">Shop: <a href="shop/">Our planners</a> (Amazon paperbacks and printable PDFs on Etsy)</p>
-  <p class="foot-links">Follow: <a href="follow/">X, Instagram, Threads, Bluesky, Pinterest and Reddit</a></p>
+  <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
   <p class="foot-links">Guides: <a href="where-to-buy-hobonichi-2027/">Where to buy the Hobonichi Techo 2027</a> · <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a></p>
   <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
   <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
@@ -183,19 +183,34 @@ NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatc
 # Tracker pages share one sidebar, in this order: signup, Featured shop, gift pick, then page links.
 # On one-column screens (<=900px, see style.css) the same elements are re-ordered with CSS, no duplicates:
 # signup right after the hero stats (.m-top), then the first main section (.m-lead), then the Featured shop.
-def signup_block(compact=False):
+SIGNUP_ACTION = f"https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}"
+
+def signup_block(compact=False, anchor="alerts"):
     # Buttondown's standard HTML embed form (docs.buttondown.com/building-your-subscriber-base):
     # a plain POST to embed-subscribe; don't submit via fetch, Buttondown may need to show a CAPTCHA.
-    return f"""<section class="card signup{' compact m-top' if compact else ''}" id="alerts">
+    return f"""<section class="card signup{' compact m-top' if compact else ''}" id="{anchor}">
   <h2>Get restock alerts</h2>
   <p>One short email when a sold-out item comes back somewhere we track. No spam, unsubscribe anytime.</p>
-  <form class="signup-form embeddable-buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}" method="post">
+  <form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
     <label class="sr" for="email{int(compact)}">Email address</label>
     <input id="email{int(compact)}" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
     <input type="hidden" value="1" name="embed">
     <button type="submit">Notify me</button>
   </form>
   <p class="form-note">Sent via <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>.</p>
+</section>"""
+
+def signup_strip(anchor="alerts"):
+    """Compact one-row signup for the top of a page (in or right under the hero). Same Buttondown form as signup_block.
+    Pages that use it near the top drop the sidebar/early signup_block so there's one form per screen."""
+    return f"""<section class="signup-strip" id="{anchor}" aria-label="Email restock alerts">
+  <form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
+    <label class="strip-label" for="email-top">Get restock alerts by email</label>
+    <input id="email-top" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+    <input type="hidden" value="1" name="embed">
+    <button type="submit">Notify me</button>
+  </form>
+  <p class="strip-note">One short email when a sold-out item comes back. No spam, unsubscribe anytime. Sent via <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>.</p>
 </section>"""
 
 def sponsor_block():
@@ -408,6 +423,7 @@ def build_index():
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
   <p class="shop-cta"><a class="btn-ghost" href="shop/">Our planners →</a> <span class="muted small">2027 planners and a kids' journal we make, on Amazon and Etsy</span></p>
   <p class="small section-switch">Also tracked: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">· {E(dotgrid_names())}</span></p>
+  {signup_strip()}
   <div class="stats{' five' if s['unknown'] else ''}">
     <div><b>{s['in_stock']}</b><span>in stock</span></div>
     <div><b>{s['preorder']}</b><span>preorder</span></div>
@@ -436,7 +452,6 @@ def build_index():
     {faq_html}
   </div>
   <aside class="side-col">
-    {signup_block(compact=True)}
     {sponsor_block()}
     {editor_block()}
     <section class="card soon">
@@ -464,6 +479,7 @@ def build_hobonichi():
 <p class="eyebrow">Guide · updated Oct 25, 2026</p>
 <h1>Hobonichi Techo 2027 launch &amp; restock calendar</h1>
 <p class="lede">Hobonichi sells its planners in two big drops a year, and popular covers can sell out within minutes. Here's how the 2027 season has gone so far and when stock usually comes back.</p>
+""" + signup_strip("alerts-top") + """
 
 <ol class="timeline">
   <li><time>Aug 25, 2026</time><div><h3>Previews go up</h3><p>Shops post the 2027 lineup as "out of stock" or "coming soon" pages. They aren't sold out; they're just not on sale yet. <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
@@ -504,6 +520,7 @@ def build_about():
 <article class="prose">
 <h1>About Stationery Drop Watch</h1>
 <p class="lede">Limited planners sell out fast, and every shop only posts its own restocks. This site checks them all in one place.</p>
+{signup_strip()}
 <h2>How it works</h2>
 <p>A small script visits the public product pages of {n_checked} stores on a schedule, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. The site has two sections: <a href="index.html">Hobonichi</a> (the official store and independent shops) and <a href="{DOTGRID_SLUG}/">dot grid journaling</a> ({E(dotgrid_names())}, each checked on its own store). When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
@@ -669,6 +686,7 @@ def build_group(g, oe):
   <p class="lede">{E(g['intro'])}</p>
   <p><strong>Right now:</strong> {right_now}
   <span class="muted small">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time>.</span></p>
+  {"" if g.get("dotgrid") else signup_strip()}
 </section>
 <div class="layout">
   <div class="main-col">
@@ -686,7 +704,7 @@ def build_group(g, oe):
     </section>
   </div>
   <aside class="side-col">
-    {signup_block(compact=True)}
+    {signup_block(compact=True) if g.get("dotgrid") else ""}
     {sponsor_block()}
     {editor_block("dotgrid" if g.get("dotgrid") else "home")}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
@@ -745,7 +763,7 @@ def product_links_block():
     return (f'<section class="card" id="by-product"><h2>Restock pages by product</h2><ul class="link-list">{"".join(items)}</ul>'
             f'<p class="eyebrow">Guides</p><ul class="link-list">{guides}</ul></section>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-10-27", "about.html": "2026-10-27"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-02", "about.html": "2026-11-02"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -753,7 +771,7 @@ def build_sitemap():
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for("guides/"), GUIDES_LASTMOD), (url_for("shop/"), "2026-10-30"), (url_for("follow/"), "2026-10-31")]
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for("guides/"), GUIDES_LASTMOD), (url_for("shop/"), "2026-11-02"), (url_for("follow/"), "2026-11-02")]
     def w3c(iso):
         return iso if len(iso) == 10 else dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
@@ -919,6 +937,7 @@ def build_where_to_buy():
   <p class="eyebrow">Guide · Hobonichi Techo 2027 · {n_shops} shops checked hourly</p>
   <h1>Where to buy the Hobonichi Techo 2027</h1>
   <p class="lede">Which shops have the 2027 Original A6, Cousin A5, Weeks, Weeks Mega and A6 covers right now, edition by edition. Every status below is what the shop's own product data said at our last check, {last}.</p>
+  {signup_strip()}
 </section>
 <div class="layout">
   <div class="main-col">
@@ -929,7 +948,6 @@ def build_where_to_buy():
       <p class="muted small">"Not yet on sale" means a preview page is up but the shop isn't taking orders. "Couldn't check" means our check failed, so we don't know. Always confirm on the shop's page before you buy. We don't show prices; check the shop.</p>
     </section>
     </div>
-    {signup_block()}
     {"".join(secs)}
     <section class="card"><h2>Shops we list but can't check</h2>
       <p class="muted small">Their sites block automated checks, so we link to them without a status.</p>
@@ -1128,6 +1146,7 @@ def build_shop():
 <p class="eyebrow">Shop</p>
 <h1>Our planners</h1>
 <p class="lede">Planners and journals made by Stationery Drop Watch. Get a printed paperback on Amazon or a printable PDF on Etsy.</p>
+{signup_strip("alerts-top")}
 <h2>Paperbacks on Amazon</h2>
 <ul class="shop-list">{amz}</ul>
 <h2>Printable PDFs on Etsy</h2>
@@ -1147,6 +1166,7 @@ SOCIALS = [  # (platform, handle, url, note, icon letter)
     ("Threads", "@stationerydropwatch", "https://www.threads.com/@stationerydropwatch", "Restock alerts and planner chat.", "@"),
     ("Bluesky", "@stationerydropwatch.com", "https://bsky.app/profile/stationerydropwatch.com", "Restock alerts and planner news.", "B"),
     ("Pinterest", "@stationerydropwatch", "https://www.pinterest.com/stationerydropwatch/", "Planner pins and guides to save for later.", "P"),
+    ("Facebook", "Stationery Drop Watch", "https://www.facebook.com/stationerydropwatch", "Restock alerts and planner news on our Page.", "f"),
     ("Reddit", "u/stationerydropwatch", "https://www.reddit.com/user/stationerydropwatch/", "Where we join planner conversations.", "r/"),
 ]
 
@@ -1168,7 +1188,7 @@ def build_follow():
         {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
         {"@type": "ListItem", "position": 2, "name": "Follow us", "item": url_for(fname)}]}
     return fname, page(fname, "Follow us · Stationery Drop Watch",
-                       "Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest and Reddit for restock alerts and planner news.",
+                       "Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest, Facebook and Reddit for restock alerts and planner news.",
                        body, ld=(crumbs,))
 
 def main():

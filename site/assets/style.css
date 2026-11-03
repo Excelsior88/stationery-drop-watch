@@ -89,6 +89,14 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
 .form-note{font-size:.88rem;background:var(--paper-2);padding:8px 10px;border-radius:8px;margin:10px 0 0}
 .signup.compact{background:linear-gradient(180deg,#fff7ea,#fffdf8)}
+/* One-row signup near the top of a page (signup_strip in build_site.py) */
+.signup-strip{margin:16px 0 18px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#fff7ea,#fffdf8);max-width:640px}
+.signup-strip .signup-form{margin-top:0;align-items:center}
+.signup-strip .strip-label{flex:1 1 100%;font:600 1rem var(--serif);color:var(--ink)}
+.signup-strip input[type=email]{flex:1 1 200px}
+.signup-strip button{flex:0 0 auto}
+.signup-strip .strip-note{margin:6px 0 0;font-size:.8rem;color:var(--ink-2)}
+@media (max-width:420px){.signup-strip button{flex:1 1 100%}}
 
 .sponsor-slot{border:2px dashed #d9c9ae;border-radius:12px;padding:16px;text-align:center;background:repeating-linear-gradient(-45deg,transparent 0 10px,rgba(201,154,46,.06) 10px 20px)}
 .sponsor-title{font:600 1.15rem var(--serif);margin:.1em 0 .3em}
