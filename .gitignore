@@ -9,3 +9,11 @@ items*.js
 social/
 ledger.csv
 alerts/out/
+
+# local-only working folders
+alerts/*
+!alerts/out/
+analytics/
+assets-incoming/
+audit/
+etsy/
