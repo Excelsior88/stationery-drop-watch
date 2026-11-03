@@ -2,7 +2,7 @@ name: Check stock and deploy site
 
 on:
   schedule:
-    - cron: "0 * * * *"     # hourly
+    - cron: "17,47 * * * *"  # twice an hour, off the busy :00 slot (GitHub was dropping most :00 runs)
   workflow_dispatch:
     inputs:
       test_ping:
