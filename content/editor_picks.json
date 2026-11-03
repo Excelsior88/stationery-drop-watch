@@ -65,6 +65,46 @@
       ],
       "cover": "assets/books/B0HPBDNS7F.jpg?v=2",
       "cover_alt": "2027 Planner cover: soft blush arch design reading \"2027 planner, January - December\""
+    },
+    {
+      "id": "B0HQ5TLDK3",
+      "kicker": "Gift pick",
+      "pitch": "Track your habits, moods and energy, one day at a time",
+      "title": "Habit & Mood Tracker Journal: Undated - 12 Months",
+      "author": "Excelsior, b0nem0ther",
+      "format": "Paperback",
+      "cover": "assets/books/B0HQ5TLDK3.jpg?v=1",
+      "cover_alt": "Habit & Mood tracker journal cover: a soft blush arch with sage leaves, reading \"undated, 12 months\"",
+      "blurb": "An undated 12-month journal for your habits, moods and energy. Each month has a 10-habit tracker, a 31-day mood tracker and a month review, plus a two-page weekly check-in for all 52 weeks. Start any month you like.",
+      "details": [
+        "166 pages",
+        "6 x 9 in paperback",
+        "Undated, 12 months",
+        "Year in pixels page and a soft blush arch cover"
+      ],
+      "url": "https://www.amazon.com/dp/B0HQ5TLDK3",
+      "source": "Amazon listing B0HQ5TLDK3 (from a.co/d/09OJ5hKI), fetched 2026-11-03; matches Kiln's description.html in /workspace/deliver/habit-mood-journal-listing. Cover is Amazon's main image resized to 1200px tall.",
+      "hidden": true
+    },
+    {
+      "id": "B0HQ5X3C7D",
+      "kicker": "Gift pick",
+      "pitch": "A record of every book you read",
+      "title": "Reading Journal: A Record of Books Read",
+      "author": "Excelsior, b0nem0ther",
+      "format": "Paperback",
+      "cover": "assets/books/B0HQ5X3C7D.jpg?v=1",
+      "cover_alt": "Reading Journal cover: cream lettering reading \"A Record of Books Read\" above sage and cream botanical line art on deep espresso-olive",
+      "blurb": "An undated reading journal with 100 one-page book reviews, a monthly reading log, a genre tracker and a 100-book shelf to color in as you finish each book. Start it any time of year.",
+      "details": [
+        "152 pages",
+        "7 x 10 in paperback",
+        "Undated",
+        "100 numbered review pages, TBR lists, quotes and book club notes"
+      ],
+      "url": "https://www.amazon.com/dp/B0HQ5X3C7D",
+      "source": "Amazon listing B0HQ5X3C7D, fetched 2026-11-03; matches Kiln's description.html in /workspace/deliver/reading-journal-listing. Cover is Amazon's main image resized to 1200px tall.",
+      "hidden": true
     }
   ]
 }

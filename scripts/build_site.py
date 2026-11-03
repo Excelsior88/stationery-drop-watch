@@ -163,7 +163,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <footer class="foot"><div class="wrap">
   <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
   <p class="foot-links">Hobonichi: <a href="index.html">All listings</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
-  <p class="foot-links">Shop: <a href="shop/">Our planners</a> (printed planners on Amazon and printable PDFs on Etsy)</p>
+  <p class="foot-links">Shop: <a href="shop/">Our planners</a> (printed planners and journals on Amazon, printable PDFs on Etsy)</p>
   <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
   <p class="foot-links">Guides: <a href="where-to-buy-hobonichi-2027/">Where to buy the Hobonichi Techo 2027</a> · <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a></p>
   <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
@@ -421,7 +421,7 @@ def build_index():
   <p class="eyebrow">Hobonichi Techo 2027 · {len({p['store_id'] for p in prods})} shops checked</p>
   <h1>Know the moment your planner is back.</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
-  <p class="shop-cta"><a class="btn-ghost" href="shop/">Our planners →</a> <span class="muted small">2027 planners and a kids' journal we make, on Amazon and Etsy</span></p>
+  <p class="shop-cta"><a class="btn-ghost" href="shop/">Our planners →</a> <span class="muted small">2027 planners and journals we make, on Amazon and Etsy</span></p>
   <p class="small section-switch">Also tracked: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">· {E(dotgrid_names())}</span></p>
   {signup_strip()}
   <div class="stats{' five' if s['unknown'] else ''}">
@@ -1121,7 +1121,8 @@ ASSET_V = {n: _hl.md5((SITE / 'assets' / n).read_bytes()).hexdigest()[:8] for n 
 def build_shop():
     fname = "shop/"
     books = {b["id"]: b for b in json.loads((ROOT / "content/editor_picks.json").read_text())["books"]}
-    labels = {"B0HPBDNS7F": "2027 Planner, Blush", "B0HP9PXSR1": "2027 Planner for Men", "B0HP85QLMS": "Kids' Goldfish Journal"}
+    labels = {"B0HPBDNS7F": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
+              "B0HP9PXSR1": "2027 Planner for Men", "B0HP85QLMS": "Kids' Goldfish Journal"}
     def srcset(img):  # Etsy mockups ship 600w + 1200w copies; Amazon covers use their single file
         if img.startswith("assets/shop/") and img.endswith("-planner.jpg"):
             b = img[:-4]
@@ -1136,7 +1137,7 @@ def build_shop():
   <a class="btn" href="{E(href)}"{attr} rel="noopener" target="_blank">{E(btn)}</a></div></li>"""
     amz = "".join(card(books[a]["cover"], books[a]["cover_alt"], labels[a], books[a]["title"] + " · " + books[a]["format"],
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True)
-                  for a in ("B0HPBDNS7F", "B0HP9PXSR1", "B0HP85QLMS"))
+                  for a in ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HP85QLMS"))
     etsy = "".join(card(e["img"], e["alt"], e["title"], "Printable PDF · instant download", e["blurb"],
                         ["US Letter 8.5 x 11 in", "172 pages", "$6.99, 20% off launch sale Oct 31 to Nov 30"], e["url"], "View on Etsy", False)
                    for e in SHOP_ETSY)
@@ -1147,7 +1148,7 @@ def build_shop():
 <h1>Our planners</h1>
 <p class="lede">Planners and journals made by Stationery Drop Watch. Get a printed copy on Amazon or a printable PDF on Etsy.</p>
 {signup_strip("alerts-top")}
-<h2>Printed planners on Amazon</h2>
+<h2>Printed planners and journals on Amazon</h2>
 <ul class="shop-list">{amz}</ul>
 <h2>Printable PDFs on Etsy</h2>
 <ul class="shop-list">{etsy}</ul>
@@ -1156,8 +1157,8 @@ def build_shop():
     crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
         {"@type": "ListItem", "position": 2, "name": "Our planners", "item": url_for(fname)}]}
-    return fname, page(fname, "Our planners: 2027 planners on Amazon and Etsy · Stationery Drop Watch",
-                       "Planners made by Stationery Drop Watch: printed 2027 planners and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy.",
+    return fname, page(fname, "Our planners: 2027 planners and journals on Amazon and Etsy · Stationery Drop Watch",
+                       "Planners made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, a reading journal and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy.",
                        body, ld=(crumbs,))
 
 SOCIALS = [  # (platform, handle, url, note, icon letter)
