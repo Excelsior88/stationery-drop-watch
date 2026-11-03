@@ -16,7 +16,7 @@ What's inside
 - Extras at the back: brain dump pages, monthly budget pages, a reading list, a wishlist and dot grid notes pages
 
 Details
-- 8.5 x 11 inch paperback, 172 pages
+- 8.5 x 11 inch hardcover, 172 pages
 - Clean, minimal black and white interior
 - Soft blush cover with an arch design
 

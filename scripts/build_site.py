@@ -163,7 +163,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <footer class="foot"><div class="wrap">
   <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
   <p class="foot-links">Hobonichi: <a href="index.html">All listings</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
-  <p class="foot-links">Shop: <a href="shop/">Our planners</a> (Amazon paperbacks and printable PDFs on Etsy)</p>
+  <p class="foot-links">Shop: <a href="shop/">Our planners</a> (printed planners on Amazon and printable PDFs on Etsy)</p>
   <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
   <p class="foot-links">Guides: <a href="where-to-buy-hobonichi-2027/">Where to buy the Hobonichi Techo 2027</a> · <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a></p>
   <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
@@ -1145,9 +1145,9 @@ def build_shop():
 <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Our planners</span></nav>
 <p class="eyebrow">Shop</p>
 <h1>Our planners</h1>
-<p class="lede">Planners and journals made by Stationery Drop Watch. Get a printed paperback on Amazon or a printable PDF on Etsy.</p>
+<p class="lede">Planners and journals made by Stationery Drop Watch. Get a printed copy on Amazon or a printable PDF on Etsy.</p>
 {signup_strip("alerts-top")}
-<h2>Paperbacks on Amazon</h2>
+<h2>Printed planners on Amazon</h2>
 <ul class="shop-list">{amz}</ul>
 <h2>Printable PDFs on Etsy</h2>
 <ul class="shop-list">{etsy}</ul>
@@ -1157,7 +1157,7 @@ def build_shop():
         {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
         {"@type": "ListItem", "position": 2, "name": "Our planners", "item": url_for(fname)}]}
     return fname, page(fname, "Our planners: 2027 planners on Amazon and Etsy · Stationery Drop Watch",
-                       "Planners made by Stationery Drop Watch: 2027 paperback planners and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy.",
+                       "Planners made by Stationery Drop Watch: printed 2027 planners and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy.",
                        body, ld=(crumbs,))
 
 SOCIALS = [  # (platform, handle, url, note, icon letter)
