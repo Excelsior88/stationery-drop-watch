@@ -1,5 +1,7 @@
 """Social share cards (1200x630) for Open Graph / Twitter:
-site/assets/brand/og-image.png (Hobonichi side, home) and og-dotgrid.png (dot grid journaling page).
+site/assets/brand/og-image.png (Hobonichi side, home), og-dotgrid.png (dot grid journals),
+og-travelers.png (Traveler's Company limited editions) and og-midori.png (MIDORI MD seasonal releases).
+No shop counts on the cards (they change with the data); the check frequency matches the site's wording.
 Run: python3 scripts/brand/make_og.py (needs Pillow; uses logo-1600.png)."""
 import os
 from PIL import Image, ImageDraw, ImageFont
@@ -45,8 +47,15 @@ f3 = ImageFont.truetype(sans, 24)
 try: f3.set_variation_by_axes([24, 500])
 except Exception: pass
 
+FREQ = "checked about every 30 minutes"
 card("og-image.png", [("Hobonichi Techo 2027 restock tracker", f1, INK, 72),
-                      ("Books, Weeks & covers · checked hourly across 13 shops", f2, INK2, 0)])
+                      ("Books, Weeks & covers · " + FREQ, f2, INK2, 0)])
 card("og-dotgrid.png", [("Dot grid journal restock tracker", f1, INK, 66),
                         ("Archer and Olive · Leuchtturm1917 · Scribbles That Matter · Notebook Therapy", f3, INK2, 40),
-                        ("Size by size, color by color · checked hourly", f3, TERRA, 0)])
+                        ("Size by size, color by color · " + FREQ, f3, TERRA, 0)])
+card("og-travelers.png", [("Traveler's Company limited edition tracker", f1, INK, 66),
+                          ("2027 diary accessories · anniversary sets · shop exclusives", f3, INK2, 40),
+                          ("Official and independent shops · " + FREQ, f3, TERRA, 0)])
+card("og-midori.png", [("MIDORI MD seasonal release tracker", f1, INK, 66),
+                       ("MD notebooks, diaries and limited covers (now MD PRODUCT)", f3, INK2, 40),
+                       ("Official and independent shops · " + FREQ, f3, TERRA, 0)])

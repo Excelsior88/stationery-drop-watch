@@ -155,6 +155,48 @@
    "label": "Notebook Therapy · Tsuki 'Raven's Secret' Limited Edition",
    "type": "Dot grid notebook",
    "brand": "notebooktherapy"
+  },
+  {
+   "id": "tn-2027-sticker-set",
+   "label": "Traveler's notebook 2027 Customized Sticker Set",
+   "type": "Sticker set",
+   "brand": "travelers",
+   "section": "travelers"
+  },
+  {
+   "id": "tn-2027-clear-folder-regular",
+   "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+   "type": "Clear folder",
+   "brand": "travelers",
+   "section": "travelers"
+  },
+  {
+   "id": "tn-2027-plastic-sheet-regular",
+   "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+   "type": "Plastic sheet",
+   "brand": "travelers",
+   "section": "travelers"
+  },
+  {
+   "id": "tn-20th-customization-set",
+   "label": "Traveler's notebook 20th Anniversary Customization Set",
+   "type": "Customization set",
+   "brand": "travelers",
+   "section": "travelers"
+  },
+  {
+   "id": "tn-20th-card-black",
+   "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+   "type": "Notebook",
+   "brand": "travelers",
+   "section": "travelers"
+  },
+  {
+   "id": "tn-road-trip-brown",
+   "label": "Traveler's notebook ROAD TRIP Brown · Regular size (US exclusive)",
+   "type": "Notebook",
+   "brand": "travelers",
+   "section": "travelers"
   }
  ],
  "stores": [
@@ -301,6 +343,30 @@
      "type": "Weeks Mega",
      "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-mega-planner-colors-midnight-blue-english",
      "source_title": "Hobonichi Techo 2027 Weeks MEGA Planner | Colors: Midnight Blue | English"
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://www.thepapermouse.com/products/travelers-notebook-customized-sticker-set-2027-edition",
+     "section": "travelers",
+     "source_title": "TRAVELER'S notebook Customized Sticker Set | 2027 Edition"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://www.thepapermouse.com/products/travelers-notebook-clear-folder-regular-size-2027-edition",
+     "section": "travelers",
+     "source_title": "TRAVELER'S notebook Clear Folder | Regular Size | 2027 Edition"
+    },
+    {
+     "canonical": "tn-20th-customization-set",
+     "label": "Traveler's notebook 20th Anniversary Customization Set",
+     "type": "Customization set",
+     "url": "https://www.thepapermouse.com/products/traveler-s-notebook-20th-anniversary-customization-set-limited-edition",
+     "section": "travelers",
+     "source_title": "TRAVELER'S notebook 20th Anniversary Customization Set | Limited Edition"
     }
    ]
   },
@@ -354,6 +420,30 @@
      "type": "Weeks",
      "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-pink-sapphire",
      "source_title": "Hobonichi Techo Weeks - Colors: Pink Sapphire"
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://www.atlasstationers.com/products/travelers-2027-diary-customized-sticker-set",
+     "section": "travelers",
+     "source_title": "Traveler's 2027 Diary Customized Sticker Set"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://www.atlasstationers.com/products/travelers-2027-clear-folder-regular-size",
+     "section": "travelers",
+     "source_title": "Traveler's 2027 Clear Folder - Regular Size"
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://www.atlasstationers.com/products/travelers-notebook-card-size-20th-anniversary-set-black",
+     "section": "travelers",
+     "source_title": "Traveler's Notebook - Card Size - 20th Anniversary Set - Black"
     }
    ]
   },
@@ -453,6 +543,30 @@
      "type": "Book",
      "url": "https://www.baum-kuchen.net/products/hobonichi-2027-planner-book-a6-english",
      "source_title": "[Hobonichi 2027] Planner Book (A6 / English)"
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://www.baum-kuchen.net/products/trc-2027-customized-sticker-set",
+     "section": "travelers",
+     "source_title": "[TRC 2027] Customized Sticker Set"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://www.baum-kuchen.net/products/trc-2027-clear-folder",
+     "section": "travelers",
+     "source_title": "[TRC 2027] Clear Folder"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://www.baum-kuchen.net/products/trc-2027-plastic-sheet",
+     "section": "travelers",
+     "source_title": "[TRC 2027] Plastic Sheet"
     }
    ]
   },
@@ -783,6 +897,30 @@
      "type": "Weeks",
      "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-yumi-kitagishi-white-cat-wallpaper",
      "source_title": "Hobonichi Techo Weeks 2027 - Yumi Kitagishi: White Cat Wallpaper"
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://www.jennibick.com/products/travelers-notebook-2027-customized-sticker-set-for-diary",
+     "section": "travelers",
+     "source_title": "TRAVELER'S Notebook 2027 Customized Sticker Set For Diary"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://www.jennibick.com/products/travelers-notebook-2027-clear-folder-regular-size",
+     "section": "travelers",
+     "source_title": "TRAVELER'S Notebook 2027 Clear Folder - Regular Size"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://www.jennibick.com/products/travelers-notebook-2027-plastic-sheet-regular-size",
+     "section": "travelers",
+     "source_title": "TRAVELER'S Notebook 2027 Plastic Sheet - Regular Size"
     }
    ]
   },
@@ -906,6 +1044,89 @@
      "type": "Weeks",
      "url": "https://omoionline.com/products/hobonichi-techo-2027-weeks-paper-series-planner-jade",
      "source_title": "Hobonichi Techo 2027 WEEKS Paper Series Planner Jade"
+    }
+   ]
+  },
+  {
+   "id": "travelerscompanyusa",
+   "name": "Traveler's Company USA (official)",
+   "url": "https://shop.travelerscompanyusa.com/",
+   "platform": "shopify",
+   "section": "travelers",
+   "note": "Official Traveler's Company online shop for the US and Canada.",
+   "products": [
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://shop.travelerscompanyusa.com/products/customized-sticker-set-for-diary-2027",
+     "section": "travelers",
+     "source_title": "Customized Sticker Set for Diary 2027"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://shop.travelerscompanyusa.com/products/clear-folder-2027-regular-size",
+     "section": "travelers",
+     "source_title": "Clear Folder 2027 (Regular Size)"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://shop.travelerscompanyusa.com/products/plastic-sheet-2027-regular-size",
+     "section": "travelers",
+     "source_title": "Plastic Sheet 2027 (Regular Size)"
+    },
+    {
+     "canonical": "tn-20th-customization-set",
+     "label": "Traveler's notebook 20th Anniversary Customization Set",
+     "type": "Customization set",
+     "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-20th-anniversary-customization-set",
+     "section": "travelers",
+     "source_title": "20th Anniversary Customization Set"
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-card-size-20th-anniversary-set-black",
+     "section": "travelers",
+     "source_title": "20th Anniversary Card Size Set Black"
+    },
+    {
+     "canonical": "tn-road-trip-brown",
+     "label": "Traveler's notebook ROAD TRIP Brown · Regular size (US exclusive)",
+     "type": "Notebook",
+     "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-brown-road-trip",
+     "section": "travelers",
+     "source_title": "ROAD TRIP Brown (Regular Size)"
+    }
+   ]
+  },
+  {
+   "id": "tokyopenshop",
+   "name": "Tokyo Pen Shop",
+   "url": "https://www.tokyopenshop.com/",
+   "platform": "shopify",
+   "note": "Independent shop selling Japanese stationery.",
+   "products": [
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://www.tokyopenshop.com/products/2027-customized-sticker-for-travelers-notebook",
+     "section": "travelers",
+     "source_title": "2027 Customized Sticker for Traveler's Notebook"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://www.tokyopenshop.com/products/2027-clear-folder-for-travelers-notebook",
+     "section": "travelers",
+     "source_title": "2027 Clear Folder for Traveler's Notebook"
     }
    ]
   },

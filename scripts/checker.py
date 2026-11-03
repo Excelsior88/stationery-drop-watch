@@ -79,7 +79,8 @@ def check_shopify_store(store):
     for p in store["products"]:
         rec = dict(store_id=store["id"], store=store["name"], canonical=p.get("canonical"), label=p["label"],
                    type=p["type"], url=p["url"], checked_at=None, status="unknown", method=None,
-                   available_variants=None, total_variants=None, title=p.get("source_title"), error=None)
+                   available_variants=None, total_variants=None, title=p.get("source_title"), error=None,
+                   **({"section": p["section"]} if p.get("section") else {}))
         try:
             vid = p.get("variant_id")   # optional: track one size/paper option, not the whole product
             r = h.get(p["url"].split("?")[0] + ".js"); rec["checked_at"] = now()
@@ -147,7 +148,8 @@ def main():
         r["status_since"] = old.get("status_since") if old and old["status"] == r["status"] else r["checked_at"]
         if old and r["status"] != "unknown" and old["status"] not in ("unknown", r["status"]):
             changes.append(dict(at=r["checked_at"], store_id=r["store_id"], store=r["store"], label=r["label"],
-                                url=r["url"], **{"from": old["status"], "to": r["status"]}))
+                                url=r["url"], **({"section": r["section"]} if r.get("section") else {}),
+                                **{"from": old["status"], "to": r["status"]}))
         elif old and r["status"] == "unknown" and old["status"] != "unknown":
             r["status_since"] = old.get("status_since")  # transient failure: don't reset the clock
     summary = {k: sum(1 for r in results if r["status"] == k) for k in ("in_stock", "preorder", "coming_soon", "sold_out", "unknown")}

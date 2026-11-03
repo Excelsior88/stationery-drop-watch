@@ -51,36 +51,75 @@ changes = json.loads((ROOT / "data/changes.json").read_text())
 picks = json.loads((ROOT / "content/editor_picks.json").read_text())
 amz = json.loads((ROOT / "content/amazon_links.json").read_text())  # links only; never fetched by the checker
 
-# Canonical products from other brands (e.g. Archer and Olive). They get no Amazon fallback link:
-# the only Amazon brand link we have is Hobonichi's, and we don't link a brand to a product it isn't.
+# Canonical products from other brands (e.g. Archer and Olive). Dot grid items get no Amazon fallback link:
+# we don't link a brand to a product it isn't. Sections with their own Amazon brand link (Traveler's, MIDORI) use that.
 OTHER_BRAND = {c["id"] for c in stores["canonical"] if c.get("brand")}
-HOBO_SHOPS = {s["id"] for s in stores["stores"] if not s.get("brand")}
-# The site has two separate sections: Hobonichi (home tracker, calendar, Hobonichi product pages)
-# and dot grid journaling (one page, every shop whose store entry has a "brand"). Never mixed.
+CANON_SECTION = {c["id"]: c["section"] for c in stores["canonical"] if c.get("section")}
+HOBO_SHOPS = {s["id"] for s in stores["stores"] if not s.get("brand") and not s.get("section")}
+# The site keeps brand families apart, never mixed: Hobonichi (home tracker, calendar, Hobonichi product pages)
+# plus one page per other section below. A listing's section is its own "section", its canonical's "section",
+# or (older dot grid entries) a canonical with a "brand" or a store entry with a "brand".
 DOTGRID_SHOPS = [s for s in stores["stores"] if s.get("brand")]
+SECTIONS = {  # non-Hobonichi sections in nav/footer order; each has one page (the GROUPS entry with that section)
+    "dotgrid": dict(slug="archer-and-olive-dot-grid-journal", nav="Dot grid journals", name="dot grid journals",
+                    foot="Dot grid journaling", count="dot grid journals", amazon=None),
+    "travelers": dict(slug="travelers-company-limited-edition", nav="Traveler's Company", name="Traveler's Company limited editions",
+                      foot="Traveler's Company", count="Traveler's Company", amazon="travelers"),
+    "midori": dict(slug="midori-md-limited-edition", nav="MIDORI MD", name="MIDORI MD seasonal releases",
+                   foot="MIDORI MD", count="MIDORI MD", amazon="midori"),
+}
 
-N_STORES = len({p["store_id"] for p in stock["products"]})  # stores the checker actually checks
+def g_sec(g):
+    return g.get("section", "hobonichi")
+
+def section_of(p):
+    s = p.get("section") or CANON_SECTION.get(p.get("canonical"))
+    if s:
+        return s
+    return "dotgrid" if (p.get("canonical") in OTHER_BRAND or p["store_id"] not in HOBO_SHOPS) else "hobonichi"
 
 def is_dotgrid(p):
-    return p.get("canonical") in OTHER_BRAND or p["store_id"] not in HOBO_SHOPS
+    return section_of(p) == "dotgrid"
+
+def section_products(sec):
+    return [p for p in stock["products"] if section_of(p) == sec]
 
 def hobo_products():
-    return [p for p in stock["products"] if not is_dotgrid(p)]
+    return section_products("hobonichi")
 
-def dotgrid_names():
-    n = [s["name"] for s in DOTGRID_SHOPS]
+N_STORES = len({p["store_id"] for p in stock["products"]})  # stores the checker actually checks
+N_SEC = {k: len({p["store_id"] for p in section_products(k)}) for k in ("hobonichi", *SECTIONS)}  # shops per section, from data
+LIVE = [k for k in SECTIONS if section_products(k)]  # sections that have tracked listings (and so a page)
+
+def section_shops(sec):
+    """Store entries with listings in a section, in stores.json order."""
+    ids = {p["store_id"] for p in section_products(sec)}
+    return [s for s in stores["stores"] if s["id"] in ids]
+
+def names_and(n):
     return ", ".join(n[:-1]) + " and " + n[-1] if len(n) > 1 else "".join(n)
 
+def dotgrid_names():
+    return names_and([s["name"] for s in DOTGRID_SHOPS])
+
+def shop_names(sec):
+    return dotgrid_names() if sec == "dotgrid" else names_and([s["name"] for s in section_shops(sec)])
+
+def sections_phrase():
+    """'dot grid journals, Traveler's Company limited editions and MIDORI MD seasonal releases' (live ones only)."""
+    return names_and([SECTIONS[k]["name"] for k in LIVE])
+
 def amazon_for(canonical, listing_url=""):
-    """(tagged url, label) for a tracked listing: exact verified ASIN, else the Hobonichi brand link.
-    ("", "") for other brands' products."""
-    if canonical in OTHER_BRAND:  # exact verified listing only; no brand fallback for other brands
+    """(tagged url, label) for a tracked listing: exact verified ASIN, else the brand link of its section
+    (Hobonichi, Traveler's Company or MIDORI). ("", "") for dot grid products without an exact listing."""
+    sec = CANON_SECTION.get(canonical or "")
+    if canonical in OTHER_BRAND and not (sec and SECTIONS[sec]["amazon"]):  # dot grid: exact verified listing only
         m = amz.get("listings", {}).get(listing_url)
         return (amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "View on Amazon") if m else ("", "")
     m = amz["products"].get(canonical or "") or amz.get("listings", {}).get(listing_url)
     if m:
         return amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "View on Amazon"
-    b = amz["brands"]["hobonichi"]
+    b = amz["brands"][SECTIONS[sec]["amazon"] if sec else "hobonichi"]
     return amazon_link(b["url"]), b["label"]
 
 def brand_amazon(key):
@@ -102,15 +141,17 @@ def checked_line(ls):
 
 STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not yet on sale",
           "sold_out": "Sold out", "unknown": "Couldn't check"}
-DOTGRID_SLUG = "archer-and-olive-dot-grid-journal"
+DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG}
-NAV = [("index.html", "Hobonichi tracker"), ("hobonichi-2027.html", "2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journals"), ("guides/", "Guides"), ("shop/", "Planners and journals"), ("follow/", "Follow us"), ("about.html", "About")]
+NAV = ([("index.html", "Hobonichi tracker"), ("hobonichi-2027.html", "2027 calendar")]
+       + [(SECTIONS[k]["slug"] + "/", SECTIONS[k]["nav"]) for k in LIVE]
+       + [("guides/", "Guides"), ("shop/", "Planners and journals"), ("follow/", "Follow us"), ("about.html", "About")])
 SHOP_NAME = "Our planners and journals"  # h1 of /shop; nav and breadcrumb say "Planners and journals"
 # The workflow cron is "17,47 * * * *": two runs an hour. Every page says it the same way.
 CHECK_FREQ = "about every 30 minutes"
-N_HOBO = len({p["store_id"] for p in hobo_products()})                              # Hobonichi shops we check
-N_DG = len({p["store_id"] for p in stock["products"] if is_dotgrid(p)})          # dot grid shops we check
+N_HOBO = N_SEC["hobonichi"]   # Hobonichi shops we check
+N_DG = N_SEC["dotgrid"]        # dot grid shops we check
 TITLE_SUFFIX = " · Stationery Drop Watch"
 
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
@@ -178,13 +219,12 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 </div></header>
 <main class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
-  <p><strong>Stationery Drop Watch</strong> checks {N_STORES} official and independent shops ({N_HOBO} for Hobonichi, {N_DG} for dot grid journals) {CHECK_FREQ} for limited planner and journal restocks, so you don't have to keep refreshing tabs.</p>
-  <p class="foot-links">Hobonichi: <a href="index.html">Hobonichi tracker</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))}</p>
+  <p><strong>Stationery Drop Watch</strong> checks {N_STORES} official and independent shops ({", ".join([f"{N_HOBO} for Hobonichi"] + [f"{N_SEC[k]} for {SECTIONS[k]['count']}" for k in LIVE])}) {CHECK_FREQ} for limited planner and journal restocks, so you don't have to keep refreshing tabs.</p>
+  <p class="foot-links">Hobonichi: <a href="index.html">Hobonichi tracker</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if g_sec(g) == "hobonichi")}</p>
   <p class="foot-links">Shop: <a href="shop/">{SHOP_NAME}</a> (printed on Amazon, printable PDFs on Etsy)</p>
   <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
   <p class="foot-links">Guides: {" · ".join(f'<a href="{h}">{E(t)}</a>' for h, t in GUIDES)}</p>
-  <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
-  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
+{"".join(f'  <p class="foot-links">{E(SECTIONS[k]["foot"])}: <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a> <span class="muted">({E(shop_names(k))})</span></p>' + chr(10) for k in LIVE)}  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
 </div></footer>
@@ -308,17 +348,24 @@ def product_key(p):
     t = re.sub(r"\b(hobonichi|techo|2027|planner)\b", " ", t)
     return "t:" + " ".join(re.findall(r"[a-z0-9&]+", t))
 
+def exact_only(canonical):
+    """Dot grid products are tracked size by size and only ever get an exact verified Amazon listing."""
+    return canonical in OTHER_BRAND and not SECTIONS.get(CANON_SECTION.get(canonical or ""), {}).get("amazon")
+
+def oe_key(p):
+    return p["url"] if exact_only(p.get("canonical")) else product_key(p)
+
 def amazon_main(prods):
     """Products that no tracked shop can sell right now (every listing sold out / not yet on sale).
     Recomputed from data/stock.json on every build. A product with any listing we couldn't
     check ('unknown') is left out, since we can't honestly say it's unavailable everywhere."""
     groups = {}
     for p in prods:
-        # Other brands are tracked size by size, so each listing is its own product here.
-        groups.setdefault(p["url"] if p.get("canonical") in OTHER_BRAND else product_key(p), []).append(p)
+        groups.setdefault(oe_key(p), []).append(p)
     out = {}
     for k, ls in groups.items():
-        other = ls[0].get("canonical") in OTHER_BRAND
+        other = exact_only(ls[0].get("canonical"))
+        brand = SECTIONS.get(CANON_SECTION.get(ls[0].get("canonical") or ""), {}).get("amazon") or "hobonichi"
         sts = {l["status"] for l in ls}
         if not sts <= set(NOT_BUYABLE):
             continue
@@ -332,7 +379,7 @@ def amazon_main(prods):
         if hit:
             url, label, exact = amazon_link(f"https://www.amazon.com/dp/{hit['asin']}"), "View on Amazon", True
         else:
-            url, label, exact = amazon_link(amz["brands"]["hobonichi"]["url"]), amz["brands"]["hobonichi"]["label"], False
+            url, label, exact = amazon_link(amz["brands"][brand]["url"]), amz["brands"][brand]["label"], False
         n = len({l["store_id"] for l in ls})
         if sts == {"sold_out"}:
             note = "Sold out at every shop we track" if n > 1 else "Sold out at the only shop we track"
@@ -376,7 +423,7 @@ def tracker_rows(prods, out_everywhere):
                  va=p.get("available_variants"), tv=p.get("total_variants"),
                  az=amazon_for(p.get("canonical"), p["url"])[0], azl=amazon_for(p.get("canonical"), p["url"])[1]) for p in prods]
     for r in rows:  # product unavailable at every tracked shop: Amazon becomes the main action
-        m = out_everywhere.get(r["u"] if r["c"] in OTHER_BRAND else r["g"])
+        m = out_everywhere.get(r["u"] if exact_only(r["c"]) else r["g"])
         if m:
             r.update(az=m["url"], azl=m["label"], azm=1)
     return rows
@@ -399,6 +446,17 @@ def count_line(ls, unit="listings"):
 
 def stock_data(rows):
     return f'<script id="stock-data" type="application/json">{json.dumps(rows, ensure_ascii=False).replace("</", "<\\/")}</script>'
+
+def soon_block():
+    """Sections we plan to track but don't have listings for yet. Disappears once every one is live."""
+    soon = [k for k in SECTIONS if k not in LIVE and SECTIONS[k]["amazon"]]
+    if not soon:
+        return ""
+    items = "".join(f'<li>{E(SECTIONS[k]["name"])} <span class="muted small">· {brand_amazon(SECTIONS[k]["amazon"])}</span></li>' for k in soon)
+    return f"""<section class="card soon">
+      <p class="eyebrow">Coming to the tracker</p>
+      <ul>{items}</ul>
+    </section>"""
 
 def build_index():
     prods = hobo_products()  # Hobonichi section only; dot grid shops live on their own page
@@ -448,7 +506,7 @@ def build_index():
   <h1>Know the moment your planner is back.</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
   <p class="shop-cta"><a class="btn-ghost" href="shop/">{SHOP_NAME} →</a> <span class="muted small">2027 planners and journals we make, printed on Amazon and printable on Etsy</span></p>
-  <p class="small section-switch">Also tracked: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">· {E(dotgrid_names())}</span></p>
+  <p class="small section-switch">Also tracked: {" · ".join(f'<a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE)}</p>
   {signup()}
   <div class="stats{' five' if s['unknown'] else ''}">
     <div><b>{s['in_stock']}</b><span>in stock</span></div>
@@ -480,23 +538,20 @@ def build_index():
   <aside class="side-col">
     {sponsor_block()}
     {editor_block()}
-    <section class="card soon">
-      <p class="eyebrow">Coming to the tracker</p>
-      <ul><li>Traveler's Company limited editions <span class="muted small">· {brand_amazon("travelers")}</span></li><li>MIDORI MD seasonal releases <span class="muted small">· {brand_amazon("midori")}</span></li></ul>
-    </section>
+    {soon_block()}
   </aside>
 </div>
 {stock_data(rows)}
 """
     n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
-               "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in a separate section, dot grid journals from {dotgrid_names()}.",
+               "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
                "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
-                             "description": "Independent restock tracker for Hobonichi Techo 2027 planners and covers, and dot grid journals. Statuses come straight from each shop's public product data.",
+                             "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {sections_phrase()}. Statuses come straight from each shop's public product data.",
                              "logo": BASE + "assets/brand/icon-512.png", "email": "stationerydropwatch@gmail.com",
                              "sameAs": [s[2] for s in SOCIALS]}}
     return page("index.html", "Hobonichi Techo 2027 & dot grid journal restock tracker · Stationery Drop Watch",
-                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked {CHECK_FREQ}. Plus a separate dot grid journal restock tracker.",
+                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked {CHECK_FREQ}. Plus separate trackers for {sections_phrase()}.",
                 body, ld=(site_ld, faq_ld))
 
 def build_hobonichi():
@@ -559,7 +614,7 @@ def build_about():
 <p class="lede">Limited planners sell out fast, and every shop only posts its own restocks. This site checks them all in one place.</p>
 {signup()}
 <h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. The site has two sections: the <a href="index.html">Hobonichi tracker</a> (the official store and independent shops) and <a href="{DOTGRID_SLUG}/">dot grid journaling</a> ({E(dotgrid_names())}, each checked on its own store). When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
+<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="index.html">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email <a href="mailto:stationerydropwatch@gmail.com?subject=Featured%20restock%20slot">stationerydropwatch@gmail.com</a> for rates and dates.</p>
@@ -568,7 +623,7 @@ def build_about():
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
 </article>"""
-    return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks shops {CHECK_FREQ} for Hobonichi Techo 2027 and dot grid journal restocks, and why it never guesses stock.", body, ld=(crumbs_ld(("about.html", "About")),))
+    return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks shops {CHECK_FREQ} for Hobonichi Techo 2027, {sections_phrase()} restocks, and why it never guesses stock.", body, ld=(crumbs_ld(("about.html", "About")),))
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
 # Every status on these pages comes from data/stock.json exactly as the checker wrote it.
@@ -603,7 +658,8 @@ GROUPS = [
          desc="Are Hobonichi Techo 2027 A6 covers like Moomin: My Yard and Yumi Kitagishi: White Cat House in stock? Live status at {shops} shops, checked about every 30 minutes.",
          intro="Popular Hobonichi covers can sell out within minutes of a drop. "
                "We track a handful of 2027 A6 covers; here's what each shop reported at its last check."),
-    dict(slug=DOTGRID_SLUG, short="Dot grid journals", product="Dot grid journal", dotgrid=True,
+    dict(slug=DOTGRID_SLUG, short="Dot grid journals", product="Dot grid journal", section="dotgrid", featured=True, per_shop=True,
+         search_hint="Tsuki, B5, Charcoal…",
          match=is_dotgrid,
          eyebrow="Dot grid journaling", unit="listings",
          open_hint="Open a row to go straight to that exact size and color on the shop's site",
@@ -616,13 +672,26 @@ GROUPS = [
          og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
                "We track a focused set of flagship dot grid notebooks straight from each maker's own store, size by size and color by color. "
-               "Archer and Olive is featured first. This covers dot grid journals only; we don't track pens or other paper here, and Hobonichi has its own section."),
+               "Archer and Olive is featured first. This covers dot grid journals only; we don't track pens or other paper here, and Hobonichi and our other sections have their own pages."),
+    dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Company limited edition", section="travelers",
+         match=lambda p: section_of(p) == "travelers", eyebrow="Traveler's Company", search_hint="Sticker set, Clear Folder, 20th…",
+         guide="Traveler's Company makes these in limited runs, and each shop gets its own allocation, so one shop can sell out while another still has stock. "
+               "For the regular refills and covers, which stay in the catalog, check the shops directly.",
+         title=f"Traveler's Company limited edition restock tracker",
+         desc="Are the Traveler's notebook 2027 diary accessories and 20th anniversary sets in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
+         og_image=BASE + "assets/brand/og-travelers.png",
+         og_alt="Stationery Drop Watch: Traveler's Company limited edition tracker, checked " + CHECK_FREQ,
+         intro="Traveler's Company limited editions come in small runs: the yearly diary accessories, anniversary sets and shop exclusives. "
+               "We check the official Traveler's Company USA shop and independent shops, item by item. "
+               "This covers Traveler's Company limited editions only; Hobonichi and our other sections have their own pages."),
 ]
 for _g in GROUPS:  # one name per page: H1 is "<product> restock tracker"; the <title> adds the live shop count
     _g["h1"] = _g["product"] + " restock tracker"
-for _g in GROUPS:  # Hobonichi pages never pick up dot grid listings
-    if not _g.get("dotgrid"):
-        _g["match"] = (lambda m: lambda p: not is_dotgrid(p) and m(p))(_g["match"])
+for _g in GROUPS:  # Hobonichi pages never pick up listings from another section
+    if g_sec(_g) == "hobonichi":
+        _g["match"] = (lambda m: lambda p: section_of(p) == "hobonichi" and m(p))(_g["match"])
+# A section's page exists only once it has listings; until then it sits in the "Coming to the tracker" box.
+GROUPS = [g for g in GROUPS if g_sec(g) == "hobonichi" or g_sec(g) in LIVE]
 
 def latest(*isos):
     return max(i for i in isos if i)
@@ -632,7 +701,7 @@ def group_listings(g):
 
 def row_amz(l, oe):
     """Per-size Amazon button for other brands' listings (their oe entries are keyed by listing URL)."""
-    m = oe.get(l["url"]) if l.get("canonical") in OTHER_BRAND else None
+    m = oe.get(l["url"]) if exact_only(l.get("canonical")) else None
     return f'<a class="btn btn-amz btn-sm" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a>' if m else ""
 
 def status_rows(ls, oe):
@@ -654,7 +723,9 @@ def build_group(g, oe):
     for l in ls:
         sections.setdefault(l.get("canonical") or "", []).append(l)
     order = [c["id"] for c in stores["canonical"] if c["id"] in sections] + ([""] if "" in sections else [])
-    if g.get("dotgrid"):  # one block per shop, in stores.json order (Archer and Olive first)
+    ext = g_sec(g) != "hobonichi"  # non-Hobonichi sections carry their own tracker table on the page
+    per_shop = g.get("per_shop")  # dot grid: every product sits in one maker's store, so the page goes shop by shop
+    if per_shop:  # shops in stores.json order (Archer and Olive first)
         rank = {s["id"]: i for i, s in enumerate(stores["stores"])}
         order.sort(key=lambda cid: min(rank[l["store_id"]] for l in sections[cid]))
     parts = []
@@ -666,16 +737,16 @@ def build_group(g, oe):
         amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
                    f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
         az_url, az_label = amazon_for(cid, sl[0]["url"])
-        az_sub = "" if m or not az_url or cid in OTHER_BRAND else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
-        tracker = (f' · <a href="?product={E(cid)}#tracker">Filter below</a>' if g.get("dotgrid") else
+        az_sub = "" if m or not az_url or exact_only(cid) else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
+        tracker = (f' · <a href="?product={E(cid)}#tracker">Filter below</a>' if ext else
                    f' · <a href="index.html?product={E(cid)}#tracker">Filter in the tracker</a>') if cid else ""
         sid = sl[0]["store_id"]
-        hx = "h3" if g.get("dotgrid") else "h2"  # dot grid page: shop is the h2, its products are h3
-        if g.get("dotgrid") and sid not in seen_shop:
+        hx = "h3" if per_shop else "h2"  # shop-by-shop pages: shop is the h2, its products are h3
+        if per_shop and sid not in seen_shop:
             seen_shop.add(sid)
             st = next(x for x in stores["stores"] if x["id"] == sid)
             sls = [l for l in ls if l["store_id"] == sid]
-            feat = ' <span class="badge featured">Featured</span>' if not parts else ""
+            feat = ' <span class="badge featured">Featured</span>' if not parts and g.get("featured") else ""
             parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a></span>{feat}
   <span class="muted small">{E(count_line(sls).capitalize())}</span></h2>""")
         parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
@@ -694,7 +765,7 @@ def build_group(g, oe):
         right_now = (f"{len(buy)} of {len(ls) - len(unk) if unk else len(ls)} {'checked ' if unk else ''}listings are in stock or on preorder "
                      f"at {len({l['store_id'] for l in buy})} of {shops} shops."
                      + (f" {len(unk)} couldn't be checked this run." if unk else ""))
-    lead_n = 2 if g.get("dotgrid") else 1  # dot grid: first shop heading + its first card
+    lead_n = 2 if per_shop else 1  # shop-by-shop pages: first shop heading + its first card
     urls = {l["url"] for l in ls}
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
                 key=lambda c: c["at"], reverse=True)[:10]
@@ -707,12 +778,17 @@ def build_group(g, oe):
         start = tracking_start(ls)
         restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
   A restock shows up here the moment a sold-out listing flips back to in stock or preorder between two checks.</p></div>'''
-    others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and bool(x.get("dotgrid")) == bool(g.get("dotgrid")))
-    if g.get("dotgrid"):
-        others += '<li><a href="#tracker">Every dot grid listing we track</a></li>'
-        shop_nav = "".join(f'<a class="chip" href="#shop-{E(x["id"])}">{E(x["name"])}</a>' for x in DOTGRID_SHOPS if any(l["store_id"] == x["id"] for l in ls))
-        shop_nav = f'<nav class="chips" aria-label="Shops on this page"><span class="muted small">Jump to a shop:</span> {shop_nav}</nav>'
-        dg_tracker = tracker_block(ls, tracker_rows(ls, oe), "Tsuki, B5, Charcoal…") + stock_data(tracker_rows(ls, oe))
+    others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and (g_sec(x) != "hobonichi") == ext)
+    if ext:
+        others += f'<li><a href="#tracker">Every {E(SECTIONS[g_sec(g)]["name"].removesuffix("s"))} listing we track</a></li>'
+        if per_shop:
+            shop_ids = sorted({l["store_id"] for l in ls}, key=lambda sid: rank[sid])
+            shop_nav = "".join(f'<a class="chip" href="#shop-{E(sid)}">{E(next(x["name"] for x in stores["stores"] if x["id"] == sid))}</a>' for sid in shop_ids)
+            shop_nav = f'<nav class="chips" aria-label="Shops on this page"><span class="muted small">Jump to a shop:</span> {shop_nav}</nav>'
+        else:  # products span several shops: jump by product instead
+            shop_nav = "".join(f'<a class="chip" href="#{E(cid)}">{E(canon[cid].removeprefix("Traveler\'s notebook ").removeprefix("MD "))}</a>' for cid in order if cid)
+            shop_nav = f'<nav class="chips" aria-label="Products on this page"><span class="muted small">Jump to:</span> {shop_nav}</nav>'
+        dg_tracker = tracker_block(ls, tracker_rows(ls, oe), g["search_hint"]) + stock_data(tracker_rows(ls, oe))
     else:
         others += '<li><a href="index.html#tracker">Hobonichi tracker (every listing)</a></li>'
         shop_nav = dg_tracker = ""
@@ -744,9 +820,9 @@ def build_group(g, oe):
   </div>
   <aside class="side-col">
     {sponsor_block()}
-    {editor_block("dotgrid" if g.get("dotgrid") else "home")}
+    {editor_block("dotgrid" if ext else "home")}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
-    {"" if g.get("dotgrid") else guides_block()}
+    {"" if ext else guides_block()}
   </aside>
 </div>
 </div>"""
@@ -767,26 +843,34 @@ FAQ = [
     ("How often do you check the shops?",
      "About every 30 minutes. A scheduled job reads each shop's public product data, then rebuilds this site with what it found."),
     ("Which shops do you check?",
-     "{n} shops in two separate sections. Hobonichi: the official Hobonichi Online Store and independent stationery shops. Dot grid journaling: {dg}, each checked on its own store. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
+     "{n} shops, in separate sections per brand family. Hobonichi: the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
-     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 covers. On a separate dot grid journaling page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color. We don't track pens or other paper."),
+     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 covers. {tracks} We don't track pens or everyday refills."),
     ("What does \"Couldn't check\" mean?",
      "Our check of that listing failed, for example because the shop's site didn't respond. We show that instead of guessing whether it's in stock."),
     ("What does \"Not yet on sale\" mean?",
      "The shop has a preview page up for the product but isn't taking orders yet. That's different from sold out."),
     ("Do you sell planners?",
      "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon and as printable PDFs on Etsy. "
-     "The Hobonichi and dot grid stationery we track is sold by the shops themselves; we just link you to them. "
+     "The stationery we track is sold by the shops themselves; we just link you to them. "
      "Amazon links on the site are affiliate links, and we say so on every page; links to the shops we track are plain links."),
     ("How do restock alerts work?",
      "Sign up with your email and you'll get one short email when a sold-out item comes back somewhere we track. It's free and you can unsubscribe anytime."),
 ]
 
+FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
+    "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color.",
+    "travelers": "On the Traveler's Company page, we track limited editions: the 2027 diary accessories, anniversary sets and shop exclusives.",
+    "midori": "On the MIDORI MD page, we track seasonal and limited MD releases (MIDORI's MD line is now sold as MD PRODUCT).",
+}
+
 def faq_block():
     n = len({p["store_id"] for p in stock["products"]})
     # {shop} is a link in the page and the plain URL in the FAQ structured data
-    qa = [(q, a.format(n=n, dg=dotgrid_names(), shop=url_for("shop/")),
-           E(a).format(n=n, dg=E(dotgrid_names()), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in FAQ]
+    secs = ". ".join(f'{SECTIONS[k]["foot"]}: {shop_names(k)}' + (", each checked on its own store" if k == "dotgrid" else "") for k in LIVE)
+    tracks = " ".join(FAQ_TRACKS[k] for k in LIVE)
+    qa = [(q, a.format(n=n, secs=secs, tracks=tracks.format(dg=dotgrid_names()), shop=url_for("shop/")),
+           E(a).format(n=n, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in FAQ]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}
@@ -795,7 +879,7 @@ def faq_block():
 def product_links_block():
     items = []
     for g in GROUPS:
-        if g.get("dotgrid"):
+        if g_sec(g) != "hobonichi":
             continue
         ls = group_listings(g)
         items.append(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a> <span class="muted small">· {E(count_line(ls))}</span></li>')
@@ -836,22 +920,22 @@ Sitemap: {BASE}sitemap.xml
 
 def build_404():
     """GitHub Pages serves this for any unknown path, so every link is root-relative (see _page)."""
-    hobo = "".join(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a></li>' for g in GROUPS if not g.get("dotgrid"))
+    hobo = "".join(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a></li>' for g in GROUPS if g_sec(g) == "hobonichi")
     body = f"""
 <article class="prose notfound">
 {crumbs(("404.html", "Page not found"))}
 {eyebrow("404", "page not found")}
 <h1>This page sold out. Or it never existed.</h1>
 <p class="lede">The link may be old or mistyped. Every tracker is still here and checked {CHECK_FREQ}.</p>
-<p><a class="btn" href="index.html">Go to the Hobonichi tracker</a> <a class="btn-ghost" href="{DOTGRID_SLUG}/">Dot grid journals</a></p>
+<p><a class="btn" href="index.html">Go to the Hobonichi tracker</a> {" ".join(f'<a class="btn-ghost" href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE)}</p>
 <section class="card"><h2>Restock pages</h2>
   <p class="eyebrow">Hobonichi Techo 2027</p><ul class="link-list"><li><a href="index.html">Hobonichi tracker</a></li>{hobo}</ul>
-  <p class="eyebrow">Dot grid journaling</p><ul class="link-list"><li><a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted small">· {E(dotgrid_names())}</span></li></ul>
+{"".join(f'  <p class="eyebrow">{E(SECTIONS[k]["foot"])}</p><ul class="link-list"><li><a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a> <span class="muted small">· {E(shop_names(k))}</span></li></ul>' + chr(10) for k in LIVE)}
   <p class="eyebrow">Guides</p><ul class="link-list">{"".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES)}</ul>
 </section>
 </article>"""
     return page("404.html", "Page not found · Stationery Drop Watch",
-                "This page doesn't exist. Find the Hobonichi Techo 2027 and dot grid journal restock trackers here.", body, noindex=True)
+                f"This page doesn't exist. Find the Hobonichi Techo 2027, {sections_phrase()} restock trackers here.", body, noindex=True)
 
 # --- SEO guides (Hobonichi section) -------------------------------------------------------------
 # Editorial pages. Every stock status on them comes from data/stock.json (rebuilt about every 30 minutes by the
@@ -923,7 +1007,7 @@ def _shop_table(ls):
 def build_where_to_buy():
     fname = WTB_SLUG + "/"
     hobo = hobo_products()
-    groups = [g for g in GROUPS if not g.get("dotgrid")]
+    groups = [g for g in GROUPS if g_sec(g) == "hobonichi"]
     last = f'<time datetime="{E(stock["run_finished"])}">{E(fmt_et(stock["run_finished"]))}</time>'
     quick, secs = [], []
     for g in groups:

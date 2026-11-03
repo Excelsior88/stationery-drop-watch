@@ -47,6 +47,13 @@ def grapheme_len(text):
 def topic_tags(product, variant, store):
     blob = f"{product} {variant or ''}".lower()
     brand = next((t for k, t in BRAND_TAGS.items() if k in blob or k in store.lower()), None)
+    blob = blob.replace("\u2019", "'")
+    if "traveler" in blob:  # Traveler's Company section (checked before the generic "notebook" match)
+        return dict(x=["#TravelersNotebook"], ig=["#TravelersNotebook", "#TravelersCompany", "#Journaling", "#Stationery", "#PlannerCommunity"],
+                    threads="Journaling", bsky=["#travelersnotebook", "#stationery"])
+    if any(k in blob for k in ("midori", "md notebook", "md paper", "md product")):  # MIDORI MD section
+        return dict(x=["#MidoriMD"], ig=["#MidoriMD", "#MDPaper", "#Journaling", "#Stationery", "#PlannerCommunity"],
+                    threads="Stationery", bsky=["#stationery", "#journaling", "#midorimd"])
     if "hobonichi" in blob:
         y = "#Hobonichi2027" if "2027" in blob else "#Hobonichi"
         return dict(x=[y], ig=["#Hobonichi", "#Hobonichi2027" if "2027" in blob else "#HobonichiTecho",
