@@ -80,16 +80,13 @@ table.stock{width:100%;border-collapse:collapse;font-size:.93rem}
 .empty-row td{text-align:center;color:var(--ink-2);padding:24px}
 details{margin-top:10px} summary{cursor:pointer}
 
-.signup h2{margin-bottom:.3em}
 .signup-form{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .signup-form input{flex:1 1 180px}
 button,.btn{font:600 .95rem var(--sans);background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;text-decoration:none;display:inline-block;min-height:40px}
 button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .btn-ghost{display:inline-block;font-weight:600;font-size:.9rem;padding:8px 14px;border:1.5px solid var(--ink);border-radius:10px;color:var(--ink);text-decoration:none}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
-.form-note{font-size:.88rem;background:var(--paper-2);padding:8px 10px;border-radius:8px;margin:10px 0 0}
-.signup.compact{background:linear-gradient(180deg,#fff7ea,#fffdf8)}
-/* One-row signup near the top of a page (signup_strip in build_site.py) */
+/* The one signup box: signup() in build_site.py, once per page, right after the page intro */
 .signup-strip{margin:16px 0 18px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#fff7ea,#fffdf8);max-width:640px}
 .signup-strip .signup-form{margin-top:0;align-items:center}
 .signup-strip .strip-label{flex:1 1 100%;font:600 1rem var(--serif);color:var(--ink)}
@@ -98,9 +95,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .signup-strip .strip-note{margin:6px 0 0;font-size:.8rem;color:var(--ink-2)}
 @media (max-width:420px){.signup-strip button{flex:1 1 100%}}
 
-.sponsor-slot{border:2px dashed #d9c9ae;border-radius:12px;padding:16px;text-align:center;background:repeating-linear-gradient(-45deg,transparent 0 10px,rgba(201,154,46,.06) 10px 20px)}
 .sponsor-title{font:600 1.15rem var(--serif);margin:.1em 0 .3em}
-.sponsor-slot p{margin:.3em 0 .8em;font-size:.93rem;color:var(--ink-2)}
 
 .editor{background:#fffaf2}
 .books{display:grid;gap:18px}
@@ -117,9 +112,10 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .soon ul{margin:0;padding-left:1.1em} .soon li{margin:.2em 0}
 
 
-.prose{max-width:760px;padding:40px 0 50px}
+.prose{max-width:760px;padding:0 0 50px}
 .prose h2{margin-top:1.6em}
 .prose .card{margin:28px 0}
+.prose .card>:first-child,.prose .card>.section-head:first-child>*{margin-top:0}
 .timeline{list-style:none;padding:0;margin:24px 0;border-left:2px solid var(--line)}
 .timeline li{display:grid;grid-template-columns:170px 1fr;gap:16px;padding:0 0 22px 22px;position:relative}
 .timeline li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--card);border:2px solid var(--accent)}
@@ -132,16 +128,12 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 
 .m-lead{display:contents}
 @media (max-width:900px){
-  /* one column: flatten both columns and re-order (signup after the stats, Featured shop after the first section) */
+  /* one column: flatten both columns and re-order (first main section, then the Featured shop if one is booked) */
   .layout{display:flex;flex-direction:column}
   .main-col,.side-col{display:contents}
   .m-top{order:-3}
   .m-lead>*{order:-2}
   .layout .sponsor{order:-1}
-  .signup.m-top{padding:14px 16px}
-  .signup.m-top h2{font-size:1.2rem;margin:0 0 .2em}
-  .signup.m-top>p:not(.form-note){font-size:.9rem;margin:0}
-  .signup.m-top .form-note{margin:.4em 0 0;font-size:.78rem}
 }
 @media (max-width:560px){
   .wrap{padding:0 14px}
@@ -158,7 +150,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
   .stock td,.stock th{padding:9px 8px}
 }
 .more{margin-top:12px;background:none;cursor:pointer;font-family:var(--sans)}
-.stock td:last-child{white-space:nowrap}
+.stock time{white-space:nowrap}
 
 /* Amazon affiliate links: deliberately quiet so the stock status stays the focus */
 a.az{color:inherit;opacity:.75;font-size:.85em;text-decoration:underline dotted;text-underline-offset:2px}
@@ -176,13 +168,11 @@ a.az:hover{opacity:1}
 @media (max-width:560px){.oe-item{flex-direction:column;align-items:stretch}.oe-item .btn-amz{text-align:center}}
 
 /* Product restock pages, product links, FAQ */
-.crumbs{font-size:.86rem;color:var(--ink-2);padding-top:22px}
-.crumbs{display:block}
+.crumbs{display:block;font-size:.86rem;color:var(--ink-2);padding-top:22px;margin:0 0 14px}
 .crumbs a{color:var(--ink-2);padding:0;border-radius:0;font-size:inherit;text-decoration:underline}
 .crumbs a:hover{background:none;color:var(--accent)}
-.product-page .hero{padding-top:14px}
+.product-page .hero{padding-top:0}
 .link-list{margin:0;padding-left:1.1em} .link-list li{margin:.35em 0}
-.group-sec .stock td:last-child{white-space:normal}
 .faq-item{border-top:1px dashed var(--line);padding:10px 0;margin:0}
 .faq-item summary{font-weight:600}
 .faq-item p{margin:.5em 0 .2em;color:var(--ink-2)}
@@ -192,7 +182,7 @@ a.az:hover{opacity:1}
 .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 18px}
 .chip{display:inline-block;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fffdf8;color:#2d2a32;text-decoration:none;font-size:.9rem}
 .chip:hover{border-color:#c1553b;color:#c1553b}
-.shop-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:28px 0 10px;font-size:1.6rem}
+.shop-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:28px 0 10px;font-size:1.45rem}
 .shop-head a{color:#2d2a32;text-decoration:none}
 .shop-head a:hover{color:#c1553b}
 .badge.featured{color:#7a5a12;background:#f7ecd0;border-color:#c99a2e}
@@ -209,7 +199,7 @@ a.az:hover{opacity:1}
 .wtb-items .badge{margin-left:.35rem}
 .compare th[scope=row]{text-align:left;white-space:nowrap;font-weight:600}
 .compare td,.compare th{vertical-align:top}
-.vs-page .signup{margin:1.25rem 0}
+.related ul{margin:0 0 .6em;padding-left:1.1em}
 .guide-list{list-style:none;padding:0}
 .guide-list li{margin:0 0 1rem}
 @media (max-width:420px){nav{justify-content:center;gap:2px}nav a{padding:5px 7px;font-size:.82rem}}
@@ -217,9 +207,12 @@ a.az:hover{opacity:1}
 .shop-list{list-style:none;padding:0;display:grid;gap:22px}
 .shop-card{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start;padding:16px;border:1px solid #e6dccb;border-radius:12px;background:#fff}
 .shop-card h3{margin:0 0 2px}.shop-card ul{padding-left:18px}
-.shop-img{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;width:100%;background:#f6efe3;border-radius:10px;padding:12px;box-sizing:border-box;overflow:hidden}
-.shop-img img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;border-radius:4px;box-shadow:0 6px 14px -8px rgba(60,40,20,.45)}
-@media(max-width:600px){.shop-card{grid-template-columns:1fr;gap:14px;padding:14px}.shop-img{max-width:300px;margin:0 auto}.shop-card .btn{display:block;text-align:center}}
+.shop-img{display:block;aspect-ratio:3/4;width:100%;background:#f6efe3;border-radius:8px;overflow:hidden;box-shadow:0 6px 14px -8px rgba(60,40,20,.45)}
+/* Every cover fills the same 3:4 frame. Amazon covers are 2:3 to ~3:4 (trims a sliver top and bottom);
+   the square Etsy mockups trim their props at the sides, keeping the whole planner in frame. */
+.shop-img img{width:100%;height:100%;object-fit:cover;display:block}
+.shop-img.photo img{object-position:40% 50%}
+@media(max-width:600px){.shop-card{grid-template-columns:1fr;gap:14px;padding:14px}.shop-img{max-width:240px;margin:0 auto}.shop-card .btn{display:block;text-align:center}}
 
 .follow-list{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .follow-card{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid #e6dccb;border-radius:12px;background:#fff}

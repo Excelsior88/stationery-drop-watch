@@ -13,10 +13,10 @@ E = html.escape
 # Amazon Associates tracking ID. Every amazon.com product link on the site is rewritten to
 # https://www.amazon.com/dp/<ASIN>?tag=<AMAZON_TAG> with rel="sponsored noopener" (see tag_amazon_links).
 AMAZON_TAG = "excelsior88-20"
-AMAZON_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
+AMAZON_DISCLOSURE = "As an Amazon Associate we earn from qualifying purchases."
 # One affiliate statement, used in the footer and on About. Keep it true to how tag_amazon_links works.
 AFFILIATE_NOTE = ("Amazon links on this site are affiliate links. " + AMAZON_DISCLOSURE +
-                  " Links to the shops we track, and to my own books on Amazon, are plain links.")
+                  " Links to the shops we track, and to our own planners and journals on Amazon, are plain links.")
 _ASIN = re.compile(r"/(?:dp|gp/product|gp/aw/d)/([A-Z0-9]{10})")
 _AMAZON_A = re.compile(r'<a\b[^>]*\bhref="https?://(?:www\.)?amazon\.com/[^"]*"[^>]*>')
 
@@ -88,24 +88,39 @@ def brand_amazon(key):
     return f'<a class="az" target="_blank" href="{E(b["url"])}">{E(b["label"])}</a>'
 
 def fmt_et(iso):
+    """The one time format on the site: "Nov 3, 11:47 AM ET" (the year is added only when it isn't this year)."""
     t = dt.datetime.fromisoformat(iso).astimezone(ET)
-    return t.strftime("%b %-d, %Y, %-I:%M %p ") + t.tzname()
+    yr = f", {t.year}" if t.year != dt.datetime.now(ET).year else ""
+    return t.strftime("%b %-d") + yr + t.strftime(", %-I:%M %p ET")
+
+def time_tag(iso):
+    return f'<time datetime="{E(iso)}">{E(fmt_et(iso))}</time>'
+
+def checked_line(ls):
+    """One "checked" time per table: the latest check among its listings (all from the same run)."""
+    return f'checked {time_tag(max(l["checked_at"] for l in ls))}' if ls else ""
 
 STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not yet on sale",
           "sold_out": "Sold out", "unknown": "Couldn't check"}
 DOTGRID_SLUG = "archer-and-olive-dot-grid-journal"
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG}
-NAV = [("index.html", "Hobonichi"), ("hobonichi-2027.html", "2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journals"), ("guides/", "Guides"), ("shop/", "Our planners"), ("follow/", "Follow us"), ("about.html", "About")]
+NAV = [("index.html", "Hobonichi tracker"), ("hobonichi-2027.html", "2027 calendar"), (DOTGRID_SLUG + "/", "Dot grid journals"), ("guides/", "Guides"), ("shop/", "Planners and journals"), ("follow/", "Follow us"), ("about.html", "About")]
+SHOP_NAME = "Our planners and journals"  # h1 of /shop; nav and breadcrumb say "Planners and journals"
+# The workflow cron is "17,47 * * * *": two runs an hour. Every page says it the same way.
+CHECK_FREQ = "about every 30 minutes"
+N_HOBO = len({p["store_id"] for p in hobo_products()})                              # Hobonichi shops we check
+N_DG = len({p["store_id"] for p in stock["products"] if is_dotgrid(p)})          # dot grid shops we check
+TITLE_SUFFIX = " · Stationery Drop Watch"
 
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
 CNAME = "stationerydropwatch.com"
 OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (Hobonichi side)
-OG_ALT = "Stationery Drop Watch: Hobonichi Techo 2027 restock tracker, books, Weeks and covers checked hourly across 13 shops"
+OG_ALT = f"Stationery Drop Watch: Hobonichi Techo 2027 restock tracker, books, Weeks and covers checked {CHECK_FREQ} across {N_HOBO} shops"
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
-OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked hourly"
-CONTENT_LASTMOD = "2026-10-27"  # last copy/structure change on the home and restock pages (sitemap lastmod floor)
+OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked " + CHECK_FREQ
+CONTENT_LASTMOD = "2026-11-03"  # last copy/structure change on the home and restock pages (sitemap lastmod floor)
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
 
@@ -129,8 +144,10 @@ def jsonld(obj):
 
 def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
     url = url_for(fname)
+    if not title.endswith(TITLE_SUFFIX):  # every page title ends with the site name
+        title += TITLE_SUFFIX
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-"))  # Hobonichi product pages sit under the tracker
-    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/")  # guides sit under Guides
+    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/")  # guides sit under Guides (the calendar keeps its own nav item)
     nav = "".join(f'<a href="{h}"{" aria-current=page" if h == fname or (hobo_page and h == "index.html") or (guide_page and h == "guides/") else ""}>{E(t)}</a>' for h, t in NAV)
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
@@ -161,11 +178,11 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 </div></header>
 <main class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
-  <p><strong>Stationery Drop Watch</strong> checks independent and official stores for limited planner restocks so you don't have to refresh {N_STORES} tabs.</p>
-  <p class="foot-links">Hobonichi: <a href="index.html">All listings</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))} · <a href="hobonichi-2027.html">2027 calendar</a></p>
-  <p class="foot-links">Shop: <a href="shop/">Our planners</a> (printed planners and journals on Amazon, printable PDFs on Etsy)</p>
+  <p><strong>Stationery Drop Watch</strong> checks {N_STORES} official and independent shops ({N_HOBO} for Hobonichi, {N_DG} for dot grid journals) {CHECK_FREQ} for limited planner and journal restocks, so you don't have to keep refreshing tabs.</p>
+  <p class="foot-links">Hobonichi: <a href="index.html">Hobonichi tracker</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("dotgrid"))}</p>
+  <p class="foot-links">Shop: <a href="shop/">{SHOP_NAME}</a> (printed on Amazon, printable PDFs on Etsy)</p>
   <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
-  <p class="foot-links">Guides: <a href="where-to-buy-hobonichi-2027/">Where to buy the Hobonichi Techo 2027</a> · <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a></p>
+  <p class="foot-links">Guides: {" · ".join(f'<a href="{h}">{E(t)}</a>' for h, t in GUIDES)}</p>
   <p class="foot-links">Dot grid journaling: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">({E(dotgrid_names())})</span></p>
   <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
@@ -180,49 +197,58 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 
 NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatch)
 
-# Tracker pages share one sidebar, in this order: signup, Featured shop, gift pick, then page links.
-# On one-column screens (<=900px, see style.css) the same elements are re-ordered with CSS, no duplicates:
-# signup right after the hero stats (.m-top), then the first main section (.m-lead), then the Featured shop.
+# Page types: trackers (home + GROUPS) use hero + .layout with a sidebar; guides and info pages use article.prose.
+# Every page has at most one signup box, signup(), placed right after the page intro.
 SIGNUP_ACTION = f"https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}"
 
-def signup_block(compact=False, anchor="alerts"):
-    # Buttondown's standard HTML embed form (docs.buttondown.com/building-your-subscriber-base):
-    # a plain POST to embed-subscribe; don't submit via fetch, Buttondown may need to show a CAPTCHA.
-    return f"""<section class="card signup{' compact m-top' if compact else ''}" id="{anchor}">
-  <h2>Get restock alerts</h2>
-  <p>One short email when a sold-out item comes back somewhere we track. No spam, unsubscribe anytime.</p>
-  <form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
-    <label class="sr" for="email{int(compact)}">Email address</label>
-    <input id="email{int(compact)}" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
-    <input type="hidden" value="1" name="embed">
-    <button type="submit">Notify me</button>
-  </form>
-  <p class="form-note">Sent via <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>.</p>
-</section>"""
+SIGNUP_COPY = {
+    "alerts": ("Get restock alerts by email",
+               "One short email when a sold-out item comes back somewhere we track. No spam, unsubscribe anytime."),
+    "shop": ("Hear about new planners and journals",
+             "An occasional email when we release a new planner or journal, plus our restock alerts. No spam, unsubscribe anytime."),
+}
 
-def signup_strip(anchor="alerts"):
-    """Compact one-row signup for the top of a page (in or right under the hero). Same Buttondown form as signup_block.
-    Pages that use it near the top drop the sidebar/early signup_block so there's one form per screen."""
-    return f"""<section class="signup-strip" id="{anchor}" aria-label="Email restock alerts">
+def signup(kind="alerts"):
+    """The site's one signup box (one per page, right under the page intro). Buttondown's standard HTML embed form
+    (docs.buttondown.com/building-your-subscriber-base): a plain POST to embed-subscribe; don't submit via fetch,
+    Buttondown may need to show a CAPTCHA. Always id="alerts", so "#alerts" links work on every page."""
+    label, note = SIGNUP_COPY[kind]
+    return f"""<section class="signup-strip" id="alerts" aria-label="{E(label)}">
   <form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
-    <label class="strip-label" for="email-top">Get restock alerts by email</label>
+    <label class="strip-label" for="email-top">{E(label)}</label>
     <input id="email-top" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
     <input type="hidden" value="1" name="embed">
     <button type="submit">Notify me</button>
   </form>
-  <p class="strip-note">One short email when a sold-out item comes back. No spam, unsubscribe anytime. Sent via <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>.</p>
+  <p class="strip-note">{E(note)} Sent via <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>.</p>
 </section>"""
 
+def crumbs(*trail):
+    """Breadcrumb for every non-home page: Home > ... > this page. trail = (href, label) pairs; the last one is this page."""
+    parts = ['<a href="index.html">Home</a>'] + [f'<a href="{h}">{E(t)}</a>' for h, t in trail[:-1]] + [f'<span aria-current="page">{E(trail[-1][1])}</span>']
+    return '<nav class="crumbs" aria-label="Breadcrumb">' + ' <span aria-hidden="true">›</span> '.join(parts) + '</nav>'
+
+def crumbs_ld(*trail):
+    items = [("index.html", "Home")] + list(trail)
+    return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i + 1, "name": t, "item": url_for(h)} for i, (h, t) in enumerate(items)]}
+
+def eyebrow(*parts):
+    """One eyebrow format: "Section · detail · detail"."""
+    return f'<p class="eyebrow">{E(" · ".join(parts))}</p>'
+
+
+
+# Featured shop slot. Hidden until a shop books it: set SPONSOR to dict(name=..., line=..., url=...) to show it.
+SPONSOR = None
+
 def sponsor_block():
-    # TODO(sponsor): when a shop books this slot, replace the placeholder with their logo, line, and link (rel="sponsored").
-    return """<aside class="card sponsor" aria-label="Featured shop">
-  <p class="eyebrow">Featured shop</p>
-  <div class="sponsor-slot">
-    <p class="sponsor-title">This spot is available</p>
-    <p>Run an independent stationery shop? Put your next restock in front of planner people who are actively hunting for it.</p>
-    <p>Shops: want a featured restock slot? Email <a href="mailto:stationerydropwatch@gmail.com?subject=Featured%20restock%20slot">stationerydropwatch@gmail.com</a>.</p>
-    <a class="btn-ghost" href="about.html#sponsor">Sponsor details</a>
-  </div>
+    if not SPONSOR:
+        return ""
+    return f"""<aside class="card sponsor" aria-label="Featured shop">
+  <p class="eyebrow">Featured shop · sponsored</p>
+  <p class="sponsor-title"><a href="{E(SPONSOR['url'])}" rel="sponsored noopener" target="_blank">{E(SPONSOR['name'])}</a></p>
+  <p>{E(SPONSOR['line'])}</p>
 </aside>"""
 
 def editor_block(page="home"):
@@ -257,7 +283,7 @@ def editor_block(page="home"):
   <div class="book-body">
     <p class="eyebrow">{E(b.get('kicker',''))}</p>
     <h3>{E(b['pitch'])}</h3>
-    <p class="book-title">{E(b['title'])} <span class="muted">· {E(b.get('format',''))}</span></p>
+    <p class="book-title">{E(b['title'].replace(" - ", " – "))} <span class="muted">· {E(b.get('format',''))}</span></p>
     {f"<p>{E(b['blurb'])}</p>" if b.get('blurb') else ""}
     <ul class="book-details">{details}</ul>{inside}
     <a class="btn" href="{E(own_amazon_link(b['url']))}" data-own-product rel="noopener" target="_blank">View on Amazon</a>
@@ -268,7 +294,7 @@ def editor_block(page="home"):
     return f"""<section class="card editor" aria-label="{E(picks['heading'])}">
   <p class="eyebrow">{E(picks['heading'])}</p>
   <div class="books">{''.join(items)}</div>
-  <p class="muted small">Made by the person who runs this site.</p>
+  <p class="muted small">Our own planners and journals. <a href="shop/">See them all</a>.</p>
 </section>"""
 
 BUYABLE = ("in_stock", "preorder")
@@ -327,7 +353,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
     status_opts = "".join(f'<option value="{k}">{v}</option>' for k, v in STATUS.items() if any(p["status"] == k for p in prods))
     noscript_rows = "".join(f'<tr><td>{E(r["p"])}</td><td>{E(r["s"])}</td><td><span class="badge {r["st"]}">{STATUS[r["st"]]}</span></td></tr>' for r in rows)
     return f"""<section class="card" id="tracker">
-      <div class="section-head"><h2>Every listing we track</h2><p class="muted small" id="count"></p></div>
+      <div class="section-head"><h2>Every listing we track</h2><p class="muted small"><span id="count"></span> · {checked_line(prods)}</p></div>
       <form class="filters" onsubmit="return false">
         <label>Product<select id="f-product"><option value="">All products</option>{prod_opts}{other_opt}</select></label>
         <label>Type<select id="f-type"><option value="">All types</option>{type_opts}</select></label>
@@ -336,7 +362,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
         <label class="grow">Search<input id="f-q" type="search" placeholder="{E(search_hint)}"></label>
       </form>
       <div class="table-wrap"><table class="stock">
-        <thead><tr><th>Product</th><th>Store</th><th>Status</th><th class="hide-sm">Checked</th></tr></thead>
+        <thead><tr><th>Product</th><th>Store</th><th>Status</th></tr></thead>
         <tbody id="rows"><noscript>{noscript_rows}</noscript></tbody>
       </table></div>
       <button type="button" id="more" class="btn-ghost more" hidden>Show all</button>
@@ -418,12 +444,12 @@ def build_index():
         f'<details class="muted small"><summary>Stores we list but don\'t check automatically</summary><ul>{not_checked}</ul></details>')
     body = f"""
 <section class="hero">
-  <p class="eyebrow">Hobonichi Techo 2027 · {len({p['store_id'] for p in prods})} shops checked</p>
+  {eyebrow("Hobonichi Techo 2027", f"{len({p['store_id'] for p in prods})} shops checked {CHECK_FREQ}")}
   <h1>Know the moment your planner is back.</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
-  <p class="shop-cta"><a class="btn-ghost" href="shop/">Our planners →</a> <span class="muted small">2027 planners and journals we make, on Amazon and Etsy</span></p>
+  <p class="shop-cta"><a class="btn-ghost" href="shop/">{SHOP_NAME} →</a> <span class="muted small">2027 planners and journals we make, printed on Amazon and printable on Etsy</span></p>
   <p class="small section-switch">Also tracked: <a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted">· {E(dotgrid_names())}</span></p>
-  {signup_strip()}
+  {signup()}
   <div class="stats{' five' if s['unknown'] else ''}">
     <div><b>{s['in_stock']}</b><span>in stock</span></div>
     <div><b>{s['preorder']}</b><span>preorder</span></div>
@@ -464,22 +490,22 @@ def build_index():
 """
     n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
-               "description": f"Hourly restock checks for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in a separate section, dot grid journals from {dotgrid_names()}.",
+               "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in a separate section, dot grid journals from {dotgrid_names()}.",
                "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
                              "description": "Independent restock tracker for Hobonichi Techo 2027 planners and covers, and dot grid journals. Statuses come straight from each shop's public product data.",
                              "logo": BASE + "assets/brand/icon-512.png", "email": "stationerydropwatch@gmail.com",
                              "sameAs": [s[2] for s in SOCIALS]}}
     return page("index.html", "Hobonichi Techo 2027 & dot grid journal restock tracker · Stationery Drop Watch",
-                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked hourly. Plus a separate dot grid journal restock tracker.",
+                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked {CHECK_FREQ}. Plus a separate dot grid journal restock tracker.",
                 body, ld=(site_ld, faq_ld))
 
 def build_hobonichi():
     body = """
-<article class="prose">
-<p class="eyebrow">Guide · updated Oct 25, 2026</p>
+<article class="prose guide">
+""" + crumbs(("guides/", "Guides"), ("hobonichi-2027.html", "2027 calendar")) + eyebrow("Guide", "Hobonichi Techo 2027", "updated Oct 25, 2026") + """
 <h1>Hobonichi Techo 2027 launch &amp; restock calendar</h1>
 <p class="lede">Hobonichi sells its planners in two big drops a year, and popular covers can sell out within minutes. Here's how the 2027 season has gone so far and when stock usually comes back.</p>
-""" + signup_strip("alerts-top") + """
+""" + signup() + """
 
 <ol class="timeline">
   <li><time>Aug 25, 2026</time><div><h3>Previews go up</h3><p>Shops post the 2027 lineup as "out of stock" or "coming soon" pages. They aren't sold out; they're just not on sale yet. <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
@@ -498,31 +524,42 @@ def build_hobonichi():
   <li>Live stock by product: """ + " · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS) + """.</li>
   <li>Buying direct from Hobonichi is the only way to get store-exclusive extras, but it ships from Japan and tariffs may apply in the US <a href="#s-papermouse">[Paper Mouse]</a>.</li>
   <li>Which shops have it right now: <a href="where-to-buy-hobonichi-2027/">where to buy the Hobonichi Techo 2027</a>. Choosing a size: <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a>.</li>
-  <li><a href="#alerts">Sign up for alerts</a> and we'll email you when something flips back to in stock.</li>
+  <li><a href="#alerts">Sign up for alerts</a> (above) and we'll email you when something flips back to in stock.</li>
 </ul>
-""" + signup_block() + """
+
 <h2>Sources</h2>
 <ol class="sources">
   <li id="s-1101"><a href="https://www.1101.com/store/techo/en/2027/pc/shopping_guide/" rel="noopener" target="_blank">Hobonichi Techo 2027 shopping guide</a>, Hobonichi (official). Release dates, shipping, and restock notification rules.</li>
   <li id="s-papermouse"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Launch times, the Sept 30 preorder, the Oct 15 arrival, and restock history.</li>
   <li id="s-atlas"><a href="https://www.atlasstationers.com/blogs/news/hobonichi-faq-2027" rel="noopener" target="_blank">Hobonichi FAQ – 2027</a>, Atlas Stationers. Launch time, sell-out warning, and the early-October restock.</li>
 </ol>
+""" + related_block("hobonichi-2027.html") + """
 </article>"""
-    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
-        {"@type": "ListItem", "position": 2, "name": "2027 calendar", "item": url_for("hobonichi-2027.html")}]}
     return page("hobonichi-2027.html", "Hobonichi Techo 2027 launch & restock calendar · Stationery Drop Watch",
-                "When Hobonichi Techo 2027 planners launch, sell out and restock: launch times, the October wave, and when restocks usually land, with sources.", body, ld=(crumbs,))
+                "When Hobonichi Techo 2027 planners launch, sell out and restock: launch times, the October wave, and when restocks usually land, with sources.",
+                body, ld=(crumbs_ld(("guides/", "Guides"), ("hobonichi-2027.html", "2027 calendar")),))
+
+def related_block(current):
+    """Same closing card on every guide: the other guides, then the live restock pages."""
+    others = "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES if h != current)
+    pages = " · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS)
+    return f"""<section class="card related" aria-label="More guides and restock pages">
+  <h2>More guides</h2>
+  <ul>{others}</ul>
+  <p class="small">Live stock: <a href="index.html">Hobonichi tracker</a> · {pages}</p>
+</section>"""
 
 def build_about():
     n_checked = len([s for s in stores["stores"] if s["platform"] in ("shopify", "hobonichi")])
     body = f"""
 <article class="prose">
+{crumbs(("about.html", "About"))}
+{eyebrow("About", "how we check stock")}
 <h1>About Stationery Drop Watch</h1>
 <p class="lede">Limited planners sell out fast, and every shop only posts its own restocks. This site checks them all in one place.</p>
-{signup_strip()}
+{signup()}
 <h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores on a schedule, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. The site has two sections: <a href="index.html">Hobonichi</a> (the official store and independent shops) and <a href="{DOTGRID_SLUG}/">dot grid journaling</a> ({E(dotgrid_names())}, each checked on its own store). When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
+<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. The site has two sections: the <a href="index.html">Hobonichi tracker</a> (the official store and independent shops) and <a href="{DOTGRID_SLUG}/">dot grid journaling</a> ({E(dotgrid_names())}, each checked on its own store). When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email <a href="mailto:stationerydropwatch@gmail.com?subject=Featured%20restock%20slot">stationerydropwatch@gmail.com</a> for rates and dates.</p>
@@ -531,7 +568,7 @@ def build_about():
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
 </article>"""
-    return page("about.html", "About Stationery Drop Watch: how we check stock", "How Stationery Drop Watch checks shops hourly for Hobonichi Techo 2027 and dot grid journal restocks, and why it never guesses stock.", body)
+    return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks shops {CHECK_FREQ} for Hobonichi Techo 2027 and dot grid journal restocks, and why it never guesses stock.", body, ld=(crumbs_ld(("about.html", "About")),))
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
 # Every status on these pages comes from data/stock.json exactly as the checker wrote it.
@@ -542,28 +579,28 @@ def _is_a6_book(p):
 GROUPS = [
     dict(slug="hobonichi-techo-2027-original-a6", short="Original A6", product="Hobonichi Techo 2027 Original (A6)",
          match=_is_a6_book,
-         desc="Is the Hobonichi Techo 2027 Original A6 book in stock? Live status for the English and Japanese A6 books at {shops} shops, checked hourly.",
+         desc="Is the Hobonichi Techo 2027 Original A6 book in stock? Live status for the English and Japanese A6 books at {shops} shops, checked about every 30 minutes.",
          intro="The Original is Hobonichi's A6 one-page-a-day book, sold in an English and a Japanese edition. "
                "Below is what each shop we track reported at its last check: in stock, on preorder, sold out, or not on sale yet. "
                "If a check failed we say \"Couldn't check\" rather than guess."),
     dict(slug="hobonichi-techo-2027-cousin-a5", short="Cousin A5", product="Hobonichi Techo 2027 Cousin (A5)",
          match=lambda p: p.get("canonical") == "cousin-a5-en",
-         desc="Is the Hobonichi Techo 2027 Cousin A5 book in stock? Live status for the English Cousin at {shops} shops, checked hourly, with every restock we spot.",
+         desc="Is the Hobonichi Techo 2027 Cousin A5 book in stock? Live status for the English Cousin at {shops} shops, checked about every 30 minutes, with every restock we spot.",
          intro="The Cousin is the A5 version of the Techo, with a page a day and more room to write. "
                "Here's what each shop we track reported for the English Cousin at its last check."),
     dict(slug="hobonichi-weeks-2027", short="Weeks", product="Hobonichi Weeks 2027",
          match=lambda p: p["type"] == "Weeks",
-         desc="Is Hobonichi Weeks 2027 in stock? Live status for Midnight Blue, Canaria Yellow, Moomin, White Cat Wallpaper and more at {shops} shops, checked hourly.",
+         desc="Is Hobonichi Weeks 2027 in stock? Live status for Midnight Blue, Canaria Yellow, Moomin, White Cat Wallpaper and more at {shops} shops, checked about every 30 minutes.",
          intro="Weeks is Hobonichi's slim, wallet-size weekly planner, and the popular covers sell out fast. "
                "These are the 2027 Weeks listings we track, grouped by design, with the status each shop reported at its last check."),
     dict(slug="hobonichi-weeks-mega-2027", short="Weeks Mega", product="Hobonichi Weeks Mega 2027",
          match=lambda p: p["type"] == "Weeks Mega",
-         desc="Is Hobonichi Weeks Mega 2027 in stock? Live status for Midnight Blue, Bow & Tie: Candy Dream and more at {shops} shops, checked hourly.",
+         desc="Is Hobonichi Weeks Mega 2027 in stock? Live status for Midnight Blue, Bow & Tie: Candy Dream and more at {shops} shops, checked about every 30 minutes.",
          intro="Weeks Mega is the Weeks planner with extra blank pages at the back. "
                "Here's what each shop we track reported for the 2027 Weeks Mega listings at its last check."),
     dict(slug="hobonichi-techo-2027-covers", short="A6 covers", product="Hobonichi Techo 2027 A6 cover",
          match=lambda p: p["type"] == "Cover",
-         desc="Are Hobonichi Techo 2027 A6 covers like Moomin: My Yard and Yumi Kitagishi: White Cat House in stock? Live status at {shops} shops, checked hourly.",
+         desc="Are Hobonichi Techo 2027 A6 covers like Moomin: My Yard and Yumi Kitagishi: White Cat House in stock? Live status at {shops} shops, checked about every 30 minutes.",
          intro="Popular Hobonichi covers can sell out within minutes of a drop. "
                "We track a handful of 2027 A6 covers; here's what each shop reported at its last check."),
     dict(slug=DOTGRID_SLUG, short="Dot grid journals", product="Dot grid journal", dotgrid=True,
@@ -572,7 +609,10 @@ GROUPS = [
          open_hint="Open a row to go straight to that exact size and color on the shop's site",
          guide="Dot grid journals come in several sizes, papers and colors, and each one sells out on its own. "
                "We check the exact variant named in each row, so \"In stock\" means that size and color, not just some version of the journal.",
-         desc="Are Archer and Olive, Leuchtturm1917, Scribbles That Matter and Tsuki dot grid journals in stock? Live size-by-size status, checked hourly.",
+         # The URL slug says "archer-and-olive" (kept so links don't break); the page covers every dot grid shop we check,
+         # with Archer and Olive featured first, so the title and description name them all.
+         title=f"Dot grid journal restock tracker: {dotgrid_names()}",
+         desc=f"Are {dotgrid_names()} dot grid journals in stock? Live size-by-size status from each maker's own store, checked {CHECK_FREQ}, with Archer and Olive featured first.",
          og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
                "We track a focused set of flagship dot grid notebooks straight from each maker's own store, size by size and color by color. "
@@ -602,8 +642,7 @@ def status_rows(ls, oe):
         since = l.get("status_since")
         since_html = f'<span class="sub">since {E(fmt_et(since).rsplit(",", 1)[0])}</span>' if since and l["status"] != "unknown" else ""
         rows.append(f"""<tr><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a><span class="sub">{E(l.get('title') or l['label'])}</span></td>
-  <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td>
-  <td class="hide-sm">{"Tried " if l["status"] == "unknown" else ""}<time datetime="{E(l['checked_at'])}">{E(fmt_et(l['checked_at']))}</time></td></tr>""")
+  <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td></tr>""")
     return "".join(rows)
 
 def build_group(g, oe):
@@ -640,10 +679,10 @@ def build_group(g, oe):
             parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a></span>{feat}
   <span class="muted small">{E(count_line(sls).capitalize())}</span></h2>""")
         parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
-  <div class="section-head"><{hx}>{E(name)}</{hx}><p class="muted small">{E(count_line(sl, g.get('unit', 'listings')).capitalize())}</p></div>
+  <div class="section-head"><{hx}>{E(name)}</{hx}><p class="muted small">{E(count_line(sl, g.get('unit', 'listings')).capitalize())} · {checked_line(sl)}</p></div>
   {amz_btn}
   <div class="table-wrap"><table class="stock">
-    <thead><tr><th>Shop</th><th>Status</th><th class="hide-sm">Checked</th></tr></thead>
+    <thead><tr><th>Shop</th><th>Status</th></tr></thead>
     <tbody>{status_rows(sl, oe)}</tbody>
   </table></div>
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}</p>
@@ -675,18 +714,18 @@ def build_group(g, oe):
         shop_nav = f'<nav class="chips" aria-label="Shops on this page"><span class="muted small">Jump to a shop:</span> {shop_nav}</nav>'
         dg_tracker = tracker_block(ls, tracker_rows(ls, oe), "Tsuki, B5, Charcoal…") + stock_data(tracker_rows(ls, oe))
     else:
-        others += '<li><a href="index.html#tracker">Every listing we track</a></li>'
+        others += '<li><a href="index.html#tracker">Hobonichi tracker (every listing)</a></li>'
         shop_nav = dg_tracker = ""
     body = f"""
 <div class="product-page">
-<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">{E(g['short'])}</span></nav>
+{crumbs((g["slug"] + "/", g["short"]))}
 <section class="hero">
-  <p class="eyebrow">{E(g.get('eyebrow', 'Hobonichi Techo 2027'))} · {shops} {'shop' if shops == 1 else 'shops'} checked</p>
+  {eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), f"{shops} {'shop' if shops == 1 else 'shops'} checked {CHECK_FREQ}")}
   <h1>{E(g['h1'])}</h1>
   <p class="lede">{E(g['intro'])}</p>
   <p><strong>Right now:</strong> {right_now}
   <span class="muted small">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time>.</span></p>
-  {"" if g.get("dotgrid") else signup_strip()}
+  {signup()}
 </section>
 <div class="layout">
   <div class="main-col">
@@ -704,7 +743,6 @@ def build_group(g, oe):
     </section>
   </div>
   <aside class="side-col">
-    {signup_block(compact=True) if g.get("dotgrid") else ""}
     {sponsor_block()}
     {editor_block("dotgrid" if g.get("dotgrid") else "home")}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
@@ -713,14 +751,12 @@ def build_group(g, oe):
 </div>
 </div>"""
     fname = g["slug"] + "/"
-    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
-        {"@type": "ListItem", "position": 2, "name": g["short"], "item": url_for(fname)}]}
     items = {"@context": "https://schema.org", "@type": "ItemList", "name": g["h1"] + ": listings we track",
              "numberOfItems": len(ls), "itemListElement": [
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: (l.get("canonical") or "~", l["store"])))]}
-    return fname, page(fname, f'{g["h1"]}: live stock at {shops} {"shop" if shops == 1 else "shops"} · Stationery Drop Watch', g["desc"].format(shops=shops), body, ld=(crumbs, items),
+    title = g.get("title") or f'{g["h1"]}: live stock at {shops} {"shop" if shops == 1 else "shops"}'
+    return fname, page(fname, title, g["desc"].format(shops=shops), body, ld=(crumbs_ld((fname, g["short"])), items),
                        og_image=g.get("og_image", OG_IMAGE), og_alt=g.get("og_alt", OG_ALT))
 
 def group_lastmod(g):
@@ -729,7 +765,7 @@ def group_lastmod(g):
 
 FAQ = [
     ("How often do you check the shops?",
-     "About once an hour. A scheduled job reads each shop's public product data, then rebuilds this site with what it found."),
+     "About every 30 minutes. A scheduled job reads each shop's public product data, then rebuilds this site with what it found."),
     ("Which shops do you check?",
      "{n} shops in two separate sections. Hobonichi: the official Hobonichi Online Store and independent stationery shops. Dot grid journaling: {dg}, each checked on its own store. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
@@ -739,17 +775,21 @@ FAQ = [
     ("What does \"Not yet on sale\" mean?",
      "The shop has a preview page up for the product but isn't taking orders yet. That's different from sold out."),
     ("Do you sell planners?",
-     "No. We link you to the shops. Amazon links on the site are affiliate links, and we say so on every page; links to the shops themselves are plain links."),
+     "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon and as printable PDFs on Etsy. "
+     "The Hobonichi and dot grid stationery we track is sold by the shops themselves; we just link you to them. "
+     "Amazon links on the site are affiliate links, and we say so on every page; links to the shops we track are plain links."),
     ("How do restock alerts work?",
      "Sign up with your email and you'll get one short email when a sold-out item comes back somewhere we track. It's free and you can unsubscribe anytime."),
 ]
 
 def faq_block():
     n = len({p["store_id"] for p in stock["products"]})
-    qa = [(q, a.format(n=n, dg=dotgrid_names())) for q, a in FAQ]
-    html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{E(a)}</p></details>" for q, a in qa)
+    # {shop} is a link in the page and the plain URL in the FAQ structured data
+    qa = [(q, a.format(n=n, dg=dotgrid_names(), shop=url_for("shop/")),
+           E(a).format(n=n, dg=E(dotgrid_names()), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in FAQ]
+    html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}
     return f'<section class="card faq" id="faq"><h2>Good to know</h2>{html_}</section>', ld
 
 def product_links_block():
@@ -763,7 +803,7 @@ def product_links_block():
     return (f'<section class="card" id="by-product"><h2>Restock pages by product</h2><ul class="link-list">{"".join(items)}</ul>'
             f'<p class="eyebrow">Guides</p><ul class="link-list">{guides}</ul></section>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-02", "about.html": "2026-11-02"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-03", "about.html": "2026-11-03"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -771,7 +811,7 @@ def build_sitemap():
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for("guides/"), GUIDES_LASTMOD), (url_for("shop/"), "2026-11-02"), (url_for("follow/"), "2026-11-02")]
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for("guides/"), GUIDES_LASTMOD), (url_for("shop/"), "2026-11-03"), (url_for("follow/"), "2026-11-03")]
     def w3c(iso):
         return iso if len(iso) == 10 else dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
@@ -798,34 +838,32 @@ def build_404():
     """GitHub Pages serves this for any unknown path, so every link is root-relative (see _page)."""
     hobo = "".join(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a></li>' for g in GROUPS if not g.get("dotgrid"))
     body = f"""
-<section class="hero notfound">
-  <p class="eyebrow">404 · page not found</p>
-  <h1>This page sold out. Or it never existed.</h1>
-  <p class="lede">The link may be old or mistyped. Every tracker is still here and checked hourly.</p>
-  <p><a class="btn" href="index.html">Go to the Hobonichi tracker</a> <a class="btn-ghost" href="{DOTGRID_SLUG}/">Dot grid journals</a></p>
+<article class="prose notfound">
+{crumbs(("404.html", "Page not found"))}
+{eyebrow("404", "page not found")}
+<h1>This page sold out. Or it never existed.</h1>
+<p class="lede">The link may be old or mistyped. Every tracker is still here and checked {CHECK_FREQ}.</p>
+<p><a class="btn" href="index.html">Go to the Hobonichi tracker</a> <a class="btn-ghost" href="{DOTGRID_SLUG}/">Dot grid journals</a></p>
+<section class="card"><h2>Restock pages</h2>
+  <p class="eyebrow">Hobonichi Techo 2027</p><ul class="link-list"><li><a href="index.html">Hobonichi tracker</a></li>{hobo}</ul>
+  <p class="eyebrow">Dot grid journaling</p><ul class="link-list"><li><a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted small">· {E(dotgrid_names())}</span></li></ul>
+  <p class="eyebrow">Guides</p><ul class="link-list">{"".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES)}</ul>
 </section>
-<div class="layout">
-  <div class="main-col">
-    <section class="card"><h2>Restock pages</h2>
-      <p class="eyebrow">Hobonichi Techo 2027</p><ul class="link-list"><li><a href="index.html">All listings</a></li>{hobo}<li><a href="hobonichi-2027.html">2027 calendar</a></li></ul>
-      <p class="eyebrow">Dot grid journaling</p><ul class="link-list"><li><a href="{DOTGRID_SLUG}/">Dot grid journals</a> <span class="muted small">· {E(dotgrid_names())}</span></li></ul>
-    </section>
-  </div>
-  <aside class="side-col">{signup_block(compact=True)}</aside>
-</div>"""
+</article>"""
     return page("404.html", "Page not found · Stationery Drop Watch",
                 "This page doesn't exist. Find the Hobonichi Techo 2027 and dot grid journal restock trackers here.", body, noindex=True)
 
 # --- SEO guides (Hobonichi section) -------------------------------------------------------------
-# Two editorial pages. Every stock status on them comes from data/stock.json (rebuilt hourly by the
+# Editorial pages. Every stock status on them comes from data/stock.json (rebuilt about every 30 minutes by the
 # workflow); product facts come only from the sources listed on each page. No prices: the checker
 # doesn't record them.
 WTB_SLUG = "where-to-buy-hobonichi-2027"
 VS_SLUG = "hobonichi-techo-vs-cousin-vs-weeks"
-GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks")]
+GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
 GUIDES_LASTMOD = "2026-10-29"
-GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin A5, Weeks and Weeks Mega in stock right now, checked hourly, plus tips for catching a restock.",
-                VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits."}  # last copy change on the guide pages (sitemap lastmod floor)
+GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin A5, Weeks and Weeks Mega in stock right now, checked about every 30 minutes, plus tips for catching a restock.",
+                VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits.",
+                "hobonichi-2027.html": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources."}  # last copy change on the guide pages (sitemap lastmod floor)
 H_SRC = {  # official Hobonichi pages used for product facts
     "orig": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6 (2027), specifications"),
     "cousin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_jan_en/", "English Cousin Book A5 (2027), specifications"),
@@ -927,27 +965,21 @@ def build_where_to_buy():
         ("Will sold-out 2027 books come back?",
          "Often, but not always. The Paper Mouse says almost all items have been restocked at least once after launch in past years, but it can't guarantee restocks."),
         ("How do I get told when something restocks?",
-         "Sign up for Stationery Drop Watch alerts. We check the shops about once an hour and send one short email when a sold-out item comes back somewhere we track."),
+         "Sign up for Stationery Drop Watch alerts. We check the shops about every 30 minutes and send one short email when a sold-out item comes back somewhere we track."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     body = f"""
-<div class="product-page">
-<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Where to buy</span></nav>
-<section class="hero">
-  <p class="eyebrow">Guide · Hobonichi Techo 2027 · {n_shops} shops checked hourly</p>
-  <h1>Where to buy the Hobonichi Techo 2027</h1>
-  <p class="lede">Which shops have the 2027 Original A6, Cousin A5, Weeks, Weeks Mega and A6 covers right now, edition by edition. Every status below is what the shop's own product data said at our last check, {last}.</p>
-  {signup_strip()}
-</section>
-<div class="layout">
-  <div class="main-col">
-    <div class="m-lead">
+<article class="prose guide">
+{crumbs(("guides/", "Guides"), (fname, "Where to buy"))}
+{eyebrow("Guide", "Hobonichi Techo 2027", f"live stock from {n_shops} shops")}
+<h1>Where to buy the Hobonichi Techo 2027</h1>
+<p class="lede">Which shops have the 2027 Original A6, Cousin A5, Weeks, Weeks Mega and A6 covers right now, edition by edition. Every status below is what the shop's own product data said at our last check, {last}.</p>
+{signup()}
     <section class="card" id="quick">
       <h2>Quick answer</h2>
       <ul>{"".join(quick)}</ul>
       <p class="muted small">"Not yet on sale" means a preview page is up but the shop isn't taking orders. "Couldn't check" means our check failed, so we don't know. Always confirm on the shop's page before you buy. We don't show prices; check the shop.</p>
     </section>
-    </div>
     {"".join(secs)}
     <section class="card"><h2>Shops we list but can't check</h2>
       <p class="muted small">Their sites block automated checks, so we link to them without a status.</p>
@@ -958,29 +990,22 @@ def build_where_to_buy():
         <li><strong>Watch for preorders.</strong> Restocks don't always show up as "in stock". At the October 1 wave, some shops took preorders for earlier sell-outs. We count preorders as available. <a href="hobonichi-2027.html">See the 2027 calendar</a>.</li>
         <li><strong>Don't mistake "not yet on sale" for sold out.</strong> Shops put up preview pages before items go on sale.</li>
         <li><strong>Sign up at the official store too.</strong> Hobonichi's restock notification emails cover the Techo books and the Drawer Pouch, not accessories, and don't guarantee you'll get one <a href="#src-shop">[Hobonichi]</a>. Many independent shops offer their own restock sign-ups on product pages <a href="#src-pm">[Paper Mouse]</a>.</li>
-        <li><strong>Get our alerts.</strong> We check about once an hour and email you when a sold-out item comes back. <a href="#alerts">Sign up above</a>.</li>
+        <li><strong>Get our alerts.</strong> We check about every 30 minutes and email you when a sold-out item comes back. <a href="#alerts">Sign up above</a>.</li>
       </ul>
     </section>
-    <section class="card"><h2>Which one should you get?</h2>
-      <p>Not sure between the A6 Original, the A5 Cousin and the slim Weeks? Read <a href="{VS_SLUG}/">Hobonichi Techo vs Cousin vs Weeks</a>: sizes, layouts and who each one suits, from Hobonichi's own specs.</p>
-    </section>
-    <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
-    <section class="card"><h2>Sources</h2><ol class="sources">
-      <li id="src-shop"><a href="{H_SRC['shop'][0]}" rel="noopener" target="_blank">{E(H_SRC['shop'][1])}</a>, Hobonichi (official). Restock notification emails.</li>
-      <li id="src-pm"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Restock history (restocks not guaranteed; almost all items restocked at least once after launch in past years), product-page restock sign-ups.</li>
-      <li>Stock statuses: each shop's public product data, read by our checker; see <a href="about.html">how it works</a>.</li>
-    </ol></section>
-  </div>
-  <aside class="side-col">
-    {sponsor_block()}
-    {guides_block()}
-    <section class="card"><p class="eyebrow">Restock pages</p><ul class="link-list">{"".join(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a></li>' for g in groups)}<li><a href="index.html#tracker">Every listing we track</a></li><li><a href="hobonichi-2027.html">2027 calendar</a></li></ul></section>
-  </aside>
-</div>
-</div>"""
-    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
-        {"@type": "ListItem", "position": 2, "name": "Where to buy the Hobonichi Techo 2027", "item": url_for(fname)}]}
+<h2>Which one should you get?</h2>
+<p>Not sure between the A6 Original, the A5 Cousin and the slim Weeks? Read <a href="{VS_SLUG}/">Hobonichi Techo vs Cousin vs Weeks</a>: sizes, layouts and who each one suits, from Hobonichi's own specs.</p>
+
+<section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
+
+<h2>Sources</h2>
+<ol class="sources">
+  <li id="src-shop"><a href="{H_SRC['shop'][0]}" rel="noopener" target="_blank">{E(H_SRC['shop'][1])}</a>, Hobonichi (official). Restock notification emails.</li>
+  <li id="src-pm"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Restock history (restocks not guaranteed; almost all items restocked at least once after launch in past years), product-page restock sign-ups.</li>
+  <li>Stock statuses: each shop's public product data, read by our checker; see <a href="about.html">how it works</a>.</li>
+</ol>
+{related_block(fname)}
+</article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": "Where to buy the Hobonichi Techo 2027",
            "dateModified": stock["run_finished"], "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
@@ -988,8 +1013,8 @@ def build_where_to_buy():
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
     return fname, page(fname, "Where to buy the Hobonichi Techo 2027: live stock by shop · Stationery Drop Watch",
-                       f"Where to buy the Hobonichi Techo 2027 Original A6, Cousin A5, Weeks and Weeks Mega: which of {n_shops} shops have each one in stock, checked hourly, plus restock tips.",
-                       body, ld=(crumbs, art, faq_ld))
+                       f"Where to buy the Hobonichi Techo 2027 Original A6, Cousin A5, Weeks and Weeks Mega: which of {n_shops} shops have each one in stock, checked {CHECK_FREQ}, plus restock tips.",
+                       body, ld=(crumbs_ld(("guides/", "Guides"), (fname, "Where to buy the Hobonichi Techo 2027")), art, faq_ld))
 
 def build_vs():
     fname = VS_SLUG + "/"
@@ -1030,11 +1055,12 @@ def build_vs():
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, Hobonichi (official).</li>' for k, (u, t) in H_SRC.items() if k != "shop")
     body = f"""
-<article class="prose vs-page">
-<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Techo vs Cousin vs Weeks</span></nav>
-<p class="eyebrow">Guide · Hobonichi Techo 2027 · updated Oct 29, 2026</p>
+<article class="prose guide vs-page">
+{crumbs(("guides/", "Guides"), (fname, "Techo vs Cousin vs Weeks"))}
+{eyebrow("Guide", "Hobonichi Techo 2027", "updated Oct 29, 2026")}
 <h1>Hobonichi Techo vs Cousin vs Weeks: which 2027 planner fits you?</h1>
 <p class="lede">The three most popular Hobonichi books differ in size, layout and how much you carry. Here's an honest side-by-side from Hobonichi's own 2027 specifications, with live stock for each.</p>
+{signup()}
 
 <h2>The short version</h2>
 <ul>
@@ -1062,18 +1088,15 @@ def build_vs():
 <p><a href="hobonichi-weeks-2027/">Live Weeks stock</a> · <a href="hobonichi-weeks-mega-2027/">Weeks Mega</a></p>
 
 <h2>Where to buy</h2>
-<p>Stock changes by the hour, and one shop is often sold out while another has it. See <a href="{WTB_SLUG}/">where to buy the Hobonichi Techo 2027</a> for every shop we track, edition by edition, or sign up below and we'll email you when a sold-out one comes back.</p>
-{signup_block()}
+<p>Stock changes fast, and one shop is often sold out while another has it. See <a href="{WTB_SLUG}/">where to buy the Hobonichi Techo 2027</a> for every shop we track, edition by edition, or <a href="#alerts">sign up above</a> and we'll email you when a sold-out one comes back.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
 <h2>Sources</h2>
 <ol class="sources">{src_items}</ol>
 <p class="muted small">Hobonichi makes other types too, such as the A5 and A6 HON. This guide covers only the three above.</p>
+{related_block(fname)}
 </article>"""
-    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
-        {"@type": "ListItem", "position": 2, "name": "Hobonichi Techo vs Cousin vs Weeks", "item": url_for(fname)}]}
     art = {"@context": "https://schema.org", "@type": "Article", "headline": "Hobonichi Techo vs Cousin vs Weeks: which 2027 planner fits you?",
            "dateModified": GUIDES_LASTMOD, "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
@@ -1082,7 +1105,7 @@ def build_vs():
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
     return fname, page(fname, "Hobonichi Techo vs Cousin vs Weeks (2027): sizes, layouts, who each suits · Stationery Drop Watch",
                        "Hobonichi Techo Original A6 vs Cousin A5 vs Weeks for 2027: size, weight, daily vs weekly layout, pages and paper from Hobonichi's specs, plus live stock.",
-                       body, ld=(crumbs, art, faq_ld))
+                       body, ld=(crumbs_ld(("guides/", "Guides"), (fname, "Hobonichi Techo vs Cousin vs Weeks")), art, faq_ld))
 
 
 def build_guides_index():
@@ -1090,21 +1113,18 @@ def build_guides_index():
     items = "".join(f'<li><a href="{h}"><strong>{E(t)}</strong></a><br><span class="muted">{E(GUIDE_BLURBS[h])}</span></li>' for h, t in GUIDES)
     body = f"""
 <article class="prose">
-<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Guides</span></nav>
-<p class="eyebrow">Guides</p>
+{crumbs((fname, "Guides"))}
+{eyebrow("Guides", f"{len(GUIDES)} guides")}
 <h1>Stationery buying guides</h1>
-<p class="lede">Short, sourced guides to help you choose and find stationery that sells out. Stock on every guide comes from the same hourly checks as the tracker.</p>
+<p class="lede">Short, sourced guides to help you choose and find stationery that sells out. Live stock on the guides comes from the same checks as the tracker, {CHECK_FREQ}.</p>
+{signup()}
 <ul class="guide-list">{items}</ul>
-{signup_block()}
 </article>"""
-    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
-        {"@type": "ListItem", "position": 2, "name": "Guides", "item": url_for(fname)}]}
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": t, "url": url_for(h)} for i, (h, t) in enumerate(GUIDES)]}
-    return fname, page(fname, "Guides: where to buy and which Hobonichi to choose · Stationery Drop Watch",
-                       "Stationery Drop Watch guides: where to buy the Hobonichi Techo 2027 with live stock by shop, and Hobonichi Techo vs Cousin vs Weeks compared.",
-                       body, ld=(crumbs, lst))
+    return fname, page(fname, "Guides: where to buy, which Hobonichi to choose, and the 2027 calendar · Stationery Drop Watch",
+                       "Stationery Drop Watch guides: where to buy the Hobonichi Techo 2027 with live stock by shop, Hobonichi Techo vs Cousin vs Weeks compared, and the 2027 launch and restock calendar.",
+                       body, ld=(crumbs_ld((fname, "Guides")), lst))
 
 SHOP_ETSY = [
     dict(title="2027 Printable Planner, Blush", img="assets/shop/womens-2027-printable-planner.jpg",
@@ -1132,34 +1152,30 @@ def build_shop():
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
         attr = ' data-own-product' if own else ''
         return f"""<li class="shop-card">
-  <a class="shop-img" href="{E(href)}"{attr} rel="noopener" target="_blank"><img src="{E(img)}"{srcset(img)} sizes="(max-width:600px) 300px, 200px" alt="{E(alt)}" loading="lazy" decoding="async"></a>
-  <div><h3>{E(title)}</h3><p class="muted small">{E(sub)}</p><p>{E(blurb)}</p><ul class="small">{dl}</ul>
+  <a class="shop-img{' photo' if not own else ''}" href="{E(href)}"{attr} rel="noopener" target="_blank"><img src="{E(img)}"{srcset(img)} sizes="(max-width:600px) 300px, 200px" alt="{E(alt)}" loading="lazy" decoding="async"></a>
+  <div class="shop-body"><h3>{E(title)}</h3><p class="muted small">{E(sub)}</p><p>{E(blurb)}</p><ul class="small">{dl}</ul>
   <a class="btn" href="{E(href)}"{attr} rel="noopener" target="_blank">{E(btn)}</a></div></li>"""
-    amz = "".join(card(books[a]["cover"], books[a]["cover_alt"], labels[a], books[a]["title"] + " · " + books[a]["format"],
+    amz = "".join(card(books[a]["cover"], books[a]["cover_alt"], labels[a], books[a]["format"] + " · on Amazon",
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True)
                   for a in ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HP85QLMS"))
-    etsy = "".join(card(e["img"], e["alt"], e["title"], "Printable PDF · instant download", e["blurb"],
+    etsy = "".join(card(e["img"], e["alt"], e["title"], "Printable PDF · instant download from Etsy", e["blurb"],
                         ["US Letter 8.5 x 11 in", "172 pages", "$6.99, 20% off launch sale Oct 31 to Nov 30"], e["url"], "View on Etsy", False)
                    for e in SHOP_ETSY)
     body = f"""
 <article class="prose shop">
-<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Our planners</span></nav>
-<p class="eyebrow">Shop</p>
-<h1>Our planners</h1>
-<p class="lede">Planners and journals made by Stationery Drop Watch. Get a printed copy on Amazon or a printable PDF on Etsy.</p>
-{signup_strip("alerts-top")}
+{crumbs((fname, "Planners and journals"))}
+{eyebrow("Shop", "made by Stationery Drop Watch")}
+<h1>{SHOP_NAME}</h1>
+<p class="lede">Planners and journals we make. Get a printed copy on Amazon or a printable PDF on Etsy.</p>
+{signup("shop")}
 <h2>Printed planners and journals on Amazon</h2>
 <ul class="shop-list">{amz}</ul>
 <h2>Printable PDFs on Etsy</h2>
 <ul class="shop-list">{etsy}</ul>
-{signup_block()}
 </article>"""
-    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
-        {"@type": "ListItem", "position": 2, "name": "Our planners", "item": url_for(fname)}]}
-    return fname, page(fname, "Our planners: 2027 planners and journals on Amazon and Etsy · Stationery Drop Watch",
-                       "Planners made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, a reading journal and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy.",
-                       body, ld=(crumbs,))
+    return fname, page(fname, "Our planners and journals: 2027 planners and journals on Amazon and Etsy · Stationery Drop Watch",
+                       "Planners and journals made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, a reading journal and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy.",
+                       body, ld=(crumbs_ld((fname, "Planners and journals")),))
 
 SOCIALS = [  # (platform, handle, url, note, icon letter)
     ("X", "@stationerydrop", "https://x.com/stationerydrop", "Restock alerts the moment we confirm them, plus planner news.", "X"),
@@ -1178,19 +1194,16 @@ def build_follow():
   <a class="btn" href="{E(u)}" rel="noopener" target="_blank">Follow on {E(n)}</a></li>""" for n, h, u, note, ic in SOCIALS)
     body = f"""
 <article class="prose follow">
-<nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> <span aria-hidden="true">›</span> <span aria-current="page">Follow us</span></nav>
-<p class="eyebrow">Socials</p>
+{crumbs((fname, "Follow us"))}
+{eyebrow("Follow us", f"{len(SOCIALS)} apps")}
 <h1>Follow us</h1>
 <p class="lede">We post restock alerts and planner news. Pick the app you already use.</p>
+{signup()}
 <ul class="follow-list">{rows}</ul>
-{signup_block()}
 </article>"""
-    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": BASE},
-        {"@type": "ListItem", "position": 2, "name": "Follow us", "item": url_for(fname)}]}
     return fname, page(fname, "Follow us · Stationery Drop Watch",
                        "Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest, Facebook and Reddit for restock alerts and planner news.",
-                       body, ld=(crumbs,))
+                       body, ld=(crumbs_ld((fname, "Follow us")),))
 
 def main():
     (SITE / "data").mkdir(parents=True, exist_ok=True)

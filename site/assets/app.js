@@ -1,13 +1,7 @@
-// Stationery Drop Watch: client-side table filtering.
+// Stationery Drop Watch: client-side table filtering. The check time is shown once per table (build_site.py).
 (function () {
   const LABEL = { in_stock: "In stock", preorder: "Preorder", coming_soon: "Not yet on sale", sold_out: "Sold out", unknown: "Couldn't check" };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  function ago(iso) {
-    const m = Math.round((Date.now() - new Date(iso)) / 60000);
-    if (m < 1) return "just now"; if (m < 60) return m + " min ago";
-    const h = Math.round(m / 60); if (h < 48) return h + " h ago";
-    return Math.round(h / 24) + " days ago";
-  }
   const dataEl = document.getElementById("stock-data");
   if (dataEl) {
     const rows = JSON.parse(dataEl.textContent);
@@ -35,8 +29,7 @@
         <td><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.p)}</a><span class="sub">${esc(r.t)}${r.az && !r.azm ? ` · <a class="az" href="${esc(r.az)}" target="_blank" rel="sponsored noopener">${esc(r.azl)}</a>` : ""}</span>${r.azm ? `<a class="btn btn-amz btn-sm" href="${esc(r.az)}" target="_blank" rel="sponsored noopener">${esc(r.azl)}</a>` : ""}</td>
         <td>${esc(r.s)}</td>
         <td><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></td>
-        <td class="hide-sm"><time datetime="${esc(r.at)}" title="${esc(new Date(r.at).toLocaleString())}">${ago(r.at)}</time></td>
-      </tr>`).join("") : `<tr class="empty-row"><td colspan="4">Nothing matches those filters.</td></tr>`;
+      </tr>`).join("") : `<tr class="empty-row"><td colspan="3">Nothing matches those filters.</td></tr>`;
       $("count").textContent = `Showing ${shown.length} of ${out.length} matching (${rows.length} tracked)`;
     }
     Object.values(f).forEach(el => el.addEventListener("input", () => { limit = PAGE; render(); }));
