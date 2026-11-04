@@ -124,5 +124,15 @@
   "url": "https://scribblesthatmatter.com/products/dotted-journal-pro?variant=42136311300272",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-04T06:18:28+00:00",
+  "store_id": "simplepaper",
+  "store": "Simple Paper",
+  "label": "Traveler's notebook Regular size · Brown",
+  "url": "https://simplepaper.co/products/travelers-notebook-regular-brown",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
