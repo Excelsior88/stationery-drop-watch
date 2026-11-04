@@ -11,7 +11,7 @@
 const http = require("http"), fs = require("fs"), path = require("path");
 const { chromium } = require("playwright-core");
 
-const SITE = path.join(__dirname, "..", "site");
+const SITE = process.env.DROPWATCH_SITE_OUT || path.join(__dirname, "..", "site");
 const args = process.argv.slice(2);
 const opt = k => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : null; };
 const SHOTS = opt("--shots");

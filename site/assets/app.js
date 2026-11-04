@@ -1,10 +1,12 @@
 // Stationery Drop Watch: client-side table filtering. The check time is shown once per table (build_site.py).
 (function () {
-  // Header "Trackers" menu: works without JS (details/summary); this only closes it on Escape or a click elsewhere.
-  const menu = document.querySelector(".nav-menu");
-  if (menu) {
-    document.addEventListener("click", e => { if (menu.open && !menu.contains(e.target)) menu.open = false; });
-    document.addEventListener("keydown", e => { if (e.key === "Escape" && menu.open) { menu.open = false; menu.querySelector("summary").focus(); } });
+  // The Hobonichi tracker moved from the homepage to its own page. Old links such as /#listings, /#tracker or
+  // /?product=x#tracker can't be redirected by the server (the part after # never reaches it), so forward them here.
+  if (location.pathname === "/" || location.pathname === "/index.html") {
+    const moved = { tracker: "tracker", listings: "tracker", "by-product": "by-product", "sold-out-everywhere": "sold-out-everywhere", faq: "faq", rows: "tracker" };
+    const h = location.hash.slice(1), q = new URLSearchParams(location.search);
+    const filt = ["product", "type", "store", "status", "q"].some(k => q.get(k));
+    if (moved[h] || filt) location.replace("/hobonichi-restock-tracker/" + location.search + (moved[h] ? "#" + moved[h] : (h ? "#" + h : "#tracker")));
   }
   const LABEL = { in_stock: "In stock", preorder: "Preorder", coming_soon: "Not yet on sale", sold_out: "Sold out", unknown: "Couldn't check" };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));

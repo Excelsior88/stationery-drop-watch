@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Build the static site in site/ from stores.json, data/*.json and content/*.json.
 Never invents data: every status shown comes from data/stock.json written by checker.py."""
-import json, html, re, datetime as dt, shutil
+import json, html, os, re, datetime as dt, shutil
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent.parent
-SITE = ROOT / "site"
+SITE = Path(os.environ["DROPWATCH_SITE_OUT"]) if os.environ.get("DROPWATCH_SITE_OUT") else ROOT / "site"  # draft builds write elsewhere
 ET = ZoneInfo("America/New_York")
 E = html.escape
 
@@ -145,9 +145,10 @@ DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG + "/",
              "travelers-notebook-regular-size": SECTIONS["travelers"]["slug"] + "/#tracker"}  # Regular colors merged into the Traveler's Company page
-# Header: the four trackers sit under one "Trackers" menu (details/summary: works by keyboard, touch and without JS);
-# the rest stay top level. Every URL is unchanged.
-NAV_TRACKERS = [("index.html", "Hobonichi tracker")] + [(SECTIONS[k]["slug"] + "/", SECTIONS[k]["nav"]) for k in LIVE]
+# Home is a hub; the Hobonichi tracker (the old homepage content) lives on its own page.
+HOBO_TRACKER = "hobonichi-restock-tracker/"
+# Header: the four trackers as plain visible links, then the rest. Wraps on narrow screens; nothing is hidden.
+NAV_TRACKERS = [(HOBO_TRACKER, "Hobonichi tracker")] + [(SECTIONS[k]["slug"] + "/", SECTIONS[k]["nav"]) for k in LIVE]
 NAV = [("hobonichi-2027.html", "2027 calendar"), ("guides/", "Guides"), ("shop/", "Planners and journals"),
        ("follow/", "Follow us"), ("about.html", "About")]
 SHOP_NAME = "Our planners and journals"  # h1 of /shop; nav and breadcrumb say "Planners and journals"
@@ -193,12 +194,11 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-"))  # Hobonichi product pages sit under the tracker
     guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "best-dot-grid-journals/")  # guides sit under Guides (the calendar keeps its own nav item)
     def cur(h):  # this page, or the page it sits under (product pages under the tracker, design pages under their section)
-        return (h == fname or (hobo_page and h == "index.html") or (guide_page and h == "guides/")
+        return (h == fname or (hobo_page and h == HOBO_TRACKER) or (guide_page and h == "guides/")
                 or (h in [x for x, _ in NAV_TRACKERS] and h.endswith("/") and fname.startswith(h)))
     trk = "".join(f'<a href="{h}"{" aria-current=page" if cur(h) else ""}>{E(t)}</a>' for h, t in NAV_TRACKERS)
-    nav = (f'<details class="nav-menu{" is-current" if any(cur(h) for h, _ in NAV_TRACKERS) else ""}"><summary>Trackers</summary>'
-           f'<div class="nav-pop">{trk}</div></details>'
-           + "".join(f'<a href="{h}"{" aria-current=page" if cur(h) else ""}>{E(t)}</a>' for h, t in NAV))
+    nav = (f'<span class="nav-trackers">{trk}</span><span class="nav-rest">'
+           + "".join(f'<a href="{h}"{" aria-current=page" if cur(h) else ""}>{E(t)}</a>' for h, t in NAV) + '</span>')
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
 <html lang="en"><head>
@@ -229,7 +229,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <main class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
   <p><strong>Stationery Drop Watch</strong> checks {N_STORES} official and independent shops ({", ".join([f"{N_HOBO} for Hobonichi"] + [f"{N_SEC[k]} for {SECTIONS[k]['count']}" for k in LIVE])}) {CHECK_FREQ} for limited planner and journal restocks, so you don't have to keep refreshing tabs.</p>
-  <p class="foot-links">Hobonichi: <a href="index.html">Hobonichi tracker</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if g_sec(g) == "hobonichi")}</p>
+  <p class="foot-links">Hobonichi: <a href="{HOBO_TRACKER}">Hobonichi tracker</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if g_sec(g) == "hobonichi")}</p>
   <p class="foot-links">Shop: <a href="shop/">{SHOP_NAME}</a> (printed on Amazon, printable PDFs on Etsy)</p>
   <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
   <p class="foot-links">Guides: {" · ".join(f'<a href="{h}">{E(t)}</a>' for h, t in GUIDES)}</p>
@@ -478,7 +478,8 @@ def soon_block():
       <ul>{items}</ul>
     </section>"""
 
-def build_index():
+def build_hobo_tracker():
+    """The full Hobonichi tracker (the old homepage), now at HOBO_TRACKER. Copy, FAQ and FAQ schema unchanged."""
     prods = hobo_products()  # Hobonichi section only; dot grid shops live on their own page
     s = {k: sum(p["status"] == k for p in prods) for k in STATUS}
     checked = sum(v for k, v in s.items() if k != "unknown")
@@ -531,10 +532,12 @@ def build_index():
     </section>""" if out_everywhere else "")
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a>: <span class="muted">{E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
 
+    side = sponsor_block() + soon_block()  # the "From the editor" card is gone from this page
     faq_html, faq_ld = faq_block()
     tracker_html = tracker_block(prods, rows, "Moomin, Cousin, Midnight Blue…", '<option value="__other">Other 2027 items</option>',
         f'<details class="muted small"><summary>Stores we list but don\'t check automatically</summary><ul>{not_checked}</ul></details>')
     body = f"""
+{crumbs((HOBO_TRACKER, "Hobonichi tracker"))}
 <section class="hero">
   {eyebrow("Hobonichi Techo 2027", f"{len({p['store_id'] for p in prods})} Hobonichi shops", f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}")}
   <h1>Know the moment your planner is back.</h1>
@@ -552,7 +555,7 @@ def build_index():
   <p class="muted small">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time> · {checked} of {len(prods)} listings checked successfully.</p>
 </section>
 
-<div class="layout">
+<div class="layout{'' if side.strip() else ' solo'}">
   <div class="main-col">
     <div class="m-lead">
     <section class="card" id="restocked">
@@ -569,24 +572,112 @@ def build_index():
 
     {faq_html}
   </div>
-  <aside class="side-col">
-    {sponsor_block()}
-    {editor_block()}
-    {soon_block()}
-  </aside>
+  {f'<aside class="side-col">{side}</aside>' if side.strip() else ''}
 </div>
 {stock_data(rows)}
 """
     n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
+    return page(HOBO_TRACKER, "Hobonichi Techo 2027 restock tracker · Stationery Drop Watch",
+                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked {CHECK_FREQ}. Plus separate trackers for {sections_phrase()}.",
+                body, ld=(faq_ld, crumbs_ld((HOBO_TRACKER, "Hobonichi tracker"))))
+
+HUB_TRACKERS = {  # one line per tracker card on the hub homepage
+    "hobonichi": ("Hobonichi Techo 2027", "Original A6, Cousin A5, Weeks, Weeks Mega and covers, at the official store and independent shops."),
+    "dotgrid": ("Dot grid journals", ""),  # shop names filled in from stores.json
+    "travelers": ("Traveler's Company", "Traveler's notebooks, refills and limited editions."),
+    "midori": ("MIDORI MD", "MD Notebook diaries and MIDORI MD seasonal releases."),
+}
+HUB_FAQ = ("What do you track?", "How often do you check the shops?", 'What does "Couldn\'t check" mean?',
+           'What does "Not yet on sale" mean?', "How do restock alerts work?")
+
+def build_index():
+    """Hub homepage: hero and signup, the four trackers, recent restocks from every tracker, guides, our own products, FAQ."""
+    prods = stock["products"]
+    s = {k: sum(p["status"] == k for p in prods) for k in STATUS}
+    checked = sum(v for k, v in s.items() if k != "unknown")
+    keys = ["hobonichi", *LIVE]
+    href = {"hobonichi": HOBO_TRACKER, **{k: SECTIONS[k]["slug"] + "/" for k in LIVE}}
+    cards = []
+    for k in keys:
+        ps = section_products(k)
+        st = {x: sum(p["status"] == x for p in ps) for x in STATUS}
+        name, line = HUB_TRACKERS[k]
+        if k == "dotgrid":
+            line = f"{dotgrid_names()}, each checked on its own store."
+        extra = (f' · {st["preorder"]} on preorder' if st["preorder"] else "") + (f' · {st["unknown"]} couldn\'t be checked' if st["unknown"] else "")
+        cards.append(f"""<li class="hub-card"><a href="{href[k]}">
+  <h3>{E(name)}</h3><p>{E(line)}</p>
+  <p class="hub-count"><b>{st["in_stock"]}</b> in stock now <span class="muted small">of {len(ps)} listings · {N_SEC[k]} shops{E(extra)}</span></p>
+  <span class="hub-go">Open the tracker →</span></a></li>""")
+    sec_of_url = {p["url"]: section_of(p) for p in prods}
+    restocks = [c for c in changes if c["url"] in sec_of_url and c["to"] in ("in_stock", "preorder") and c["from"] in ("sold_out", "coming_soon")]
+    restocks.sort(key=lambda c: c["at"], reverse=True)
+    cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)
+    recent = [c for c in restocks if dt.datetime.fromisoformat(c["at"]) >= cutoff][:12]
+    short = {"hobonichi": "Hobonichi", **{k: SECTIONS[k]["nav"] for k in LIVE}}
+    if recent:
+        feed = "".join(f"""<li class="feed-item"><span class="badge {E(c['to'])}">{E(STATUS[c['to']])}</span>
+  <a href="{E(c['url'])}" rel="noopener" target="_blank">{E(c['label'])}</a> <span class="muted">at {E(c['store'])}</span>
+  <a class="hub-tag" href="{href[sec_of_url[c['url']]]}">{E(short[sec_of_url[c['url']]])}</a>
+  <time datetime="{E(c['at'])}">{E(fmt_et(c['at']))}</time></li>""" for c in recent)
+        feed_html = f'<ol class="feed">{feed}</ol>'
+    else:
+        start = tracking_start(prods)
+        lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."
+        feed_html = f"""<div class="empty"><p><strong>{lead}</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
+  A restock shows up here the moment a sold-out item flips back to in stock or preorder between two checks.</p>
+  <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet.</p></div>"""
+    guides = "".join(f'<li><a href="{h}">{E(t)}</a>{f"<p class=\"muted small\">{E(GUIDE_BLURBS[h])}</p>" if h in GUIDE_BLURBS else ""}</li>' for h, t in GUIDES)
+    books = {b["id"]: b for b in picks["books"]}
+    own = [(books[a]["cover"], books[a]["cover_alt"], SHOP_LABELS[a], books[a]["format"]) for a in SHOP_ORDER if a in books and books[a].get("cover")]
+    own += [(e["img"], e["alt"], e["title"], "Printable PDF") for e in SHOP_ETSY]
+    own_html = "".join(f'<li><a href="shop/"><img src="{E(img)}" alt="{E(alt)}" loading="lazy" decoding="async" width="200" height="300"><span class="hub-own-t">{E(t)}</span><span class="muted small">{E(sub)}</span></a></li>' for img, alt, t, sub in own)
+    faq_html, _ = faq_block(only=HUB_FAQ, sid="good-to-know")
+    unk = f' <span class="unk-note">{s["unknown"]} couldn\'t be checked this run.</span>' if s["unknown"] else ""
+    body = f"""
+<section class="hero">
+  {eyebrow("4 restock trackers", f"{N_STORES} shops", f"checked {CHECK_FREQ}")}
+  <h1>Know the moment your planner is back.</h1>
+  <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
+  {signup()}
+  <p class="muted small hub-status">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time> · {checked} of {len(prods)} listings checked successfully.{unk}</p>
+</section>
+
+<section class="hub-trackers" id="trackers" aria-labelledby="trackers-h">
+  <h2 id="trackers-h">Pick a tracker</h2>
+  <ul class="hub-grid">{"".join(cards)}</ul>
+</section>
+
+<div class="hub-cols">
+  <section class="card" id="restocked">
+    <h2>Recent restocks</h2>
+    <p class="muted small">Every tracker, newest first. Last 14 days.</p>
+    {feed_html}
+  </section>
+  <section class="card" id="guides">
+    <h2>Guides</h2>
+    <ul class="link-list hub-guides">{guides}</ul>
+    <p class="small"><a href="guides/">All guides →</a></p>
+  </section>
+</div>
+
+<section class="hub-own" id="our-planners" aria-labelledby="own-h">
+  <div class="section-head"><h2 id="own-h">{SHOP_NAME}</h2><a class="btn-ghost" href="shop/">See them all →</a></div>
+  <p class="muted small">2027 planners and journals we make: printed books on Amazon and printable PDFs on Etsy.</p>
+  <ul class="hub-own-row">{own_html}</ul>
+</section>
+
+{faq_html}
+"""
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
                "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
                "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
                              "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {sections_phrase()}. Statuses come straight from each shop's public product data.",
                              "logo": BASE + "assets/brand/icon-512.png", "email": "stationerydropwatch@gmail.com",
                              "sameAs": [s[2] for s in SOCIALS]}}
-    return page("index.html", "Hobonichi Techo 2027 & dot grid journal restock tracker · Stationery Drop Watch",
-                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked {CHECK_FREQ}. Plus separate trackers for {sections_phrase()}.",
-                body, ld=(site_ld, faq_ld))
+    return page("index.html", "Hobonichi, dot grid, Traveler's Company & MIDORI MD restock tracker · Stationery Drop Watch",
+                f"Live restock checks {CHECK_FREQ} at {N_STORES} shops: Hobonichi Techo 2027 planners and covers, dot grid journals, Traveler's Company notebooks and MIDORI MD releases. See what's in stock now and get an email when a sold-out item is back.",
+                body, ld=(site_ld,))
 
 def build_hobonichi():
     body = """
@@ -609,7 +700,7 @@ def build_hobonichi():
 
 <h2>How to not miss it</h2>
 <ul>
-  <li>Check several shops. When one store sells out, another often still has stock. That's the whole point of the <a href="index.html#tracker">tracker</a>.</li>
+  <li>Check several shops. When one store sells out, another often still has stock. That's the whole point of the <a href=\"""" + HOBO_TRACKER + """#tracker">tracker</a>.</li>
   <li>Live stock by product: """ + " · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS) + """.</li>
   <li>Buying direct from Hobonichi is the only way to get store-exclusive extras, but it ships from Japan and tariffs may apply in the US <a href="#s-papermouse">[Paper Mouse]</a>.</li>
   <li>Which shops have it right now: <a href="where-to-buy-hobonichi-2027/">where to buy the Hobonichi Techo 2027</a>. Choosing a size: <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a>.</li>
@@ -635,7 +726,7 @@ def related_block(current):
     return f"""<section class="card related" aria-label="More guides and restock pages">
   <h2>More guides</h2>
   <ul>{others}</ul>
-  <p class="small">Live stock: <a href="index.html">Hobonichi tracker</a> · {pages}</p>
+  <p class="small">Live stock: <a href="{HOBO_TRACKER}">Hobonichi tracker</a> · {pages}</p>
 </section>"""
 
 def build_about():
@@ -648,7 +739,7 @@ def build_about():
 <p class="lede">Limited planners sell out fast, and every shop only posts its own restocks. This site checks them all in one place.</p>
 {signup()}
 <h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="index.html">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
+<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email <a href="mailto:stationerydropwatch@gmail.com?subject=Featured%20restock%20slot">stationerydropwatch@gmail.com</a> for rates and dates.</p>
@@ -785,8 +876,8 @@ def build_group(g, oe):
                    f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
         az_url, az_label = amazon_for(cid, sl[0]["url"])
         az_sub = "" if m or not az_url or exact_only(cid) else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
-        tracker = (f' · <a href="?product={E(cid)}#tracker">Filter below</a>' if ext else
-                   f' · <a href="index.html?product={E(cid)}#tracker">Filter in the tracker</a>') if cid else ""
+        tracker = (f' · <a href="{g['slug']}/?product={E(cid)}#tracker">Filter below</a>' if ext else
+                   f' · <a href="{HOBO_TRACKER}?product={E(cid)}#tracker">Filter in the tracker</a>') if cid else ""
         dp = design_page_for(sl)
         dp_link = f' · <a href="{dp}">{"Design page" if cid else "Design pages"}: {E(", ".join(d["name"] for d in DESIGNS if any(d["match"](l) for l in sl)))}</a>' if dp else ""
         if dp and not cid:  # "Other designs" card can hold several designed pages: link each
@@ -841,7 +932,7 @@ def build_group(g, oe):
             shop_nav = f'<nav class="chips" aria-label="Products on this page"><span class="muted small">Jump to:</span> {shop_nav}</nav>'
         dg_tracker = tracker_block(ls, tracker_rows(ls, oe), g["search_hint"]) + stock_data(tracker_rows(ls, oe))
     else:
-        others += '<li><a href="index.html#tracker">Hobonichi tracker (every listing)</a></li>'
+        others += f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>'
         shop_nav = dg_tracker = ""
     ds = designs_of(g["slug"])
     design_nav = ('<nav class="chips" aria-label="Design pages"><span class="muted small">Design pages:</span> '
@@ -1017,7 +1108,7 @@ def build_design(d, oe):
   <ul class="link-list">{sources}</ul></section>""" if ls else ""
     sibs = "".join(f'<li><a href="{design_fname(x)}">{E(x["name"])}</a></li>' for x in designs_of(d["parent"]) if x is not d)
     others = (f'<li><a href="{parent["slug"]}/">All {E(parent["short"])} designs</a></li>' + sibs
-              + ('<li><a href="index.html#tracker">Hobonichi tracker (every listing)</a></li>' if sec == "hobonichi" else f'<li><a href="{parent["slug"]}/#tracker">Every listing on the {E(parent["short"])} page</a></li>'))
+              + (f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>' if sec == "hobonichi" else f'<li><a href="{parent["slug"]}/#tracker">Every listing on the {E(parent["short"])} page</a></li>'))
     intro = (f'{d["full"]}: the status each shop we track reported at its last check, in one place. '
              f'This page covers just this design; the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a> has every design we track.')
     body = f"""
@@ -1085,18 +1176,19 @@ FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
     "midori": "On the MIDORI MD page, we track seasonal and limited MD releases (MIDORI's MD line is now sold as MD PRODUCT).",
 }
 
-def faq_block():
+def faq_block(only=None, sid="faq"):
+    """only: a subset of FAQ questions (the hub shows a short version, without FAQPage markup)."""
     n = len({p["store_id"] for p in stock["products"]})
     # {shop} is a link in the page and the plain URL in the FAQ structured data
     secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + (", each checked on its own store" if k == "dotgrid" else "") for k in LIVE)
     secs += ". Some shops sell more than one brand, so they're counted once in the total"
     tracks = " ".join(FAQ_TRACKS[k] for k in LIVE)
     qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_names()), shop=url_for("shop/")),
-           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in FAQ]
+           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in FAQ if only is None or q in only]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}
-    return f'<section class="card faq" id="faq"><h2>Good to know</h2>{html_}</section>', ld
+    return f'<section class="card faq" id="{sid}"><h2>Good to know</h2>{html_}</section>', ld
 
 def product_links_block():
     items = []
@@ -1115,7 +1207,7 @@ STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-03", "about.html": "2026-11-03
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
-    urls = [(url_for("index.html"), home_mod)]
+    urls = [(url_for("index.html"), home_mod), (url_for(HOBO_TRACKER), latest(*[p.get("status_since") for p in hobo_products()], *[c["at"] for c in changes], CONTENT_LASTMOD))]
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(design_fname(d)), design_lastmod(d)) for d in DESIGNS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
@@ -1153,9 +1245,9 @@ def build_404():
 {eyebrow("404", "page not found")}
 <h1>This page sold out. Or it never existed.</h1>
 <p class="lede">The link may be old or mistyped. Every tracker is still here and checked {CHECK_FREQ}.</p>
-<p><a class="btn" href="index.html">Go to the Hobonichi tracker</a> {" ".join(f'<a class="btn-ghost" href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE)}</p>
+<p><a class="btn" href="{HOBO_TRACKER}">Go to the Hobonichi tracker</a> {" ".join(f'<a class="btn-ghost" href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE)}</p>
 <section class="card"><h2>Restock pages</h2>
-  <p class="eyebrow">Hobonichi Techo 2027</p><ul class="link-list"><li><a href="index.html">Hobonichi tracker</a></li>{hobo}</ul>
+  <p class="eyebrow">Hobonichi Techo 2027</p><ul class="link-list"><li><a href="{HOBO_TRACKER}">Hobonichi tracker</a></li>{hobo}</ul>
 {"".join(f'  <p class="eyebrow">{E(SECTIONS[k]["foot"])}</p><ul class="link-list"><li><a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a> <span class="muted small">· {E(shop_names(k))}</span></li></ul>' + chr(10) for k in LIVE)}
   <p class="eyebrow">Guides</p><ul class="link-list">{"".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES)}</ul>
 </section>
@@ -1300,7 +1392,7 @@ def build_where_to_buy():
       <ul>{not_checked}</ul></section>
     <section class="card" id="tips"><h2>Tips for catching a restock</h2>
       <ul>
-        <li><strong>Check more than one shop.</strong> When one store sells out, another often still has it.{tip_split} The <a href="index.html#tracker">full tracker</a> puts every shop side by side.</li>
+        <li><strong>Check more than one shop.</strong> When one store sells out, another often still has it.{tip_split} The <a href="{HOBO_TRACKER}#tracker">full tracker</a> puts every shop side by side.</li>
         <li><strong>Watch for preorders.</strong> Restocks don't always show up as "in stock". At the October 1 wave, some shops took preorders for earlier sell-outs. We count preorders as available. <a href="hobonichi-2027.html">See the 2027 calendar</a>.</li>
         <li><strong>Don't mistake "not yet on sale" for sold out.</strong> Shops put up preview pages before items go on sale.</li>
         <li><strong>Sign up at the official store too.</strong> Hobonichi's restock notification emails cover the Techo books and the Drawer Pouch, not accessories, and don't guarantee you'll get one <a href="#src-shop">[Hobonichi]</a>. Many independent shops offer their own restock sign-ups on product pages <a href="#src-pm">[Paper Mouse]</a>.</li>
@@ -1591,6 +1683,9 @@ SHOP_ETSY = [
 # 2026-11-04 (buy box and format swatch; no strikethrough or deal shown). A None here shows "See price on Amazon".
 AMAZON_LIST_PRICES = {"B0HPBDNS7F": "$19.99", "B0HQ5TLDK3": "$14.99", "B0HQ5X3C7D": "$16.99",
                       "B0HP9PXSR1": "$14.99", "B0HP85QLMS": "$9.99"}
+SHOP_LABELS = {"B0HPBDNS7F": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
+               "B0HP9PXSR1": "2027 Planner for Men", "B0HP85QLMS": "Kids' Goldfish Journal"}
+SHOP_ORDER = ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HP85QLMS")
 ETSY_PRICE = ("$6.99", "20% off launch sale Oct 31 to Nov 30")
 # Interior previews, web-sized into assets/shop/inside/: our own Etsy listing images (etsy/printables/*/listing-images)
 # and, for the Amazon books, interior spreads Kiln exported from the print files (keyed by ASIN). (file stem, caption)
@@ -1616,8 +1711,7 @@ ASSET_V = {n: _hl.md5((SITE / 'assets' / n).read_bytes()).hexdigest()[:8] for n 
 def build_shop():
     fname = "shop/"
     books = {b["id"]: b for b in json.loads((ROOT / "content/editor_picks.json").read_text())["books"]}
-    labels = {"B0HPBDNS7F": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
-              "B0HP9PXSR1": "2027 Planner for Men", "B0HP85QLMS": "Kids' Goldfish Journal"}
+    labels = SHOP_LABELS
     def srcset(img):  # Etsy mockups ship 600w + 1200w copies; Amazon covers use their single file
         if img.startswith("assets/shop/") and img.endswith("-planner.jpg"):
             b = img[:-4]
@@ -1644,7 +1738,7 @@ def build_shop():
     amz = "".join(card(books[a]["cover"], books[a]["cover_alt"], labels[a], books[a]["format"] + " · on Amazon",
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True,
                        amz_price(a), a if a in SHOP_INSIDE else None)
-                  for a in ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HP85QLMS"))
+                  for a in SHOP_ORDER)
     etsy_price = f'<p class="shop-price"><strong>{E(ETSY_PRICE[0])}</strong> <span class="muted small">{E(ETSY_PRICE[1])}</span></p>'
     etsy = "".join(card(e["img"], e["alt"], e["title"], "Printable PDF · instant download from Etsy", e["blurb"],
                         ["US Letter 8.5 x 11 in", "172 pages"], e["url"], "View on Etsy", False, etsy_price, e.get("inside"))
@@ -1698,6 +1792,8 @@ def main():
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
     shutil.copy(ROOT / "data/changes.json", SITE / "data/changes.json")
     (SITE / "index.html").write_text(build_index())
+    (SITE / HOBO_TRACKER).mkdir(parents=True, exist_ok=True)
+    (SITE / HOBO_TRACKER / "index.html").write_text(build_hobo_tracker())
     (SITE / "hobonichi-2027.html").write_text(build_hobonichi())
     (SITE / "about.html").write_text(build_about())
     (SITE / "404.html").write_text(build_404())
