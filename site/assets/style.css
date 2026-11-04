@@ -324,3 +324,29 @@ a.az:hover{opacity:1}
   .signup-strip input[type=email]{flex:1 1 auto}
   .site-nav{flex-wrap:nowrap}.nav-trackers,.nav-rest{display:contents}
 }
+/* Pre-launch audit fixes */
+:root{--accent:#a8452e}
+h1{text-wrap:balance}h2{text-wrap:balance}
+.follow-card h2.h3{font-size:1.17em;margin:0}
+nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-visible,a.btn-amz:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tag-soon{display:inline-block;vertical-align:middle;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:var(--paper-2);font:600 .7rem/1.4 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+@media (min-width:1200px){.prose p,.prose li,.faq p,.faq-item p,.faq dd{font-size:1.125rem}}
+@media (min-width:1100px){
+  .prose .cols2,.faq-cols{column-count:2;column-gap:48px}
+  .cols2>*,.faq-cols>*{break-inside:avoid}
+  .cols2 h2,.cols2 h3{break-after:avoid}
+}
+@media (max-width:900px){
+  .masthead .wrap{flex-wrap:nowrap;flex-direction:column;align-items:stretch;gap:4px;min-height:0;padding-top:6px;padding-bottom:4px}
+  .masthead .brand{align-self:center}
+  .site-nav{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -14px;padding:0 14px 4px;scroll-snap-type:x proximity}
+  .site-nav::-webkit-scrollbar{display:none}
+  .nav-trackers,.nav-rest{display:contents}
+  .site-nav a{white-space:nowrap;flex:0 0 auto}
+}
+@media (max-width:560px){.brand-logo{height:36px}}
+@media (min-width:1100px){
+  .cols2 table,.cols2 .table-wrap,.cols2 figure,.cols2 .cards,.cols2 .vs-grid,.cols2 .timeline,.cols2 .card{column-span:all;break-inside:avoid}
+  .cols2 p,.cols2 li,.cols2 section{break-inside:avoid}
+  #good-to-know{column-count:2;column-gap:40px}#good-to-know h2{column-span:all}#good-to-know .faq-item{break-inside:avoid}
+}

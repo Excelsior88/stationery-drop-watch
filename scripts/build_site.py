@@ -170,7 +170,18 @@ X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
 
 def page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
+    body = two_col_prose(body)
     return tag_amazon_links(_page(fname, title, desc, body, ld, og_type, og_image, og_alt, noindex))
+
+_PROSE_COLS = re.compile(r'(<article class="prose(?: guide| guide vs-page)?">.*?(?:</section>|<p class="lede">.*?</p>))(.*?)(</article>)', re.S)
+def two_col_prose(body):
+    """About and guide pages: the body after the intro/signup flows in two columns on wide screens (style.css .cols2),
+    so text spans the full content width without 140-character lines. Shop, follow and 404 are left alone."""
+    if 'class="signup-strip"' in body:
+        rx = re.compile(r'(<article class="prose(?: guide| guide vs-page)?">.*?<section class="signup-strip".*?</section>)(.*?)(</article>)', re.S)
+    else:
+        rx = re.compile(r'(<article class="prose(?: guide| guide vs-page)?">.*?<p class="lede">.*?</p>)(.*?)(</article>)', re.S)
+    return rx.sub(lambda m: f'{m.group(1)}\n<div class="cols2">{m.group(2)}</div>\n{m.group(3)}', body, count=1)
 
 def pretty(path):
     """Public form of a local page path: 'index.html' -> '', 'about.html#x' -> 'about#x', 'slug/' unchanged.
@@ -687,12 +698,13 @@ def build_hobonichi():
 <p class="lede">Hobonichi sells its planners in two big drops a year, and popular covers can sell out within minutes. Here's how the 2027 season has gone so far and when stock usually comes back.</p>
 """ + signup() + """
 
+<h2 class="sr">2027 timeline</h2>
 <ol class="timeline">
-  <li><time>Aug 25, 2026</time><div><h3>Previews go up</h3><p>Shops post the 2027 lineup as "out of stock" or "coming soon" pages. They aren't sold out; they're just not on sale yet. <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
-  <li><time>Aug 31, 2026 · 10 PM ET</time><div><h3>Worldwide launch (January-start planners)</h3><p>Everything goes live at the same moment worldwide: 11 AM on September 1 in Japan, 10 PM ET / 9 PM CT the night before in the US. Atlas Stationers warned that popular styles and collaborations "often sell out within minutes." <a href="#s-papermouse">[Paper Mouse]</a> <a href="#s-atlas">[Atlas]</a></p></div></li>
-  <li><time>Sep 30 – Oct 1, 2026</time><div><h3>Second fall wave</h3><p>Hobonichi notes that some products begin sales on October 1. At US shops that meant the ONE PIECE magazine collection and the Weeksdays 2027 desk calendar, plus a large restock of earlier sell-outs (as preorders at some shops). <a href="#s-1101">[Hobonichi]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
-  <li><time>Early–mid Oct 2026</time><div><h3>First restocks land at indie shops</h3><p>Atlas expected its first restock in early October. Paper Mouse's shipment arrived October 15 and preorders began shipping. <a href="#s-atlas">[Atlas]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
-  <li><time>February 2027</time><div><h3>Spring launch (April-start planners)</h3><p>The second yearly release, timed to Japan's April academic and fiscal year. Expect another rush on new covers. <a href="#s-papermouse">[Paper Mouse]</a> <a href="#s-1101">[Hobonichi]</a></p></div></li>
+  <li><time>Aug 25, 2026</time><div><h3 class="tl">Previews go up</h3><p>Shops post the 2027 lineup as "out of stock" or "coming soon" pages. They aren't sold out; they're just not on sale yet. <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
+  <li><time>Aug 31, 2026 · 10 PM ET</time><div><h3 class="tl">Worldwide launch (January-start planners)</h3><p>Everything goes live at the same moment worldwide: 11 AM on September 1 in Japan, 10 PM ET / 9 PM CT the night before in the US. Atlas Stationers warned that popular styles and collaborations "often sell out within minutes." <a href="#s-papermouse">[Paper Mouse]</a> <a href="#s-atlas">[Atlas]</a></p></div></li>
+  <li><time>Sep 30 – Oct 1, 2026</time><div><h3 class="tl">Second fall wave</h3><p>Hobonichi notes that some products begin sales on October 1. At US shops that meant the ONE PIECE magazine collection and the Weeksdays 2027 desk calendar, plus a large restock of earlier sell-outs (as preorders at some shops). <a href="#s-1101">[Hobonichi]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
+  <li><time>Early–mid Oct 2026</time><div><h3 class="tl">First restocks land at indie shops</h3><p>Atlas expected its first restock in early October. Paper Mouse's shipment arrived October 15 and preorders began shipping. <a href="#s-atlas">[Atlas]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
+  <li><time>February 2027</time><div><h3 class="tl">Spring launch (April-start planners)</h3><p>The second yearly release, timed to Japan's April academic and fiscal year. Expect another rush on new covers. <a href="#s-papermouse">[Paper Mouse]</a> <a href="#s-1101">[Hobonichi]</a></p></div></li>
 </ol>
 
 <h2>Will it come back?</h2>
@@ -741,6 +753,10 @@ def build_about():
 <h2>How it works</h2>
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
+<section class="couple" aria-labelledby="couple-h">
+<h2 id="couple-h">The couple behind Drop Watch <span class="tag-soon">Coming soon</span></h2>
+<p>Drop Watch is run by a couple. He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together. Our story and a look at the planners we use are coming soon.</p>
+</section>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email <a href="mailto:stationerydropwatch@gmail.com?subject=Featured%20restock%20slot">stationerydropwatch@gmail.com</a> for rates and dates.</p>
 <h2>Affiliate links</h2>
@@ -965,7 +981,6 @@ def build_group(g, oe):
   </div>
   <aside class="side-col">
     {sponsor_block()}
-    {editor_block("dotgrid" if ext else "home")}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
     {"" if ext else guides_block()}
   </aside>
@@ -1131,7 +1146,6 @@ def build_design(d, oe):
   </div>
   <aside class="side-col">
     {sponsor_block()}
-    {editor_block("dotgrid" if sec != "hobonichi" else "home")}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
     {guides_block() if sec == "hobonichi" else ""}
   </aside>
@@ -1772,7 +1786,7 @@ SOCIALS = [  # (platform, handle, url, note, icon letter)
 def build_follow():
     fname = "follow/"
     rows = "".join(f"""<li class="follow-card"><span class="follow-ico" aria-hidden="true">{E(ic)}</span>
-  <div class="follow-text"><h3>{E(n)}</h3><p class="muted small">{E(h)}</p><p class="small">{E(note)}</p></div>
+  <div class="follow-text"><h2 class="h3">{E(n)}</h2><p class="muted small">{E(h)}</p><p class="small">{E(note)}</p></div>
   <a class="btn" href="{E(u)}" rel="noopener" target="_blank">Follow on {E(n)}</a></li>""" for n, h, u, note, ic in SOCIALS)
     body = f"""
 <article class="prose follow">
