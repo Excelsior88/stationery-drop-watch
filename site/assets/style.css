@@ -308,3 +308,8 @@ a.az:hover{opacity:1}
 @media (max-width:760px){.hub-cols{grid-template-columns:1fr}}
 @media (max-width:560px){.hub-grid{grid-template-columns:1fr;gap:12px}.hub-own{padding:18px 16px}.hub-own-row{grid-template-columns:repeat(7,128px);overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}.hub-own-row li{scroll-snap-align:start}}
 .layout.solo{grid-template-columns:minmax(0,1fr)}
+/* Header, footer and every page's content share one column: .wrap (1180px max, 20px / 14px side padding) */
+.prose,.prose.shop-wide{max-width:none}
+.foot p{max-width:none}
+/* nav row spans the column; the -12px offsets the pill padding so the first and last link text sit on the content edges */
+@media (min-width:901px){.site-nav{flex:1 1 100%;justify-content:space-between;margin:0 -12px}.nav-trackers,.nav-rest{flex:0 0 auto}}

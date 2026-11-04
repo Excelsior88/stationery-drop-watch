@@ -637,7 +637,7 @@ def build_index():
     body = f"""
 <section class="hero">
   {eyebrow("4 restock trackers", f"{N_STORES} shops", f"checked {CHECK_FREQ}")}
-  <h1>Know the moment your planner is back.</h1>
+  <h1>Know the moment your planner or journal is back.</h1>
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
   {signup()}
   <p class="muted small hub-status">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time> · {checked} of {len(prods)} listings checked successfully.{unk}</p>
