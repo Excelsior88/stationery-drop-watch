@@ -423,15 +423,38 @@ def amazon_main(prods):
             url, label, exact = amazon_link(f"https://www.amazon.com/dp/{hit['asin']}"), "View on Amazon", True
         else:
             url, label, exact = amazon_link(amz["brands"][brand]["url"]), amz["brands"][brand]["label"], False
-        n = len({l["store_id"] for l in ls})
-        if sts == {"sold_out"}:
-            note = "Sold out at every shop we track" if n > 1 else "Sold out at the only shop we track"
-        elif sts == {"coming_soon"}:
-            note = "Not on sale yet at any shop we track" if n > 1 else "Not on sale yet at the only shop we track"
-        else:
-            note = "Sold out or not yet on sale at every shop we track"
-        out[k] = dict(url=url, label=label, exact=exact, note=f"{note} ({n} shops)" if n > 1 else note, listings=ls)
+        out[k] = dict(url=url, label=label, exact=exact, note=oe_note(ls), listings=ls)
     return out
+
+def oe_note(ls):
+    n = len({l["store_id"] for l in ls})
+    sts = {l["status"] for l in ls}
+    if sts == {"sold_out"}:
+        note = "Sold out at every shop we track" if n > 1 else "Sold out at the only shop we track"
+    elif sts == {"coming_soon"}:
+        note = "Not on sale yet at any shop we track" if n > 1 else "Not on sale yet at the only shop we track"
+    else:
+        note = "Sold out or not yet on sale at every shop we track"
+    return f"{note} ({n} shops)" if n > 1 else note
+
+def page_amz(ls, oe):
+    """Top Amazon button for a set of listings shown together. Only offered when every one of
+    those listings is sold out / not yet on sale; the note is worded over all of them."""
+    if not ls or any(l["status"] not in NOT_BUYABLE for l in ls):
+        return None
+    keys = list(dict.fromkeys(oe_key(l) for l in ls))
+    if exact_only(ls[0].get("canonical")) and len(keys) > 1:  # several exact sizes: no single Amazon match
+        return None
+    m = next((oe[k] for k in keys if k in oe), None)
+    if not m:
+        return None
+    m = dict(m, note=oe_note(ls))
+    check_amz_note(ls, m["note"])
+    return m
+
+def check_amz_note(ls, note):
+    if any(l["status"] not in NOT_BUYABLE for l in ls):
+        raise SystemExit(f"top Amazon note '{note}' contradicts a listing that is buyable or unchecked: {ls[0]['url']}")
 
 def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
     """Filterable table of every listing in `prods` (driven by assets/app.js)."""
@@ -931,7 +954,7 @@ def build_group(g, oe):
     for cid in order:
         sl = sections[cid]
         name = canon.get(cid) or ("Other designs and editions" if len(order) > 1 else "Listings")
-        m = oe.get(cid) if cid else None
+        m = page_amz(sl, oe) if cid else None
         amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
                    f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
         az_url, az_label = amazon_for(cid, sl[0]["url"])
@@ -1177,7 +1200,7 @@ def build_design(d, oe):
     sec = g_sec(parent)
     ey = parent.get("eyebrow", "Hobonichi Techo 2027")
     h1 = f'{d["full"]} restock tracker'
-    m = next((oe.get(k) for k in {oe_key(l) for l in ls} if oe.get(k)), None)
+    m = page_amz(ls, oe)
     amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
                f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
     if not ls:
@@ -1964,6 +1987,13 @@ def check_none_claim(fname, doc):
     if badges and all(b == "unknown" for b in badges) and _NONE_CLAIM.search(doc):
         raise SystemExit(f"{fname}: says none in stock but every listing is Couldn't check")
 
+_AMZ_NOTE = re.compile(r'class="btn btn-amz"[^>]*>[^<]*</a> <span class="muted small">(Sold out|Not on sale yet)[^<]*</span>')
+
+def check_amz_doc(fname, doc):
+    """Build check: a design page's top Amazon note must not claim sold out while a listing on it is buyable or unchecked."""
+    if _AMZ_NOTE.search(doc) and re.search(r'<span class="badge (in_stock|preorder|unknown)">', doc):
+        raise SystemExit(f"{fname}: top note claims sold out but a listing on the page is in stock, on preorder or unchecked")
+
 def main():
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
@@ -1984,6 +2014,7 @@ def main():
     for d in DESIGNS:
         fname, doc = build_design(d, oe)
         check_none_claim(fname, doc)
+        check_amz_doc(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_guides_index, build_shop, build_follow):
