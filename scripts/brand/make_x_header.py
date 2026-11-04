@@ -28,8 +28,12 @@ def build():
     ux0, ux1 = X + w1 + 6, X + w1 + w2 - 22
     parts.append(f'<path d="M{ux0:.1f} 250 Q{(ux0+ux1)/2:.1f} 242 {ux1:.1f} 248" fill="none" stroke="{MUSTARD}" '
                  f'stroke-width="5" stroke-linecap="round"/>')
-    sub = "Hobonichi Techo 2027 planners & covers, checked hourly across 13 shops."
-    p3, w3 = text_path(SERIF, sub, 28, X + 2, 306, {"wght": 420, "opsz": 24})
+    sub = "Hobonichi, dot grid journals & more, checked every 30 minutes across 20 shops."
+    size = 28  # shrink only if the subline would run past the safe area (x 1420) / ribbon
+    while True:
+        p3, w3 = text_path(SERIF, sub, size, X + 2, 306, {"wght": 420, "opsz": 24})
+        if X + 2 + w3 <= 1400 or size <= 20: break
+        size -= 0.5
     parts.append(f'<path d="{p3}" fill="{INK2}"/>')
     url = "stationerydropwatch.com"
     p4, w4 = text_path(SANS, url, 19, X + 2 + 30, 368, {"wght": 500}, tracking=0.01)
