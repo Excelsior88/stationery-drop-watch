@@ -96,6 +96,16 @@ def section_shops(sec):
     ids = {p["store_id"] for p in section_products(sec)}
     return [s for s in stores["stores"] if s["id"] in ids]
 
+# Shop's home country, from its own site or domain (stores.json "country", first word). Never a shipping claim.
+_REGION_FIX = {"travelerscompanyusa": "US", "tokyopenshop": "US", "mdproductusa": "US"}  # US company sites (Tokyo Pen Shop: Fairfield, Iowa)
+REGION = {x["id"]: _REGION_FIX.get(x["id"]) or (x.get("country") or "").split()[0] for x in stores["stores"]}
+REGION_NAME = {"US": "United States", "CA": "Canada", "SG": "Singapore", "UK": "United Kingdom", "JP": "Japan"}
+assert all(REGION[x["id"]] in REGION_NAME for x in stores["stores"]), "every shop needs a country tag"
+
+def region_tag(store_id):
+    r = REGION.get(store_id, "")
+    return f' <span class="region" title="Shop based in {REGION_NAME[r]}">{r}</span>' if r else ""
+
 def names_and(n):
     return ", ".join(n[:-1]) + " and " + n[-1] if len(n) > 1 else "".join(n)
 
@@ -233,7 +243,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p class="foot-links">Shop: <a href="shop/">{SHOP_NAME}</a> (printed on Amazon, printable PDFs on Etsy)</p>
   <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
   <p class="foot-links">Guides: {" · ".join(f'<a href="{h}">{E(t)}</a>' for h, t in GUIDES)}</p>
-{"".join(f'  <p class="foot-links">{E(SECTIONS[k]["foot"])}: <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["link"])}</a> <span class="muted">({E(shop_names(k))})</span></p>' + chr(10) for k in LIVE)}  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
+{"".join(f'  <p class="foot-links">{E(SECTIONS[k]["foot"])}: <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["link"])}</a> <span class="muted">({E(shop_names(k))})</span></p>' + chr(10) for k in LIVE)}  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="privacy.html">Privacy</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
 </div></footer>
@@ -269,7 +279,7 @@ def signup(kind="alerts"):
     <input type="hidden" value="1" name="embed">
     <button type="submit">Notify me</button>
   </form>
-  <p class="strip-note">{E(note)} Sent via <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>.</p>
+  <p class="strip-note">{E(note)} Sent via <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>. <a href="privacy.html">Privacy</a></p>
 </section>"""
 
 def crumbs(*trail):
@@ -412,7 +422,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
         ns_groups.setdefault(r["g"], []).append(r)
     noscript_rows = "".join(
         f'<tr class="grp"><th colspan="2" scope="rowgroup">{E(ls[0]["gn"])} <span class="sub">{E(ls[0]["t"])}</span></th></tr>'
-        + "".join(f'<tr class="child"><td><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a></td><td><span class="badge {r["st"]}">{STATUS[r["st"]]}</span></td></tr>' for r in ls)
+        + "".join(f'<tr class="child"><td><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region_tag(r["sid"])}<span class="sub variant">{E(r["p"])}</span></td><td><span class="badge {r["st"]}">{STATUS[r["st"]]}</span></td></tr>' for r in ls)
         for ls in ns_groups.values())
     return f"""<section class="card" id="tracker">
       <div class="section-head"><h2>Every listing we track</h2><p class="muted small"><span id="count"></span> · {checked_line(prods)}</p></div>
@@ -434,7 +444,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
 
 def tracker_rows(prods, out_everywhere):
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
-    rows = [dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], st=p["status"],
+    rows = [dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st=p["status"],
                  u=p["url"], at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
                  va=p.get("available_variants"), tv=p.get("total_variants"),
                  az=amazon_for(p.get("canonical"), p["url"])[0], azl=amazon_for(p.get("canonical"), p["url"])[1]) for p in prods]
@@ -516,7 +526,7 @@ def build_hobo_tracker():
         name_html = f'<a href="{dp}">{E(name)}</a>' if dp else E(name)
         since = oe_since(m)
         since_html = f' <span class="oe-since">sold out since {time_tag(since)}</span>' if since else ""
-        shops = "".join(f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(l["store"])}</a> <span class="badge {E(l["status"])}">{E(STATUS[l["status"]])}</span></li>' for l in m["listings"])
+        shops = "".join(f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(l["store"])}</a>{region_tag(l["store_id"])} <span class="badge {E(l["status"])}">{E(STATUS[l["status"]])}</span></li>' for l in m["listings"])
         n = len({l["store_id"] for l in m["listings"]})
         amz_label = "View on Amazon" if m["exact"] else "Search Amazon"
         return f"""<li class="oe-row"><div class="oe-name"><span class="oe-title">{name_html}</span>{since_html}
@@ -730,6 +740,26 @@ def related_block(current):
   <p class="small">Live stock: <a href="{HOBO_TRACKER}">Hobonichi tracker</a> · {pages}</p>
 </section>"""
 
+def build_privacy():
+    fname = "privacy.html"
+    body = f"""
+<article class="prose">
+{crumbs((fname, "Privacy"))}
+{eyebrow("Privacy", "updated Nov 4, 2026")}
+<h1>Privacy</h1>
+<p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, and cookie-free page view counts.</p>
+<h2>Email alerts (Buttondown)</h2>
+<p>If you sign up for restock alerts, your email address goes to <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>, the service that stores the list and sends the emails. We use it only to send the alerts and occasional updates you signed up for. Every email has an unsubscribe link, and you can also email us to be removed. Buttondown's own privacy policy is at <a href="https://buttondown.com/legal/privacy" target="_blank" rel="noopener">buttondown.com/legal/privacy</a>.</p>
+<h2>Page view counts (Cloudflare Web Analytics)</h2>
+<p>The site is hosted on Cloudflare Pages and uses Cloudflare Web Analytics to count visits. It doesn't use cookies or local storage and doesn't follow you across other sites. Cloudflare also handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
+<p>This site doesn't set its own cookies and doesn't run ad trackers.</p>
+<h2>Amazon and affiliate links</h2>
+<p>{E(AFFILIATE_NOTE)} When you open an Amazon link, Amazon may set its own cookies to credit the referral; that happens on Amazon's side under <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ" target="_blank" rel="noopener">Amazon's privacy notice</a>. Links to the shops we track are plain links, and what you do on their sites is covered by their own policies.</p>
+<h2>Contact</h2>
+<p>Questions, or want your email address removed? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
+</article>"""
+    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown), cookie-free Cloudflare Web Analytics and Amazon affiliate links.", body, ld=(crumbs_ld((fname, "Privacy")),))
+
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
     body = f"""
@@ -853,7 +883,7 @@ def status_rows(ls, oe):
     for l in sorted(ls, key=lambda l: (order.get(l["status"], 9), l["store"])):
         since = l.get("status_since")
         since_html = f'<span class="sub">since {E(fmt_et(since).rsplit(",", 1)[0])}</span>' if since and l["status"] != "unknown" else ""
-        rows.append(f"""<tr><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a><span class="sub">{E(l.get('title') or l['label'])}</span></td>
+        rows.append(f"""<tr><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
   <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td></tr>""")
     return "".join(rows)
 
@@ -881,7 +911,7 @@ def build_group(g, oe):
                    f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
         az_url, az_label = amazon_for(cid, sl[0]["url"])
         az_sub = "" if m or not az_url or exact_only(cid) else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
-        tracker = (f' · <a href="{g['slug']}/?product={E(cid)}#tracker">Filter below</a>' if ext else
+        tracker = ("" if ext else
                    f' · <a href="{HOBO_TRACKER}?product={E(cid)}#tracker">Filter in the tracker</a>') if cid else ""
         dp = design_page_for(sl)
         dp_link = f' · <a href="{dp}">{"Design page" if cid else "Design pages"}: {E(", ".join(d["name"] for d in DESIGNS if any(d["match"](l) for l in sl)))}</a>' if dp else ""
@@ -894,7 +924,7 @@ def build_group(g, oe):
             st = next(x for x in stores["stores"] if x["id"] == sid)
             sls = [l for l in ls if l["store_id"] == sid]
             feat = ' <span class="badge featured">Featured</span>' if not parts and g.get("featured") else ""
-            parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a></span>{feat}
+            parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a>{region_tag(sid)}</span>{feat}
   <span class="muted small">{E(count_line(sls).capitalize())}</span></h2>""")
         parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
   <div class="section-head"><{hx}>{E(name)}</{hx}><p class="muted small">{E(count_line(sl, g.get('unit', 'listings')).capitalize())} · {checked_line(sl)}</p></div>
@@ -927,7 +957,7 @@ def build_group(g, oe):
   A restock shows up here the moment a sold-out listing flips back to in stock or preorder between two checks.</p></div>'''
     others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and (g_sec(x) != "hobonichi") == ext)
     if ext:
-        others += f'<li><a href="#tracker">Every {E(SECTIONS[g_sec(g)]["name"].removesuffix("s"))} listing we track</a></li>'
+        others += f'<li><a href="#tracker">Every {E(SECTIONS[g_sec(g)]["name"].removesuffix("s"))} listing we track (this page)</a></li>'
         if per_shop:
             shop_ids = sorted({l["store_id"] for l in ls}, key=lambda sid: rank[sid])
             shop_nav = "".join(f'<a class="chip" href="#shop-{E(sid)}">{E(next(x["name"] for x in stores["stores"] if x["id"] == sid))}</a>' for sid in shop_ids)
@@ -935,10 +965,12 @@ def build_group(g, oe):
         else:  # products span several shops: jump by product instead
             shop_nav = "".join(f'<a class="chip" href="#{E(cid)}">{E(canon[cid].removeprefix("Traveler\'s notebook "))}</a>' for cid in order if cid)
             shop_nav = f'<nav class="chips" aria-label="Products on this page"><span class="muted small">Jump to:</span> {shop_nav}</nav>'
-        dg_tracker = tracker_block(ls, tracker_rows(ls, oe), g["search_hint"]) + stock_data(tracker_rows(ls, oe))
+        dg_tracker = ""  # per-product tables are the one view; the old grouped table repeated every listing
     else:
         others += f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>'
         shop_nav = dg_tracker = ""
+    card_filter = (f'<form class="filters card-filter" role="search" onsubmit="return false"><label class="grow">Search this page'
+                   f'<input id="card-q" type="search" placeholder="{E(g["search_hint"])}"></label></form>') if ext else ""
     ds = designs_of(g["slug"])
     design_nav = ('<nav class="chips" aria-label="Design pages"><span class="muted small">Design pages:</span> '
                   + "".join(f'<a class="chip" href="{design_fname(d)}">{E(d["name"])}</a>' for d in ds) + '</nav>') if ds else ""
@@ -955,8 +987,11 @@ def build_group(g, oe):
 </section>
 <div class="layout">
   <div class="main-col">
-    <div class="m-lead">{design_nav}{shop_nav}{''.join(parts[:lead_n])}</div>
+    <div id="tracker"{' class="card-filtered"' if ext else ''}>
+    <div class="m-lead">{design_nav}{shop_nav}{card_filter}{''.join(parts[:lead_n])}</div>
     {''.join(parts[lead_n:])}
+    <p class="muted small card-empty" hidden>Nothing on this page matches that search.</p>
+    </div>
     {dg_tracker}
     <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
     <section class="card"><h2>Good to know</h2>
@@ -1206,7 +1241,7 @@ def product_links_block():
     return (f'<section class="card" id="by-product"><h2>Restock pages by product</h2><ul class="link-list">{"".join(items)}</ul>'
             f'<p class="eyebrow">Guides</p><ul class="link-list">{guides}</ul></section>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-03", "about.html": "2026-11-03"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-03", "about.html": "2026-11-03", "privacy.html": "2026-11-04"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -1284,6 +1319,11 @@ H_SRC = {  # official Hobonichi pages used for product facts
     "shop": ("https://www.1101.com/store/techo/en/2027/pc/shopping_guide/", "Hobonichi Techo 2027 shopping guide"),
 }
 
+def design_links_block():
+    """Hobonichi design pages, for the Hobonichi guides."""
+    items = "".join(f'<li><a href="{design_fname(d)}">{E(d["full"])}</a></li>' for d in DESIGNS if any(g["slug"] == d["parent"] and g_sec(g) == "hobonichi" for g in GROUPS))
+    return f'<h2>Restock pages for single designs</h2><ul class="link-list">{items}</ul>' if items else ""
+
 def guides_block():
     return ('<section class="card"><p class="eyebrow">Guides</p><ul class="link-list">'
             + "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in HOBO_GUIDES) + "</ul></section>")
@@ -1325,7 +1365,7 @@ def _shop_table(ls):
             f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(canon.get(l.get("canonical") or "") or l.get("title") or l["label"])}</a> '
             f'<span class="badge {E(l["status"])}">{E(STATUS[l["status"]])}</span></li>'
             for l in sorted(by[sid], key=lambda l: (order[l["status"]], l["label"])))
-        rows.append(f'<tr><td>{E(by[sid][0]["store"])}</td><td><ul class="wtb-items">{items}</ul></td></tr>')
+        rows.append(f'<tr><td>{E(by[sid][0]["store"])}{region_tag(sid)}</td><td><ul class="wtb-items">{items}</ul></td></tr>')
     return f'''<div class="table-wrap"><table class="stock"><thead><tr><th>Shop</th><th>What we track there · status at last check</th></tr></thead>
 <tbody>{"".join(rows)}</tbody></table></div>'''
 
@@ -1413,6 +1453,7 @@ def build_where_to_buy():
   <li id="src-pm"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Restock history (restocks not guaranteed; almost all items restocked at least once after launch in past years), product-page restock sign-ups.</li>
   <li>Stock statuses: each shop's public product data, read by our checker; see <a href="about.html">how it works</a>.</li>
 </ol>
+{design_links_block()}
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": "Where to buy the Hobonichi Techo 2027",
@@ -1504,6 +1545,7 @@ def build_vs():
 <h2>Sources</h2>
 <ol class="sources">{src_items}</ol>
 <p class="muted small">Hobonichi makes other types too, such as the A5 and A6 HON. This guide covers only the three above.</p>
+{design_links_block()}
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": "Hobonichi Techo vs Cousin vs Weeks: which 2027 planner fits you?",
@@ -1541,10 +1583,17 @@ def build_dotgrid_guide():
     dg = section_products("dotgrid")
     def s(k):
         return f'<a href="#src-{k}">[{E(DG_SRC[k][2])}]</a>'
-    def col_ls(canons):
-        return [p for p in dg if p.get("canonical") in canons]
+    def col_ls(store_id):  # same scope as the tracker: every dot grid listing at that shop
+        return [p for p in dg if p["store_id"] == store_id]
+    # Build check: the guide's counts must come from exactly the tracker's listings.
+    dg_group = next(g for g in GROUPS if g["slug"] == DOTGRID_SLUG.rstrip("/"))
+    trk = group_listings(dg_group)
+    guide_ls = [p for _, sid, _ in DG_COLS for p in col_ls(sid)]
+    if sorted(map(id, guide_ls)) != sorted(map(id, dg)) or count_line(guide_ls) != count_line(trk) or len(trk) != len(dg):
+        raise SystemExit(f"dot grid guide counts differ from tracker: guide {count_line(guide_ls)!r}, tracker {count_line(trk)!r}")
+    dg_total = count_line(guide_ls)
     def avail(store_id, canons):
-        ls = col_ls(canons)
+        ls = col_ls(store_id)
         if not ls:
             return f'<a href="{DOTGRID_SLUG}/#shop-{store_id}">Live stock</a>'
         buy = [re.sub(r"\s*Bullet Journal", "", l["label"]) for l in ls if l["status"] in BUYABLE]
@@ -1617,7 +1666,7 @@ def build_dotgrid_guide():
 <div class="table-wrap"><table class="stock compare">
 <thead><tr><th></th>{"".join(f"<th>{E(h)}</th>" for h, _, _ in DG_COLS)}</tr></thead>
 <tbody>{rows_html}</tbody></table></div>
-<p class="muted small">Stock is what each maker's own shop said at our last check, {asof}. Archer and Olive counts the A5 and B5 dot grid notebooks we track; Scribbles That Matter includes the Iconic.</p>
+<p class="muted small">Stock is what each maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop, the same listings as the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. Across all four: {E(dg_total)}.</p>
 {az_html}
 
 <h2>Who each one suits</h2>
@@ -1799,6 +1848,7 @@ def main():
     (SITE / HOBO_TRACKER / "index.html").write_text(build_hobo_tracker())
     (SITE / "hobonichi-2027.html").write_text(build_hobonichi())
     (SITE / "about.html").write_text(build_about())
+    (SITE / "privacy.html").write_text(build_privacy())
     (SITE / "404.html").write_text(build_404())
     oe = amazon_main(stock["products"])
     for g in GROUPS:

@@ -340,3 +340,8 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
   .site-nav a{white-space:nowrap;flex:0 0 auto}
 }
 @media (max-width:560px){.brand-logo{height:36px}}
+
+/* Round 2: shop country tag and variant label */
+.region{display:inline-block;margin-left:.35em;padding:0 .35em;border:1px solid currentColor;border-radius:3px;font-size:.7rem;line-height:1.4;letter-spacing:.04em;color:#6b6259;vertical-align:.1em;font-weight:600}
+.sub.variant{color:#4a423b}
+.card-filter{margin:0 0 1rem}

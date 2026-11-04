@@ -59,7 +59,7 @@
           <span class="sub">${esc(h.t)} · ${shops} ${shops === 1 ? "shop" : "shops"}${h.dp ? ` · <a href="${esc(h.dp)}">Design page</a>` : ""}</span>
           ${h.az && sameAz ? azLink(h, "grp-az") : ""}</div></th></tr>` +
           ls.map(r => `<tr class="child">
-          <td><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.title && r.title !== r.gn ? `<span class="sub">${esc(r.title)}</span>` : ""}${r.az && !sameAz ? `<span class="sub">${azLink(r)}</span>` : ""}</td>
+          <td><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span>` : ""}<span class="sub variant">${esc(r.p)}</span>${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}${r.az && !sameAz ? `<span class="sub">${azLink(r)}</span>` : ""}</td>
           <td><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></td>
         </tr>`).join("");
       }).join("") : `<tr class="empty-row"><td colspan="2">Nothing matches those filters.</td></tr>`;
@@ -67,5 +67,39 @@
     }
     Object.values(f).forEach(el => el.addEventListener("input", () => { limit = PAGE; render(); }));
     render();
+  }
+  // Section trackers (dot grid, Traveler's, MIDORI): one table per product, searched in place.
+  const cq = document.getElementById("card-q");
+  if (cq) {
+    const wrap = document.getElementById("tracker");
+    const cards = [...wrap.querySelectorAll(".group-sec")];
+    const heads = [...wrap.querySelectorAll(".shop-head")];
+    const empty = wrap.querySelector(".card-empty");
+    const params = new URLSearchParams(location.search);
+    const filter = () => {
+      const q = cq.value.trim().toLowerCase();
+      let shown = 0;
+      for (const c of cards) {
+        let any = false;
+        for (const tr of c.querySelectorAll("tbody tr")) {
+          const hit = !q || (c.querySelector("h2,h3")?.textContent + " " + tr.textContent).toLowerCase().includes(q);
+          tr.hidden = !hit; any = any || hit;
+        }
+        c.hidden = !any; if (any) shown++;
+      }
+      for (const h of heads) {  // hide a shop heading when none of its cards are left
+        let el = h.nextElementSibling, vis = false;
+        while (el && !el.classList.contains("shop-head")) { if (el.classList.contains("group-sec") && !el.hidden) vis = true; el = el.nextElementSibling; }
+        h.hidden = !vis;
+      }
+      if (empty) empty.hidden = shown > 0;
+    };
+    if (params.get("q")) cq.value = params.get("q");
+    cq.addEventListener("input", filter);
+    filter();
+    // Old ?product=<id> links (from the grouped table) now scroll to that product's own table.
+    const pid = params.get("product");
+    const target = pid && document.getElementById(pid);
+    if (target) target.scrollIntoView();
   }
 })();
