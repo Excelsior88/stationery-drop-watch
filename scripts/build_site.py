@@ -364,10 +364,6 @@ def exact_only(canonical):
 def oe_key(p):
     return p["url"] if exact_only(p.get("canonical")) else product_key(p)
 
-def design_page_for(listings):
-    """Root-relative-ready href of the design page covering these listings, if one exists (see DESIGNS)."""
-    return None
-
 def amazon_main(prods):
     """Products that no tracked shop can sell right now (every listing sold out / not yet on sale).
     Recomputed from data/stock.json on every build. A product with any listing we couldn't
@@ -446,8 +442,8 @@ def tracker_rows(prods, out_everywhere):
         m = out_everywhere.get(r["u"] if exact_only(r["c"]) else r["g"])
         if m:
             r.update(az=m["url"], azl=m["label"], azm=1)
-    for r in rows:  # design page link (FIX-09), shown on the product's group header
-        dp = design_page_for([{"canonical": r["c"], "label": r["p"], "url": r["u"]}])
+    for r, p in zip(rows, prods):  # design page link (FIX-09), shown on the product's group header
+        dp = design_page_for([p])
         if dp:
             r["dp"] = "/" + pretty(dp)
     return rows
@@ -791,6 +787,10 @@ def build_group(g, oe):
         az_sub = "" if m or not az_url or exact_only(cid) else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
         tracker = (f' · <a href="?product={E(cid)}#tracker">Filter below</a>' if ext else
                    f' · <a href="index.html?product={E(cid)}#tracker">Filter in the tracker</a>') if cid else ""
+        dp = design_page_for(sl)
+        dp_link = f' · <a href="{dp}">{"Design page" if cid else "Design pages"}: {E(", ".join(d["name"] for d in DESIGNS if any(d["match"](l) for l in sl)))}</a>' if dp else ""
+        if dp and not cid:  # "Other designs" card can hold several designed pages: link each
+            dp_link = " · Design pages: " + ", ".join(f'<a href="{design_fname(d)}">{E(d["name"])}</a>' for d in DESIGNS if any(d["match"](l) for l in sl))
         sid = sl[0]["store_id"]
         hx = "h3" if per_shop else "h2"  # shop-by-shop pages: shop is the h2, its products are h3
         if per_shop and sid not in seen_shop:
@@ -807,7 +807,7 @@ def build_group(g, oe):
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
     <tbody>{status_rows(sl, oe)}</tbody>
   </table></div>
-  <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}</p>
+  <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}{dp_link}</p>
 </section>""")
     unk = [l for l in ls if l["status"] == "unknown"]
     if len(unk) == len(ls):
@@ -843,6 +843,9 @@ def build_group(g, oe):
     else:
         others += '<li><a href="index.html#tracker">Hobonichi tracker (every listing)</a></li>'
         shop_nav = dg_tracker = ""
+    ds = designs_of(g["slug"])
+    design_nav = ('<nav class="chips" aria-label="Design pages"><span class="muted small">Design pages:</span> '
+                  + "".join(f'<a class="chip" href="{design_fname(d)}">{E(d["name"])}</a>' for d in ds) + '</nav>') if ds else ""
     body = f"""
 <div class="product-page">
 {crumbs((g["slug"] + "/", g["short"]))}
@@ -856,7 +859,7 @@ def build_group(g, oe):
 </section>
 <div class="layout">
   <div class="main-col">
-    <div class="m-lead">{shop_nav}{''.join(parts[:lead_n])}</div>
+    <div class="m-lead">{design_nav}{shop_nav}{''.join(parts[:lead_n])}</div>
     {''.join(parts[lead_n:])}
     {dg_tracker}
     <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
@@ -889,6 +892,173 @@ def build_group(g, oe):
 def group_lastmod(g):
     ls = group_listings(g)
     return latest(*[l.get("status_since") for l in ls], *[l.get("first_seen") for l in ls], CONTENT_LASTMOD)
+
+# FIX-09: one indexable page per high-demand design, nested under its book-type restock page
+# (e.g. /hobonichi-weeks-2027/midnight-blue/). Same template pieces and SEO pattern as the restock pages.
+# Picked from data/stock.json on 2026-11-04; "why" records the reason each design got a page.
+TN_SLUG = SECTIONS["travelers"]["slug"]
+DESIGNS = [
+    dict(parent="hobonichi-weeks-2027", slug="midnight-blue", name="Midnight Blue", full="Hobonichi Weeks 2027 Midnight Blue",
+         match=lambda p: p.get("canonical") == "weeks-midnight-blue",
+         why="Most widely stocked Weeks design: 8 shops, with a mix of in stock, sold out and not yet on sale."),
+    dict(parent="hobonichi-weeks-mega-2027", slug="midnight-blue", name="Midnight Blue", full="Hobonichi Weeks Mega 2027 Midnight Blue",
+         match=lambda p: p.get("canonical") == "weeks-mega-midnight-blue",
+         why="8 shops and half of them sold out: the Weeks Mega design people chase most."),
+    dict(parent="hobonichi-weeks-2027", slug="canaria-yellow", name="Canaria Yellow", full="Hobonichi Weeks 2027 Canaria Yellow",
+         match=lambda p: p.get("canonical") == "weeks-canaria-yellow",
+         why="7 shops, 2 already sold out."),
+    dict(parent="hobonichi-weeks-2027", slug="white-cat-wallpaper", name="Yumi Kitagishi: White Cat Wallpaper", full="Hobonichi Weeks 2027 White Cat Wallpaper",
+         match=lambda p: p.get("canonical") == "weeks-white-cat",
+         why="7 shops, 1 sold out; artist collaboration designs sell out fast."),
+    dict(parent="hobonichi-weeks-2027", slug="moomin-at-the-table", name="Moomin: At the Table", full="Hobonichi Weeks 2027 Moomin: At the Table",
+         match=lambda p: p.get("canonical") == "weeks-moomin-table",
+         why="6 shops; Moomin designs are among the most searched Hobonichi collaborations."),
+    dict(parent="hobonichi-weeks-mega-2027", slug="candy-dream", name="Bow & Tie: Candy Dream", full="Hobonichi Weeks Mega 2027 Bow & Tie: Candy Dream",
+         match=lambda p: p.get("canonical") == "weeks-mega-candy-dream",
+         why="5 shops, including one not yet on sale."),
+    dict(parent="hobonichi-weeks-2027", slug="sea-glass", name="Sea Glass", full="Hobonichi Weeks 2027 Sea Glass",
+         match=lambda p: p["type"] == "Weeks" and "sea glass" in p["label"].lower(),
+         why="Sold out at the only shop we track and named in the site review as a design people look for."),
+    dict(parent="hobonichi-weeks-2027", slug="v-and-a", name="V&A series", full="Hobonichi Weeks 2027 V&A series",
+         match=lambda p: p["type"] == "Weeks" and "v&a" in p["label"].lower(),
+         why="Both V&A designs we track are sold out; named in the site review."),
+    dict(parent=TN_SLUG, slug="regular-camel", name="Regular size Camel", full="Traveler's notebook Regular size Camel",
+         match=lambda p: p.get("canonical") == "tn-regular-camel",
+         why="Sold out at all 5 shops we track."),
+    dict(parent=TN_SLUG, slug="regular-olive", name="Regular size Olive", full="Traveler's notebook Regular size Olive",
+         match=lambda p: p.get("canonical") == "tn-regular-olive",
+         why="Sold out at all 5 shops we track."),
+]
+DESIGNS_LASTMOD = "2026-11-04"
+
+def design_fname(d):
+    return f'{d["parent"]}/{d["slug"]}/'
+
+def design_listings(d):
+    return [p for p in stock["products"] if d["match"](p)]
+
+def design_page_for(listings):
+    """Local path ('parent/slug/') of the design page covering these listings, if one exists."""
+    for d in DESIGNS:
+        if any(d["match"](l) for l in listings):
+            return design_fname(d)
+    return None
+
+def designs_of(parent_slug):
+    return [d for d in DESIGNS if d["parent"] == parent_slug]
+
+def build_design(d, oe):
+    parent = next(g for g in GROUPS if g["slug"] == d["parent"])
+    ls = design_listings(d)
+    fname = design_fname(d)
+    shops = len({l["store_id"] for l in ls})
+    buy = [l for l in ls if l["status"] in BUYABLE]
+    unk = [l for l in ls if l["status"] == "unknown"]
+    run = stock["run_finished"]
+    sec = g_sec(parent)
+    ey = parent.get("eyebrow", "Hobonichi Techo 2027")
+    h1 = f'{d["full"]} restock tracker'
+    m = next((oe.get(k) for k in {oe_key(l) for l in ls} if oe.get(k)), None)
+    amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
+               f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
+    if not ls:
+        right_now = "none of the shops we check list this design right now. We'll show it here again if a shop adds it."
+    elif len(unk) == len(ls):
+        right_now = f"we couldn't check any of these {len(ls)} listings this run, so we're not showing a status."
+    else:
+        right_now = (f"{len(buy)} of {len(ls) - len(unk) if unk else len(ls)} {'checked ' if unk else ''}listings are in stock or on preorder "
+                     f"at {len({l['store_id'] for l in buy})} of {shops} {'shop' if shops == 1 else 'shops'}."
+                     + (f" {len(unk)} couldn't be checked this run." if unk else ""))
+    table = (f"""<section class="card group-sec" id="stock">
+  <div class="section-head"><h2>Stock by shop</h2><p class="muted small">{E(count_line(ls).capitalize())} · {checked_line(ls)}</p></div>
+  {amz_btn}
+  <div class="table-wrap"><table class="stock">
+    <thead><tr><th>Shop</th><th>Status</th></tr></thead>
+    <tbody>{status_rows(ls, oe)}</tbody>
+  </table></div>
+  <p class="muted small">Open a shop's name to go straight to its listing.</p>
+</section>""" if ls else f'<section class="card group-sec" id="stock"><h2>Stock by shop</h2><div class="empty"><p>No shop we check lists this design right now. See the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a> for everything we track.</p></div></section>')
+    urls = {l["url"] for l in ls}
+    rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
+                key=lambda c: c["at"], reverse=True)[:10]
+    if rs:
+        restock_html = '<ol class="feed">' + "".join(f"""<li class="feed-item"><span class="badge {E(c['to'])}">{E(STATUS[c['to']])}</span>
+  <a href="{E(c['url'])}" rel="noopener" target="_blank">{E(c['label'])}</a> <span class="muted">at {E(c['store'])}</span>
+  <time datetime="{E(c['at'])}">{E(fmt_et(c['at']))}</time></li>""" for c in rs) + "</ol>"
+    else:
+        start = tracking_start(ls) if ls else stock["run_started"]
+        restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
+  A restock shows up here the moment a sold-out listing flips back to in stock or preorder between two checks.</p></div>'''
+    # short FAQ, answered from this run's data
+    names = lambda xs: ", ".join(sorted({l["store"] for l in xs})) or "none"
+    when = fmt_et(run)
+    if not ls:
+        a1 = f"At the last check ({when}) none of the shops we track listed it."
+    elif not buy:
+        a1 = f"Not at the shops we track. At the last check ({when}) none of the {shops} shops had it in stock or on preorder." + (f" {m['note']}, so we link to Amazon, which may still have it." if m else "")
+    else:
+        a1 = f"Yes, at {len({l['store_id'] for l in buy})} of {shops} shops at the last check ({when}): {names(buy)}. Stock can change within minutes, so confirm on the shop's page."
+    if unk:
+        a1 += f" We couldn't check {names(unk)} this run, so we don't know their status."
+    a2 = (f"We track it at {shops} {'shop' if shops == 1 else 'shops'}: {names(ls)}. Each name in the table above opens that shop's own listing."
+          if ls else "No shop we check lists it right now.")
+    qa = [(f'Is {d["full"]} in stock?', a1),
+          (f'Where can I buy {d["full"]}?', a2),
+          ("How often do you check?",
+           f"Every shop is checked {CHECK_FREQ}. Each status is exactly what the shop's public product data said at that time. \"Not yet on sale\" means the shop has a preview page up but isn't taking orders yet, and \"Couldn't check\" means our check failed, so we don't guess."),
+          ("Can I get an alert when it's back?",
+           "Yes. Sign up above for restock emails: we send one short email when a sold-out item comes back at any shop we track.")]
+    faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in qa) + "</section>"
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
+    sources = "".join(f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(l["store"])}: {E(l.get("title") or l["label"])}</a></li>' for l in sorted(ls, key=lambda l: l["store"]))
+    sources_html = f"""<section class="card" id="sources"><h2>Sources</h2>
+  <p class="muted small">Statuses come from each shop's own public product page, read by our checker at the time shown. The raw data for every check is public: <a href="data/stock.json">stock.json</a>.</p>
+  <ul class="link-list">{sources}</ul></section>""" if ls else ""
+    sibs = "".join(f'<li><a href="{design_fname(x)}">{E(x["name"])}</a></li>' for x in designs_of(d["parent"]) if x is not d)
+    others = (f'<li><a href="{parent["slug"]}/">All {E(parent["short"])} designs</a></li>' + sibs
+              + ('<li><a href="index.html#tracker">Hobonichi tracker (every listing)</a></li>' if sec == "hobonichi" else f'<li><a href="{parent["slug"]}/#tracker">Every listing on the {E(parent["short"])} page</a></li>'))
+    intro = (f'{d["full"]}: the status each shop we track reported at its last check, in one place. '
+             f'This page covers just this design; the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a> has every design we track.')
+    body = f"""
+<div class="product-page">
+{crumbs((parent["slug"] + "/", parent["short"]), (fname, d["name"]))}
+<section class="hero">
+  {eyebrow(ey, f"{shops} {'shop' if shops == 1 else 'shops'} checked {CHECK_FREQ}")}
+  <h1>{E(h1)}</h1>
+  <p class="lede">{intro}</p>
+  <p><strong>Right now:</strong> {right_now}
+  <span class="muted small">Last check: <time datetime="{E(run)}">{E(fmt_et(run))}</time>.</span></p>
+  {signup()}
+</section>
+<div class="layout">
+  <div class="main-col">
+    <div class="m-lead">{table}</div>
+    <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
+    {faq_html}
+    {sources_html}
+  </div>
+  <aside class="side-col">
+    {sponsor_block()}
+    {editor_block("dotgrid" if sec != "hobonichi" else "home")}
+    <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
+    {guides_block() if sec == "hobonichi" else ""}
+  </aside>
+</div>
+</div>"""
+    items = {"@context": "https://schema.org", "@type": "ItemList", "name": h1.replace(" restock tracker", "") + ": listings we track",
+             "numberOfItems": len(ls), "itemListElement": [
+                 {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
+                 for i, l in enumerate(sorted(ls, key=lambda l: l["store"]))]}
+    title = f'{d["full"]}: live stock at {shops} {"shop" if shops == 1 else "shops"}'
+    desc = (f'Is {d["full"]} in stock? Live status at {shops} {"shop" if shops == 1 else "shops"}, checked {CHECK_FREQ}, '
+            f'with every restock we spot and a link to each shop\'s listing.')
+    return fname, page(fname, title, desc, body, ld=(crumbs_ld((parent["slug"] + "/", parent["short"]), (fname, d["name"])), items, faq_ld),
+                       og_image=parent.get("og_image", OG_IMAGE), og_alt=parent.get("og_alt", OG_ALT))
+
+def design_lastmod(d):
+    ls = design_listings(d)
+    return latest(*[l.get("status_since") for l in ls], *[l.get("first_seen") for l in ls], DESIGNS_LASTMOD)
 
 FAQ = [
     ("How often do you check the shops?",
@@ -934,7 +1104,9 @@ def product_links_block():
         if g_sec(g) != "hobonichi":
             continue
         ls = group_listings(g)
-        items.append(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a> <span class="muted small">· {E(count_line(ls))}</span></li>')
+        ds = designs_of(g["slug"])
+        dl = (' <span class="muted small">· Designs: ' + ", ".join(f'<a href="{design_fname(d)}">{E(d["name"])}</a>' for d in ds) + '</span>') if ds else ""
+        items.append(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a> <span class="muted small">· {E(count_line(ls))}</span>{dl}</li>')
     guides = "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in HOBO_GUIDES)
     return (f'<section class="card" id="by-product"><h2>Restock pages by product</h2><ul class="link-list">{"".join(items)}</ul>'
             f'<p class="eyebrow">Guides</p><ul class="link-list">{guides}</ul></section>')
@@ -945,6 +1117,7 @@ def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
     urls = [(url_for("index.html"), home_mod)]
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
+    urls += [(url_for(design_fname(d)), design_lastmod(d)) for d in DESIGNS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
     urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for("guides/"), DG_GUIDE_LASTMOD), (url_for("shop/"), "2026-11-03"), (url_for("follow/"), "2026-11-03")]
@@ -1495,6 +1668,10 @@ def main():
     oe = amazon_main(stock["products"])
     for g in GROUPS:
         fname, doc = build_group(g, oe)
+        (SITE / fname).mkdir(parents=True, exist_ok=True)
+        (SITE / fname / "index.html").write_text(doc)
+    for d in DESIGNS:
+        fname, doc = build_design(d, oe)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_guides_index, build_shop, build_follow):
