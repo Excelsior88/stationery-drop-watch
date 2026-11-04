@@ -317,10 +317,10 @@ a.az:hover{opacity:1}
 .hero{max-width:none}
 .hero h1{font-size:clamp(2rem,3.55vw,3.25rem);max-width:none}
 .hero .lede,.hero .eyebrow{max-width:none}
-.hero .signup-strip{max-width:none}
+.signup-strip{max-width:none}
 @media (min-width:901px){
-  .hero .signup-strip .signup-form{flex-wrap:nowrap}
-  .hero .signup-strip .strip-label{flex:0 0 auto;margin-right:8px}
-  .hero .signup-strip input[type=email]{flex:1 1 auto}
+  .signup-strip .signup-form{flex-wrap:nowrap}
+  .signup-strip .strip-label{flex:0 0 auto;margin-right:8px}
+  .signup-strip input[type=email]{flex:1 1 auto}
   .site-nav{flex-wrap:nowrap}.nav-trackers,.nav-rest{display:contents}
 }
