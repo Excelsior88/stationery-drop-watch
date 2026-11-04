@@ -65,6 +65,8 @@ SECTIONS = {  # non-Hobonichi sections in nav/footer order; each has one page (t
                     foot="Dot grid journaling", link="Dot grid journals", count="dot grid journals", amazon=None),
     "travelers": dict(slug="travelers-company-limited-edition", nav="Traveler's Company", name="Traveler's Company limited editions",
                       foot="Traveler's Company", link="Limited editions", count="Traveler's Company", amazon="travelers"),
+    "tnregular": dict(slug="travelers-notebook-regular-size", nav="Traveler's notebook Regular", name="Traveler's notebook Regular size colors",
+                      foot="Traveler's notebook Regular size", link="Black, Brown, Blue, Camel, Olive", count="Traveler's notebook Regular", amazon="travelers"),
     "midori": dict(slug="midori-md-limited-edition", nav="MIDORI MD", name="MIDORI MD seasonal releases",
                    foot="MIDORI MD", link="Seasonal releases", count="MIDORI MD", amazon="midori"),
 }
@@ -676,7 +678,7 @@ GROUPS = [
     dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Company limited edition", section="travelers",
          match=lambda p: section_of(p) == "travelers", eyebrow="Traveler's Company", search_hint="Sticker set, Clear Folder, 20th…",
          guide="Traveler's Company makes these in limited runs, and each shop gets its own allocation, so one shop can sell out while another still has stock. "
-               "For the regular refills and covers, which stay in the catalog, check the shops directly.",
+               "The standard Regular size notebooks (Black, Brown, Blue, Camel and Olive) have <a href=\"/travelers-notebook-regular-size/\">their own tracker</a>; for refills, check the shops directly.",
          title=f"Traveler's Company limited edition restock tracker",
          desc="Are the Traveler's notebook 2027 diary accessories and 20th anniversary sets in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
          og_image=BASE + "assets/brand/og-travelers.png",
@@ -684,6 +686,18 @@ GROUPS = [
          intro="Traveler's Company limited editions come in small runs: the yearly diary accessories, anniversary sets and shop exclusives. "
                "We check the official Traveler's Company USA shop and independent shops, item by item. "
                "This covers Traveler's Company limited editions only; Hobonichi and our other sections have their own pages."),
+    dict(slug=SECTIONS["tnregular"]["slug"], short="Traveler's notebook Regular", product="Traveler's notebook Regular size", section="tnregular",
+         match=lambda p: section_of(p) == "tnregular", eyebrow="Traveler's Company", search_hint="Olive, Camel, Blue…",
+         guide="These are Traveler's Company's five standard Regular size starter kits: Black (No. 13714006), Brown (No. 13715006), Blue (No. 15239006), Camel (No. 15193006) and Olive (No. 15342006). "
+               "They stay in the catalog, but colors go out of stock at one shop while another still has them. Traveler's Company warns that counterfeits are sold in the US, so we only track the official US shop and authorized retailers. "
+               "Limited editions are on our <a href=\"/travelers-company-limited-edition/\">Traveler's Company limited editions</a> page.",
+         title="Traveler's notebook Regular size restock tracker: Black, Brown, Blue, Camel, Olive",
+         desc="Is the Traveler's notebook Regular size in stock? Live color-by-color status for Black, Brown, Blue, Camel and Olive at {shops} official and authorized shops, checked " + CHECK_FREQ + ".",
+         og_image=BASE + "assets/brand/og-travelers.png",
+         og_alt="Stationery Drop Watch: Traveler's notebook Regular size tracker, checked " + CHECK_FREQ,
+         intro="The Traveler's notebook Regular size starter kit comes in five standard leather colors, and each one sells out on its own. "
+               "We check the official Traveler's Company USA shop and authorized US retailers, color by color. "
+               "This covers the standard Regular size colors only; limited editions, Hobonichi and our other sections have their own pages."),
     dict(slug=SECTIONS["midori"]["slug"], short="MIDORI MD", product="MIDORI MD seasonal release", section="midori",
          match=lambda p: section_of(p) == "midori", eyebrow="MIDORI MD", search_hint="Diary 2027, 1 Day 1 Page, Stickers…",
          guide="MIDORI makes the dated MD diaries and diary stickers once a year, so when a shop's allocation is gone it is usually gone until the next year's edition. "
@@ -872,6 +886,7 @@ FAQ = [
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
     "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color.",
     "travelers": "On the Traveler's Company page, we track limited editions: the 2027 diary accessories, anniversary sets and shop exclusives.",
+    "tnregular": "On the Traveler's notebook Regular page, we track the five standard Regular size colors (Black, Brown, Blue, Camel and Olive) at the official US shop and authorized retailers.",
     "midori": "On the MIDORI MD page, we track seasonal and limited MD releases (MIDORI's MD line is now sold as MD PRODUCT).",
 }
 
