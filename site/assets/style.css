@@ -326,7 +326,7 @@ a.az:hover{opacity:1}
 }
 /* Pre-launch audit fixes */
 :root{--accent:#a8452e}
-h1{text-wrap:balance}h2{text-wrap:balance}
+h1{text-wrap:wrap}h2{text-wrap:balance}
 .follow-card h2.h3{font-size:1.17em;margin:0}
 nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-visible,a.btn-amz:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .tag-soon{display:inline-block;vertical-align:middle;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:var(--paper-2);font:600 .7rem/1.4 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
