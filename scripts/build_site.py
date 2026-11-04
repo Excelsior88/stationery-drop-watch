@@ -1592,8 +1592,18 @@ SHOP_ETSY = [
 AMAZON_LIST_PRICES = {"B0HPBDNS7F": "$19.99", "B0HQ5TLDK3": "$14.99", "B0HQ5X3C7D": "$16.99",
                       "B0HP9PXSR1": "$14.99", "B0HP85QLMS": "$9.99"}
 ETSY_PRICE = ("$6.99", "20% off launch sale Oct 31 to Nov 30")
-# Interior previews: only our own Etsy listing images (etsy/printables/*/listing-images), web-sized into assets/shop/inside/.
+# Interior previews, web-sized into assets/shop/inside/: our own Etsy listing images (etsy/printables/*/listing-images)
+# and, for the Amazon books, interior spreads Kiln exported from the print files (keyed by ASIN). (file stem, caption)
 SHOP_INSIDE = {
+    "B0HPBDNS7F": [("monthly-calendar-goals-spread-p6-7", "January calendar and Goals & Priorities, pages 6-7"),
+                   ("weekly-spread-p12-13", "Weekly spread, Jan 3 to 9, pages 12-13")],
+    "B0HQ5TLDK3": [("habit-and-mood-tracker-spread-p6-7", "Habit tracker and mood tracker, pages 6-7"),
+                   ("weekly-checkin-spread-p8-9", "Weekly check-in, pages 8-9")],
+    "B0HQ5X3C7D": [("genre-tracker-books-read-log-spread-p12-13", "Genre tracker and books-read log, pages 12-13"),
+                   ("book-review-spread-p24-25", "Book review pages, pages 24-25")],
+    "B0HP9PXSR1": [("monthly-calendar-goals-spread-p6-7", "January calendar and Goals & Priorities, pages 6-7"),
+                   ("weekly-spread-p12-13", "Weekly spread, Jan 3 to 9, pages 12-13")],
+    "B0HP85QLMS": [("journal-page-spread-p2-3", "Journal pages, pages 2-3 (every page has this layout)")],
     "womens": [("04-weekly-spread-dec27-jan2", "Weekly spread, Dec 27 to Jan 2"), ("05-monthly-calendar-january", "Monthly calendar, January"),
                ("06-habit-tracker-january", "Habit tracker, January")],
     "mens": [("04-weekly-spread-dec27-jan2", "Weekly spread, Dec 27 to Jan 2"), ("05-monthly-calendar-january", "Monthly calendar, January"),
@@ -1620,7 +1630,8 @@ def build_shop():
         if inside:
             figs = "".join(f'<figure><img src="/assets/shop/inside/{inside}-{f}.jpg" alt="{E(title)}: {E(cap)}" loading="lazy" decoding="async"><figcaption>{E(cap)}</figcaption></figure>'
                            for f, cap in SHOP_INSIDE[inside])
-            ins = f'<details class="shop-inside"><summary>See inside</summary><div class="inside-grid">{figs}</div></details>'
+            spreads = ' spreads' if inside in AMAZON_LIST_PRICES else ''
+            ins = f'<details class="shop-inside"><summary>See inside</summary><div class="inside-grid{spreads}">{figs}</div></details>'
         return f"""<li class="shop-card">
   <a class="shop-img{' photo' if not own else ''}" href="{E(href)}"{attr} rel="noopener" target="_blank"><img src="{E(img)}"{srcset(img)} sizes="(max-width:600px) 240px, 150px" alt="{E(alt)}" loading="lazy" decoding="async"></a>
   <div class="shop-body"><h3>{E(title)}</h3><p class="muted small">{E(sub)}</p>{price}<p>{E(blurb)}</p><ul class="small">{dl}</ul>
@@ -1632,7 +1643,7 @@ def build_shop():
         return f'<p class="shop-price"><strong>{E(lp)}</strong> <span class="muted small">List price, check current price on Amazon</span></p>'
     amz = "".join(card(books[a]["cover"], books[a]["cover_alt"], labels[a], books[a]["format"] + " · on Amazon",
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True,
-                       amz_price(a))
+                       amz_price(a), a if a in SHOP_INSIDE else None)
                   for a in ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HP85QLMS"))
     etsy_price = f'<p class="shop-price"><strong>{E(ETSY_PRICE[0])}</strong> <span class="muted small">{E(ETSY_PRICE[1])}</span></p>'
     etsy = "".join(card(e["img"], e["alt"], e["title"], "Printable PDF · instant download from Etsy", e["blurb"],

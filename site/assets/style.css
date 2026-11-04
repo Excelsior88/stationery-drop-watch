@@ -284,3 +284,4 @@ a.az:hover{opacity:1}
 .inside-grid figcaption{font-size:.78rem;color:#6b6470;margin-top:2px}
 @media(max-width:760px){.shop-wide .shop-list{grid-template-columns:1fr}}
 @media(max-width:600px){.shop-wide .shop-card{grid-template-columns:1fr}}
+.inside-grid.spreads{grid-template-columns:1fr}
