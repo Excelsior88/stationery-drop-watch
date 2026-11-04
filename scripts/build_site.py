@@ -170,8 +170,23 @@ def time_tag(iso):
     return f'<time datetime="{E(iso)}">{E(fmt_et(iso))}</time>'
 
 def checked_line(ls):
-    """One "checked" time per table: the latest check among its listings (all from the same run)."""
-    return f'checked {time_tag(max(l["checked_at"] for l in ls))}' if ls else ""
+    """Every "checked" stamp on the site is the run's one check time (stock["run_finished"])."""
+    return f'checked {time_tag(stock["run_finished"])}' if ls else ""
+
+GUIDE_DATES = ROOT / "data/guide_dates.json"
+
+def guide_updated(fn):
+    """A guide's "updated" date: the day its template (the build function's source) last changed.
+    Stored as {name: {hash, date}} in data/guide_dates.json; stock rebuilds don't move it."""
+    import hashlib, inspect, json as _j
+    db = _j.loads(GUIDE_DATES.read_text()) if GUIDE_DATES.exists() else {}
+    h = hashlib.sha256(inspect.getsource(fn).encode()).hexdigest()[:16]
+    e = db.get(fn.__name__)
+    if not e or e["hash"] != h:
+        e = db[fn.__name__] = {"hash": h, "date": dt.datetime.now(ET).date().isoformat()}
+        GUIDE_DATES.write_text(_j.dumps(db, indent=1, sort_keys=True) + "\n")
+    d = dt.date.fromisoformat(e["date"])
+    return f"updated {d.strftime('%b')} {d.day}, {d.year}"
 
 STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not yet on sale",
           "sold_out": "Sold out", "unknown": "Couldn't check"}
@@ -740,7 +755,7 @@ def build_index():
 def build_hobonichi():
     body = """
 <article class="prose guide">
-""" + crumbs(("guides/", "Guides"), ("hobonichi-2027.html", "2027 calendar")) + eyebrow("Guide", "Hobonichi Techo 2027", "updated Oct 25, 2026") + """
+""" + crumbs(("guides/", "Guides"), ("hobonichi-2027.html", "2027 calendar")) + eyebrow("Guide", "Hobonichi Techo 2027", guide_updated(build_hobonichi)) + """
 <h1>Hobonichi Techo 2027 launch &amp; restock calendar</h1>
 <p class="lede">Hobonichi sells its planners in two big drops a year, and popular covers can sell out within minutes. Here's how the 2027 season has gone so far and when stock usually comes back.</p>
 """ + signup() + """
@@ -1645,7 +1660,7 @@ def build_vs():
     body = f"""
 <article class="prose guide vs-page">
 {crumbs(("guides/", "Guides"), (fname, "Techo vs Cousin vs Weeks"))}
-{eyebrow("Guide", "Hobonichi Techo 2027", "updated Oct 29, 2026")}
+{eyebrow("Guide", "Hobonichi Techo 2027", guide_updated(build_vs))}
 <h1>Hobonichi Techo vs Cousin vs Weeks: which 2027 planner fits you?</h1>
 <p class="lede">The three most popular Hobonichi books differ in size, layout and how much you carry. Here's an honest side-by-side from Hobonichi's own 2027 specifications, with live stock for each.</p>
 {signup()}
@@ -1786,7 +1801,7 @@ def build_dotgrid_guide():
     body = f"""
 <article class="prose guide vs-page">
 {crumbs(("guides/", "Guides"), (fname, "Dot grid journals compared"))}
-{eyebrow("Guide", "Dot grid journals", "updated Nov 4, 2026")}
+{eyebrow("Guide", "Dot grid journals", guide_updated(build_dotgrid_guide))}
 <h1>Best dot grid journals compared: Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy</h1>
 <p class="lede">Four popular dot grid journals, side by side: paper weight, pages, size and what comes in the book. Every spec is from the maker's own product page, and stock is live from our tracker.</p>
 {signup()}
