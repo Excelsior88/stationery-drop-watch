@@ -102,10 +102,29 @@ REGION = {x["id"]: _REGION_FIX.get(x["id"]) or (x.get("country") or "").split()[
 REGION_NAME = {"US": "United States", "CA": "Canada", "SG": "Singapore", "UK": "United Kingdom", "JP": "Japan"}
 assert all(REGION[x["id"]] in REGION_NAME for x in stores["stores"]), "every shop needs a country tag"
 
-# No tag when the shop's own name already ends with its country (e.g. "Leuchtturm1917 US").
+# A shop whose name ends with its country (e.g. "Leuchtturm1917 US") shows the plain name plus the
+# country tag, like every other shop, so the country never appears twice.
+_STRIP = {}
 for _x in stores["stores"]:
-    if _x["name"].rstrip().upper().endswith(" " + REGION[_x["id"]]):
-        REGION[_x["id"]] = ""
+    _sfx = " " + REGION[_x["id"]]
+    if _x["name"].rstrip().upper().endswith(_sfx):
+        _STRIP[_x["name"]] = _x["name"].rstrip()[:-len(_sfx)]
+        _x["name"] = _STRIP[_x["name"]]
+for _r in stock["products"] + changes + stock.get("not_checked", []):
+    for _k in ("store", "name"):
+        if _r.get(_k) in _STRIP:
+            _r[_k] = _STRIP[_r[_k]]
+
+def region_legend(store_ids):
+    """One-line key for the country tags in the stock tables below or above it: where each shop is based."""
+    cs = sorted({REGION.get(i) for i in store_ids if REGION.get(i)}, key=list(REGION_NAME).index)
+    if not cs:
+        return ""
+    return ('<p class="muted small region-legend">Country tags show where each shop is based, not where it ships: '
+            + ", ".join(f'<span class="region">{c}</span> {REGION_NAME[c]}' for c in cs) + ".</p>")
+
+def nshops(n, w="shop"):
+    return f"{n} {w}" if n == 1 else f"{n} {w}s"
 
 def region_tag(store_id):
     r = REGION.get(store_id, "")
@@ -444,6 +463,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
       </table></div>
       <button type="button" id="more" class="btn-ghost more" hidden>Show all</button>
       <p class="muted small">"Not yet on sale" means the store has a preview page up but isn't taking orders yet.</p>
+      {region_legend(p["store_id"] for p in prods)}
       {extra}
     </section>"""
 
@@ -729,7 +749,7 @@ def build_hobonichi():
   <li id="s-papermouse"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Launch times, the Sept 30 preorder, the Oct 15 arrival, and restock history.</li>
   <li id="s-atlas"><a href="https://www.atlasstationers.com/blogs/news/hobonichi-faq-2027" rel="noopener" target="_blank">Hobonichi FAQ – 2027</a>, Atlas Stationers. Launch time, sell-out warning, and the early-October restock.</li>
 </ol>
-""" + related_block("hobonichi-2027.html") + """
+""" + design_links_block() + related_block("hobonichi-2027.html") + """
 </article>"""
     return page("hobonichi-2027.html", "Hobonichi Techo 2027 launch & restock calendar · Stationery Drop Watch",
                 "When Hobonichi Techo 2027 planners launch, sell out and restock: launch times, the October wave, and when restocks usually land, with sources.",
@@ -939,13 +959,14 @@ def build_group(g, oe):
     <tbody>{status_rows(sl, oe)}</tbody>
   </table></div>
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}{dp_link}</p>
+  {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
 </section>""")
     unk = [l for l in ls if l["status"] == "unknown"]
     if len(unk) == len(ls):
-        right_now = f"we couldn't check any of these {len(ls)} listings this run, so we're not showing a status."
+        right_now = ("we couldn't reach the shop for this listing at the last check, so its status is unknown." if len(ls) == 1 else f"we couldn't check any of these {len(ls)} listings at the last check, so their status is unknown.")
     else:
         right_now = (f"{len(buy)} of {len(ls) - len(unk) if unk else len(ls)} {'checked ' if unk else ''}listings are in stock or on preorder "
-                     f"at {len({l['store_id'] for l in buy})} of {shops} shops."
+                     f"at {len({l['store_id'] for l in buy})} of {nshops(len({l['store_id'] for l in ls if l['status'] != 'unknown'})) + ' we could check' if unk else nshops(shops)}."
                      + (f" {len(unk)} couldn't be checked this run." if unk else ""))
     lead_n = 2 if per_shop else 1  # shop-by-shop pages: first shop heading + its first card
     urls = {l["url"] for l in ls}
@@ -1064,6 +1085,8 @@ DESIGNS = [
          match=lambda p: p.get("canonical") == "tn-regular-olive",
          why="Sold out at all 5 shops we track."),
     # --- Round 3: one page per tracked planner or journal design. Facts come from the shops' own listing titles in data/stock.json.
+    dict(parent="hobonichi-techo-2027-original-a6", slug="one-piece-edition", name="One Piece Edition", full="Hobonichi Techo 2027 One Piece Edition",
+         match=lambda p: p["type"] == "Book" and "one piece edition" in p["label"].lower()),
     dict(parent="hobonichi-weeks-2027", slug="pink-sapphire", name="Pink Sapphire", full="Hobonichi Weeks 2027 Pink Sapphire",
          match=lambda p: p["type"] == "Weeks" and "pink sapphire" in p["label"].lower()),
     dict(parent="hobonichi-weeks-2027", slug="paper-series-jade", name="Paper Series: Jade", full="Hobonichi Weeks 2027 Paper Series Jade",
@@ -1119,7 +1142,7 @@ DESIGNS = [
 ]
 DESIGNS_LASTMOD = "2026-11-04"
 
-DESIGN_ABOUT = {'hobonichi-weeks-2027/midnight-blue': 'Midnight Blue is a Colors design for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-mega-2027/midnight-blue': 'Midnight Blue is a Colors design for the Hobonichi Weeks Mega 2027 weekly planner.', 'hobonichi-weeks-2027/canaria-yellow': 'Canaria Yellow is a Colors design for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-2027/white-cat-wallpaper': 'White Cat Wallpaper is a Yumi Kitagishi artist collaboration for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-2027/moomin-at-the-table': 'Moomin: At the Table is a Moomin collaboration for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-mega-2027/candy-dream': 'Bow & Tie: Candy Dream is a design for the Hobonichi Weeks Mega 2027 weekly planner.', 'hobonichi-weeks-2027/sea-glass': 'Sea Glass is a Colors design for the Hobonichi Weeks weekly planner.', 'hobonichi-weeks-2027/v-and-a': 'The V&A series is a set of Hobonichi Weeks 2027 designs; we track Welcome to the V&A and Leicester.', 'hobonichi-weeks-2027/pink-sapphire': 'Pink Sapphire is a Colors design for the Hobonichi Weeks weekly planner.', 'hobonichi-weeks-2027/paper-series-jade': 'Jade is part of the Paper Series for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-2027/shirt-fabric-graph-plaid': 'Graph Plaid is a Shirt Fabric design for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-techo-2027-covers/moomin-my-yard': 'Moomin: My Yard (Pale Mint) is a Hobonichi cover for the A6 Original book.', 'hobonichi-techo-2027-covers/white-cat-house': 'White Cat House is a Yumi Kitagishi artist collaboration cover for the Hobonichi A6 Original book.', 'archer-and-olive-storybook-navy': 'Storybook in Navy is an Archer and Olive dot grid notebook with white paper, in A5 (192 pages) and B5 (160 pages).', 'archer-and-olive-songbird-blue': 'Songbird in Blue is an Archer and Olive dot grid notebook in A5 (192 pages) and B5 (160 pages), and each size sells out on its own.', 'archer-and-olive-majestic-skies': 'Majestic Skies is an Archer and Olive dot grid notebook in A5 with 192 pages.', 'archer-and-olive-apothecary-shelf': "Apothecary Shelf is Archer and Olive's Halloween 2026 dot grid notebook, a B5 with 160 pages of white dot grid paper.", 'leuchtturm1917-hardcover-a5-dotted': 'The Leuchtturm1917 Hardcover Medium (A5) with dotted pages comes in several colors, and each one goes out of stock on its own.', 'leuchtturm1917-120g-a5-dotted': 'The Leuchtturm1917 120G edition is the Medium (A5) hardcover with heavier 120 g paper and 203 numbered pages.', 'leuchtturm1917-edition-2': "Bullet Journal Edition 2, as Leuchtturm1917 names it, is the brand's official dot grid journal, tracked here in every color its US shop lists.", 'scribbles-that-matter-pro': 'The Scribbles That Matter Dotted Journal Pro is a 160gsm dot grid journal in A5 and B5 and several colors.', 'scribbles-that-matter-iconic': 'The Scribbles That Matter Dotted Journal Iconic is an A5 dot grid journal with 160gsm paper, here in Bottle Green.', 'scribbles-that-matter-starry-night': 'Starry Night is a Scribbles That Matter A5 dotted journal with black paper.', 'notebook-therapy-tsuki-160gsm': "The Tsuki 160GSM is Notebook Therapy's dot grid journal with heavy 160gsm paper, and each cover color sells out on its own.", 'notebook-therapy-tsuki-dark-academia': 'Dark Academia is a limited edition Tsuki dot grid journal from Notebook Therapy, an A5 with 176 pages.', 'notebook-therapy-tsuki-violet-nocturne': 'Violet Nocturne is a limited edition A5 Tsuki dot grid journal from Notebook Therapy, with white paper.', 'notebook-therapy-tsuki-ravens-secret': "Raven's Secret is a limited edition Tsuki dot grid journal from Notebook Therapy, an A5 with 176 pages.", 'regular-black': "The Traveler's notebook Regular size in Black is a leather notebook cover from Traveler's Company.", 'regular-blue': "The Traveler's notebook Regular size in Blue is a leather notebook cover from Traveler's Company.", 'regular-brown': "The Traveler's notebook Regular size in Brown is a leather notebook cover from Traveler's Company.", 'regular-camel': "The Traveler's notebook Regular size in Camel is a leather notebook cover from Traveler's Company.", 'regular-olive': "The Traveler's notebook Regular size in Olive is a leather notebook cover from Traveler's Company.", 'road-trip-brown': "ROAD TRIP Brown is a Regular size Traveler's notebook that Traveler's Company USA sells as a US exclusive.", 'card-size-20th-anniversary-black': "The Card Size 20th Anniversary Set in Black is a limited Traveler's Company set for the notebook's 20th anniversary.", 'md-diary-2027-a5': 'The MIDORI MD Notebook Diary 2027 in A5 is a dated monthly planner on MD Paper.', 'md-diary-1-day-1-page-2027-a5': 'The MIDORI MD Notebook Diary 1 Day 1 Page 2027 in A5 gives every day of 2027 its own page.'}
+DESIGN_ABOUT = {'one-piece-edition': 'The One Piece Edition is a Japanese-language Hobonichi Techo 2027 Original book in A6 size, with a page for every day, a January start and Monday-start weeks.', 'hobonichi-weeks-2027/midnight-blue': 'Midnight Blue is a Colors design for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-mega-2027/midnight-blue': 'Midnight Blue is a Colors design for the Hobonichi Weeks Mega 2027 weekly planner.', 'hobonichi-weeks-2027/canaria-yellow': 'Canaria Yellow is a Colors design for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-2027/white-cat-wallpaper': 'White Cat Wallpaper is a Yumi Kitagishi artist collaboration for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-2027/moomin-at-the-table': 'Moomin: At the Table is a Moomin collaboration for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-mega-2027/candy-dream': 'Bow & Tie: Candy Dream is a design for the Hobonichi Weeks Mega 2027 weekly planner.', 'hobonichi-weeks-2027/sea-glass': 'Sea Glass is a Colors design for the Hobonichi Weeks weekly planner.', 'hobonichi-weeks-2027/v-and-a': 'The V&A series is a set of Hobonichi Weeks 2027 designs; we track Welcome to the V&A and Leicester.', 'hobonichi-weeks-2027/pink-sapphire': 'Pink Sapphire is a Colors design for the Hobonichi Weeks weekly planner.', 'hobonichi-weeks-2027/paper-series-jade': 'Jade is part of the Paper Series for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-weeks-2027/shirt-fabric-graph-plaid': 'Graph Plaid is a Shirt Fabric design for the Hobonichi Weeks 2027 weekly planner.', 'hobonichi-techo-2027-covers/moomin-my-yard': 'Moomin: My Yard (Pale Mint) is a Hobonichi cover for the A6 Original book.', 'hobonichi-techo-2027-covers/white-cat-house': 'White Cat House is a Yumi Kitagishi artist collaboration cover for the Hobonichi A6 Original book.', 'archer-and-olive-storybook-navy': 'Storybook in Navy is an Archer and Olive dot grid notebook with white paper, in A5 (192 pages) and B5 (160 pages).', 'archer-and-olive-songbird-blue': 'Songbird in Blue is an Archer and Olive dot grid notebook in A5 (192 pages) and B5 (160 pages), and each size sells out on its own.', 'archer-and-olive-majestic-skies': 'Majestic Skies is an Archer and Olive dot grid notebook in A5 with 192 pages.', 'archer-and-olive-apothecary-shelf': "Apothecary Shelf is Archer and Olive's Halloween 2026 dot grid notebook, a B5 with 160 pages of white dot grid paper.", 'leuchtturm1917-hardcover-a5-dotted': 'The Leuchtturm1917 Hardcover Medium (A5) with dotted pages comes in several colors, and each one goes out of stock on its own.', 'leuchtturm1917-120g-a5-dotted': 'The Leuchtturm1917 120G edition is the Medium (A5) hardcover with heavier 120 g paper and 203 numbered pages.', 'leuchtturm1917-edition-2': "Bullet Journal Edition 2, as Leuchtturm1917 names it, is the brand's official dot grid journal, tracked here in every color its US shop lists.", 'scribbles-that-matter-pro': 'The Scribbles That Matter Dotted Journal Pro is a 160gsm dot grid journal in A5 and B5 and several colors.', 'scribbles-that-matter-iconic': 'The Scribbles That Matter Dotted Journal Iconic is an A5 dot grid journal with 160gsm paper, here in Bottle Green.', 'scribbles-that-matter-starry-night': 'Starry Night is a Scribbles That Matter A5 dotted journal with black paper.', 'notebook-therapy-tsuki-160gsm': "The Tsuki 160GSM is Notebook Therapy's dot grid journal with heavy 160gsm paper, and each cover color sells out on its own.", 'notebook-therapy-tsuki-dark-academia': 'Dark Academia is a limited edition Tsuki dot grid journal from Notebook Therapy, an A5 with 176 pages.', 'notebook-therapy-tsuki-violet-nocturne': 'Violet Nocturne is a limited edition A5 Tsuki dot grid journal from Notebook Therapy, with white paper.', 'notebook-therapy-tsuki-ravens-secret': "Raven's Secret is a limited edition Tsuki dot grid journal from Notebook Therapy, an A5 with 176 pages.", 'regular-black': "The Traveler's notebook Regular size in Black is a leather notebook cover from Traveler's Company.", 'regular-blue': "The Traveler's notebook Regular size in Blue is a leather notebook cover from Traveler's Company.", 'regular-brown': "The Traveler's notebook Regular size in Brown is a leather notebook cover from Traveler's Company.", 'regular-camel': "The Traveler's notebook Regular size in Camel is a leather notebook cover from Traveler's Company.", 'regular-olive': "The Traveler's notebook Regular size in Olive is a leather notebook cover from Traveler's Company.", 'road-trip-brown': "ROAD TRIP Brown is a Regular size Traveler's notebook that Traveler's Company USA sells as a US exclusive.", 'card-size-20th-anniversary-black': "The Card Size 20th Anniversary Set in Black is a limited Traveler's Company set for the notebook's 20th anniversary.", 'md-diary-2027-a5': 'The MIDORI MD Notebook Diary 2027 in A5 is a dated monthly planner on MD Paper.', 'md-diary-1-day-1-page-2027-a5': 'The MIDORI MD Notebook Diary 1 Day 1 Page 2027 in A5 gives every day of 2027 its own page.'}
 
 def design_about(d):
     return DESIGN_ABOUT.get(d["parent"] + "/" + d["slug"]) or DESIGN_ABOUT[d["slug"]]
@@ -1160,10 +1183,10 @@ def build_design(d, oe):
     if not ls:
         right_now = "none of the shops we check list this design right now. We'll show it here again if a shop adds it."
     elif len(unk) == len(ls):
-        right_now = f"we couldn't check any of these {len(ls)} listings this run, so we're not showing a status."
+        right_now = ("we couldn't reach the shop for this listing at the last check, so its status is unknown." if len(ls) == 1 else f"we couldn't check any of these {len(ls)} listings at the last check, so their status is unknown.")
     else:
         right_now = (f"{len(buy)} of {len(ls) - len(unk) if unk else len(ls)} {'checked ' if unk else ''}listings are in stock or on preorder "
-                     f"at {len({l['store_id'] for l in buy})} of {shops} {'shop' if shops == 1 else 'shops'}."
+                     f"at {len({l['store_id'] for l in buy})} of {nshops(len({l['store_id'] for l in ls if l['status'] != 'unknown'})) + ' we could check' if unk else nshops(shops)}."
                      + (f" {len(unk)} couldn't be checked this run." if unk else ""))
     table = (f"""<section class="card group-sec" id="stock">
   <div class="section-head"><h2>Stock by shop</h2><p class="muted small">{E(count_line(ls).capitalize())} · {checked_line(ls)}</p></div>
@@ -1173,6 +1196,7 @@ def build_design(d, oe):
     <tbody>{status_rows(ls, oe)}</tbody>
   </table></div>
   <p class="muted small">Open a shop's name to go straight to its listing.</p>
+  {region_legend(l["store_id"] for l in ls)}
 </section>""" if ls else f'<section class="card group-sec" id="stock"><h2>Stock by shop</h2><div class="empty"><p>No shop we check lists this design right now. See the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a> for everything we track.</p></div></section>')
     urls = {l["url"] for l in ls}
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
@@ -1190,12 +1214,19 @@ def build_design(d, oe):
     when = fmt_et(run)
     if not ls:
         a1 = f"At the last check ({when}) none of the shops we track listed it."
-    elif not buy:
-        a1 = f"Not at the shops we track. At the last check ({when}) none of the {shops} shops had it in stock or on preorder." + (f" {m['note']}, so we link to Amazon, which may still have it." if m else "")
+    elif len(unk) == len(ls):
+        a1 = (f"We don't know. At the last check ({when}) we couldn't reach "
+              f"{'the shop' if shops == 1 else f'any of the {shops} shops'} that list{'s' if shops == 1 else ''} it, so its status is unknown. Open the shop's page in the table above to see it there.")
     else:
-        a1 = f"Yes, at {len({l['store_id'] for l in buy})} of {shops} shops at the last check ({when}): {names(buy)}. Stock can change within minutes, so confirm on the shop's page."
-    if unk:
-        a1 += f" We couldn't check {names(unk)} this run, so we don't know their status."
+        chk = len({l["store_id"] for l in ls if l["status"] != "unknown"})
+        of = f"{nshops(chk)} we could check" if unk else nshops(shops)
+        if not buy:
+            a1 = (f"Not at the shops we track. At the last check ({when}) none of the {of} had it in stock or on preorder." if chk > 1 else
+                  f"Not at the shops we track. At the last check ({when}) the {'one shop we could check' if unk else 'one shop we track'} didn't have it in stock or on preorder.") + (f" {m['note']}, so we link to Amazon, which may still have it." if m else "")
+        else:
+            a1 = f"Yes, at {len({l['store_id'] for l in buy})} of {of} at the last check ({when}): {names(buy)}. Stock can change within minutes, so confirm on the shop's page."
+        if unk:
+            a1 += f" We couldn't check {names(unk)} this run, so we don't know their status."
     a2 = (f"We track it at {shops} {'shop' if shops == 1 else 'shops'}: {names(ls)}. Each name in the table above opens that shop's own listing."
           if ls else "No shop we check lists it right now.")
     vers = sorted({(l.get("title") or l["label"]) for l in ls})
@@ -1473,6 +1504,7 @@ def build_where_to_buy():
         secs.append(f'''<section class="card" id="{E(g["slug"])}">
   <div class="section-head"><h2>{E(g["product"])}</h2><p class="muted small">{E(count_line(ls).capitalize())}</p></div>
   {_shop_table(ls)}
+  {"" if secs else region_legend(l["store_id"] for l in hobo)}
   {az_html}
   <p class="small"><a href="{g["slug"]}/">Full {E(g["short"])} restock page</a> <span class="muted">· every listing, when it last changed, and recent restocks</span></p>
 </section>''')
@@ -1556,7 +1588,7 @@ def build_vs():
     def avail(slug):
         ls = group_listings(_group(slug))
         b = _buy_shops(ls)
-        return f'{len(b)} of {len({l["store_id"] for l in ls})} shops we track · <a href="{slug}/">live stock</a>'
+        return f'{len(b)} of {nshops(len({l["store_id"] for l in ls}))} we track · <a href="{slug}/">live stock</a>'
     rows = [
         ("Size", "A6: 148 × 105 × 15 mm (5.8 × 4.1 × 0.6 in)", "A5: 210 × 148 × 18 mm (8.3 × 5.8 × 0.7 in)", "Tall and slim: 188 × 94 × 10 mm (7.4 × 3.7 × 0.4 in)"),
         ("Weight", "About 195 g", "About 445 g", "About 134 g (Colors cover; varies by cover)"),
@@ -1924,6 +1956,14 @@ def build_follow():
                        "Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest, Facebook and Reddit for restock alerts and planner news.",
                        body, ld=(crumbs_ld((fname, "Follow us")),))
 
+_NONE_CLAIM = re.compile(r"none of the [^<.]*?(had it|in stock|on preorder)|didn't have it in stock|(?<![\w])0 of \d+ (checked )?listings are in stock", re.I)
+
+def check_none_claim(fname, doc):
+    """Build check: a page must not say no shop has an item when every listing it shows is 'Couldn't check'."""
+    badges = re.findall(r'<span class="badge (\w+)">', doc)
+    if badges and all(b == "unknown" for b in badges) and _NONE_CLAIM.search(doc):
+        raise SystemExit(f"{fname}: says none in stock but every listing is Couldn't check")
+
 def main():
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
@@ -1938,10 +1978,12 @@ def main():
     oe = amazon_main(stock["products"])
     for g in GROUPS:
         fname, doc = build_group(g, oe)
+        check_none_claim(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for d in DESIGNS:
         fname, doc = build_design(d, oe)
+        check_none_claim(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_guides_index, build_shop, build_follow):
