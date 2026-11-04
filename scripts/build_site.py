@@ -170,18 +170,7 @@ X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
 
 def page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
-    body = two_col_prose(body)
     return tag_amazon_links(_page(fname, title, desc, body, ld, og_type, og_image, og_alt, noindex))
-
-_PROSE_COLS = re.compile(r'(<article class="prose(?: guide| guide vs-page)?">.*?(?:</section>|<p class="lede">.*?</p>))(.*?)(</article>)', re.S)
-def two_col_prose(body):
-    """About and guide pages: the body after the intro/signup flows in two columns on wide screens (style.css .cols2),
-    so text spans the full content width without 140-character lines. Shop, follow and 404 are left alone."""
-    if 'class="signup-strip"' in body:
-        rx = re.compile(r'(<article class="prose(?: guide| guide vs-page)?">.*?<section class="signup-strip".*?</section>)(.*?)(</article>)', re.S)
-    else:
-        rx = re.compile(r'(<article class="prose(?: guide| guide vs-page)?">.*?<p class="lede">.*?</p>)(.*?)(</article>)', re.S)
-    return rx.sub(lambda m: f'{m.group(1)}\n<div class="cols2">{m.group(2)}</div>\n{m.group(3)}', body, count=1)
 
 def pretty(path):
     """Public form of a local page path: 'index.html' -> '', 'about.html#x' -> 'about#x', 'slug/' unchanged.
@@ -750,13 +739,13 @@ def build_about():
 <h1>About Stationery Drop Watch</h1>
 <p class="lede">Limited planners sell out fast, and every shop only posts its own restocks. This site checks them all in one place.</p>
 {signup()}
-<h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
-<p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <section class="couple" aria-labelledby="couple-h">
 <h2 id="couple-h">The couple behind Drop Watch <span class="tag-soon">Coming soon</span></h2>
 <p>Drop Watch is run by a couple. He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together. Our story and a look at the planners we use are coming soon.</p>
 </section>
+<h2>How it works</h2>
+<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
+<p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email <a href="mailto:stationerydropwatch@gmail.com?subject=Featured%20restock%20slot">stationerydropwatch@gmail.com</a> for rates and dates.</p>
 <h2>Affiliate links</h2>
