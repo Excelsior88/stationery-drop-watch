@@ -189,7 +189,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     if not title.endswith(TITLE_SUFFIX):  # every page title ends with the site name
         title += TITLE_SUFFIX
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-"))  # Hobonichi product pages sit under the tracker
-    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/")  # guides sit under Guides (the calendar keeps its own nav item)
+    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "best-dot-grid-journals/")  # guides sit under Guides (the calendar keeps its own nav item)
     nav = "".join(f'<a href="{h}"{" aria-current=page" if h == fname or (hobo_page and h == "index.html") or (guide_page and h == "guides/") else ""}>{E(t)}</a>' for h, t in NAV)
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
@@ -665,7 +665,8 @@ GROUPS = [
          eyebrow="Dot grid journaling", unit="listings",
          open_hint="Open a row to go straight to that exact size and color on the shop's site",
          guide="Dot grid journals come in several sizes, papers and colors, and each one sells out on its own. "
-               "We check the exact variant named in each row, so \"In stock\" means that size and color, not just some version of the journal.",
+               "We check the exact variant named in each row, so \"In stock\" means that size and color, not just some version of the journal. "
+               "To compare paper weight, pages and size across the four brands, see <a href=\"best-dot-grid-journals/\">best dot grid journals compared</a>.",
          # The URL slug says "archer-and-olive" (kept so links don't break); the page covers every dot grid shop we check,
          # with Archer and Olive featured first, so the title and description name them all.
          title=f"Dot grid journal restock tracker: {dotgrid_names()}",
@@ -896,7 +897,7 @@ def product_links_block():
             continue
         ls = group_listings(g)
         items.append(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a> <span class="muted small">· {E(count_line(ls))}</span></li>')
-    guides = "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES)
+    guides = "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in HOBO_GUIDES)
     return (f'<section class="card" id="by-product"><h2>Restock pages by product</h2><ul class="link-list">{"".join(items)}</ul>'
             f'<p class="eyebrow">Guides</p><ul class="link-list">{guides}</ul></section>')
 
@@ -908,7 +909,7 @@ def build_sitemap():
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for("guides/"), GUIDES_LASTMOD), (url_for("shop/"), "2026-11-03"), (url_for("follow/"), "2026-11-03")]
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for("guides/"), DG_GUIDE_LASTMOD), (url_for("shop/"), "2026-11-03"), (url_for("follow/"), "2026-11-03")]
     def w3c(iso):
         return iso if len(iso) == 10 else dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
@@ -957,11 +958,15 @@ def build_404():
 # doesn't record them.
 WTB_SLUG = "where-to-buy-hobonichi-2027"
 VS_SLUG = "hobonichi-techo-vs-cousin-vs-weeks"
-GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
+DG_GUIDE_SLUG = "best-dot-grid-journals"
+HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
+GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
 GUIDES_LASTMOD = "2026-10-29"
+DG_GUIDE_LASTMOD = "2026-11-04"  # last copy change on the dot grid guide
 GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin A5, Weeks and Weeks Mega in stock right now, checked about every 30 minutes, plus tips for catching a restock.",
                 VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits.",
-                "hobonichi-2027.html": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources."}  # last copy change on the guide pages (sitemap lastmod floor)
+                "hobonichi-2027.html": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources.",
+                DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock."}  # last copy change on the guide pages (sitemap lastmod floor)
 H_SRC = {  # official Hobonichi pages used for product facts
     "orig": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6 (2027), specifications"),
     "cousin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_jan_en/", "English Cousin Book A5 (2027), specifications"),
@@ -975,7 +980,7 @@ H_SRC = {  # official Hobonichi pages used for product facts
 
 def guides_block():
     return ('<section class="card"><p class="eyebrow">Guides</p><ul class="link-list">'
-            + "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES) + "</ul></section>")
+            + "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in HOBO_GUIDES) + "</ul></section>")
 
 def _group(slug):
     return next(g for g in GROUPS if g["slug"] == slug)
@@ -1206,6 +1211,144 @@ def build_vs():
                        body, ld=(crumbs_ld(("guides/", "Guides"), (fname, "Hobonichi Techo vs Cousin vs Weeks")), art, faq_ld))
 
 
+DG_SRC = {  # each maker's own product page, read Nov 4, 2026; every spec on the guide cites one of these
+    "ao": ("https://www.archerandolive.com/products/songbird-in-blue", "Songbird in Blue notebook", "Archer and Olive"),
+    "ao2": ("https://www.archerandolive.com/products/storybook-in-navy-books", "Storybook in Navy notebook", "Archer and Olive"),
+    "lt": ("https://www.leuchtturm1917.us/products/hardcover-notebook", "Hardcover Notebook", "Leuchtturm1917"),
+    "lt120": ("https://www.leuchtturm1917.us/products/120g-edition", "Notebook Medium (A5), 120G", "Leuchtturm1917"),
+    "stm": ("https://scribblesthatmatter.com/products/dotted-journal-pro", "Dotted Journal Pro", "Scribbles That Matter"),
+    "stm2": ("https://scribblesthatmatter.com/products/dotted-journal-iconic", "Dotted Journal Iconic", "Scribbles That Matter"),
+    "nt": ("https://notebooktherapy.com/products/notebooktherapy-tsuki-bullet-journal", "Tsuki 160GSM dot grid journal", "Notebook Therapy"),
+}
+DG_COLS = [  # (column heading, store_id, canonicals whose live stock fills the column)
+    ("Archer and Olive A5 dot grid", "archerolive", ("ao-storybook-navy", "ao-songbird-blue", "ao-majestic-skies", "ao-apothecary-shelf")),
+    ("Leuchtturm1917 Hardcover Medium (A5) dotted", "leuchtturm-us", ("lt-hardcover-a5", "lt-120g-a5")),
+    ("Scribbles That Matter Dotted Journal Pro", "scribbles", ("stm-pro", "stm-iconic")),
+    ("Notebook Therapy Tsuki 160GSM", "notebooktherapy", ("nt-tsuki-160",)),
+]
+
+def build_dotgrid_guide():
+    fname = DG_GUIDE_SLUG + "/"
+    title = "Best dot grid journals compared: Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy"
+    desc = ("Dot grid journals compared: paper weight (gsm), pages, size and features for Archer and Olive, Leuchtturm1917, "
+            "Scribbles That Matter and Notebook Therapy, from each maker's page, plus live stock.")
+    dg = section_products("dotgrid")
+    def s(k):
+        return f'<a href="#src-{k}">[{E(DG_SRC[k][2])}]</a>'
+    def col_ls(canons):
+        return [p for p in dg if p.get("canonical") in canons]
+    def avail(store_id, canons):
+        ls = col_ls(canons)
+        if not ls:
+            return f'<a href="{DOTGRID_SLUG}/#shop-{store_id}">Live stock</a>'
+        buy = [re.sub(r"\s*Bullet Journal", "", l["label"]) for l in ls if l["status"] in BUYABLE]
+        names = f'<br><span class="muted small">In stock: {E("; ".join(buy))}</span>' if buy else ""
+        return f'<strong>{len(buy)} of {len(ls)}</strong> versions we track · <a href="{DOTGRID_SLUG}/#shop-{store_id}">live stock</a>{names}'
+    na = "Not listed on the product page"
+    rows = [  # (row, A&O, Leuchtturm1917, Scribbles That Matter, Notebook Therapy), each cell (text, source keys)
+        ("Paper weight", ("160gsm (Storybook also comes in kraft dot grid, 150gsm)", "ao ao2"), ("80 g/m² (the 120G edition is 120 gsm)", "lt lt120"),
+         ("160gsm or 120gsm, your choice", "stm"), ("160 GSM", "nt")),
+        ("Pages", ("192 (A5)", "ao ao2"), ("251 numbered pages (120G edition: 203)", "lt lt120"), (na, "stm"), ("128, with gilded edges", "nt")),
+        ("Size", ('A5: 5.75 × 8.25 in', "ao"), ("Medium (A5): 5.71 × 8.27 in", "lt"), ("A5 or B5 (dimensions not listed)", "stm"), ("135 × 195 mm", "nt")),
+        ("Dot grid", ("Dot grid (spacing not listed)", "ao"), ("Dots 5 mm apart", "lt"), ("5 mm dot grid", "stm"), ("5 mm, light grey dots", "nt")),
+        ("Paper color", ("White, kraft or ivory dot grid (Storybook)", "ao2"), ("Slightly chamois-colored", "lt"), ("Bright white", "stm"), ("Bright white", "nt")),
+        ("Cover", ("Vegan leather (hard or soft not listed)", "ao"), ("Hardcover; softcover also sold", "lt"), ("Vegan leather hardcover", "stm"), ("Vegan leather (hard or soft not listed)", "nt")),
+        ("Lays flat", ("Yes, lay-flat binding", "ao"), ("Yes, thread-bound, opens flat", "lt"), ("Yes, lay-flat binding", "stm"), ("Yes, 180° lay flat", "nt")),
+        ("Page numbers and index", (na, "ao"), ("Numbered pages and a blank table of contents", "lt"), ("Numbered pages, index, key and pen test page", "stm"), (na, "nt")),
+        ("Bookmarks", (na, "ao"), ("Two page markers", "lt"), ("Two ribbon bookmarks", "stm"), (na, "nt")),
+        ("Extras", (na, "ao"), ("Gusseted pocket, elastic band, 8 perforated sheets, stickers", "lt"),
+         ("Back pocket, elastic, pen loop; comes with a 0.7 mm fineliner, layout guide and box", "stm"), ("Back pocket with a sticker sheet, elastic band", "nt")),
+        ("Other sizes", ("B5, 8x8 square, B6, TN, Pocket and Letter (Songbird)", "ao"), ("Pocket (A6), Composition (B5) and Master (A4+)", "lt"), ("B5", "stm"), ("None listed on this page", "nt")),
+    ]
+    def n(k):  # numbered citation, matching the Sources list order
+        return f'<a href="#src-{k}">[{list(DG_SRC).index(k) + 1}]</a>'
+    def cell(t, keys):
+        return f'{E(t)} <span class="small">{"".join(n(k) for k in keys.split())}</span>'
+    rows_html = "".join(f'<tr><th scope="row">{E(r[0])}</th>' + "".join(f"<td>{cell(*c)}</td>" for c in r[1:]) + "</tr>" for r in rows)
+    rows_html += '<tr><th scope="row">In stock now</th>' + "".join(f"<td>{avail(sid, cs)}</td>" for _, sid, cs in DG_COLS) + "</tr>"
+    az = _exact_amazon([p for p in dg if p.get("canonical") in ("lt-hardcover-a5", "lt-120g-a5", "stm-pro")])
+    az_html = ('<p class="small">Also on Amazon (exact listings, affiliate links): ' + " · ".join(
+        f'<a class="az" href="https://www.amazon.com/dp/{E(a)}" target="_blank">{E(n)}</a>' for a, n in az.items()) + "</p>") if az else ""
+    faq = [
+        ("What paper weight (gsm) is best for a dot grid journal?",
+         "Heavier paper is thicker. Archer and Olive, Notebook Therapy's Tsuki and the 160gsm Scribbles That Matter journals use 160gsm paper. "
+         "Scribbles That Matter also sells 120gsm, and Leuchtturm1917 sells a 120 gsm edition. Leuchtturm1917's standard hardcover uses 80 g/m² paper. "
+         "If you use markers or brush pens, the thicker papers are the safer pick; if you mostly write, thinner paper gives you more pages per book."),
+        ("Archer and Olive vs Leuchtturm1917: what's the difference?",
+         "Paper and pages. Archer and Olive's A5 dot grid notebook has 160gsm paper and 192 pages. Leuchtturm1917's Hardcover Medium (A5) has 80 g/m² paper "
+         "and 251 numbered pages, plus a blank table of contents and two page markers. Both are close to A5 in size."),
+        ("Which of these dot grid journals has the most pages?",
+         "Of the four, the Leuchtturm1917 Hardcover Medium (A5) has the most pages listed: 251. Archer and Olive's A5 has 192 and the Tsuki 160GSM has 128. "
+         "Scribbles That Matter doesn't list a page count on its Dotted Journal Pro page."),
+        ("Which ones come with page numbers and an index?",
+         "Leuchtturm1917 (numbered pages and a blank table of contents) and Scribbles That Matter (numbered pages, an index, a key page and a pen test page). "
+         "Archer and Olive's and Notebook Therapy's product pages don't mention numbered pages or an index."),
+        ("How do I know when a sold-out dot grid journal is back?",
+         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up for the free email alerts and we'll tell you when a sold-out size or color comes back."),
+    ]
+    faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
+    src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, {E(b)} (official product page).</li>'
+                        for k, (u, t, b) in DG_SRC.items())
+    asof = f'<time datetime="{E(stock["run_finished"])}">{E(fmt_et(stock["run_finished"]))}</time>'
+    body = f"""
+<article class="prose guide vs-page">
+{crumbs(("guides/", "Guides"), (fname, "Dot grid journals compared"))}
+{eyebrow("Guide", "Dot grid journals", "updated Nov 4, 2026")}
+<h1>Best dot grid journals compared: Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy</h1>
+<p class="lede">Four popular dot grid journals, side by side: paper weight, pages, size and what comes in the book. Every spec is from the maker's own product page, and stock is live from our tracker.</p>
+{signup()}
+
+<h2>The short version</h2>
+<ul>
+  <li><strong>Archer and Olive</strong>: thick 160gsm paper in many sizes and designs. {s("ao")}</li>
+  <li><strong>Leuchtturm1917</strong>: the most pages (251 in A5), with numbered pages, a table of contents and two page markers. Thinner 80 g/m² paper, or 120 gsm in the 120G edition. {s("lt")} {s("lt120")}</li>
+  <li><strong>Scribbles That Matter</strong>: the most set up out of the box, with numbered pages, an index, a key and a pen test page, and a choice of 160gsm or 120gsm paper. {s("stm")}</li>
+  <li><strong>Notebook Therapy Tsuki</strong>: 160 GSM paper in a slightly smaller book (135 × 195 mm) with 128 gilded-edge pages. {s("nt")}</li>
+</ul>
+
+<h2>Side by side</h2>
+<p class="muted small">A5 dot grid versions (the Tsuki comes in one size), from each maker's US product page as of Nov 4, 2026. Numbers in brackets point to the sources below. Where a page doesn't list something, we say so instead of guessing. We don't show prices, because they change and differ by edition.</p>
+<div class="table-wrap"><table class="stock compare">
+<thead><tr><th></th>{"".join(f"<th>{E(h)}</th>" for h, _, _ in DG_COLS)}</tr></thead>
+<tbody>{rows_html}</tbody></table></div>
+<p class="muted small">Stock is what each maker's own shop said at our last check, {asof}. Archer and Olive counts the A5 and B5 dot grid notebooks we track; Scribbles That Matter includes the Iconic.</p>
+{az_html}
+
+<h2>Who each one suits</h2>
+<h3>Archer and Olive: for markers, paint and lots of size choices</h3>
+<p>Pick Archer and Olive if you want thick paper and a specific size. Its notebooks use 160gsm paper, and the A5 has 192 pages {s("ao")}. Sizes run from Pocket to Letter, including B5, B6, square and a traveler's notebook size {s("ao")}. Some designs also offer kraft (150gsm) or ivory dot grid paper {s("ao2")}. The product page doesn't mention page numbers, an index or bookmarks, so plan to set those up yourself.</p>
+<p><a href="{DOTGRID_SLUG}/#shop-archerolive">Live Archer and Olive stock</a></p>
+<h3>Leuchtturm1917: for writing, and the most pages</h3>
+<p>Pick the Leuchtturm1917 Hardcover Medium (A5) if you mostly write and want room. It has 251 numbered pages, a blank table of contents, two page markers, a gusseted pocket and 8 perforated sheets {s("lt")}. The paper is 80 g/m² and slightly chamois-colored, the thinnest here {s("lt")}. If you want thicker paper with the same setup, the 120G edition has 120 gsm paper and 203 numbered pages {s("lt120")}.</p>
+<p><a href="{DOTGRID_SLUG}/#shop-leuchtturm-us">Live Leuchtturm1917 stock</a></p>
+<h3>Scribbles That Matter: for starting right away</h3>
+<p>Pick the Scribbles That Matter Dotted Journal Pro if you want the setup done. It comes with numbered pages, an index, a key page and a pen test page, two ribbon bookmarks, a pen loop and a 0.7 mm fineliner in the box {s("stm")}. You choose 160gsm or 120gsm paper, in A5 or B5 {s("stm")}. The Pro has a plain matte cover; the Iconic is the same idea with an embossed cover {s("stm2")}. The page doesn't list a page count.</p>
+<p><a href="{DOTGRID_SLUG}/#shop-scribbles">Live Scribbles That Matter stock</a></p>
+<h3>Notebook Therapy Tsuki: for a smaller book</h3>
+<p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we track too.</p>
+<p><a href="{DOTGRID_SLUG}/#shop-notebooktherapy">Live Notebook Therapy stock</a></p>
+
+<h2>Where to buy</h2>
+<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> and we'll email you when a sold-out one comes back. More guides are on the <a href="guides/">guides page</a>.</p>
+
+<section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
+
+<h2>Sources</h2>
+<ol class="sources">{src_items}</ol>
+<p class="muted small">Each maker sells other dot grid journals too. This guide covers the A5 versions above.</p>
+{related_block(fname)}
+</article>"""
+    art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
+           "datePublished": DG_GUIDE_LASTMOD, "dateModified": DG_GUIDE_LASTMOD, "url": url_for(fname), "image": OG_DOTGRID,
+           "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
+           "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
+    return fname, page(fname, title + TITLE_SUFFIX, desc, body,
+                       ld=(crumbs_ld(("guides/", "Guides"), (fname, "Dot grid journals compared")), art, faq_ld),
+                       og_type="article", og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT)
+
+
 def build_guides_index():
     fname = "guides/"
     items = "".join(f'<li><a href="{h}"><strong>{E(t)}</strong></a><br><span class="muted">{E(GUIDE_BLURBS[h])}</span></li>' for h, t in GUIDES)
@@ -1220,8 +1363,8 @@ def build_guides_index():
 </article>"""
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": t, "url": url_for(h)} for i, (h, t) in enumerate(GUIDES)]}
-    return fname, page(fname, "Guides: where to buy, which Hobonichi to choose, and the 2027 calendar · Stationery Drop Watch",
-                       "Stationery Drop Watch guides: where to buy the Hobonichi Techo 2027 with live stock by shop, Hobonichi Techo vs Cousin vs Weeks compared, and the 2027 launch and restock calendar.",
+    return fname, page(fname, "Guides: best dot grid journals, where to buy and which Hobonichi to choose · Stationery Drop Watch",
+                       "Stationery Drop Watch guides: the best dot grid journals compared, where to buy the Hobonichi Techo 2027 with live stock by shop, Hobonichi Techo vs Cousin vs Weeks, and the 2027 launch and restock calendar.",
                        body, ld=(crumbs_ld((fname, "Guides")), lst))
 
 SHOP_ETSY = [
@@ -1316,7 +1459,7 @@ def main():
         fname, doc = build_group(g, oe)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_guides_index, build_shop, build_follow):
+    for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_guides_index, build_shop, build_follow):
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
