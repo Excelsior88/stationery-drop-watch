@@ -94,8 +94,12 @@ jobs:
           path: site
 
   deploy:
+    # Backup only: the live site is served by Cloudflare Pages (cloudflare-pages.yml).
+    # A failed GitHub Pages deploy must not mark the run as failed or send failure emails.
     needs: check
     runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 12
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
