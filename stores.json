@@ -231,35 +231,35 @@
    "label": "Traveler's notebook Regular size · Black (No. 13714006)",
    "type": "Notebook",
    "brand": "travelers",
-   "section": "tnregular"
+   "section": "travelers"
   },
   {
    "id": "tn-regular-brown",
    "label": "Traveler's notebook Regular size · Brown (No. 13715006)",
    "type": "Notebook",
    "brand": "travelers",
-   "section": "tnregular"
+   "section": "travelers"
   },
   {
    "id": "tn-regular-blue",
    "label": "Traveler's notebook Regular size · Blue (No. 15239006)",
    "type": "Notebook",
    "brand": "travelers",
-   "section": "tnregular"
+   "section": "travelers"
   },
   {
    "id": "tn-regular-camel",
    "label": "Traveler's notebook Regular size · Camel (No. 15193006)",
    "type": "Notebook",
    "brand": "travelers",
-   "section": "tnregular"
+   "section": "travelers"
   },
   {
    "id": "tn-regular-olive",
    "label": "Traveler's notebook Regular size · Olive (No. 15342006)",
    "type": "Notebook",
    "brand": "travelers",
-   "section": "tnregular"
+   "section": "travelers"
   }
  ],
  "stores": [
@@ -1289,7 +1289,7 @@
      "label": "Traveler's notebook Regular size · Black",
      "type": "Notebook",
      "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-black",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Black (Regular Size)"
     },
     {
@@ -1297,7 +1297,7 @@
      "label": "Traveler's notebook Regular size · Brown",
      "type": "Notebook",
      "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-brown",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Brown (Regular Size)"
     },
     {
@@ -1305,7 +1305,7 @@
      "label": "Traveler's notebook Regular size · Blue",
      "type": "Notebook",
      "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-blue",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Blue (Regular Size)"
     },
     {
@@ -1313,7 +1313,7 @@
      "label": "Traveler's notebook Regular size · Camel",
      "type": "Notebook",
      "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-camel",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Camel (Regular Size)"
     },
     {
@@ -1321,7 +1321,7 @@
      "label": "Traveler's notebook Regular size · Olive",
      "type": "Notebook",
      "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-olive",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Olive (Regular Size)"
     }
    ]
@@ -1363,7 +1363,7 @@
      "type": "Notebook",
      "url": "https://www.tokyopenshop.com/products/travelers-notebook?variant=42876827304148",
      "variant_id": 42876827304148,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook · Black"
     },
     {
@@ -1372,7 +1372,7 @@
      "type": "Notebook",
      "url": "https://www.tokyopenshop.com/products/travelers-notebook?variant=42876827402452",
      "variant_id": 42876827402452,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook · Brown"
     },
     {
@@ -1381,7 +1381,7 @@
      "type": "Notebook",
      "url": "https://www.tokyopenshop.com/products/travelers-notebook?variant=42876827369684",
      "variant_id": 42876827369684,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook · Blue"
     },
     {
@@ -1390,7 +1390,7 @@
      "type": "Notebook",
      "url": "https://www.tokyopenshop.com/products/travelers-notebook?variant=42876827336916",
      "variant_id": 42876827336916,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook · Camel"
     },
     {
@@ -1399,7 +1399,7 @@
      "type": "Notebook",
      "url": "https://www.tokyopenshop.com/products/travelers-notebook?variant=43664241295572",
      "variant_id": 43664241295572,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook · Olive"
     }
    ]
@@ -1456,7 +1456,7 @@
    "country": "US",
    "platform": "shopify",
    "indie": true,
-   "section": "tnregular",
+   "section": "travelers",
    "note": "Authorized Traveler's Company retailer (US).",
    "products": [
     {
@@ -1464,7 +1464,7 @@
      "label": "Traveler's notebook Regular size · Black",
      "type": "Notebook",
      "url": "https://www.gouletpens.com/products/travelers-notebook-black-regular",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Black (Regular)"
     },
     {
@@ -1472,7 +1472,7 @@
      "label": "Traveler's notebook Regular size · Brown",
      "type": "Notebook",
      "url": "https://www.gouletpens.com/products/travelers-notebook-brown-regular",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Brown (Regular)"
     },
     {
@@ -1480,7 +1480,7 @@
      "label": "Traveler's notebook Regular size · Blue",
      "type": "Notebook",
      "url": "https://www.gouletpens.com/products/travelers-notebook-blue-regular",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Blue (Regular)"
     },
     {
@@ -1488,7 +1488,7 @@
      "label": "Traveler's notebook Regular size · Camel",
      "type": "Notebook",
      "url": "https://www.gouletpens.com/products/travelers-notebook-camel-regular",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Camel (Regular)"
     },
     {
@@ -1496,7 +1496,7 @@
      "label": "Traveler's notebook Regular size · Olive",
      "type": "Notebook",
      "url": "https://www.gouletpens.com/products/travelers-notebook-olive-regular",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Olive (Regular)"
     }
    ]
@@ -1508,7 +1508,7 @@
    "country": "US",
    "platform": "shopify",
    "indie": true,
-   "section": "tnregular",
+   "section": "travelers",
    "note": "Authorized Traveler's Company retailer (US).",
    "products": [
     {
@@ -1516,7 +1516,7 @@
      "label": "Traveler's notebook Regular size · Black",
      "type": "Notebook",
      "url": "https://simplepaper.co/products/travelers-notebook-regular-black",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Regular - Black"
     },
     {
@@ -1524,7 +1524,7 @@
      "label": "Traveler's notebook Regular size · Brown",
      "type": "Notebook",
      "url": "https://simplepaper.co/products/travelers-notebook-regular-brown",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Regular - Brown"
     },
     {
@@ -1532,7 +1532,7 @@
      "label": "Traveler's notebook Regular size · Blue",
      "type": "Notebook",
      "url": "https://simplepaper.co/products/travelers-notebook-regular-blue",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Regular - Blue"
     },
     {
@@ -1540,7 +1540,7 @@
      "label": "Traveler's notebook Regular size · Camel",
      "type": "Notebook",
      "url": "https://simplepaper.co/products/travelers-notebook-regular-camel",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Regular - Camel"
     },
     {
@@ -1548,7 +1548,7 @@
      "label": "Traveler's notebook Regular size · Olive",
      "type": "Notebook",
      "url": "https://simplepaper.co/products/travelers-notebook-regular-olive",
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "Traveler's Notebook - Regular - Olive"
     }
    ]
@@ -1560,7 +1560,7 @@
    "country": "US",
    "platform": "shopify",
    "indie": true,
-   "section": "tnregular",
+   "section": "travelers",
    "note": "Authorized Traveler's Company retailer (US).",
    "products": [
     {
@@ -1569,7 +1569,7 @@
      "type": "Notebook",
      "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=51593658335546",
      "variant_id": 51593658335546,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "TRAVELER'S notebook Regular Size · Black"
     },
     {
@@ -1578,7 +1578,7 @@
      "type": "Notebook",
      "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=51593658401082",
      "variant_id": 51593658401082,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "TRAVELER'S notebook Regular Size · Brown"
     },
     {
@@ -1587,7 +1587,7 @@
      "type": "Notebook",
      "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=51593658433850",
      "variant_id": 51593658433850,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "TRAVELER'S notebook Regular Size · Blue"
     },
     {
@@ -1596,7 +1596,7 @@
      "type": "Notebook",
      "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=51593658368314",
      "variant_id": 51593658368314,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "TRAVELER'S notebook Regular Size · Camel"
     },
     {
@@ -1605,7 +1605,7 @@
      "type": "Notebook",
      "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=52467629588794",
      "variant_id": 52467629588794,
-     "section": "tnregular",
+     "section": "travelers",
      "source_title": "TRAVELER'S notebook Regular Size · Olive"
     }
    ]
