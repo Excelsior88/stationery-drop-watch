@@ -268,3 +268,19 @@ a.az:hover{opacity:1}
 #rows tr.child td:first-child{padding-left:26px}
 #rows td:last-child{width:1%;white-space:nowrap}
 @media (max-width:600px){#rows tr.child td:first-child{padding-left:16px}}
+
+/* Shop (FIX-06): two-column card grid on desktop, one column on small screens, price on every card */
+.prose.shop-wide{max-width:1040px}
+.shop-wide .shop-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.shop-wide .shop-card{grid-template-columns:150px 1fr;gap:16px}
+.shop-wide .shop-body{min-width:0}
+.shop-price{margin:6px 0 8px;font-family:var(--sans)}
+.shop-price strong{font-size:1.25rem;color:#2d2a32;margin-right:4px}
+.shop-inside{margin:6px 0 12px}
+.shop-inside summary{cursor:pointer;color:#c1553b;font-family:var(--sans);font-size:.92rem}
+.inside-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.inside-grid figure{margin:0}.inside-grid figure:first-child{grid-column:1/-1}
+.inside-grid img{width:100%;height:auto;display:block;border:1px solid #e6dccb;border-radius:6px;background:#fff}
+.inside-grid figcaption{font-size:.78rem;color:#6b6470;margin-top:2px}
+@media(max-width:760px){.shop-wide .shop-list{grid-template-columns:1fr}}
+@media(max-width:600px){.shop-wide .shop-card{grid-template-columns:1fr}}
