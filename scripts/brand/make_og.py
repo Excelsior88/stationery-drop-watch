@@ -1,6 +1,6 @@
 """Social share cards (1200x630) for Open Graph / Twitter:
 site/assets/brand/og-image.png (Hobonichi side, home), og-dotgrid.png (dot grid journals),
-og-travelers.png (Traveler's Company limited editions) and og-midori.png (MIDORI MD seasonal releases).
+og-travelers.png (Traveler's Company notebooks and limited editions) and og-midori.png (MIDORI MD seasonal releases).
 No shop counts on the cards (they change with the data); the check frequency matches the site's wording.
 Run: python3 scripts/brand/make_og.py (needs Pillow; uses logo-1600.png)."""
 import os
@@ -53,8 +53,8 @@ card("og-image.png", [("Hobonichi Techo 2027 restock tracker", f1, INK, 72),
 card("og-dotgrid.png", [("Dot grid journal restock tracker", f1, INK, 66),
                         ("Archer and Olive · Leuchtturm1917 · Scribbles That Matter · Notebook Therapy", f3, INK2, 40),
                         ("Size by size, color by color · " + FREQ, f3, TERRA, 0)])
-card("og-travelers.png", [("Traveler's Company limited edition tracker", f1, INK, 66),
-                          ("2027 diary accessories · anniversary sets · shop exclusives", f3, INK2, 40),
+card("og-travelers.png", [("Traveler's Notebook restock tracker", f1, INK, 66),
+                          ("Regular size colors · 2027 diary accessories · limited editions", f3, INK2, 40),
                           ("Official and independent shops · " + FREQ, f3, TERRA, 0)])
 card("og-midori.png", [("MIDORI MD seasonal release tracker", f1, INK, 66),
                        ("MD notebooks, diaries and limited covers (now MD PRODUCT)", f3, INK2, 40),

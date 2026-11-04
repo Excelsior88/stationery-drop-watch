@@ -63,8 +63,8 @@ DOTGRID_SHOPS = [s for s in stores["stores"] if s.get("brand")]
 SECTIONS = {  # non-Hobonichi sections in nav/footer order; each has one page (the GROUPS entry with that section)
     "dotgrid": dict(slug="archer-and-olive-dot-grid-journal", nav="Dot grid journals", name="dot grid journals",
                     foot="Dot grid journaling", link="Dot grid journals", count="dot grid journals", amazon=None),
-    "travelers": dict(slug="travelers-company-limited-edition", nav="Traveler's Company", name="Traveler's Company limited editions",
-                      foot="Traveler's Company", link="Limited editions", count="Traveler's Company", amazon="travelers"),
+    "travelers": dict(slug="travelers-company-limited-edition", nav="Traveler's Company", name="Traveler's Company notebooks and limited editions",
+                      foot="Traveler's Company", link="Notebooks and limited editions", count="Traveler's Company", amazon="travelers"),
     "midori": dict(slug="midori-md-limited-edition", nav="MIDORI MD", name="MIDORI MD seasonal releases",
                    foot="MIDORI MD", link="Seasonal releases", count="MIDORI MD", amazon="midori"),
 }
@@ -106,7 +106,7 @@ def shop_names(sec):
     return dotgrid_names() if sec == "dotgrid" else names_and([s["name"] for s in section_shops(sec)])
 
 def sections_phrase():
-    """'dot grid journals, Traveler's Company limited editions and MIDORI MD seasonal releases' (live ones only)."""
+    """'dot grid journals, Traveler's Company notebooks and limited editions and MIDORI MD seasonal releases' (live ones only)."""
     return names_and([SECTIONS[k]["name"] for k in LIVE])
 
 def amazon_for(canonical, listing_url=""):
@@ -674,18 +674,18 @@ GROUPS = [
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
                "We track a focused set of flagship dot grid notebooks straight from each maker's own store, size by size and color by color. "
                "Archer and Olive is featured first. This covers dot grid journals only; we don't track pens or other paper here, and Hobonichi and our other sections have their own pages."),
-    dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Company limited edition", section="travelers",
+    dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Company notebook and limited edition", section="travelers",
          match=lambda p: section_of(p) == "travelers", eyebrow="Traveler's Company", search_hint="Sticker set, Olive, 20th…",
-         guide="Traveler's Company makes these in limited runs, and each shop gets its own allocation, so one shop can sell out while another still has stock. "
+         guide="Traveler's Company makes its limited editions in small runs, and each shop gets its own allocation, so one shop can sell out while another still has stock. "
                "We also track the five standard Regular size notebooks: Black (No. 13714006), Brown (No. 13715006), Blue (No. 15239006), Camel (No. 15193006) and Olive (No. 15342006). "
                "Traveler's Company warns that counterfeits are sold in the US, so we only list the official US shop and authorized retailers. For refills, check the shops directly.",
-         title=f"Traveler's Company limited edition restock tracker",
-         desc="Are the Traveler's notebook 2027 diary accessories, 20th anniversary sets and Regular size colors in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
+         title=f"Traveler's Notebook restock tracker: regular colors and limited editions",
+         desc="Are the Traveler's Notebook Regular size colors (Black, Brown, Blue, Camel, Olive), 2027 diary accessories and 20th anniversary sets in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
          og_image=BASE + "assets/brand/og-travelers.png",
-         og_alt="Stationery Drop Watch: Traveler's Company limited edition tracker, checked " + CHECK_FREQ,
-         intro="Traveler's Company limited editions come in small runs: the yearly diary accessories, anniversary sets and shop exclusives. "
+         og_alt="Stationery Drop Watch: Traveler's Notebook and limited edition tracker, checked " + CHECK_FREQ,
+         intro="We track the five Regular size Traveler's Notebook colors (Black, Brown, Blue, Camel and Olive) plus Traveler's Company limited editions: the yearly diary accessories, anniversary sets and shop exclusives. "
                "We check the official Traveler's Company USA shop and independent shops, item by item. "
-               "It also covers the five standard Regular size notebook colors. Hobonichi and our other sections have their own pages."),
+               "Hobonichi and our other sections have their own pages."),
     dict(slug=SECTIONS["midori"]["slug"], short="MIDORI MD", product="MIDORI MD seasonal release", section="midori",
          match=lambda p: section_of(p) == "midori", eyebrow="MIDORI MD", search_hint="Diary 2027, 1 Day 1 Page, Stickers…",
          guide="MIDORI makes the dated MD diaries and diary stickers once a year, so when a shop's allocation is gone it is usually gone until the next year's edition. "
@@ -873,7 +873,7 @@ FAQ = [
 
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
     "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color.",
-    "travelers": "On the Traveler's Company page, we track limited editions: the 2027 diary accessories, anniversary sets and shop exclusives.",
+    "travelers": "On the Traveler's Company page, we track the five Regular size notebook colors plus limited editions: the 2027 diary accessories, anniversary sets and shop exclusives.",
     "midori": "On the MIDORI MD page, we track seasonal and limited MD releases (MIDORI's MD line is now sold as MD PRODUCT).",
 }
 
