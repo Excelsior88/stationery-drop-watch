@@ -411,7 +411,13 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
     prod_opts = "".join(f'<option value="{E(k)}">{E(v)}</option>' for k, v in canon.items() if any(p.get("canonical") == k for p in prods))
     type_opts = "".join(f'<option value="{E(t)}">{E(t)}</option>' for t in sorted({p["type"] for p in prods}))
     status_opts = "".join(f'<option value="{k}">{v}</option>' for k, v in STATUS.items() if any(p["status"] == k for p in prods))
-    noscript_rows = "".join(f'<tr><td>{E(r["p"])}</td><td>{E(r["s"])}</td><td><span class="badge {r["st"]}">{STATUS[r["st"]]}</span></td></tr>' for r in rows)
+    ns_groups = {}
+    for r in sorted(rows, key=lambda r: (r["gn"].lower(), r["s"].lower())):
+        ns_groups.setdefault(r["g"], []).append(r)
+    noscript_rows = "".join(
+        f'<tr class="grp"><th colspan="2" scope="rowgroup">{E(ls[0]["gn"])} <span class="sub">{E(ls[0]["t"])}</span></th></tr>'
+        + "".join(f'<tr class="child"><td><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a></td><td><span class="badge {r["st"]}">{STATUS[r["st"]]}</span></td></tr>' for r in ls)
+        for ls in ns_groups.values())
     return f"""<section class="card" id="tracker">
       <div class="section-head"><h2>Every listing we track</h2><p class="muted small"><span id="count"></span> · {checked_line(prods)}</p></div>
       <form class="filters" onsubmit="return false">
@@ -422,7 +428,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
         <label class="grow">Search<input id="f-q" type="search" placeholder="{E(search_hint)}"></label>
       </form>
       <div class="table-wrap"><table class="stock">
-        <thead><tr><th>Product</th><th>Store</th><th>Status</th></tr></thead>
+        <thead><tr><th>Product, then each shop</th><th>Status</th></tr></thead>
         <tbody id="rows"><noscript>{noscript_rows}</noscript></tbody>
       </table></div>
       <button type="button" id="more" class="btn-ghost more" hidden>Show all</button>
@@ -431,7 +437,8 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
     </section>"""
 
 def tracker_rows(prods, out_everywhere):
-    rows = [dict(g=product_key(p), p=p["label"], c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], st=p["status"],
+    canon = {c["id"]: c["label"] for c in stores["canonical"]}
+    rows = [dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], st=p["status"],
                  u=p["url"], at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
                  va=p.get("available_variants"), tv=p.get("total_variants"),
                  az=amazon_for(p.get("canonical"), p["url"])[0], azl=amazon_for(p.get("canonical"), p["url"])[1]) for p in prods]
@@ -439,6 +446,10 @@ def tracker_rows(prods, out_everywhere):
         m = out_everywhere.get(r["u"] if exact_only(r["c"]) else r["g"])
         if m:
             r.update(az=m["url"], azl=m["label"], azm=1)
+    for r in rows:  # design page link (FIX-09), shown on the product's group header
+        dp = design_page_for([{"canonical": r["c"], "label": r["p"], "url": r["u"]}])
+        if dp:
+            r["dp"] = "/" + pretty(dp)
     return rows
 
 def tracking_start(ls):
