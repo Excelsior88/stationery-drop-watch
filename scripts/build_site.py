@@ -102,6 +102,11 @@ REGION = {x["id"]: _REGION_FIX.get(x["id"]) or (x.get("country") or "").split()[
 REGION_NAME = {"US": "United States", "CA": "Canada", "SG": "Singapore", "UK": "United Kingdom", "JP": "Japan"}
 assert all(REGION[x["id"]] in REGION_NAME for x in stores["stores"]), "every shop needs a country tag"
 
+# No tag when the shop's own name already ends with its country (e.g. "Leuchtturm1917 US").
+for _x in stores["stores"]:
+    if _x["name"].rstrip().upper().endswith(" " + REGION[_x["id"]]):
+        REGION[_x["id"]] = ""
+
 def region_tag(store_id):
     r = REGION.get(store_id, "")
     return f' <span class="region" title="Shop based in {REGION_NAME[r]}">{r}</span>' if r else ""
@@ -1058,6 +1063,85 @@ DESIGNS = [
     dict(parent=TN_SLUG, slug="regular-olive", name="Regular size Olive", full="Traveler's notebook Regular size Olive",
          match=lambda p: p.get("canonical") == "tn-regular-olive",
          why="Sold out at all 5 shops we track."),
+    # --- Round 3: one page per tracked planner or journal design. Facts come from the shops' own listing titles in data/stock.json.
+    dict(parent="hobonichi-weeks-2027", slug="pink-sapphire", name="Pink Sapphire", full="Hobonichi Weeks 2027 Pink Sapphire",
+         match=lambda p: p["type"] == "Weeks" and "pink sapphire" in p["label"].lower(),
+         about="Pink Sapphire is a Hobonichi Weeks Colors design, the slim weekly planner, sold here by a single shop we track. Designs carried by one shop are easy to miss when they come back."),
+    dict(parent="hobonichi-weeks-2027", slug="paper-series-jade", name="Paper Series: Jade", full="Hobonichi Weeks 2027 Paper Series Jade",
+         match=lambda p: p["type"] == "Weeks" and "paper series" in p["label"].lower() and "jade" in p["label"].lower(),
+         about="Jade is part of the Hobonichi Weeks Paper Series, a slim weekly planner sold here by a single shop we track. Designs carried by one shop are easy to miss when they come back."),
+    dict(parent="hobonichi-weeks-2027", slug="shirt-fabric-graph-plaid", name="Shirt Fabric: Graph Plaid", full="Hobonichi Weeks 2027 Shirt Fabric Graph Plaid",
+         match=lambda p: p["type"] == "Weeks" and "shirt fabric" in p["label"].lower() and "graph plaid" in p["label"].lower(),
+         about="Graph Plaid is a Hobonichi Weeks design from the Shirt Fabric line, sold here by a single shop we track."),
+    dict(parent="hobonichi-techo-2027-covers", slug="moomin-my-yard", name="Moomin: My Yard", full="Hobonichi Techo 2027 A6 cover Moomin: My Yard",
+         match=lambda p: p.get("canonical") == "cover-a6-moomin",
+         about="Moomin: My Yard (Pale Mint) is a Hobonichi cover for the A6 Original book. Moomin collaborations are among the Hobonichi designs people search for most."),
+    dict(parent="hobonichi-techo-2027-covers", slug="white-cat-house", name="Yumi Kitagishi: White Cat House", full="Hobonichi Techo 2027 A6 cover White Cat House",
+         match=lambda p: p.get("canonical") == "cover-a6-white-cat-house",
+         about="White Cat House is a Yumi Kitagishi artist collaboration cover for the Hobonichi A6 Original book."),
+    dict(parent=DOTGRID_SLUG, slug="archer-and-olive-storybook-navy", name="Archer and Olive Storybook in Navy", full="Archer and Olive Storybook in Navy dot grid notebook",
+         match=lambda p: p.get("canonical") == "ao-storybook-navy",
+         about="Storybook in Navy is an Archer and Olive dot grid notebook. The shop lists it in A5 (192 pages) and B5 (160 pages), both with white dot grid paper."),
+    dict(parent=DOTGRID_SLUG, slug="archer-and-olive-songbird-blue", name="Archer and Olive Songbird in Blue", full="Archer and Olive Songbird in Blue dot grid notebook",
+         match=lambda p: p.get("canonical") == "ao-songbird-blue",
+         about="Songbird in Blue is an Archer and Olive dot grid notebook, listed in A5 (192 pages) and B5 (160 pages). The two sizes often sell out at different times, so this page shows each one."),
+    dict(parent=DOTGRID_SLUG, slug="archer-and-olive-majestic-skies", name="Archer and Olive Majestic Skies", full="Archer and Olive Majestic Skies dot grid notebook",
+         match=lambda p: p.get("canonical") == "ao-majestic-skies",
+         about="Majestic Skies is an Archer and Olive dot grid notebook, listed in A5 with 192 pages."),
+    dict(parent=DOTGRID_SLUG, slug="archer-and-olive-apothecary-shelf", name="Archer and Olive Apothecary Shelf", full="Archer and Olive Apothecary Shelf dot grid notebook",
+         match=lambda p: p.get("canonical") == "ao-apothecary-shelf",
+         about="Apothecary Shelf is an Archer and Olive Halloween 2026 dot grid notebook, listed in B5 with 160 pages of white dot grid paper. Seasonal designs like this one may not come back once they sell out."),
+    dict(parent=DOTGRID_SLUG, slug="leuchtturm1917-hardcover-a5-dotted", name="Leuchtturm1917 Hardcover Medium (A5) dotted", full="Leuchtturm1917 Hardcover Medium (A5) dotted notebook",
+         match=lambda p: p.get("canonical") == "lt-hardcover-a5",
+         about="The Leuchtturm1917 Hardcover Medium (A5) with dotted pages is Leuchtturm1917's best-known dot grid notebook size. We track the colors Leuchtturm1917's US shop lists for it, since single colors go out of stock on their own."),
+    dict(parent=DOTGRID_SLUG, slug="leuchtturm1917-120g-a5-dotted", name="Leuchtturm1917 Medium (A5) 120G dotted", full="Leuchtturm1917 Medium (A5) 120G dotted notebook",
+         match=lambda p: p.get("canonical") == "lt-120g-a5",
+         about="The Leuchtturm1917 120G edition is the Medium (A5) hardcover notebook with heavier 120 g paper and 203 numbered pages, as the shop lists it."),
+    dict(parent=DOTGRID_SLUG, slug="leuchtturm1917-edition-2", name="Leuchtturm1917 Bullet Journal Edition 2", full="Leuchtturm1917 Bullet Journal Edition 2 dot grid notebook",
+         match=lambda p: p.get("canonical") == "lt-bullet-journal-ed2",
+         about="Leuchtturm1917's Bullet Journal Edition 2 (the shop's own product name) is its official dot grid journal. We track each color the US shop lists."),
+    dict(parent=DOTGRID_SLUG, slug="scribbles-that-matter-pro", name="Scribbles That Matter Dotted Journal Pro", full="Scribbles That Matter Dotted Journal Pro",
+         match=lambda p: p.get("canonical") == "stm-pro",
+         about="The Scribbles That Matter Dotted Journal Pro is a dot grid journal with 160gsm paper. The shop lists it in A5 and B5 and in several colors; we track each one separately."),
+    dict(parent=DOTGRID_SLUG, slug="scribbles-that-matter-iconic", name="Scribbles That Matter Dotted Journal Iconic", full="Scribbles That Matter Dotted Journal Iconic",
+         match=lambda p: p.get("canonical") == "stm-iconic",
+         about="The Scribbles That Matter Dotted Journal Iconic is an A5 dot grid journal with 160gsm paper, listed here in Bottle Green."),
+    dict(parent=DOTGRID_SLUG, slug="scribbles-that-matter-starry-night", name="Scribbles That Matter Starry Night", full="Scribbles That Matter Starry Night dotted journal",
+         match=lambda p: p.get("canonical") == "stm-starry-night",
+         about="Starry Night is a Scribbles That Matter dotted journal in A5 with black paper."),
+    dict(parent=DOTGRID_SLUG, slug="notebook-therapy-tsuki-160gsm", name="Notebook Therapy Tsuki 160GSM", full="Notebook Therapy Tsuki 160GSM dot grid journal",
+         match=lambda p: p.get("canonical") == "nt-tsuki-160",
+         about="The Tsuki 160GSM is Notebook Therapy's dot grid journal with heavy 160gsm paper. Each cover color sells out on its own, so we track them separately."),
+    dict(parent=DOTGRID_SLUG, slug="notebook-therapy-tsuki-dark-academia", name="Notebook Therapy Tsuki Dark Academia", full="Notebook Therapy Tsuki Dark Academia dot grid journal",
+         match=lambda p: p.get("canonical") == "nt-tsuki-dark-academia",
+         about="Dark Academia is a limited edition Tsuki dot grid journal from Notebook Therapy, listed in A5 with 176 pages. Limited editions may not return once they sell out."),
+    dict(parent=DOTGRID_SLUG, slug="notebook-therapy-tsuki-violet-nocturne", name="Notebook Therapy Tsuki Violet Nocturne", full="Notebook Therapy Tsuki Violet Nocturne dot grid journal",
+         match=lambda p: p.get("canonical") == "nt-tsuki-violet-nocturne",
+         about="Violet Nocturne is a limited edition A5 Tsuki dot grid journal from Notebook Therapy, listed with white paper. Limited editions may not return once they sell out."),
+    dict(parent=DOTGRID_SLUG, slug="notebook-therapy-tsuki-ravens-secret", name="Notebook Therapy Tsuki Raven's Secret", full="Notebook Therapy Tsuki Raven's Secret dot grid journal",
+         match=lambda p: p.get("canonical") == "nt-tsuki-ravens-secret",
+         about="Raven's Secret is a limited edition Tsuki dot grid journal from Notebook Therapy, listed in A5 with 176 pages. Limited editions may not return once they sell out."),
+    dict(parent=TN_SLUG, slug="regular-black", name="Regular size Black", full="Traveler's notebook Regular size Black",
+         match=lambda p: p.get("canonical") == "tn-regular-black",
+         about="The Traveler's notebook Regular size in Black is a leather notebook cover from Traveler's Company. Shops often run out of single colors, so this page shows Black at every shop we track."),
+    dict(parent=TN_SLUG, slug="regular-blue", name="Regular size Blue", full="Traveler's notebook Regular size Blue",
+         match=lambda p: p.get("canonical") == "tn-regular-blue",
+         about="The Traveler's notebook Regular size in Blue is a leather cover from Traveler's Company, tracked here at every shop that lists it."),
+    dict(parent=TN_SLUG, slug="regular-brown", name="Regular size Brown", full="Traveler's notebook Regular size Brown",
+         match=lambda p: p.get("canonical") == "tn-regular-brown",
+         about="The Traveler's notebook Regular size in Brown is one of the classic Traveler's Company leather covers, tracked here at every shop that lists it."),
+    dict(parent=TN_SLUG, slug="road-trip-brown", name="ROAD TRIP Brown", full="Traveler's notebook ROAD TRIP Brown (Regular size)",
+         match=lambda p: p.get("canonical") == "tn-road-trip-brown",
+         about="ROAD TRIP Brown is a Regular size Traveler's notebook that Traveler's Company USA lists as a US exclusive. Exclusive editions are sold in fewer places, so restocks are easy to miss."),
+    dict(parent=TN_SLUG, slug="card-size-20th-anniversary-black", name="Card Size 20th Anniversary Set Black", full="Traveler's notebook Card Size 20th Anniversary Set Black",
+         match=lambda p: p.get("canonical") == "tn-20th-card-black",
+         about="The Card Size 20th Anniversary Set in Black is a limited Traveler's Company set marking the notebook's 20th anniversary. Anniversary sets are limited runs."),
+    dict(parent=SECTIONS["midori"]["slug"], slug="md-diary-2027-a5", name="MD Notebook Diary 2027 A5", full="MIDORI MD Notebook Diary 2027 A5",
+         match=lambda p: p.get("canonical") == "md-diary-2027-a5",
+         about="The MIDORI MD Notebook Diary 2027 in A5 is MIDORI's dated monthly planner on MD Paper. Dated diaries are made for one year only, so stock runs down as the year starts."),
+    dict(parent=SECTIONS["midori"]["slug"], slug="md-diary-1-day-1-page-2027-a5", name="MD Notebook Diary 1 Day 1 Page 2027 A5", full="MIDORI MD Notebook Diary 1 Day 1 Page 2027 A5",
+         match=lambda p: p.get("canonical") == "md-diary-1day-2027-a5",
+         about="The MIDORI MD Notebook Diary 1 Day 1 Page 2027 in A5 gives each day of 2027 its own page of MD Paper. Like all dated diaries it is made for one year only."),
 ]
 DESIGNS_LASTMOD = "2026-11-04"
 
@@ -1080,6 +1164,9 @@ def designs_of(parent_slug):
 def build_design(d, oe):
     parent = next(g for g in GROUPS if g["slug"] == d["parent"])
     ls = design_listings(d)
+    pids = {id(x) for x in group_listings(parent)}
+    if not all(id(l) in pids for l in ls):  # a design page must count only listings its parent tracker shows
+        raise SystemExit(f"design page {design_fname(d)} has listings its parent tracker doesn't show")
     fname = design_fname(d)
     shops = len({l["store_id"] for l in ls})
     buy = [l for l in ls if l["status"] in BUYABLE]
@@ -1132,7 +1219,10 @@ def build_design(d, oe):
         a1 += f" We couldn't check {names(unk)} this run, so we don't know their status."
     a2 = (f"We track it at {shops} {'shop' if shops == 1 else 'shops'}: {names(ls)}. Each name in the table above opens that shop's own listing."
           if ls else "No shop we check lists it right now.")
+    vers = sorted({(l.get("title") or l["label"]) for l in ls})
+    a_v = (f"We track {len(ls)} {'listing' if len(ls) == 1 else 'listings'}. In each shop's own words: " + "; ".join(vers) + "." if ls else "None right now.")
     qa = [(f'Is {d["full"]} in stock?', a1),
+          (f'Which sizes and versions of {d["full"]} do you track?', a_v),
           (f'Where can I buy {d["full"]}?', a2),
           ("How often do you check?",
            f"Every shop is checked {CHECK_FREQ}. Each status is exactly what the shop's public product data said at that time. \"Not yet on sale\" means the shop has a preview page up but isn't taking orders yet, and \"Couldn't check\" means our check failed, so we don't guess."),
@@ -1148,7 +1238,7 @@ def build_design(d, oe):
     sibs = "".join(f'<li><a href="{design_fname(x)}">{E(x["name"])}</a></li>' for x in designs_of(d["parent"]) if x is not d)
     others = (f'<li><a href="{parent["slug"]}/">All {E(parent["short"])} designs</a></li>' + sibs
               + (f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>' if sec == "hobonichi" else f'<li><a href="{parent["slug"]}/#tracker">Every listing on the {E(parent["short"])} page</a></li>'))
-    intro = (f'{d["full"]}: the status each shop we track reported at its last check, in one place. '
+    intro = (E(d["about"]) + " " if d.get("about") else "") + (f'{d["full"]}: the status each shop we track reported at its last check, in one place. '
              f'This page covers just this design; the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a> has every design we track.')
     body = f"""
 <div class="product-page">
@@ -1171,7 +1261,7 @@ def build_design(d, oe):
   <aside class="side-col">
     {sponsor_block()}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
-    {guides_block() if sec == "hobonichi" else ""}
+    {guides_block() if sec == "hobonichi" else (f'<section class="card"><p class="eyebrow">Guide</p><ul class="link-list"><li><a href="{DG_GUIDE_SLUG}/">Best dot grid journals compared</a></li></ul></section>' if sec == "dotgrid" else "")}
   </aside>
 </div>
 </div>"""
@@ -1319,10 +1409,24 @@ H_SRC = {  # official Hobonichi pages used for product facts
     "shop": ("https://www.1101.com/store/techo/en/2027/pc/shopping_guide/", "Hobonichi Techo 2027 shopping guide"),
 }
 
-def design_links_block():
-    """Hobonichi design pages, for the Hobonichi guides."""
-    items = "".join(f'<li><a href="{design_fname(d)}">{E(d["full"])}</a></li>' for d in DESIGNS if any(g["slug"] == d["parent"] and g_sec(g) == "hobonichi" for g in GROUPS))
-    return f'<h2>Restock pages for single designs</h2><ul class="link-list">{items}</ul>' if items else ""
+def design_links_block(sec="hobonichi", hx="h2"):
+    """Design pages of one section (or every section with sec=None), for guides and the guides index."""
+    def sec_of(d):
+        return next(g_sec(g) for g in GROUPS if g["slug"] == d["parent"])
+    items = "".join(f'<li><a href="{design_fname(d)}">{E(d["full"])}</a></li>' for d in DESIGNS if sec is None or sec_of(d) == sec)
+    return f'<{hx}>Restock pages for single designs</{hx}><ul class="link-list">{items}</ul>' if items else ""
+
+def design_index_block():
+    """Every design page, grouped by family: the design-pages index on /guides/."""
+    fam = [("hobonichi", "Hobonichi"), ("dotgrid", "Dot grid journals"), ("travelers", "Traveler's Company"), ("midori", "MIDORI MD")]
+    out = []
+    for k, t in fam:
+        ds = [d for d in DESIGNS if next(g_sec(g) for g in GROUPS if g["slug"] == d["parent"]) == k]
+        if ds:
+            out.append(f'<h3>{E(t)}</h3><ul class="link-list">' + "".join(
+                f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)))}</span></li>' for d in ds) + "</ul>")
+    return f'<section class="card" id="design-pages"><h2>Restock pages for single designs</h2><p class="muted small">{len(DESIGNS)} pages, one per planner or journal design we track. Counts come from the same checks as the trackers.</p>{"".join(out)}</section>'
+
 
 def guides_block():
     return ('<section class="card"><p class="eyebrow">Guides</p><ul class="link-list">'
@@ -1691,6 +1795,7 @@ def build_dotgrid_guide():
 <h2>Sources</h2>
 <ol class="sources">{src_items}</ol>
 <p class="muted small">Each maker sells other dot grid journals too. This guide covers the A5 versions above.</p>
+{design_links_block("dotgrid")}
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
@@ -1715,6 +1820,7 @@ def build_guides_index():
 <p class="lede">Short, sourced guides to help you choose and find stationery that sells out. Live stock on the guides comes from the same checks as the tracker, {CHECK_FREQ}.</p>
 {signup()}
 <ul class="guide-list">{items}</ul>
+{design_index_block()}
 </article>"""
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": t, "url": url_for(h)} for i, (h, t) in enumerate(GUIDES)]}
