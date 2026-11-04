@@ -364,6 +364,10 @@ def exact_only(canonical):
 def oe_key(p):
     return p["url"] if exact_only(p.get("canonical")) else product_key(p)
 
+def design_page_for(listings):
+    """Root-relative-ready href of the design page covering these listings, if one exists (see DESIGNS)."""
+    return None
+
 def amazon_main(prods):
     """Products that no tracked shop can sell right now (every listing sold out / not yet on sale).
     Recomputed from data/stock.json on every build. A product with any listing we couldn't
@@ -492,17 +496,31 @@ def build_index():
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
     out_everywhere = amazon_main(prods)
     rows = tracker_rows(prods, out_everywhere)
-    def oe_card(m):
+    def oe_since(m):
+        """Latest date a listing flipped to its current status, only if we actually saw the flip
+        (status_since later than first_seen). Listings unavailable since we started tracking get no date."""
+        seen = [l["status_since"] for l in m["listings"] if l.get("status_since") and l.get("status_since") != l.get("first_seen")]
+        return max(seen) if seen else None
+    def oe_row(m):
         l0 = m["listings"][0]
         name = canon.get(l0.get("canonical") or "", l0["label"])
+        dp = design_page_for(m["listings"])
+        name_html = f'<a href="{dp}">{E(name)}</a>' if dp else E(name)
+        since = oe_since(m)
+        since_html = f' <span class="oe-since">sold out since {time_tag(since)}</span>' if since else ""
         shops = "".join(f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(l["store"])}</a> <span class="badge {E(l["status"])}">{E(STATUS[l["status"]])}</span></li>' for l in m["listings"])
-        return f"""<li class="oe-item"><div class="oe-text"><h3>{E(name)}</h3><p class="oe-note">{E(m['note'])}</p>
-  <details class="muted small"><summary>Shops we checked</summary><ul class="oe-shops">{shops}</ul></details></div>
-  <a class="btn btn-amz" href="{E(m['url'])}" target="_blank">{E(m['label'])}</a></li>"""
+        n = len({l["store_id"] for l in m["listings"]})
+        amz_label = "View on Amazon" if m["exact"] else "Search Amazon"
+        return f"""<li class="oe-row"><div class="oe-name"><span class="oe-title">{name_html}</span>{since_html}
+  <details class="oe-det"><summary>Shops we checked ({n})</summary><ul class="oe-shops">{shops}</ul></details></div>
+  <a class="oe-amz" href="{E(m['url'])}" target="_blank" title="{E(m['label'])}">{amz_label}</a></li>"""
+    oe_groups = {}
+    for m in sorted(out_everywhere.values(), key=lambda m: not m["exact"]):
+        oe_groups.setdefault(m["note"], []).append(m)
     oe_html = (f"""<section class="card" id="sold-out-everywhere">
       <div class="section-head"><h2>Sold out at every shop we track</h2></div>
-      <p class="muted small">None of the shops we check can sell these right now. Amazon may still have them, so we link there. A product leaves this list as soon as any shop we track has it in stock or on preorder.</p>
-      <ul class="oe-list">{"".join(oe_card(m) for m in sorted(out_everywhere.values(), key=lambda m: not m["exact"]))}</ul>
+      <p class="muted small">None of the shops we check can sell these right now. Amazon may still have them, so each row links there. A product leaves this list as soon as any shop we track has it in stock or on preorder.</p>
+      {"".join(f'<h3 class="oe-group">{E(note)}</h3><ul class="oe-list compact">{"".join(oe_row(m) for m in ms)}</ul>' for note, ms in oe_groups.items())}
     </section>""" if out_everywhere else "")
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a>: <span class="muted">{E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
 
