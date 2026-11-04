@@ -313,11 +313,14 @@ a.az:hover{opacity:1}
 .foot p{max-width:none}
 /* nav row spans the column; the -12px offsets the pill padding so the first and last link text sit on the content edges */
 @media (min-width:901px){.site-nav{flex:1 1 100%;justify-content:space-between;margin:0 -12px}.nav-trackers,.nav-rest{flex:0 0 auto}}
-/* Hero uses the full content column at >=901px: intro on the left, the signup card on the right, centred against eyebrow/H1/intro; everything else full width below */
+/* Hero runs the full content column: eyebrow, H1, intro and the signup card all span it (one column, signup below the intro) */
+.hero{max-width:none}
+.hero h1{font-size:clamp(2rem,3.55vw,3.25rem);max-width:none}
+.hero .lede,.hero .eyebrow{max-width:none}
+.hero .signup-strip{max-width:none}
 @media (min-width:901px){
-  .hero{max-width:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,420px);column-gap:56px;align-items:start}
-  .hero>*{grid-column:1/-1}
-  .hero>.eyebrow,.hero>h1,.hero>.lede{grid-column:1}
-  .hero>.signup-strip{grid-column:2;grid-row:1/span 3;align-self:center;margin:0;max-width:none}
+  .hero .signup-strip .signup-form{flex-wrap:nowrap}
+  .hero .signup-strip .strip-label{flex:0 0 auto;margin-right:8px}
+  .hero .signup-strip input[type=email]{flex:1 1 auto}
   .site-nav{flex-wrap:nowrap}.nav-trackers,.nav-rest{display:contents}
 }
