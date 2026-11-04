@@ -145,9 +145,11 @@ DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG + "/",
              "travelers-notebook-regular-size": SECTIONS["travelers"]["slug"] + "/#tracker"}  # Regular colors merged into the Traveler's Company page
-NAV = ([("index.html", "Hobonichi tracker"), ("hobonichi-2027.html", "2027 calendar")]
-       + [(SECTIONS[k]["slug"] + "/", SECTIONS[k]["nav"]) for k in LIVE]
-       + [("guides/", "Guides"), ("shop/", "Planners and journals"), ("follow/", "Follow us"), ("about.html", "About")])
+# Header: the four trackers sit under one "Trackers" menu (details/summary: works by keyboard, touch and without JS);
+# the rest stay top level. Every URL is unchanged.
+NAV_TRACKERS = [("index.html", "Hobonichi tracker")] + [(SECTIONS[k]["slug"] + "/", SECTIONS[k]["nav"]) for k in LIVE]
+NAV = [("hobonichi-2027.html", "2027 calendar"), ("guides/", "Guides"), ("shop/", "Planners and journals"),
+       ("follow/", "Follow us"), ("about.html", "About")]
 SHOP_NAME = "Our planners and journals"  # h1 of /shop; nav and breadcrumb say "Planners and journals"
 # The workflow cron is "17,47 * * * *": two runs an hour. Every page says it the same way.
 CHECK_FREQ = "about every 30 minutes"
@@ -190,7 +192,13 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
         title += TITLE_SUFFIX
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-"))  # Hobonichi product pages sit under the tracker
     guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "best-dot-grid-journals/")  # guides sit under Guides (the calendar keeps its own nav item)
-    nav = "".join(f'<a href="{h}"{" aria-current=page" if h == fname or (hobo_page and h == "index.html") or (guide_page and h == "guides/") else ""}>{E(t)}</a>' for h, t in NAV)
+    def cur(h):  # this page, or the page it sits under (product pages under the tracker, design pages under their section)
+        return (h == fname or (hobo_page and h == "index.html") or (guide_page and h == "guides/")
+                or (h in [x for x, _ in NAV_TRACKERS] and h.endswith("/") and fname.startswith(h)))
+    trk = "".join(f'<a href="{h}"{" aria-current=page" if cur(h) else ""}>{E(t)}</a>' for h, t in NAV_TRACKERS)
+    nav = (f'<details class="nav-menu{" is-current" if any(cur(h) for h, _ in NAV_TRACKERS) else ""}"><summary>Trackers</summary>'
+           f'<div class="nav-pop">{trk}</div></details>'
+           + "".join(f'<a href="{h}"{" aria-current=page" if cur(h) else ""}>{E(t)}</a>' for h, t in NAV))
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
 <html lang="en"><head>
@@ -216,7 +224,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 </head><body>
 <header class="masthead"><div class="wrap">
   <a class="brand" href="index.html" aria-label="Stationery Drop Watch home"><picture><source media="(max-width:340px)" srcset="assets/brand/icon.svg"><img class="brand-logo" src="assets/brand/logo.svg" alt="Stationery Drop Watch" width="248" height="44"></picture></a>
-  <nav>{nav}</nav>
+  <nav class="site-nav" aria-label="Main">{nav}</nav>
 </div></header>
 <main class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
@@ -503,7 +511,7 @@ def build_index():
         f'<details class="muted small"><summary>Stores we list but don\'t check automatically</summary><ul>{not_checked}</ul></details>')
     body = f"""
 <section class="hero">
-  {eyebrow("Hobonichi Techo 2027", f"{len({p['store_id'] for p in prods})} shops checked {CHECK_FREQ}")}
+  {eyebrow("Hobonichi Techo 2027", f"{len({p['store_id'] for p in prods})} Hobonichi shops", f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}")}
   <h1>Know the moment your planner is back.</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
   <p class="shop-cta"><a class="btn-ghost" href="shop/">{SHOP_NAME} →</a> <span class="muted small">2027 planners and journals we make, printed on Amazon and printable on Etsy</span></p>
@@ -606,7 +614,7 @@ def related_block(current):
 </section>"""
 
 def build_about():
-    n_checked = len([s for s in stores["stores"] if s["platform"] in ("shopify", "hobonichi")])
+    n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
     body = f"""
 <article class="prose">
 {crumbs(("about.html", "About"))}
@@ -810,7 +818,7 @@ def build_group(g, oe):
 <div class="product-page">
 {crumbs((g["slug"] + "/", g["short"]))}
 <section class="hero">
-  {eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), f"{shops} {'shop' if shops == 1 else 'shops'} checked {CHECK_FREQ}")}
+  {eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), f"{shops} {'shop' if shops == 1 else 'shops'}", f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}") if ext and not g.get("parent") else eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), f"{shops} {'shop' if shops == 1 else 'shops'} checked {CHECK_FREQ}")}
   <h1>{E(g['h1'])}</h1>
   <p class="lede">{E(g['intro'])}</p>
   <p><strong>Right now:</strong> {right_now}
@@ -857,7 +865,7 @@ FAQ = [
     ("How often do you check the shops?",
      "About every 30 minutes. A scheduled job reads each shop's public product data, then rebuilds this site with what it found."),
     ("Which shops do you check?",
-     "{n} shops, in separate sections per brand family. Hobonichi: the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
+     "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
      "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 covers. {tracks} We don't track pens or everyday refills."),
     ("What does \"Couldn't check\" mean?",
@@ -881,10 +889,11 @@ FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
 def faq_block():
     n = len({p["store_id"] for p in stock["products"]})
     # {shop} is a link in the page and the plain URL in the FAQ structured data
-    secs = ". ".join(f'{SECTIONS[k]["foot"]}: {shop_names(k)}' + (", each checked on its own store" if k == "dotgrid" else "") for k in LIVE)
+    secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + (", each checked on its own store" if k == "dotgrid" else "") for k in LIVE)
+    secs += ". Some shops sell more than one brand, so they're counted once in the total"
     tracks = " ".join(FAQ_TRACKS[k] for k in LIVE)
-    qa = [(q, a.format(n=n, secs=secs, tracks=tracks.format(dg=dotgrid_names()), shop=url_for("shop/")),
-           E(a).format(n=n, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in FAQ]
+    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_names()), shop=url_for("shop/")),
+           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in FAQ]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}

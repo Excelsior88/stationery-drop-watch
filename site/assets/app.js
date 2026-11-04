@@ -1,5 +1,11 @@
 // Stationery Drop Watch: client-side table filtering. The check time is shown once per table (build_site.py).
 (function () {
+  // Header "Trackers" menu: works without JS (details/summary); this only closes it on Escape or a click elsewhere.
+  const menu = document.querySelector(".nav-menu");
+  if (menu) {
+    document.addEventListener("click", e => { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && menu.open) { menu.open = false; menu.querySelector("summary").focus(); } });
+  }
   const LABEL = { in_stock: "In stock", preorder: "Preorder", coming_soon: "Not yet on sale", sold_out: "Sold out", unknown: "Couldn't check" };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const dataEl = document.getElementById("stock-data");
