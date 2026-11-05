@@ -134,5 +134,15 @@
   "section": "travelers",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-05T01:48:32+00:00",
+  "store_id": "travelerscompanyusa",
+  "store": "Traveler's Company USA (official)",
+  "label": "Traveler's notebook Regular size · Blue",
+  "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-blue",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
