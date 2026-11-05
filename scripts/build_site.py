@@ -2009,8 +2009,14 @@ def check_none_claim(fname, doc):
 _AMZ_NOTE = re.compile(r'class="btn btn-amz"[^>]*>[^<]*</a> <span class="muted small">(Sold out|Not on sale yet)[^<]*</span>')
 
 def check_amz_doc(fname, doc):
-    """Build check: a design page's top Amazon note must not claim sold out while a listing on it is buyable or unchecked."""
-    if _AMZ_NOTE.search(doc) and re.search(r'<span class="badge (in_stock|preorder|unknown)">', doc):
+    """Build check: a design page's top Amazon note must not claim sold out while a listing on it is buyable or unchecked.
+
+    Only the stock table counts. Recent restocks reuse the same badge for an earlier flip
+    (sold out -> in stock), and that history is not the listing's status now. A later sell-out
+    still gets the sold-out note, and this check still fails if any current row is in stock,
+    on preorder, or unchecked."""
+    listings = "\n".join(m.group(1) for m in re.finditer(r'<table class="stock">(.*?)</table>', doc, re.S))
+    if _AMZ_NOTE.search(doc) and re.search(r'<span class="badge (in_stock|preorder|unknown)">', listings):
         raise SystemExit(f"{fname}: top note claims sold out but a listing on the page is in stock, on preorder or unchecked")
 
 def main():
