@@ -1884,6 +1884,11 @@ SHOP_ETSY = [
     dict(title="2027 Printable Planner for Men", inside="mens", img="assets/shop/mens-2027-printable-planner.jpg",
          alt="2027 printable planner for men in charcoal, shown as printed pages", url="https://www.etsy.com/listing/4606781258",
          blurb="The men's 2027 planner as a PDF you print at home. Weekly and monthly pages, dot grid notes, workout log and budget pages."),
+    dict(title="Level Up! My 2027 Kids Planner", img="assets/shop/kids-2027-printable-planner.jpg",
+         alt="Level Up! My 2027 Planner, a printable video game style kids planner, cover page", url="https://www.etsy.com/listing/4610143237",
+         sub="Printable PDF for kids 7 to 11 · instant download from Etsy",
+         blurb="A printable 2027 kids planner that plays like a video game. 12 monthly Levels with Main Quests, Side Quests and Boss Battles, plus a habit tracker and XP bar.",
+         details=["US Letter 8.5 x 11 in, no A4", "168 pages, Monday start, 53 weeks", "Reading Quest Log, Trophy Room, Coin Bank"]),
 ]
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
@@ -1947,8 +1952,8 @@ def build_shop():
                        amz_price(a), a if a in SHOP_INSIDE else None)
                   for a in SHOP_ORDER)
     etsy_price = f'<p class="shop-price"><strong>{E(ETSY_PRICE[0])}</strong> <span class="muted small">{E(ETSY_PRICE[1])}</span></p>'
-    etsy = "".join(card(e["img"], e["alt"], e["title"], "Printable PDF · instant download from Etsy", e["blurb"],
-                        ["US Letter 8.5 x 11 in", "172 pages"], e["url"], "View on Etsy", False, etsy_price, e.get("inside"))
+    etsy = "".join(card(e["img"], e["alt"], e["title"], e.get("sub", "Printable PDF · instant download from Etsy"), e["blurb"],
+                        e.get("details", ["US Letter 8.5 x 11 in", "172 pages"]), e["url"], "View on Etsy", False, etsy_price, e.get("inside"))
                    for e in SHOP_ETSY)
     body = f"""
 <article class="prose shop shop-wide">
@@ -1963,7 +1968,7 @@ def build_shop():
 <ul class="shop-list">{etsy}</ul>
 </article>"""
     return fname, page(fname, "Our planners and journals: 2027 planners and journals on Amazon and Etsy · Stationery Drop Watch",
-                       "Planners and journals made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, a reading journal and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy.",
+                       "Planners and journals made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, a reading journal and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy, including a kids planner.",
                        body, ld=(crumbs_ld((fname, "Planners and journals")),))
 
 SOCIALS = [  # (platform, handle, url, note, icon letter)
