@@ -214,5 +214,14 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-05T23:39:42+00:00",
+  "store_id": "leuchtturm-us",
+  "store": "Leuchtturm1917 US",
+  "label": "Bullet Journal Edition 2 · Black",
+  "url": "https://www.leuchtturm1917.us/products/bullet-journal-edition-2?variant=48072859189493",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
