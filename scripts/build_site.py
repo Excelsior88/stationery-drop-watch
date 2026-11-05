@@ -1894,10 +1894,10 @@ SHOP_ETSY = [
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
 # 2026-11-04 (buy box and format swatch; no strikethrough or deal shown). A None here shows "See price on Amazon".
 AMAZON_LIST_PRICES = {"B0HPBDNS7F": "$19.99", "B0HQ5TLDK3": "$14.99", "B0HQ5X3C7D": "$16.99",
-                      "B0HP9PXSR1": "$14.99", "B0HP85QLMS": "$9.99"}
+                      "B0HP9PXSR1": "$14.99"}
 SHOP_LABELS = {"B0HPBDNS7F": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
-               "B0HP9PXSR1": "2027 Planner for Men", "B0HP85QLMS": "Kids' Goldfish Journal"}
-SHOP_ORDER = ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HP85QLMS")
+               "B0HP9PXSR1": "2027 Planner for Men"}
+SHOP_ORDER = ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1")
 ETSY_PRICE = ("$6.99", "20% off launch sale Oct 31 to Nov 30")
 # Interior previews, web-sized into assets/shop/inside/: our own Etsy listing images (etsy/printables/*/listing-images)
 # and, for the Amazon books, interior spreads Kiln exported from the print files (keyed by ASIN). (file stem, caption)
@@ -1910,7 +1910,6 @@ SHOP_INSIDE = {
                    ("book-review-spread-p24-25", "Book review pages, pages 24-25")],
     "B0HP9PXSR1": [("monthly-calendar-goals-spread-p6-7", "January calendar and Goals & Priorities, pages 6-7"),
                    ("weekly-spread-p12-13", "Weekly spread, Jan 3 to 9, pages 12-13")],
-    "B0HP85QLMS": [("journal-page-spread-p2-3", "Journal pages, pages 2-3 (every page has this layout)")],
     "womens": [("04-weekly-spread-dec27-jan2", "Weekly spread, Dec 27 to Jan 2"), ("05-monthly-calendar-january", "Monthly calendar, January"),
                ("06-habit-tracker-january", "Habit tracker, January")],
     "mens": [("04-weekly-spread-dec27-jan2", "Weekly spread, Dec 27 to Jan 2"), ("05-monthly-calendar-january", "Monthly calendar, January"),
@@ -1968,7 +1967,7 @@ def build_shop():
 <ul class="shop-list">{etsy}</ul>
 </article>"""
     return fname, page(fname, "Our planners and journals: 2027 planners and journals on Amazon and Etsy · Stationery Drop Watch",
-                       "Planners and journals made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, a reading journal and a kids' journal on Amazon, plus printable 2027 planner PDFs on Etsy, including a kids planner.",
+                       "Planners and journals made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, and a reading journal on Amazon, plus printable 2027 planner PDFs on Etsy, including a kids planner.",
                        body, ld=(crumbs_ld((fname, "Planners and journals")),))
 
 SOCIALS = [  # (platform, handle, url, note, icon letter)
