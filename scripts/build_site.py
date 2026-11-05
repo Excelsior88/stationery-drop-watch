@@ -1888,7 +1888,7 @@ SHOP_ETSY = [
          alt="Level Up! My 2027 Planner, a printable video game style kids planner, cover page", url="https://www.etsy.com/listing/4610143237",
          sub="Printable PDF for kids 7 to 11 · instant download from Etsy",
          blurb="A printable 2027 kids planner that plays like a video game. 12 monthly Levels with Main Quests, Side Quests and Boss Battles, plus a habit tracker and XP bar.",
-         details=["US Letter 8.5 x 11 in, no A4", "168 pages, Monday start, 53 weeks", "Reading Quest Log, Trophy Room, Coin Bank"]),
+         details=["US Letter 8.5 x 11 in, no A4", "168 pages, Monday start, 53 weeks", "Reading Quest Log, Trophy Room, Coin Bank", "Print edition coming soon"]),
 ]
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
