@@ -312,6 +312,9 @@ def signup(kind="alerts"):
     (docs.buttondown.com/building-your-subscriber-base): a plain POST to embed-subscribe; don't submit via fetch,
     Buttondown may need to show a CAPTCHA. Always id="alerts", so "#alerts" links work on every page."""
     label, note = SIGNUP_COPY[kind]
+    if kind == "shop" and shop_inserts_public():
+        label = "Hear about new planners, journals, and inserts"
+        note = "An occasional email when we release a new planner, journal, or printable insert, plus our restock alerts. No spam, unsubscribe anytime."
     return f"""<section class="signup-strip" id="alerts" aria-label="{E(label)}">
   <form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
     <label class="strip-label" for="email-top">{E(label)}</label>
@@ -616,7 +619,7 @@ def build_hobo_tracker():
   {eyebrow("Hobonichi Techo 2027", f"{len({p['store_id'] for p in prods})} Hobonichi shops", f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}")}
   <h1>Know the moment your planner is back.</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
-  <p class="shop-cta"><a class="btn-ghost" href="shop/">{SHOP_NAME} →</a> <span class="muted small">2027 planners and journals we make, printed on Amazon and printable on Etsy</span></p>
+  <p class="shop-cta"><a class="btn-ghost" href="shop/">{SHOP_NAME} →</a> <span class="muted small">{shop_cta_line()}</span></p>
   <p class="small section-switch">Also tracked: {" · ".join(f'<a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE)}</p>
   {signup()}
   <div class="stats{' five' if s['unknown'] else ''}">
@@ -703,9 +706,14 @@ def build_index():
   <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet.</p></div>"""
     guides = "".join(f'<li><a href="{h}">{E(t)}</a>{f"<p class=\"muted small\">{E(GUIDE_BLURBS[h])}</p>" if h in GUIDE_BLURBS else ""}</li>' for h, t in GUIDES)
     books = {b["id"]: b for b in picks["books"]}
-    own = [(books[a]["cover"], books[a]["cover_alt"], SHOP_LABELS[a], books[a]["format"]) for a in SHOP_ORDER if a in books and books[a].get("cover")]
-    own += [(e["img"], e["alt"], e["title"], "Printable PDF") for e in SHOP_ETSY]
-    own_html = "".join(f'<li><a href="shop/"><img src="{E(img)}" alt="{E(alt)}" loading="lazy" decoding="async" width="200" height="300"><span class="hub-own-t">{E(t)}</span><span class="muted small">{E(sub)}</span></a></li>' for img, alt, t, sub in own)
+    own = [(books[a]["cover"], books[a]["cover_alt"], SHOP_LABELS[a], books[a]["format"], "", 200, 300)
+           for a in SHOP_ORDER if a in books and books[a].get("cover")]
+    own += [(e["img"], e["alt"], e["title"], e.get("hub_sub", "Printable PDF"), e.get("img_class", ""), e.get("img_w", 200), e.get("img_h", 300))
+            for e in etsy_listings()]
+    row_cls = "hub-own-row cols-8" if len(own) == 8 else "hub-own-row"
+    own_html = "".join(
+        f'<li><a href="shop/"><img{f" class=\"{E(cls)}\"" if cls else ""} src="{E(img)}" alt="{E(alt)}" loading="lazy" decoding="async" width="{w}" height="{h}"><span class="hub-own-t">{E(t)}</span><span class="muted small">{E(sub)}</span></a></li>'
+        for img, alt, t, sub, cls, w, h in own)
     faq_html, _ = faq_block(only=HUB_FAQ, sid="good-to-know")
     unk = f' <span class="unk-note">{s["unknown"]} couldn\'t be checked this run.</span>' if s["unknown"] else ""
     body = f"""
@@ -737,8 +745,8 @@ def build_index():
 
 <section class="hub-own" id="our-planners" aria-labelledby="own-h">
   <div class="section-head"><h2 id="own-h">{SHOP_NAME}</h2><a class="btn-ghost" href="shop/">See them all →</a></div>
-  <p class="muted small">2027 planners and journals we make: printed books on Amazon and printable PDFs on Etsy.</p>
-  <ul class="hub-own-row">{own_html}</ul>
+  <p class="muted small">{E(shop_hub_line())}</p>
+  <ul class="{row_cls}">{own_html}</ul>
 </section>
 
 {faq_html}
@@ -1361,8 +1369,17 @@ def faq_block(only=None, sid="faq"):
     secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + (", each checked on its own store" if k == "dotgrid" else "") for k in LIVE)
     secs += ". Some shops sell more than one brand, so they're counted once in the total"
     tracks = " ".join(FAQ_TRACKS[k] for k in LIVE)
+    pairs = []
+    for q, a in FAQ:
+        if q == "Do you sell planners?" and shop_inserts_public():
+            a = ("Yes, our own: we make planners, journals, and printable planner inserts, and sell them on our shop page ({shop}). "
+                 "Printed books are on Amazon. Printable PDFs, including undated paper tip-ins, are on Etsy. "
+                 "The stationery we track is sold by the shops themselves; we just link you to them. "
+                 "Amazon links on the site are affiliate links, and we say so on every page; links to the shops we track are plain links.")
+        if only is None or q in only:
+            pairs.append((q, a))
     qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_names()), shop=url_for("shop/")),
-           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in FAQ if only is None or q in only]
+           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in pairs]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}
@@ -1391,7 +1408,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
     tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), tn_mod), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod)), (url_for("shop/"), "2026-11-03"), (url_for("follow/"), "2026-11-03")]
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), tn_mod), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-03")]
     def w3c(iso):
         return iso if len(iso) == 10 else dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
@@ -2138,6 +2155,16 @@ def build_guides_index():
                        "Guides from Stationery Drop Watch: where to buy the Hobonichi Techo 2027, Techo vs Cousin vs Weeks, the 2027 launch calendar, dot grid journals compared, and Traveler's Notebook Regular vs Passport vs Card Size.",
                        body, ld=(crumbs_ld((fname, "Guides")), lst))
 
+# Soft Days listing confirmed by the owner on 2026-11-06.
+# Public permalink is the url below. The shopwide sale applies, so the card uses the
+# same price line as the other Etsy printables: regular $6.99 plus "20% off launch sale
+# Oct 31 to Nov 30". Do not print the intro amount (it would read as the lasting price),
+# the sale code, an AI-disclosure line, or fee records.
+# Fit: the owner tested the inserts in a Hobonichi Weeks Mega on 2026-11-06. They fit,
+# slightly smaller than that book's pages. A standard Weeks book was not part of that test.
+# A gated item with url "" is omitted. DROPWATCH_SHOP_PREVIEW=1 can render that empty
+# state into DROPWATCH_SITE_OUT only.
+_ETSY_LISTING = re.compile(r"^https://www\.etsy\.com/listing/\d+(?:/[a-z0-9-]+)?$")
 SHOP_ETSY = [
     dict(title="2027 Printable Planner, Blush", inside="womens", img="assets/shop/womens-2027-printable-planner.jpg",
          alt="2027 printable planner in blush, shown as printed pages", url="https://www.etsy.com/listing/4606759241",
@@ -2150,6 +2177,30 @@ SHOP_ETSY = [
          sub="Printable PDF for kids 7 to 11 · instant download from Etsy",
          blurb="A printable 2027 kids planner that plays like a video game. 12 monthly Levels with Main Quests, Side Quests and Boss Battles, plus a habit tracker and XP bar.",
          details=["US Letter 8.5 x 11 in, no A4", "168 pages, Monday start, 53 weeks", "Reading Quest Log, Trophy Room, Coin Bank", "Print edition coming soon"]),
+    dict(id="soft-days", kind="insert", gated=True, sale_confirmed=True, price="$6.99",
+         title="Soft Days Narrow Planner Inserts",
+         img="assets/shop/soft-days-narrow-inserts.png", img_class="sheet", img_w=2700, img_h=2025,
+         url="https://www.etsy.com/listing/4611293526/soft-days-narrow-planner-inserts",
+         alt=('Soft Days Narrow Planner Insert Set: four fanned printed tip-in sheets titled Month Dashboard, '
+              'Habit Tracker, Weekly Plan, and Meal Planner, on a pale background. The sheet reads '
+              '"16 undated tip-in templates · colour + grayscale · Letter & A4" and "Finished cut size 85 × 175 mm", '
+              'and "Digital printable · not a physical planner · personal use".'),
+         sub="Printable paper tip-ins · personal use · instant download from Etsy",
+         sub_unpublished="Printable paper tip-ins · personal use",
+         hub_sub="Printable inserts",
+         blurb=("Sixteen undated templates you print, cut, and tip in yourself. Color and grayscale editions are the same "
+                "16 designs, on US Letter and A4, not 64 different designs. Finished cut size is 85 × 175 mm (3.35 × 6.89 in). "
+                "A digital download for personal use."),
+         details=["Five PDFs: four 9-page editions (Letter and A4, color and grayscale) and a 2-page printing and tip-in guide",
+                  "Two inserts per US Letter or A4 sheet, no bleed. Print at actual size (100%) and measure the 25 mm calibration square before printing the set",
+                  "Monday-start weeks. Personal use only: don't share, resell, or redistribute the PDFs",
+                  "Not a physical planner, bound refill, sticker sheet, or planner app",
+                  "Tested in a Hobonichi Weeks Mega, with inserts slightly smaller than the planner's pages. The cut is also a design-intent size for a standard Weeks book, based on published exterior dimensions, not a separate physical test of that book. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+         templates=["Month Dashboard", "Habit Tracker (6 habits, 31 daily rows)", "Mood Tracker",
+                    "Weekly Plan (Monday start, undated)", "Monthly Budget", "Reading Log", "Pen & Ink Swatches",
+                    "Meal Planner (breakfast and lunch/dinner, Monday start)", "Wishlist & Gifts", "Annual Goals",
+                    "Monthly Reset", "Order Tracker", "Stationery Inventory", "Brain Dump", "Dot Grid", "Lined Notes"],
+         templates_label="16 templates"),
 ]
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
@@ -2180,16 +2231,114 @@ SHOP_INSIDE = {
 import hashlib as _hl
 ASSET_V = {n: _hl.md5((SITE / 'assets' / n).read_bytes()).hexdigest()[:8] for n in ('style.css', 'app.js')}
 
+def shop_preview():
+    return os.environ.get("DROPWATCH_SHOP_PREVIEW") == "1"
+
+def etsy_listing_url(item):
+    """A real public listing URL, or "" when the release gate is still closed."""
+    url = (item.get("url") or "").strip()
+    if not url:
+        return ""
+    if not _ETSY_LISTING.match(url):
+        raise SystemExit(f"{item.get('title', 'Etsy item')}: listing URL must be https://www.etsy.com/listing/<id> with no placeholder")
+    return url
+
+def etsy_listings():
+    """Listings this build may render. A gated item with no URL is omitted unless this is a preview build."""
+    preview = shop_preview()
+    out = []
+    for item in SHOP_ETSY:
+        url = etsy_listing_url(item)
+        if url:
+            out.append(item)
+        elif item.get("gated"):
+            if preview:
+                out.append(item)
+        else:
+            raise SystemExit(f"{item['title']} is missing a public Etsy listing URL")
+    return out
+
+def shop_inserts_public():
+    """True when this build shows a printable insert (live listing, or an explicit preview)."""
+    return any(e.get("kind") == "insert" for e in etsy_listings())
+
+def shop_hub_line():
+    if shop_inserts_public():
+        return "Planners, journals, and printable inserts we make: printed books on Amazon and printable PDFs on Etsy."
+    return "2027 planners and journals we make: printed books on Amazon and printable PDFs on Etsy."
+
+def shop_cta_line():
+    if shop_inserts_public():
+        return "Planners, journals, and printable inserts we make, printed on Amazon and as PDFs on Etsy"
+    return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
+
+def shop_lastmod():
+    # Keep the shipped shop date until an insert listing URL is actually set. Preview builds do not count.
+    if any(e.get("kind") == "insert" and etsy_listing_url(e) for e in SHOP_ETSY):
+        return "2026-11-06"
+    return "2026-11-03"
+
+_BANNED_CLAIMS = ("$5.59", "us$5.59", "launch20", "ai-generated", "artificial intelligence",
+                  "made with ai", "created with ai", "generated by ai", "weeks size",
+                  "guaranteed to fit", "guaranteed compatibility")
+
+def guard_release(fname, doc):
+    """A public build must not claim Soft Days is listed, on sale, or AI-disclosed on the website."""
+    low = doc.lower()
+    for s in _BANNED_CLAIMS:
+        if s in low:
+            raise SystemExit(f"{fname}: copy contains {s!r}")
+    shown = "Soft Days" in doc
+    live = any(e.get("kind") == "insert" and etsy_listing_url(e) for e in SHOP_ETSY)
+    preview = shop_preview()
+    if shown and not preview and not live:
+        raise SystemExit(f"{fname}: Soft Days is rendered but listing_url is empty")
+    if fname.endswith("shop/index.html") and (preview or live) and not shown:
+        raise SystemExit(f"{fname}: Soft Days card missing from this shop build")
+    if not shown or not fname.endswith("shop/index.html"):
+        return
+    i = doc.find("Soft Days Narrow Planner Inserts")
+    start = doc.rfind('<li class="shop-card"', 0, i)
+    end = doc.find("</div></li>", i)
+    card = doc[start:end + len("</div></li>")]
+    text = html.unescape(card)
+    for needed in ("Tested in a Hobonichi Weeks Mega, with inserts slightly smaller than the planner's pages.",
+                   "not a separate physical test", "not affiliated", "personal use", "85 × 175 mm",
+                   "16 designs", "$6.99", "actual size (100%)", "25 mm"):
+        if needed not in text:
+            raise SystemExit(f"{fname}: Soft Days card is missing {needed!r}")
+    for banned in ("has not been tested", "not been verified", "unverified", "perfect fit", "full-page", "full page", "guaranteed to fit"):
+        if banned in text.lower():
+            raise SystemExit(f"{fname}: Soft Days card still has outdated fit wording {banned!r}")
+    if card.count("<li>") < 16:  # detail bullets plus the 16 template names
+        raise SystemExit(f"{fname}: Soft Days card is missing template names")
+    if live:
+        item = next(e for e in SHOP_ETSY if e.get("kind") == "insert")
+        url = etsy_listing_url(item)
+        if card.count(url) < 2 or "Etsy listing not published yet" in card or "not a live listing" in card:
+            raise SystemExit(f"{fname}: published Soft Days card has the wrong listing state")
+        if item.get("sale_confirmed", True) and (ETSY_PRICE[1] not in card or "Regular price" in card):
+            raise SystemExit(f"{fname}: Soft Days must use the shared sale note, not a standalone intro price")
+    else:
+        if "etsy.com" in card or "not a live listing" not in card or "Etsy listing not published yet" not in card:
+            raise SystemExit(f"{fname}: preview Soft Days card is not gated")
+
 def build_shop():
     fname = "shop/"
     books = {b["id"]: b for b in json.loads((ROOT / "content/editor_picks.json").read_text())["books"]}
     labels = SHOP_LABELS
+    for item in SHOP_ETSY:
+        if not (ROOT / "site" / item["img"]).is_file():
+            raise SystemExit(f"missing shop asset {item['img']}")
+        if item.get("kind") == "insert" and len(item.get("templates") or []) != 16:
+            raise SystemExit(f"{item['title']} must list 16 templates")
     def srcset(img):  # Etsy mockups ship 600w + 1200w copies; Amazon covers use their single file
         if img.startswith("assets/shop/") and img.endswith("-planner.jpg"):
             b = img[:-4]
             return f' srcset="/{E(b)}-600.jpg 600w, /{E(b)}-1200.jpg 1200w"'
         return ""
-    def card(img, alt, title, sub, blurb, details, href, btn, own, price, inside=None):
+    def card(img, alt, title, sub, blurb, details, href, btn, own, price, inside=None, *,
+             img_class="", dims=None, note="", templates=None, templates_label="Templates", card_id=""):
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
         attr = ' data-own-product' if own else ''
         ins = ""
@@ -2198,10 +2347,29 @@ def build_shop():
                            for f, cap in SHOP_INSIDE[inside])
             spreads = ' spreads' if inside in AMAZON_LIST_PRICES else ''
             ins = f'<details class="shop-inside"><summary>See inside</summary><div class="inside-grid{spreads}">{figs}</div></details>'
-        return f"""<li class="shop-card">
-  <a class="shop-img{' photo' if not own else ''}" href="{E(href)}"{attr} rel="noopener" target="_blank"><img src="{E(img)}"{srcset(img)} sizes="(max-width:600px) 240px, 150px" alt="{E(alt)}" loading="lazy" decoding="async"></a>
-  <div class="shop-body"><h3>{E(title)}</h3><p class="muted small">{E(sub)}</p>{price}<p>{E(blurb)}</p><ul class="small">{dl}</ul>
-  {ins}<a class="btn" href="{E(href)}"{attr} rel="noopener" target="_blank">{E(btn)}</a></div></li>"""
+        if templates:
+            lis = "".join(f"<li>{E(t)}</li>" for t in templates)
+            ins += f'<details class="shop-inside"><summary>{E(templates_label)}</summary><ul class="small">{lis}</ul></details>'
+        if img_class:
+            cls = "shop-img " + img_class
+        elif own:
+            cls = "shop-img"
+        else:
+            cls = "shop-img photo"
+        dim = f' width="{int(dims[0])}" height="{int(dims[1])}"' if dims else ""
+        image = f'<img src="{E(img)}"{srcset(img)}{dim} sizes="(max-width:600px) 240px, 150px" alt="{E(alt)}" loading="lazy" decoding="async">'
+        if href:
+            media = f'<a class="{cls}" href="{E(href)}"{attr} rel="noopener" target="_blank">{image}</a>'
+            action = f'<a class="btn" href="{E(href)}"{attr} rel="noopener" target="_blank">{E(btn)}</a>'
+        else:
+            media = f'<div class="{cls}">{image}</div>'
+            action = f'<p class="btn is-disabled" role="note">{E(btn)}</p>'
+        note_html = f'<p class="release-gate">{E(note)}</p>' if note else ""
+        idattr = f' id="{E(card_id)}"' if card_id else ""
+        return f"""<li class="shop-card"{idattr}>
+  {media}
+  <div class="shop-body">{note_html}<h3>{E(title)}</h3><p class="muted small">{E(sub)}</p>{price}<p>{E(blurb)}</p><ul class="small">{dl}</ul>
+  {ins}{action}</div></li>"""
     def amz_price(a):
         lp = AMAZON_LIST_PRICES.get(a)
         if not lp:
@@ -2211,25 +2379,54 @@ def build_shop():
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True,
                        amz_price(a), a if a in SHOP_INSIDE else None)
                   for a in SHOP_ORDER)
-    etsy_price = f'<p class="shop-price"><strong>{E(ETSY_PRICE[0])}</strong> <span class="muted small">{E(ETSY_PRICE[1])}</span></p>'
-    etsy = "".join(card(e["img"], e["alt"], e["title"], e.get("sub", "Printable PDF · instant download from Etsy"), e["blurb"],
-                        e.get("details", ["US Letter 8.5 x 11 in", "172 pages"]), e["url"], "View on Etsy", False, etsy_price, e.get("inside"))
-                   for e in SHOP_ETSY)
+    def etsy_price_html(item):
+        price = item.get("price", ETSY_PRICE[0])
+        url = etsy_listing_url(item)
+        if item.get("sale_confirmed", True) and url:
+            note = item.get("sale_note", ETSY_PRICE[1])
+            return f'<p class="shop-price"><strong>{E(price)}</strong> <span class="muted small">{E(note)}</span></p>'
+        return f'<p class="shop-price"><strong>{E(price)}</strong> <span class="muted small">Regular price</span></p>'
+    def etsy_card(item):
+        url = etsy_listing_url(item)
+        sub = item.get("sub", "Printable PDF · instant download from Etsy")
+        note = ""
+        btn = "View on Etsy"
+        if not url:
+            sub = item.get("sub_unpublished", sub)
+            btn = "Etsy listing not published yet"
+            note = ("Preview only, not a live listing. No public Etsy URL is set, so this card is left out of the public site. "
+                    "The price shown is the approved regular price, US$6.99. Launch-sale eligibility is not confirmed.")
+        return card(item["img"], item["alt"], item["title"], sub, item["blurb"],
+                    item.get("details", ["US Letter 8.5 x 11 in", "172 pages"]), url, btn, False, etsy_price_html(item),
+                    item.get("inside"), img_class=item.get("img_class", ""),
+                    dims=(item["img_w"], item["img_h"]) if item.get("img_w") and item.get("img_h") else None,
+                    note=note, templates=item.get("templates"), templates_label=item.get("templates_label", "Templates"),
+                    card_id=item.get("id", ""))
+    etsy = "".join(etsy_card(e) for e in etsy_listings())
+    if shop_inserts_public():
+        lede = "Planners, journals, and printable inserts we make. Get a printed copy on Amazon, or a printable PDF on Etsy."
+        title = "Our planners and journals: printed books and printable inserts on Amazon and Etsy · Stationery Drop Watch"
+        desc = ("Planners, journals, and printable inserts made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, "
+                "and a reading journal on Amazon, plus printable 2027 planner PDFs and undated narrow planner inserts on Etsy, including a kids planner.")
+        etsy_intro = '<p class="muted">Printable planner PDFs, and undated paper tip-ins you print and cut yourself.</p>'
+    else:
+        lede = "Planners and journals we make. Get a printed copy on Amazon or a printable PDF on Etsy."
+        title = "Our planners and journals: 2027 planners and journals on Amazon and Etsy · Stationery Drop Watch"
+        desc = "Planners and journals made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, and a reading journal on Amazon, plus printable 2027 planner PDFs on Etsy, including a kids planner."
+        etsy_intro = ""
     body = f"""
 <article class="prose shop shop-wide">
 {crumbs((fname, "Planners and journals"))}
 {eyebrow("Shop", "made by Stationery Drop Watch")}
 <h1>{SHOP_NAME}</h1>
-<p class="lede">Planners and journals we make. Get a printed copy on Amazon or a printable PDF on Etsy.</p>
+<p class="lede">{E(lede)}</p>
 {signup("shop")}
 <h2>Printed planners and journals on Amazon</h2>
 <ul class="shop-list">{amz}</ul>
 <h2>Printable PDFs on Etsy</h2>
-<ul class="shop-list">{etsy}</ul>
+{etsy_intro}<ul class="shop-list">{etsy}</ul>
 </article>"""
-    return fname, page(fname, "Our planners and journals: 2027 planners and journals on Amazon and Etsy · Stationery Drop Watch",
-                       "Planners and journals made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, and a reading journal on Amazon, plus printable 2027 planner PDFs on Etsy, including a kids planner.",
-                       body, ld=(crumbs_ld((fname, "Planners and journals")),))
+    return fname, page(fname, title, desc, body, ld=(crumbs_ld((fname, "Planners and journals")),))
 
 SOCIALS = [  # (platform, handle, url, note, icon letter)
     ("X", "@stationerydrop", "https://x.com/stationerydrop", "Restock alerts the moment we confirm them, plus planner news.", "X"),
@@ -2281,6 +2478,8 @@ def check_amz_doc(fname, doc):
         raise SystemExit(f"{fname}: top note claims sold out but a listing on the page is in stock, on preorder or unchecked")
 
 def main():
+    if shop_preview() and SITE.resolve() == (ROOT / "site").resolve():
+        raise SystemExit("Refusing to write a shop preview into site/. Set DROPWATCH_SITE_OUT to another directory.")
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
     shutil.copy(ROOT / "data/changes.json", SITE / "data/changes.json")
@@ -2313,6 +2512,10 @@ def main():
     (SITE / "sitemap.xml").write_text(build_sitemap())
     (SITE / "robots.txt").write_text(ROBOTS)
     (SITE / "CNAME").write_text(CNAME + "\n")
+    for html_path in SITE.rglob("*.html"):
+        guard_release(str(html_path.relative_to(SITE)), html_path.read_text())
+    state = "preview" if shop_preview() else ("listed" if any(e.get("kind") == "insert" and etsy_listing_url(e) for e in SHOP_ETSY) else "gated")
+    print("shop release gate:", state)
     print("built", sorted(str(p.relative_to(SITE)) for p in SITE.rglob("*.html")), "+ sitemap.xml, robots.txt, CNAME")
 
 if __name__ == "__main__":
