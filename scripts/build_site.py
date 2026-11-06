@@ -191,6 +191,7 @@ def guide_updated(fn):
 STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not yet on sale",
           "sold_out": "Sold out", "unknown": "Couldn't check"}
 DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
+TN_GUIDE_SLUG = "travelers-notebook-regular-vs-passport-vs-card-size"
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG + "/",
              "travelers-notebook-regular-size": SECTIONS["travelers"]["slug"] + "/#tracker"}  # Regular colors merged into the Traveler's Company page
@@ -241,7 +242,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     if not title.endswith(TITLE_SUFFIX):  # every page title ends with the site name
         title += TITLE_SUFFIX
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-"))  # Hobonichi product pages sit under the tracker
-    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "best-dot-grid-journals/")  # guides sit under Guides (the calendar keeps its own nav item)
+    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "best-dot-grid-journals/", TN_GUIDE_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
     def cur(h):  # this page, or the page it sits under (product pages under the tracker, design pages under their section)
         return (h == fname or (hobo_page and h == HOBO_TRACKER) or (guide_page and h == "guides/")
                 or (h in [x for x, _ in NAV_TRACKERS] and h.endswith("/") and fname.startswith(h)))
@@ -901,7 +902,8 @@ GROUPS = [
          match=lambda p: section_of(p) == "travelers", eyebrow="Traveler's Company", search_hint="Sticker set, Olive, 20th…",
          guide="Traveler's Company makes its limited editions in small runs, and each shop gets its own allocation, so one shop can sell out while another still has stock. "
                "We also track the five standard Regular size notebooks: Black (No. 13714006), Brown (No. 13715006), Blue (No. 15239006), Camel (No. 15193006) and Olive (No. 15342006). "
-               "Traveler's Company warns that counterfeits are sold in the US, so we only list the official US shop and authorized retailers. For refills, check the shops directly.",
+               "Traveler's Company warns that counterfeits are sold in the US, so we only list the official US shop and authorized retailers. For refills, check the shops directly. "
+               f'Choosing Regular, Passport, or the Card Size anniversary set: <a href="{TN_GUIDE_SLUG}/">Regular vs Passport vs Card Size</a>.',
          title=f"Traveler's Notebook restock tracker: regular colors and limited editions",
          desc="Are the Traveler's Notebook Regular size colors (Black, Brown, Blue, Camel, Olive), 2027 diary accessories and 20th anniversary sets in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
          og_image=BASE + "assets/brand/og-travelers.png",
@@ -1309,7 +1311,7 @@ def build_design(d, oe):
   <aside class="side-col">
     {sponsor_block()}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
-    {guides_block() if sec == "hobonichi" else (f'<section class="card"><p class="eyebrow">Guide</p><ul class="link-list"><li><a href="{DG_GUIDE_SLUG}/">Best dot grid journals compared</a></li></ul></section>' if sec == "dotgrid" else "")}
+    {section_guides(sec)}
   </aside>
 </div>
 </div>"""
@@ -1388,7 +1390,8 @@ def build_sitemap():
     urls += [(url_for(design_fname(d)), design_lastmod(d)) for d in DESIGNS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for("guides/"), DG_GUIDE_LASTMOD), (url_for("shop/"), "2026-11-03"), (url_for("follow/"), "2026-11-03")]
+    tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), tn_mod), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod)), (url_for("shop/"), "2026-11-03"), (url_for("follow/"), "2026-11-03")]
     def w3c(iso):
         return iso if len(iso) == 10 else dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
@@ -1439,13 +1442,15 @@ WTB_SLUG = "where-to-buy-hobonichi-2027"
 VS_SLUG = "hobonichi-techo-vs-cousin-vs-weeks"
 DG_GUIDE_SLUG = "best-dot-grid-journals"
 HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
-GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
+GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared"),
+                        (TN_GUIDE_SLUG + "/", "Regular vs Passport vs Card Size")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
 GUIDES_LASTMOD = "2026-10-29"
 DG_GUIDE_LASTMOD = "2026-11-04"  # last copy change on the dot grid guide
 GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin A5, Weeks and Weeks Mega in stock right now, checked about every 30 minutes, plus tips for catching a restock.",
                 VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits.",
                 "hobonichi-2027.html": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources.",
-                DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock."}  # last copy change on the guide pages (sitemap lastmod floor)
+                DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock.",
+                TN_GUIDE_SLUG + "/": "Leather cover and refill dimensions for Regular, Passport, and the limited Card Size 20th anniversary set, from TRAVELER'S COMPANY's own pages, plus which refills fit and which sizes we track."}  # last copy change on the guide pages (sitemap lastmod floor)
 H_SRC = {  # official Hobonichi pages used for product facts
     "orig": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6 (2027), specifications"),
     "cousin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_jan_en/", "English Cousin Book A5 (2027), specifications"),
@@ -1479,6 +1484,17 @@ def design_index_block():
 def guides_block():
     return ('<section class="card"><p class="eyebrow">Guides</p><ul class="link-list">'
             + "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in HOBO_GUIDES) + "</ul></section>")
+
+def section_guides(sec):
+    """Guide links on a design page. Hobonichi keeps its guides; dot grid and Traveler's link their own."""
+    if sec == "hobonichi":
+        return guides_block()
+    link = {"dotgrid": (DG_GUIDE_SLUG + "/", "Best dot grid journals compared"),
+            "travelers": (TN_GUIDE_SLUG + "/", "Regular vs Passport vs Card Size")}.get(sec)
+    if not link:
+        return ""
+    h, t = link
+    return f'<section class="card"><p class="eyebrow">Guide</p><ul class="link-list"><li><a href="{h}">{E(t)}</a></li></ul></section>'
 
 def _group(slug):
     return next(g for g in GROUPS if g["slug"] == slug)
@@ -1858,6 +1874,259 @@ def build_dotgrid_guide():
                        og_type="article", og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT)
 
 
+# Manufacturer package specs, read from the product pages linked in the guide's Sources.
+# Cover and refill are separate lines. Inch figures from the US shop are a different listing, not a conversion.
+def build_tn_sizes():
+    fname = TN_GUIDE_SLUG + "/"
+    title = "Traveler's Notebook Regular vs Passport vs Card Size: Which Size Fits You?"
+    desc = ("Regular, Passport, or the limited Card Size set: leather cover and refill dimensions from TRAVELER'S COMPANY, "
+            "which refills fit which cover, and which sizes this site tracks.")
+    updated = guide_updated(build_tn_sizes)
+    iso = json.loads(GUIDE_DATES.read_text())[build_tn_sizes.__name__]["date"]
+    ids = {c["id"] for c in stores["canonical"]}
+    need = {"tn-regular-black", "tn-regular-brown", "tn-regular-blue", "tn-regular-camel", "tn-regular-olive",
+            "tn-road-trip-brown", "tn-20th-card-black", "tn-2027-clear-folder-regular", "tn-2027-plastic-sheet-regular"}
+    if not need <= ids or any("passport" in i for i in ids) or {i for i in ids if "card" in i} != {"tn-20th-card-black"}:
+        raise SystemExit(f"Traveler's size guide tracking claims are out of date: {sorted(ids)}")
+    for slug in ("regular-black", "regular-brown", "regular-blue", "regular-camel", "regular-olive",
+                 "road-trip-brown", "card-size-20th-anniversary-black"):
+        if not any(d["parent"] == TN_SLUG and d["slug"] == slug for d in DESIGNS):
+            raise SystemExit(f"Traveler's size guide is missing a link target: {slug}")
+        if any("passport" in (d["slug"] + d["full"]).lower() for d in DESIGNS):
+            raise SystemExit("A Passport page exists; update the size guide before saying Passport is not tracked")
+
+    def dlink(slug):
+        d = next(x for x in DESIGNS if x["parent"] == TN_SLUG and x["slug"] == slug)
+        return f'<a href="{design_fname(d)}">{E(d["name"])}</a>'
+
+    src = [
+        ("journey", "https://travelerscompanyusa.com/write-your-lifes-journey-starting-with-the-travelers-notebook/",
+         "Write Your Life's Journey, starting with the TRAVELER'S notebook", "TRAVELER'S COMPANY USA, June 1, 2021. Two sizes, Regular and Passport, and how the maker describes carrying each."),
+        ("reg", "https://www.travelers-company.com/products/trnote/starter-kit-regular/black",
+         "Regular Size Black starter kit", "TRAVELER'S COMPANY. Leather cover H220 × W120 × D10 mm. Blank refill H210 × W110 × D4 mm, 64 pages, MD paper, saddle stitched. No. 13714006."),
+        ("pass", "https://www.travelers-company.com/products/trnote/starter-kit-passport/black",
+         "Passport Size Black starter kit", "TRAVELER'S COMPANY. Leather cover H134 × W98 × D10 mm. Blank refill H124 × W89 × D4 mm, 64 pages, MD paper, saddle stitched. No. 15026006."),
+        ("usreg", "https://shop.travelerscompanyusa.com/products/travelers-notebook-black",
+         "Black (Regular Size) starter kit", "TRAVELER'S COMPANY USA shop. Inch listing for the same Regular starter kit: cover H 9 in × W 5.7 in; refill H 9 in × W 5 in × D 0.15 in."),
+        ("uspass", "https://shop.travelerscompanyusa.com/products/travelers-notebook-passport-size-black",
+         "Black (Passport Size) starter kit", "TRAVELER'S COMPANY USA shop. Inch listing: cover H 5.2 in × W 3.8 in; refill H 4.8 in × W 3.5 in × D 0.15 in. The shop's line does not print an inch mark on the width."),
+        ("r001", "https://www.travelers-company.com/products/trnote/refill-regular/refill-r-001",
+         "001 Lined Notebook, Regular Size", "TRAVELER'S COMPANY. Lined 6.5 mm, 64 pages, MD paper, H210 × W110 × D4 mm. No. 14245006."),
+        ("p001", "https://www.travelers-company.com/products/trnote/refill-passport/refill-p-001n",
+         "001 Lined Notebook, Passport Size (current MD specification)", "TRAVELER'S COMPANY. Lined 6.5 mm, 64 pages, MD paper, H124 × W89 × D4 mm. No. 14368006."),
+        ("p001old", "https://www.travelers-company.com/products/trnote/refill-passport/refill-p-001",
+         "001 Lined Notebook, Passport Size (old specification)", "TRAVELER'S COMPANY. Labeled old specification: DP paper, 80 pages, perforated, still H124 × W89 × D4 mm. The page says the current refill changed to MD paper and 64 pages in March 2016."),
+        ("p003", "https://www.travelers-company.com/products/trnote/refill-passport/refill-p-003n",
+         "003 Blank Notebook, Passport Size", "TRAVELER'S COMPANY. Blank, 64 pages, MD paper, H124 × W89 × D4 mm. No. 14370006."),
+        ("ridx", "https://www.travelers-company.com/products/trnote/refill-regular",
+         "Refills, Regular Size", "TRAVELER'S COMPANY. Refills made to set into a Regular cover, with that size's own item numbers."),
+        ("pidx", "https://www.travelers-company.com/products/trnote/refill-passport",
+         "Refills, Passport Size", "TRAVELER'S COMPANY. Refills made to set into a Passport cover. Lists repair kits 009 and 010, Pen Holder M (016), and brass clip 030 for both Regular and Passport."),
+        ("cardnews", "https://travelerscompanyusa.com/travelers-notebook-card-size-20th-anniversary-set/",
+         "TRAVELER'S notebook Card Size 20th Anniversary Set", "TRAVELER'S COMPANY USA, March 4, 2026. The set, the limited-quantity note, and Card Size refills after the set sales end."),
+        ("cardb", "https://www.travelers-company.com/products/20th/20th-black",
+         "Card Size 20th Anniversary Set Black", "TRAVELER'S COMPANY. Contents and package specs. Cover H110 × W75 × D10 mm. Refill H100 × W65 × D2 mm, 32 pages. No. 15411006."),
+        ("cardbr", "https://www.travelers-company.com/products/20th/20th-brown",
+         "Card Size 20th Anniversary Set Brown", "TRAVELER'S COMPANY. Same cover and refill measurements as the Black set. No. 15412006. Spare band orange; zipper case dark brown."),
+    ]
+    # Same millimeter lines confirmed on these Regular pages: Brown, Blue, Camel, Olive. Passport Blue matches the Passport Black lines.
+    extra = {
+        "reg": [("Brown", "https://www.travelers-company.com/products/trnote/starter-kit-regular/brown"),
+                ("Blue", "https://www.travelers-company.com/products/trnote/starter-kit-regular/blue"),
+                ("Camel", "https://www.travelers-company.com/products/trnote/starter-kit-regular/camel"),
+                ("Olive", "https://www.travelers-company.com/products/trnote/starter-kit-regular/olive")],
+        "pass": [("Blue, same measurements", "https://www.travelers-company.com/products/trnote/starter-kit-passport/blue")],
+    }
+    src_i = {k: i + 1 for i, (k, *_) in enumerate(src)}
+
+    def cite(*keys):
+        return " " + " ".join(f'<a href="#src-{k}">[{src_i[k]}]</a>' for k in keys)
+
+    def row(label, cells):
+        # cells: (html, source keys)
+        tds = "".join(f"<td>{html}{cite(*keys)}</td>" for html, keys in cells)
+        return f'<tr><th scope="row">{E(label)}</th>{tds}</tr>'
+
+    rows = [
+        row("Lineup", [
+            ("One of the two standard sizes.", ("journey",)),
+            ("The other standard size.", ("journey",)),
+            ("A limited 20th-anniversary set. A new size for that anniversary, not a third standard size in the lineup.", ("cardnews", "journey")),
+        ]),
+        row("Leather cover", [
+            ("H220 × W120 × D10 mm. Cowhide, made in Thailand. Height × width × depth.", ("reg",)),
+            ("H134 × W98 × D10 mm. Cowhide, made in Thailand.", ("pass",)),
+            ("H110 × W75 × D10 mm. The set page also says 110 mm tall and 75 mm wide without the fastener. A 20th-anniversary logo is engraved on the back.", ("cardb", "cardnews")),
+        ]),
+        row("Refill that comes with it", [
+            ("H210 × W110 × D4 mm. Blank, 64 pages, MD paper, saddle stitched. The starter-kit page identifies this refill as 003.", ("reg",)),
+            ("H124 × W89 × D4 mm. Blank, 64 pages, MD paper, saddle stitched. The current blank refill 003 is the same size.", ("pass", "p003")),
+            ("H100 × W65 × D2 mm. Blank, 32 pages, MD paper, saddle stitched. The set holds five of these notebooks.", ("cardb",)),
+        ]),
+        row("Inches on the US shop", [
+            ("A separate listing, not a conversion of the millimeters: cover H 9 in × W 5.7 in. Refill H 9 in × W 5 in × D 0.15 in.", ("usreg",)),
+            ("Cover H 5.2 in × W 3.8 in. Refill H 4.8 in × W 3.5 in × D 0.15 in.", ("uspass",)),
+            ("The set pages give millimeters only.", ("cardb",)),
+        ]),
+        row("Carry, in the maker's words", [
+            ("Hold it in one hand. The 2021 article calls it about the height of an A5 notebook but slimmer, and says tickets, maps, and A4 paper folded in three fit. Two or three refills fit easily.", ("journey", "usreg")),
+            ("Fits a palm or a back pocket, and a smaller bag. With a zipper case or file, the maker says it can be a wallet, a card case, or a passport cover. The refill is described as the same size as a passport.", ("journey", "pidx")),
+            ("Fits the palm and a jeans pocket. With the pieces in the set, the maker says it can be a compact wallet, a business-card holder, a card case, or a mini pouch.", ("cardnews", "cardb")),
+        ]),
+        row("Notebook refills that fit", [
+            ("The Regular refill catalog only. A Regular 001 lined refill is H210 × W110 × D4 mm.", ("ridx", "r001")),
+            ("The Passport refill catalog only. A Passport 001 lined refill is H124 × W89 × D4 mm.", ("pidx", "p001")),
+            ("Card Size refills. Regular and Passport refills are a different height and width. The maker says Card Size refills are planned at TRAVELER'S FACTORY and TRAVELER'S COMPANY USA after the set sales end.", ("cardb", "cardnews")),
+        ]),
+        row("Tracked on this site", [
+            ("The five Regular colors, plus ROAD TRIP Brown. Open the color page for the shops we check.", ()),
+            ("Passport is not tracked.", ()),
+            ("The Black set only. The Brown set is not tracked.", ()),
+        ]),
+    ]
+    reg_links = " · ".join(
+        f'<a href="{u}" rel="noopener" target="_blank">{E(n)}</a>' for n, u in
+        [("Black", src[1][1]), *extra["reg"]])
+    pass_links = " · ".join(
+        f'<a href="{u}" rel="noopener" target="_blank">{E(n)}</a>' for n, u in
+        [("Black", src[2][1]), *extra["pass"]])
+    src_items = []
+    for k, u, t, note in src:
+        more = ""
+        if k == "reg":
+            more = " Same cover and refill lines on " + reg_links + "."
+        elif k == "pass":
+            more = " Same cover and refill lines on " + pass_links + "."
+        src_items.append(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>. {note}{more}</li>')
+    faq = [
+        ("What is the difference between Traveler's Notebook Regular and Passport?",
+         "They are different sizes, cover and refill both. On the Regular starter kit the leather cover is H220 × W120 × D10 mm and the blank refill is H210 × W110 × D4 mm. "
+         "On the Passport starter kit the leather cover is H134 × W98 × D10 mm and the blank refill is H124 × W89 × D4 mm. Both included refills are 64-page blank MD paper, saddle stitched. "
+         "TRAVELER'S COMPANY USA describes Regular and Passport as the two sizes, and says you choose by what you want to do with the notebook."),
+        ("Is Regular the same as A5, and Passport the same as A6?",
+         "No. A5 paper is 148 × 210 mm. The Regular refill is 210 mm tall, the same as A5's long side, and 110 mm wide, which is not A5's 148 mm. "
+         "The US shop says Regular is similar to A5 with a slimmer width. It does not take A5 paper. A6 paper is 105 × 148 mm. The Passport refill is H124 × W89 mm, so it is not A6 either. "
+         "The maker describes that refill as the same size as a passport you carry when traveling."),
+        ("Do Regular, Passport, and Card Size refills fit each other's covers?",
+         "No. Regular refills are made for a Regular cover (H210 × W110 mm for the notebook refills cited here). Passport refills are made for a Passport cover (H124 × W89 mm). "
+         "Card Size refills are H100 × W65 mm. The item number is not enough: Regular 004 is a pocket sticker and Passport 004 is a zipper case; Regular 014 is kraft paper and Passport 014 is dot grid. "
+         "The Passport refill index says four accessories fit both Regular and Passport: repair kits 009 and 010, Pen Holder M (016), and the brass clip (030). Connecting bands are separate items (Regular 021, Passport 011). "
+         "The Card Size set includes its own connecting bands, H85 × W3 × D3 mm. That shared-accessory sentence does not mention Card Size."),
+        ("Why do the US shop's inches not match the millimeter measurements?",
+         "They are two listings, and the inches are not a precise conversion of the millimeters. At 25.4 mm to an inch, the Regular cover is 8.66 × 4.72 × 0.39 in and the Regular refill is 8.27 × 4.33 × 0.16 in. "
+         "The US shop prints the Regular cover as H 9 in × W 5.7 in and the refill as H 9 in × W 5 in × D 0.15 in. Passport is closer: the cover converts to 5.28 × 3.86 × 0.39 in, and the shop prints H 5.2 in × W 3.8 in. "
+         "Use the millimeter lines from the manufacturer's package contents when you need the size."),
+        ("Is Card Size a standard third Traveler's Notebook I can keep buying?",
+         "No. TRAVELER'S COMPANY USA's size article names two sizes, Regular and Passport. Card Size was introduced for the 20th anniversary as a limited-quantity set in Black and Brown, on sale outside Japan from April 23, 2026. "
+         "The maker says that after those set sales end, Card Size refills are planned for TRAVELER'S FACTORY and TRAVELER'S COMPANY USA. That note is about refills. It does not say the leather cover stays in the catalog."),
+        ("What is in the Card Size 20th anniversary set, and do you track it?",
+         "Cotton bag, a leather cover with one blank MD Paper White refill already in it, two more blank MD Paper White refills, two blank MD Paper Cream refills, a cotton zipper case, a kraft paper folder, two connecting rubber bands, and a spare rubber band. Five notebooks in total. "
+         "Black is No. 15411006 and comes with a navy zipper case and a red spare band. Brown is No. 15412006 and comes with a dark brown zipper case and an orange spare band. "
+         "We track the Black set. We do not track the Brown set, and we do not track Passport at all. Stock changes, so the listing pages are where to check the shops we follow."),
+    ]
+    faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
+    tracked = " · ".join(dlink(s) for s in ("regular-black", "regular-brown", "regular-blue", "regular-camel", "regular-olive", "road-trip-brown"))
+    body = f"""
+<article class="prose guide vs-page tn-size">
+{crumbs(("guides/", "Guides"), (fname, "Regular vs Passport vs Card Size"))}
+{eyebrow("Guide", "Traveler's Notebook", updated)}
+<h1>{E(title)}</h1>
+<p class="lede">Regular and Passport are the two standard Traveler's Notebook sizes. Card Size is a limited 20th-anniversary set, with its own smaller cover and its own refills. The measurements below keep the leather cover separate from the paper refill, and they keep the manufacturer's millimeters separate from the US shop's inches.</p>
+{signup()}
+
+<section class="card" id="quick">
+  <h2>Quick recommendation</h2>
+  <ul>
+    <li><strong>Regular</strong> if you want the larger page. The refill is H210 × W110 mm, and the 2021 article says the notebook is for one hand, with room for tickets, maps, or A4 paper folded in three.{cite("journey", "reg")}</li>
+    <li><strong>Passport</strong> if you want the cover that fits a palm or a back pocket (H134 × W98 × D10 mm) and a refill the maker compares to a passport (H124 × W89 mm).{cite("journey", "pass", "pidx")}</li>
+    <li><strong>Card Size</strong> only if you want that anniversary pocket set. The cover is 110 mm tall and 75 mm wide without the fastener. It is a limited set, sold in Black and Brown, not a third everyday size.{cite("cardnews", "cardb")}</li>
+  </ul>
+  <p class="muted small">The maker's own line is that there is no required way to choose between Regular and Passport. It depends on what you want the notebook to do.{cite("journey")}</p>
+</section>
+
+<h2 id="compare">Side by side</h2>
+<p class="muted small">Height × width × depth, as each source prints them. Cover and refill are different objects. The inch row is the US shop's own listing. It is not the millimeter row converted. Numbers in brackets point to the sources below. On a small screen, scroll the table sideways. The row labels stay put.</p>
+<div class="table-wrap">
+<table class="stock compare">
+<caption class="sr">Regular, Passport, and Card Size: cover, refill, inches, carry, refills, and what this site tracks</caption>
+<thead><tr><th></th><th>Regular</th><th>Passport</th><th>Card Size</th></tr></thead>
+<tbody>{"".join(rows)}</tbody>
+</table>
+</div>
+<p>At 25.4 mm to an inch, the Regular cover is 8.66 × 4.72 × 0.39 in and its refill is 8.27 × 4.33 × 0.16 in. The US shop instead prints the cover as H 9 in × W 5.7 in and the refill as H 9 in × W 5 in × D 0.15 in. The width gap is almost an inch, so those two Regular listings are not interchangeable.{cite("reg", "usreg")} Passport is nearer: the cover converts to 5.28 × 3.86 × 0.39 in, and the shop prints H 5.2 in × W 3.8 in.{cite("pass", "uspass")} Card Size is published in millimeters. The cover converts to 4.33 × 2.95 × 0.39 in, and the refill to 3.94 × 2.56 × 0.08 in. Those converted inches are arithmetic, not a second spec from the maker.{cite("cardb")}</p>
+<p>A5 paper is 148 × 210 mm. The Regular refill matches A5's long side and is 38 mm narrower than A5, which is what the US shop means by similar to A5 with a slimmer width.{cite("usreg", "reg")} A6 paper is 105 × 148 mm. Neither the Passport refill nor the Card Size refill matches it.</p>
+
+<h2 id="carry">Carry and what each size is built to do</h2>
+<h3>Regular: the larger page you can still hold</h3>
+<p>Choose Regular when the writing page matters more than the smallest possible cover. The page is H210 × W110 mm, against H124 × W89 mm in Passport and H100 × W65 mm in the Card Size set. The 2021 article says you hold the Regular notebook in one hand, and that tickets, maps, and three-folded A4 paper fit. It also says two or three refills fit, and that adding more is up to you.{cite("journey")} The cover's own depth on the package line is D10 mm, and one refill is D4 mm. The maker does not publish a thickness for a cover stuffed with several refills, so a heavy stack is a different carry from the starter kit.</p>
+<p>The same cover and refill measurements are printed on the Black, Brown, Blue, Camel, and Olive Regular starter kits. Color does not change the size.{cite("reg")}</p>
+<h3>Passport: pocket, small bag, or a passport cover</h3>
+<p>Choose Passport when the notebook has to live in a pocket or a small bag. The article gives H 5.2 in × W 3.8 in for the size and says it fits a palm or the back pocket of your pants.{cite("journey")} The manufacturer's cover line is more precise: H134 × W98 × D10 mm.{cite("pass")} The refill index says the paper is the same size as a passport, and that a zipper case or file lets this size work as a wallet, a card case, or a passport cover.{cite("pidx")} The writing tradeoff is the page: H124 × W89 mm, 64 pages in the current blank and lined refills.{cite("pass", "p001", "p003")}</p>
+<h3>Card Size: the anniversary notebook that goes in a jeans pocket</h3>
+<p>Choose the Card Size set when you want something smaller than Passport and you are buying that specific anniversary kit. The maker describes it for a note you want down quickly, and says that once the zipper case, folder, and refills are in the cover it can be a compact wallet, a business-card holder, a card case, or a mini pouch.{cite("cardnews")} The cover is the one that "fits perfectly in the palm of your hand and slips easily into a jeans pocket."{cite("cardb")} Each notebook is 32 pages, half the page count of the Regular and Passport starter refills, on a smaller sheet.{cite("cardb", "reg", "pass")}</p>
+
+<h2 id="refills">Refills and what fits which cover</h2>
+<p>Each cover has its own refill list. Regular refills are "set in the regular sized TRAVELER'S notebook."{cite("ridx")} Passport refills are "set into your passport size TRAVELER'S notebook."{cite("pidx")} Card Size refills are the H100 × W65 mm notebooks in the anniversary set.{cite("cardb")} A refill from one list does not become the right size because the item number looks familiar.</p>
+<ul>
+  <li><strong>Regular notebooks</strong> use the Regular numbers. 001 lined is 6.5 mm ruling, 64 pages, MD paper, H210 × W110 × D4 mm (No. 14245006).{cite("r001")} The starter kit's blank 003 uses the same outer size.{cite("reg")} The Regular index also lists grid 002, dot grid 026, diaries 005, 017, 018, and 019, sketch 012, and a zipper case 008, among others. Full list on the Regular refill page.{cite("ridx")}</li>
+  <li><strong>Passport notebooks</strong> use a different set of numbers for the same kinds of paper. Current 001 lined is also 6.5 mm and 64 pages of MD paper, but H124 × W89 × D4 mm (No. 14368006).{cite("p001")} Current blank 003 is that same size (No. 14370006).{cite("p003")} An older Passport 001 page is still online and labeled old specification: DP paper, 80 pages, perforated. The page says the refill changed to MD paper and 64 pages in March 2016. Use the current page for the paper you would buy now.{cite("p001old", "p001")}</li>
+  <li><strong>Same number, different object.</strong> On the two indexes, Regular 004 is a pocket sticker and Passport 004 is a zipper case. Regular 014 is a kraft notebook and Passport 014 is dot grid. Match the size name on the package, then the number.{cite("ridx", "pidx")}</li>
+  <li><strong>Shared by Regular and Passport only.</strong> The Passport index says these fit both: repair kit 009 (standard colors), repair kit 010 (spare colors), Pen Holder M (016), and brass clip 030. Zipper cases, folders, notebook refills, and connecting bands are not on that list. Regular's connecting band is 021. Passport's is 011.{cite("pidx", "ridx")}</li>
+  <li><strong>Card Size accessories in the set</strong> are specified on their own: cotton zipper case H105 × W140 × D10 mm when open, kraft folder H100 × W130 × D1 mm when open, connecting bands H85 × W3 × D3 mm, two of them.{cite("cardb")} Nothing on the Regular or Passport "both sizes" line adds Card Size.</li>
+</ul>
+
+<h2 id="card-set">What the Card Size anniversary set includes</h2>
+<p>TRAVELER'S COMPANY made Card Size for the notebook's 20th anniversary and put it on sale outside Japan on April 23, 2026. The sets are limited in quantity. Shops can sell out, and release dates differ by shop.{cite("cardnews", "cardb")} Black and Brown are the two editions. This is the anniversary set, not a standing third size next to Regular and Passport.{cite("journey", "cardnews")}</p>
+<p>The maker's contents list:{cite("cardb", "cardbr")}</p>
+<ol>
+  <li>Cotton bag.</li>
+  <li>Leather cover, Black or Brown, with one blank MD Paper White refill already set in it.</li>
+  <li>Two more blank MD Paper White refills. The package line counts three white refills in total, including the one in the cover. Gray paper cover, letterpress logo.</li>
+  <li>Two blank MD Paper Cream refills. Brown paper cover, gold foil logo.</li>
+  <li>Cotton zipper case. Navy with the Black cover, dark brown with the Brown cover. A card pocket on the left, a zippered pocket on the right.</li>
+  <li>Kraft paper folder, for folded banknotes, shop cards, and tickets.</li>
+  <li>Two connecting rubber bands, for adding more than one refill.</li>
+  <li>A spare rubber band. Red with Black, orange with Brown.</li>
+</ol>
+<p>After the set sales end, the maker says Card Size refills are planned for TRAVELER'S FACTORY and TRAVELER'S COMPANY USA.{cite("cardnews", "cardb")} That sentence is about refills. It does not promise that the leather cover, or the set, stays on sale.</p>
+
+<h2 id="tracked">What this site tracks</h2>
+<p>Live stock stays on the tracker. This guide does not say what is in stock today.</p>
+<ul>
+  <li><strong>Regular covers we track:</strong> {tracked}. ROAD TRIP Brown is a Regular size US exclusive. The five standard colors are the starter-kit size above. All of them sit on the <a href="{TN_SLUG}/">Traveler's Company tracker</a>.</li>
+  <li><strong>Regular accessories we track:</strong> the <a href="{TN_SLUG}/#tn-2027-clear-folder-regular">2027 clear folder</a> and the <a href="{TN_SLUG}/#tn-2027-plastic-sheet-regular">2027 plastic sheet</a>, both labeled Regular size. We do not track Passport or Card Size accessories.</li>
+  <li><strong>Card Size:</strong> {dlink("card-size-20th-anniversary-black")} only. The <a href="https://www.travelers-company.com/products/20th/20th-brown" rel="noopener" target="_blank">Brown set (No. 15412006)</a> is part of the anniversary pair, and we do not have a listing page for it.</li>
+  <li><strong>Passport is not tracked.</strong> There is no Passport cover, refill, or accessory on the tracker. The <a href="https://www.travelers-company.com/products/trnote/starter-kit-passport/black" rel="noopener" target="_blank">Passport starter kit</a> and the <a href="https://www.travelers-company.com/products/trnote/refill-passport" rel="noopener" target="_blank">Passport refill list</a> are the manufacturer's pages. The US shop's <a href="https://shop.travelerscompanyusa.com/products/travelers-notebook-passport-size-black" rel="noopener" target="_blank">Passport Black starter kit</a> is the inch listing cited above.</li>
+</ul>
+<p>The US shop warns that counterfeit notebooks using the TRAVELER'S COMPANY logo have been sold in the US, and says to buy from the official shop or an authorized reseller.{cite("usreg")}</p>
+
+<section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
+
+<h2>Sources</h2>
+<ol class="sources">{"".join(src_items)}</ol>
+<p class="muted small">TRAVELER'S COMPANY sells more refills than the examples named here. The index pages are the full lists. Prices are left off this guide because they change.</p>
+{related_block(fname)}
+</article>"""
+    for banned in ("$", "most popular", "best seller", "bestseller", "search volume", "in stock now", "always available"):
+        if banned in body.lower():
+            raise SystemExit(f"Traveler's size guide contains a banned claim: {banned}")
+    for needed in ("H220", "H134", "H110", "H210", "H124", "H100", "Passport is not tracked", "We do not track the Brown set"):
+        if needed not in body:
+            raise SystemExit(f"Traveler's size guide is missing {needed}")
+    art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
+           "datePublished": iso, "dateModified": iso, "url": url_for(fname),
+           "image": BASE + "assets/brand/og-travelers.png",
+           "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
+           "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
+                         "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
+    return fname, page(fname, title, desc, body,
+                       ld=(crumbs_ld(("guides/", "Guides"), (fname, "Regular vs Passport vs Card Size")), art, faq_ld),
+                       og_type="article", og_image=BASE + "assets/brand/og-travelers.png",
+                       og_alt="Stationery Drop Watch: Traveler's Notebook and limited edition tracker, checked " + CHECK_FREQ)
+
+
 def build_guides_index():
     fname = "guides/"
     items = "".join(f'<li><a href="{h}"><strong>{E(t)}</strong></a><br><span class="muted">{E(GUIDE_BLURBS[h])}</span></li>' for h, t in GUIDES)
@@ -1873,8 +2142,8 @@ def build_guides_index():
 </article>"""
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": t, "url": url_for(h)} for i, (h, t) in enumerate(GUIDES)]}
-    return fname, page(fname, "Guides: best dot grid journals, where to buy and which Hobonichi to choose · Stationery Drop Watch",
-                       "Stationery Drop Watch guides: the best dot grid journals compared, where to buy the Hobonichi Techo 2027 with live stock by shop, Hobonichi Techo vs Cousin vs Weeks, and the 2027 launch and restock calendar.",
+    return fname, page(fname, "Guides: Hobonichi, dot grid journals, and Traveler's Notebook sizes · Stationery Drop Watch",
+                       "Guides from Stationery Drop Watch: where to buy the Hobonichi Techo 2027, Techo vs Cousin vs Weeks, the 2027 launch calendar, dot grid journals compared, and Traveler's Notebook Regular vs Passport vs Card Size.",
                        body, ld=(crumbs_ld((fname, "Guides")), lst))
 
 SHOP_ETSY = [
@@ -2042,7 +2311,7 @@ def main():
         check_amz_doc(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_guides_index, build_shop, build_follow):
+    for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_tn_sizes, build_guides_index, build_shop, build_follow):
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
