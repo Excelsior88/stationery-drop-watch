@@ -345,3 +345,17 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 .region{display:inline-block;margin-left:.35em;padding:0 .35em;border:1px solid currentColor;border-radius:3px;font-size:.7rem;line-height:1.4;letter-spacing:.04em;color:#6b6259;vertical-align:.1em;font-weight:600}
 .sub.variant{color:#4a423b}
 .card-filter{margin:0 0 1rem}
+
+/* Traveler's size guide: headline and intro use the same column as the sections.
+   The comparison table scrolls inside its frame instead of widening the page. */
+.tn-size > h1,.tn-size > .lede,.tn-size > .eyebrow{max-width:none}
+.tn-size .table-wrap{display:block;width:100%;max-width:100%;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tn-size table.compare{width:100%;min-width:44rem}
+.tn-size table.compare td{min-width:12rem;overflow-wrap:break-word}
+.tn-size table.compare thead th:first-child{position:sticky;left:0;z-index:3;background:var(--paper-2)}
+.tn-size table.compare th[scope=row]{position:sticky;left:0;z-index:2;background:var(--paper);box-shadow:1px 0 0 var(--line)}
+@media (max-width:700px){
+  .tn-size table.compare th[scope=row]{white-space:normal;width:6.6rem;min-width:6.6rem;max-width:6.6rem}
+  .tn-size table.compare td{min-width:13rem}
+}
+.tn-size caption.sr{caption-side:top}
