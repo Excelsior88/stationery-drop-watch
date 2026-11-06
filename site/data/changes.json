@@ -272,5 +272,34 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-06T23:17:52+00:00",
+  "store_id": "atlas",
+  "store": "Atlas Stationers",
+  "label": "Hobonichi Techo Weeks - Colors: Pink Sapphire",
+  "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-pink-sapphire",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-06T23:18:15+00:00",
+  "store_id": "travelerscompanyusa",
+  "store": "Traveler's Company USA (official)",
+  "label": "Traveler's notebook 20th Anniversary Customization Set",
+  "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-20th-anniversary-customization-set",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-06T23:18:18+00:00",
+  "store_id": "travelerscompanyusa",
+  "store": "Traveler's Company USA (official)",
+  "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+  "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-card-size-20th-anniversary-set-black",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
