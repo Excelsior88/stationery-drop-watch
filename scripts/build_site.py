@@ -1875,7 +1875,7 @@ def build_dotgrid_guide():
 
 
 # Manufacturer package specs, read from the product pages linked in the guide's Sources.
-# Cover and refill are separate lines. Inch figures from the US shop are a different listing, not a conversion.
+# Cover and refill are separate lines. The comparison uses those millimeters.
 def build_tn_sizes():
     fname = TN_GUIDE_SLUG + "/"
     title = "Traveler's Notebook Regular vs Passport vs Card Size: Which Size Fits You?"
@@ -1907,9 +1907,9 @@ def build_tn_sizes():
         ("pass", "https://www.travelers-company.com/products/trnote/starter-kit-passport/black",
          "Passport Size Black starter kit", "TRAVELER'S COMPANY. Leather cover H134 × W98 × D10 mm. Blank refill H124 × W89 × D4 mm, 64 pages, MD paper, saddle stitched. No. 15026006."),
         ("usreg", "https://shop.travelerscompanyusa.com/products/travelers-notebook-black",
-         "Black (Regular Size) starter kit", "TRAVELER'S COMPANY USA shop. Inch listing for the same Regular starter kit: cover H 9 in × W 5.7 in; refill H 9 in × W 5 in × D 0.15 in."),
+         "Black (Regular Size) starter kit", "TRAVELER'S COMPANY USA shop. The same Regular starter kit, No. 13714006."),
         ("uspass", "https://shop.travelerscompanyusa.com/products/travelers-notebook-passport-size-black",
-         "Black (Passport Size) starter kit", "TRAVELER'S COMPANY USA shop. Inch listing: cover H 5.2 in × W 3.8 in; refill H 4.8 in × W 3.5 in × D 0.15 in. The shop's line does not print an inch mark on the width."),
+         "Black (Passport Size) starter kit", "TRAVELER'S COMPANY USA shop. The same Passport starter kit, No. 15026006."),
         ("r001", "https://www.travelers-company.com/products/trnote/refill-regular/refill-r-001",
          "001 Lined Notebook, Regular Size", "TRAVELER'S COMPANY. Lined 6.5 mm, 64 pages, MD paper, H210 × W110 × D4 mm. No. 14245006."),
         ("p001", "https://www.travelers-company.com/products/trnote/refill-passport/refill-p-001n",
@@ -1963,13 +1963,8 @@ def build_tn_sizes():
             ("H124 × W89 × D4 mm. Blank, 64 pages, MD paper, saddle stitched. The current blank refill 003 is the same size.", ("pass", "p003")),
             ("H100 × W65 × D2 mm. Blank, 32 pages, MD paper, saddle stitched. The set holds five of these notebooks.", ("cardb",)),
         ]),
-        row("Inches on the US shop", [
-            ("A separate listing, not a conversion of the millimeters: cover H 9 in × W 5.7 in. Refill H 9 in × W 5 in × D 0.15 in.", ("usreg",)),
-            ("Cover H 5.2 in × W 3.8 in. Refill H 4.8 in × W 3.5 in × D 0.15 in.", ("uspass",)),
-            ("The set pages give millimeters only.", ("cardb",)),
-        ]),
         row("Carry, in the maker's words", [
-            ("Hold it in one hand. The 2021 article calls it about the height of an A5 notebook but slimmer, and says tickets, maps, and A4 paper folded in three fit. Two or three refills fit easily.", ("journey", "usreg")),
+            ("Hold it in one hand. The 2021 article calls it about the height of an A5 notebook but slimmer, and says tickets, maps, and A4 paper folded in three fit. Two or three refills fit easily.", ("journey",)),
             ("Fits a palm or a back pocket, and a smaller bag. With a zipper case or file, the maker says it can be a wallet, a card case, or a passport cover. The refill is described as the same size as a passport.", ("journey", "pidx")),
             ("Fits the palm and a jeans pocket. With the pieces in the set, the maker says it can be a compact wallet, a business-card holder, a card case, or a mini pouch.", ("cardnews", "cardb")),
         ]),
@@ -2004,18 +1999,13 @@ def build_tn_sizes():
          "On the Passport starter kit the leather cover is H134 × W98 × D10 mm and the blank refill is H124 × W89 × D4 mm. Both included refills are 64-page blank MD paper, saddle stitched. "
          "TRAVELER'S COMPANY USA describes Regular and Passport as the two sizes, and says you choose by what you want to do with the notebook."),
         ("Is Regular the same as A5, and Passport the same as A6?",
-         "No. A5 paper is 148 × 210 mm. The Regular refill is 210 mm tall, the same as A5's long side, and 110 mm wide, which is not A5's 148 mm. "
-         "The US shop says Regular is similar to A5 with a slimmer width. It does not take A5 paper. A6 paper is 105 × 148 mm. The Passport refill is H124 × W89 mm, so it is not A6 either. "
-         "The maker describes that refill as the same size as a passport you carry when traveling."),
+         "No. A5 paper is 148 × 210 mm. The Regular refill is 210 mm tall and 110 mm wide, so the height matches A5 and the width does not. It does not take A5 paper. "
+         "A6 paper is 105 × 148 mm. The Passport refill is H124 × W89 mm, so it is not A6. The maker describes that refill as the same size as a passport you carry when traveling."),
         ("Do Regular, Passport, and Card Size refills fit each other's covers?",
          "No. Regular refills are made for a Regular cover (H210 × W110 mm for the notebook refills cited here). Passport refills are made for a Passport cover (H124 × W89 mm). "
          "Card Size refills are H100 × W65 mm. The item number is not enough: Regular 004 is a pocket sticker and Passport 004 is a zipper case; Regular 014 is kraft paper and Passport 014 is dot grid. "
          "The Passport refill index says four accessories fit both Regular and Passport: repair kits 009 and 010, Pen Holder M (016), and the brass clip (030). Connecting bands are separate items (Regular 021, Passport 011). "
          "The Card Size set includes its own connecting bands, H85 × W3 × D3 mm. That shared-accessory sentence does not mention Card Size."),
-        ("Why do the US shop's inches not match the millimeter measurements?",
-         "They are two listings, and the inches are not a precise conversion of the millimeters. At 25.4 mm to an inch, the Regular cover is 8.66 × 4.72 × 0.39 in and the Regular refill is 8.27 × 4.33 × 0.16 in. "
-         "The US shop prints the Regular cover as H 9 in × W 5.7 in and the refill as H 9 in × W 5 in × D 0.15 in. Passport is closer: the cover converts to 5.28 × 3.86 × 0.39 in, and the shop prints H 5.2 in × W 3.8 in. "
-         "Use the millimeter lines from the manufacturer's package contents when you need the size."),
         ("Is Card Size a standard third Traveler's Notebook I can keep buying?",
          "No. TRAVELER'S COMPANY USA's size article names two sizes, Regular and Passport. Card Size was introduced for the 20th anniversary as a limited-quantity set in Black and Brown, on sale outside Japan from April 23, 2026. "
          "The maker says that after those set sales end, Card Size refills are planned for TRAVELER'S FACTORY and TRAVELER'S COMPANY USA. That note is about refills. It does not say the leather cover stays in the catalog."),
@@ -2031,7 +2021,7 @@ def build_tn_sizes():
 {crumbs(("guides/", "Guides"), (fname, "Regular vs Passport vs Card Size"))}
 {eyebrow("Guide", "Traveler's Notebook", updated)}
 <h1>{E(title)}</h1>
-<p class="lede">Regular and Passport are the two standard Traveler's Notebook sizes. Card Size is a limited 20th-anniversary set, with its own smaller cover and its own refills. The measurements below keep the leather cover separate from the paper refill, and they keep the manufacturer's millimeters separate from the US shop's inches.</p>
+<p class="lede">Regular and Passport are the two standard sizes. Pick Regular for a larger page you can still hold, Passport for a pocket, or the Card Size set if you want the smaller 20th-anniversary notebook. Cover and refill are different sizes. The figures below are the manufacturer's package specs.</p>
 {signup()}
 
 <section class="card" id="quick">
@@ -2045,23 +2035,24 @@ def build_tn_sizes():
 </section>
 
 <h2 id="compare">Side by side</h2>
-<p class="muted small">Height × width × depth, as each source prints them. Cover and refill are different objects. The inch row is the US shop's own listing. It is not the millimeter row converted. Numbers in brackets point to the sources below. On a small screen, scroll the table sideways. The row labels stay put.</p>
+<p class="muted small">Height × width × depth from the manufacturer's package specs. The leather cover and the paper refill are different sizes. Numbers in brackets point to the sources. On a small screen, scroll the table sideways. The row labels stay put.</p>
 <div class="table-wrap">
 <table class="stock compare">
-<caption class="sr">Regular, Passport, and Card Size: cover, refill, inches, carry, refills, and what this site tracks</caption>
+<caption class="sr">Regular, Passport, and Card Size: cover, refill, carry, refills, and what this site tracks</caption>
 <thead><tr><th></th><th>Regular</th><th>Passport</th><th>Card Size</th></tr></thead>
 <tbody>{"".join(rows)}</tbody>
 </table>
 </div>
-<p>At 25.4 mm to an inch, the Regular cover is 8.66 × 4.72 × 0.39 in and its refill is 8.27 × 4.33 × 0.16 in. The US shop instead prints the cover as H 9 in × W 5.7 in and the refill as H 9 in × W 5 in × D 0.15 in. The width gap is almost an inch, so those two Regular listings are not interchangeable.{cite("reg", "usreg")} Passport is nearer: the cover converts to 5.28 × 3.86 × 0.39 in, and the shop prints H 5.2 in × W 3.8 in.{cite("pass", "uspass")} Card Size is published in millimeters. The cover converts to 4.33 × 2.95 × 0.39 in, and the refill to 3.94 × 2.56 × 0.08 in. Those converted inches are arithmetic, not a second spec from the maker.{cite("cardb")}</p>
-<p>A5 paper is 148 × 210 mm. The Regular refill matches A5's long side and is 38 mm narrower than A5, which is what the US shop means by similar to A5 with a slimmer width.{cite("usreg", "reg")} A6 paper is 105 × 148 mm. Neither the Passport refill nor the Card Size refill matches it.</p>
+<p class="muted small"><strong>Inches converted from those millimeters</strong> (25.4 mm = 1 in). This is arithmetic, not a published spec. Regular cover 8.66 × 4.72 × 0.39 in, refill 8.27 × 4.33 × 0.16 in. Passport cover 5.28 × 3.86 × 0.39 in, refill 4.88 × 3.50 × 0.16 in. Card Size cover 4.33 × 2.95 × 0.39 in, refill 3.94 × 2.56 × 0.08 in.</p>
+<p><strong>Shop dimensions.</strong> The US shop prints different dimensions for these same starter kits.{cite("usreg", "uspass")} This guide uses the manufacturer's package specs. Check those for fit.</p>
+<p>A5 paper is 148 × 210 mm. The Regular refill matches that height and is 38 mm narrower, so it does not take A5 sheets. The 2021 article calls Regular about the height of an A5 notebook but slimmer.{cite("journey", "reg")} A6 paper is 105 × 148 mm. Neither the Passport refill nor the Card Size refill is A6.</p>
 
 <h2 id="carry">Carry and what each size is built to do</h2>
 <h3>Regular: the larger page you can still hold</h3>
 <p>Choose Regular when the writing page matters more than the smallest possible cover. The page is H210 × W110 mm, against H124 × W89 mm in Passport and H100 × W65 mm in the Card Size set. The 2021 article says you hold the Regular notebook in one hand, and that tickets, maps, and three-folded A4 paper fit. It also says two or three refills fit, and that adding more is up to you.{cite("journey")} The cover's own depth on the package line is D10 mm, and one refill is D4 mm. The maker does not publish a thickness for a cover stuffed with several refills, so a heavy stack is a different carry from the starter kit.</p>
 <p>The same cover and refill measurements are printed on the Black, Brown, Blue, Camel, and Olive Regular starter kits. Color does not change the size.{cite("reg")}</p>
 <h3>Passport: pocket, small bag, or a passport cover</h3>
-<p>Choose Passport when the notebook has to live in a pocket or a small bag. The article gives H 5.2 in × W 3.8 in for the size and says it fits a palm or the back pocket of your pants.{cite("journey")} The manufacturer's cover line is more precise: H134 × W98 × D10 mm.{cite("pass")} The refill index says the paper is the same size as a passport, and that a zipper case or file lets this size work as a wallet, a card case, or a passport cover.{cite("pidx")} The writing tradeoff is the page: H124 × W89 mm, 64 pages in the current blank and lined refills.{cite("pass", "p001", "p003")}</p>
+<p>Choose Passport when the notebook has to live in a pocket or a small bag. The 2021 article says it fits a palm or the back pocket of your pants.{cite("journey")} The cover is H134 × W98 × D10 mm.{cite("pass")} The refill index says the paper is the same size as a passport, and that a zipper case or file lets this size work as a wallet, a card case, or a passport cover.{cite("pidx")} The writing page is H124 × W89 mm, 64 pages in the current blank and lined refills.{cite("pass", "p001", "p003")}</p>
 <h3>Card Size: the anniversary notebook that goes in a jeans pocket</h3>
 <p>Choose the Card Size set when you want something smaller than Passport and you are buying that specific anniversary kit. The maker describes it for a note you want down quickly, and says that once the zipper case, folder, and refills are in the cover it can be a compact wallet, a business-card holder, a card case, or a mini pouch.{cite("cardnews")} The cover is the one that "fits perfectly in the palm of your hand and slips easily into a jeans pocket."{cite("cardb")} Each notebook is 32 pages, half the page count of the Regular and Passport starter refills, on a smaller sheet.{cite("cardb", "reg", "pass")}</p>
 
@@ -2096,7 +2087,7 @@ def build_tn_sizes():
   <li><strong>Regular covers we track:</strong> {tracked}. ROAD TRIP Brown is a Regular size US exclusive. The five standard colors are the starter-kit size above. All of them sit on the <a href="{TN_SLUG}/">Traveler's Company tracker</a>.</li>
   <li><strong>Regular accessories we track:</strong> the <a href="{TN_SLUG}/#tn-2027-clear-folder-regular">2027 clear folder</a> and the <a href="{TN_SLUG}/#tn-2027-plastic-sheet-regular">2027 plastic sheet</a>, both labeled Regular size. We do not track Passport or Card Size accessories.</li>
   <li><strong>Card Size:</strong> {dlink("card-size-20th-anniversary-black")} only. The <a href="https://www.travelers-company.com/products/20th/20th-brown" rel="noopener" target="_blank">Brown set (No. 15412006)</a> is part of the anniversary pair, and we do not have a listing page for it.</li>
-  <li><strong>Passport is not tracked.</strong> There is no Passport cover, refill, or accessory on the tracker. The <a href="https://www.travelers-company.com/products/trnote/starter-kit-passport/black" rel="noopener" target="_blank">Passport starter kit</a> and the <a href="https://www.travelers-company.com/products/trnote/refill-passport" rel="noopener" target="_blank">Passport refill list</a> are the manufacturer's pages. The US shop's <a href="https://shop.travelerscompanyusa.com/products/travelers-notebook-passport-size-black" rel="noopener" target="_blank">Passport Black starter kit</a> is the inch listing cited above.</li>
+  <li><strong>Passport is not tracked.</strong> There is no Passport cover, refill, or accessory on the tracker. The <a href="https://www.travelers-company.com/products/trnote/starter-kit-passport/black" rel="noopener" target="_blank">Passport starter kit</a> and the <a href="https://www.travelers-company.com/products/trnote/refill-passport" rel="noopener" target="_blank">Passport refill list</a> are the manufacturer's pages. The <a href="https://shop.travelerscompanyusa.com/products/travelers-notebook-passport-size-black" rel="noopener" target="_blank">US shop</a> sells that same starter kit.</li>
 </ul>
 <p>The US shop warns that counterfeit notebooks using the TRAVELER'S COMPANY logo have been sold in the US, and says to buy from the official shop or an authorized reseller.{cite("usreg")}</p>
 
@@ -2107,7 +2098,8 @@ def build_tn_sizes():
 <p class="muted small">TRAVELER'S COMPANY sells more refills than the examples named here. The index pages are the full lists. Prices are left off this guide because they change.</p>
 {related_block(fname)}
 </article>"""
-    for banned in ("$", "most popular", "best seller", "bestseller", "search volume", "in stock now", "always available"):
+    for banned in ("$", "most popular", "best seller", "bestseller", "search volume", "in stock now", "always available",
+                    "5.7", "not interchangeable", "inches on the us shop"):
         if banned in body.lower():
             raise SystemExit(f"Traveler's size guide contains a banned claim: {banned}")
     for needed in ("H220", "H134", "H110", "H210", "H124", "H100", "Passport is not tracked", "We do not track the Brown set"):
