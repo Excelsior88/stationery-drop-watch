@@ -321,5 +321,14 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-07T17:47:54+00:00",
+  "store_id": "laywines",
+  "store": "Laywine's",
+  "label": "Weeks Mega · Bow & Tie: Candy Dream",
+  "url": "https://laywines.com/products/hobonichi-weeks-mega-bow-and-tie-candy-dream-2027",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
