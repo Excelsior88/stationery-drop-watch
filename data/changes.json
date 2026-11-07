@@ -301,5 +301,15 @@
   "section": "travelers",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-07T01:18:17+00:00",
+  "store_id": "travelerscompanyusa",
+  "store": "Traveler's Company USA (official)",
+  "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+  "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-card-size-20th-anniversary-set-black",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
