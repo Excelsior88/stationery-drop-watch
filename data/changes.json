@@ -311,5 +311,15 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-07T04:48:14+00:00",
+  "store_id": "travelerscompanyusa",
+  "store": "Traveler's Company USA (official)",
+  "label": "Traveler's notebook 20th Anniversary Customization Set",
+  "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-20th-anniversary-customization-set",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
