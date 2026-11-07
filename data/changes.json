@@ -330,5 +330,14 @@
   "url": "https://laywines.com/products/hobonichi-weeks-mega-bow-and-tie-candy-dream-2027",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-07T18:17:45+00:00",
+  "store_id": "penboutique",
+  "store": "Pen Boutique",
+  "label": "Original A6 book (Japanese)",
+  "url": "https://www.penboutique.com/products/hobonichi-techo-2027-japanese-original-book-a6-daily",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
