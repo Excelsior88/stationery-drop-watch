@@ -807,11 +807,16 @@ def build_index():
   <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet.</p></div>"""
     guides = "".join(f'<li><a href="{h}">{E(t)}</a>{f"<p class=\"muted small\">{E(GUIDE_BLURBS[h])}</p>" if h in GUIDE_BLURBS else ""}</li>' for h, t in GUIDES)
     books = {b["id"]: b for b in picks["books"]}
-    own = [(books[a]["cover"], books[a]["cover_alt"], SHOP_LABELS[a], books[a]["format"], "", 200, 300)
-           for a in SHOP_ORDER if a in books and books[a].get("cover")]
+    own = []
+    for a in SHOP_ORDER:
+        b = books[a]
+        if not b.get("cover"):
+            continue
+        own.append((b["cover"], b["cover_alt"], SHOP_LABELS[a], b["format"], "",
+                    b.get("cover_w", 200), b.get("cover_h", 300)))
     own += [(e["img"], e["alt"], e["title"], e.get("hub_sub", "Printable PDF"), e.get("img_class", ""), e.get("img_w", 200), e.get("img_h", 300))
             for e in etsy_listings()]
-    row_cls = "hub-own-row cols-8" if len(own) == 8 else "hub-own-row"
+    row_cls = "hub-own-row" + {8: " cols-8", 9: " cols-9"}.get(len(own), "")
     own_html = "".join(
         f'<li><a href="shop/"><img{f" class=\"{E(cls)}\"" if cls else ""} src="{E(img)}" alt="{E(alt)}" loading="lazy" decoding="async" width="{w}" height="{h}"><span class="hub-own-t">{E(t)}</span><span class="muted small">{E(sub)}</span></a></li>'
         for img, alt, t, sub, cls, w, h in own)
@@ -2265,8 +2270,9 @@ def build_guides_index():
 # same price line as the other Etsy printables: regular $6.99 plus "20% off launch sale
 # Oct 31 to Nov 30". Do not print the intro amount (it would read as the lasting price),
 # the sale code, an AI-disclosure line, or fee records.
-# Fit: the owner tested the inserts in a Hobonichi Weeks Mega on 2026-11-06. They fit,
-# slightly smaller than that book's pages. A standard Weeks book was not part of that test.
+# Fit: an earlier card said the inserts were tested in a Hobonichi Weeks Mega. The
+# 2026-11-08 source for these files says the 85 x 175 mm trim was not physically tested.
+# That test claim is removed. Do not add a Traveler's notebook fit claim.
 # A gated item with url "" is omitted. DROPWATCH_SHOP_PREVIEW=1 can render that empty
 # state into DROPWATCH_SITE_OUT only.
 _ETSY_LISTING = re.compile(r"^https://www\.etsy\.com/listing/\d+(?:/[a-z0-9-]+)?$")
@@ -2277,11 +2283,14 @@ SHOP_ETSY = [
     dict(title="2027 Printable Planner for Men", inside="mens", img="assets/shop/mens-2027-printable-planner.jpg",
          alt="2027 printable planner for men in charcoal, shown as printed pages", url="https://www.etsy.com/listing/4606781258",
          blurb="The men's 2027 planner as a PDF you print at home. Weekly and monthly pages, dot grid notes, workout log and budget pages."),
-    dict(title="Level Up! My 2027 Kids Planner", img="assets/shop/kids-2027-printable-planner.jpg",
-         alt="Level Up! My 2027 Planner, a printable video game style kids planner, cover page", url="https://www.etsy.com/listing/4610143237",
+    dict(title="Level Up! My 2027 Kids Planner", inside="levelup-etsy",
+         img="assets/shop/levelup-etsy-cover.webp", img_w=812, img_h=1050,
+         alt="Front cover of the Level Up! 2027 printable planner", url="https://www.etsy.com/listing/4610143237",
          sub="Printable PDF for kids 7 to 11 · instant download from Etsy",
+         hub_sub="Printable PDF",
          blurb="A printable 2027 kids planner that plays like a video game. 12 monthly Levels with Main Quests, Side Quests and Boss Battles, plus a habit tracker and XP bar.",
-         details=["US Letter 8.5 x 11 in, no A4", "168 pages, Monday start, 53 weeks", "Reading Quest Log, Trophy Room, Coin Bank", "Print edition coming soon"]),
+         details=["US Letter 8.5 x 11 in, no A4", "168 pages, Monday start, 53 weeks", "Reading Quest Log, Trophy Room, Coin Bank",
+                  "Printable PDF. The paperback is a separate book on this page."]),
     dict(id="soft-days", kind="insert", gated=True, sale_confirmed=True, price="$6.99",
          title="Soft Days Narrow Planner Inserts",
          img="assets/shop/soft-days-narrow-inserts.png", img_class="sheet", img_w=2700, img_h=2025,
@@ -2300,12 +2309,13 @@ SHOP_ETSY = [
                   "Two inserts per US Letter or A4 sheet, no bleed. Print at actual size (100%) and measure the 25 mm calibration square before printing the set",
                   "Monday-start weeks. Personal use only: don't share, resell, or redistribute the PDFs",
                   "Not a physical planner, bound refill, sticker sheet, or planner app",
-                  "Tested in a Hobonichi Weeks Mega, with inserts slightly smaller than the planner's pages. The cut is also a design-intent size for a standard Weeks book, based on published exterior dimensions, not a separate physical test of that book. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+                  "Finished cut size is 85 × 175 mm. Physical fit in a planner has not been tested. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
          templates=["Month Dashboard", "Habit Tracker (6 habits, 31 daily rows)", "Mood Tracker",
                     "Weekly Plan (Monday start, undated)", "Monthly Budget", "Reading Log", "Pen & Ink Swatches",
                     "Meal Planner (breakfast and lunch/dinner, Monday start)", "Wishlist & Gifts", "Annual Goals",
                     "Monthly Reset", "Order Tracker", "Stationery Inventory", "Brain Dump", "Dot Grid", "Lined Notes"],
-         templates_label="16 templates"),
+         templates_label="16 templates",
+         inside="soft-days"),
 ]
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
@@ -2313,8 +2323,8 @@ SHOP_ETSY = [
 AMAZON_LIST_PRICES = {"B0HPBDNS7F": "$19.99", "B0HQ5TLDK3": "$14.99", "B0HQ5X3C7D": "$16.99",
                       "B0HP9PXSR1": "$14.99"}
 SHOP_LABELS = {"B0HPBDNS7F": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
-               "B0HP9PXSR1": "2027 Planner for Men"}
-SHOP_ORDER = ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1")
+               "B0HP9PXSR1": "2027 Planner for Men", "B0HQW8273V": "Level Up! My 2027 Planner"}
+SHOP_ORDER = ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HQW8273V")
 ETSY_PRICE = ("$6.99", "20% off launch sale Oct 31 to Nov 30")
 # Interior previews, web-sized into assets/shop/inside/: our own Etsy listing images (etsy/printables/*/listing-images)
 # and, for the Amazon books, interior spreads Kiln exported from the print files (keyed by ASIN). (file stem, caption)
@@ -2331,6 +2341,47 @@ SHOP_INSIDE = {
                ("06-habit-tracker-january", "Habit tracker, January")],
     "mens": [("04-weekly-spread-dec27-jan2", "Weekly spread, Dec 27 to Jan 2"), ("05-monthly-calendar-january", "Monthly calendar, January"),
              ("06-habit-tracker-january", "Habit tracker, January")],
+}
+
+def _sample(src, alt, caption, w, h):
+    """One collapsed-disclosure figure. The link opens this same file, with no second artwork."""
+    return {"src": src, "alt": alt, "caption": caption, "w": w, "h": h}
+
+# Covers are card thumbs, not members of these lists. Soft Days uses the three inserts only.
+SHOP_SAMPLES = {
+    "levelup-etsy": {"class": " samples", "items": [
+        _sample("/assets/shop/inside/levelup-etsy-p009.webp",
+                "Level Up Etsy digital: January 2027 Monday-start World Map calendar. Authentic final PDF interior, complete page.",
+                "January 2027 calendar, page 9. Sample from the printable PDF.", 812, 1050),
+        _sample("/assets/shop/inside/levelup-etsy-p012.webp",
+                "Level Up Etsy digital: Week 2 dated Monday-start Week Plan. Authentic final PDF interior, complete page.",
+                "Week 2 plan, January 4 to 10, page 12. Sample from the printable PDF.", 812, 1050),
+        _sample("/assets/shop/inside/levelup-etsy-p013.webp",
+                "Level Up Etsy digital: Week 2 Save Point with habit tracker, mood and XP. Authentic final PDF interior, complete page.",
+                "Week 2 save point, page 13. Sample from the printable PDF.", 812, 1050),
+    ]},
+    "B0HQW8273V": {"class": " samples", "items": [
+        _sample("/assets/shop/inside/levelup-print-p009.webp",
+                "Level Up local print master: January 2027 Monday-start World Map calendar. Authentic final PDF interior, complete page.",
+                "January 2027 calendar, page 9. Sample from the local print master, not a photograph of the physical book.", 812, 1050),
+        _sample("/assets/shop/inside/levelup-print-p012.webp",
+                "Level Up local print master: Week 2 dated Monday-start Week Plan. Authentic final PDF interior, complete page.",
+                "Week 2 plan, January 4 to 10, page 12. Sample from the local print master, not a photograph of the physical book.", 812, 1050),
+        _sample("/assets/shop/inside/levelup-print-p013.webp",
+                "Level Up local print master: Week 2 Save Point with habit tracker, mood and XP. Authentic final PDF interior, complete page.",
+                "Week 2 save point, page 13. Sample from the local print master, not a photograph of the physical book.", 812, 1050),
+    ]},
+    "soft-days": {"class": " samples inserts", "items": [
+        _sample("/assets/shop/inside/softdays-weekly-color.webp",
+                "Soft Days soft colour: Weekly Plan, Monday start. Authentic final PDF interior extracted at full insert boundary.",
+                "Weekly Plan, Monday start. Sample of a colour insert.", 511, 1051),
+        _sample("/assets/shop/inside/softdays-habit-gray.webp",
+                "Soft Days grayscale: Habit Tracker with six-habit key. Authentic final PDF interior extracted at full insert boundary.",
+                "Habit Tracker. Sample of a grayscale insert.", 511, 1051),
+        _sample("/assets/shop/inside/softdays-swatches-color.webp",
+                "Soft Days soft colour: Pen & Ink Swatches. Authentic final PDF interior extracted at full insert boundary.",
+                "Pen & Ink Swatches. One Soft Days insert, not a separate swatch product.", 511, 1051),
+    ]},
 }
 
 import hashlib as _hl
@@ -2378,9 +2429,9 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
-    # Keep the shipped shop date until an insert listing URL is actually set. Preview builds do not count.
+    # Shop facts changed 2026-11-08 (paperback listing, see-inside samples, fit wording).
     if any(e.get("kind") == "insert" and etsy_listing_url(e) for e in SHOP_ETSY):
-        return "2026-11-06"
+        return "2026-11-08"
     return "2026-11-03"
 
 _BANNED_CLAIMS = ("$5.59", "us$5.59", "launch20", "ai-generated", "artificial intelligence",
@@ -2407,14 +2458,15 @@ def guard_release(fname, doc):
     end = doc.find("</div></li>", i)
     card = doc[start:end + len("</div></li>")]
     text = html.unescape(card)
-    for needed in ("Tested in a Hobonichi Weeks Mega, with inserts slightly smaller than the planner's pages.",
-                   "not a separate physical test", "not affiliated", "personal use", "85 × 175 mm",
+    for needed in ("Physical fit in a planner has not been tested.",
+                   "Not a Hobonichi product", "not affiliated", "personal use", "85 × 175 mm",
                    "16 designs", "$6.99", "actual size (100%)", "25 mm"):
         if needed not in text:
             raise SystemExit(f"{fname}: Soft Days card is missing {needed!r}")
-    for banned in ("has not been tested", "not been verified", "unverified", "perfect fit", "full-page", "full page", "guaranteed to fit"):
+    for banned in ("tested in a hobonichi weeks mega", "traveler", "unverified", "perfect fit",
+                   "full-page", "full page", "guaranteed to fit"):
         if banned in text.lower():
-            raise SystemExit(f"{fname}: Soft Days card still has outdated fit wording {banned!r}")
+            raise SystemExit(f"{fname}: Soft Days card still has an unsupported fit claim {banned!r}")
     if card.count("<li>") < 16:  # detail bullets plus the 16 template names
         raise SystemExit(f"{fname}: Soft Days card is missing template names")
     if live:
@@ -2448,10 +2500,19 @@ def build_shop():
         attr = ' data-own-product' if own else ''
         ins = ""
         if inside:
-            figs = "".join(f'<figure><img src="/assets/shop/inside/{inside}-{f}.jpg" alt="{E(title)}: {E(cap)}" loading="lazy" decoding="async"><figcaption>{E(cap)}</figcaption></figure>'
-                           for f, cap in SHOP_INSIDE[inside])
-            spreads = ' spreads' if inside in AMAZON_LIST_PRICES else ''
-            ins = f'<details class="shop-inside"><summary>See inside</summary><div class="inside-grid{spreads}">{figs}</div></details>'
+            if inside in SHOP_SAMPLES:
+                sample = SHOP_SAMPLES[inside]
+                figs = "".join(
+                    f'<figure><a class="inside-zoom" href="{E(s["src"])}" target="_blank" rel="noopener">'
+                    f'<img src="{E(s["src"])}" alt="{E(s["alt"])}" width="{s["w"]}" height="{s["h"]}" loading="lazy" decoding="async"></a>'
+                    f'<figcaption>{E(s["caption"])} <a href="{E(s["src"])}" target="_blank" rel="noopener">Larger view</a></figcaption></figure>'
+                    for s in sample["items"])
+                grid = "inside-grid" + sample["class"]
+            else:
+                figs = "".join(f'<figure><img src="/assets/shop/inside/{inside}-{f}.jpg" alt="{E(title)}: {E(cap)}" loading="lazy" decoding="async"><figcaption>{E(cap)}</figcaption></figure>'
+                               for f, cap in SHOP_INSIDE[inside])
+                grid = "inside-grid" + (" spreads" if inside in AMAZON_LIST_PRICES else "")
+            ins = f'<details class="shop-inside"><summary>See inside</summary><div class="{grid}">{figs}</div></details>'
         if templates:
             lis = "".join(f"<li>{E(t)}</li>" for t in templates)
             ins += f'<details class="shop-inside"><summary>{E(templates_label)}</summary><ul class="small">{lis}</ul></details>'
@@ -2482,7 +2543,8 @@ def build_shop():
         return f'<p class="shop-price"><strong>{E(lp)}</strong> <span class="muted small">List price, check current price on Amazon</span></p>'
     amz = "".join(card(books[a]["cover"], books[a]["cover_alt"], labels[a], books[a]["format"] + " · on Amazon",
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True,
-                       amz_price(a), a if a in SHOP_INSIDE else None)
+                       amz_price(a), a if a in SHOP_INSIDE or a in SHOP_SAMPLES else None,
+                       dims=(books[a]["cover_w"], books[a]["cover_h"]) if books[a].get("cover_w") and books[a].get("cover_h") else None)
                   for a in SHOP_ORDER)
     def etsy_price_html(item):
         price = item.get("price", ETSY_PRICE[0])
@@ -2511,8 +2573,8 @@ def build_shop():
     if shop_inserts_public():
         lede = "Planners, journals, and printable inserts we make. Get a printed copy on Amazon, or a printable PDF on Etsy."
         title = "Our planners and journals: printed books and printable inserts on Amazon and Etsy · Stationery Drop Watch"
-        desc = ("Planners, journals, and printable inserts made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, "
-                "and a reading journal on Amazon, plus printable 2027 planner PDFs and undated narrow planner inserts on Etsy, including a kids planner.")
+        desc = ("Planners, journals, and printable inserts made by Stationery Drop Watch: printed 2027 planners, including a kids paperback, a habit and mood tracker, "
+                "and a reading journal on Amazon, plus printable 2027 planner PDFs, including the kids planner, and undated narrow planner inserts on Etsy.")
         etsy_intro = '<p class="muted">Printable planner PDFs, and undated paper tip-ins you print and cut yourself.</p>'
     else:
         lede = "Planners and journals we make. Get a printed copy on Amazon or a printable PDF on Etsy."

@@ -86,6 +86,27 @@
       "url": "https://www.amazon.com/dp/B0HQ5X3C7D",
       "source": "Amazon listing B0HQ5X3C7D, fetched 2026-11-03; matches Kiln's description.html in /workspace/deliver/reading-journal-listing. Cover is Amazon's main image resized to 1200px tall.",
       "hidden": true
+    },
+    {
+      "id": "B0HQW8273V",
+      "hidden": true,
+      "kicker": "Kids",
+      "pitch": "A 2027 planner that plays like a video game",
+      "title": "Level Up! My 2027 Planner: For Kids Ages 7-11, January - December",
+      "format": "Paperback",
+      "cover": "assets/shop/levelup-print-front.webp",
+      "cover_alt": "Front cover of the Level Up! 2027 paperback planner",
+      "cover_w": 812,
+      "cover_h": 1051,
+      "blurb": "A paperback 2027 planner for kids ages 7 to 11. Dated January through December, Monday start, 168 full-color pages, with a Reading Quest Log, Trophy Room and Coin Bank.",
+      "details": [
+        "Paperback, 168 pages",
+        "8.5 x 11 in, full color",
+        "Dated January to December 2027, Monday start",
+        "Page samples are from the local print master, not a photograph of the physical book"
+      ],
+      "url": "https://www.amazon.com/dp/B0HQW8273V",
+      "source": "Public Amazon listing B0HQW8273V, read 2026-11-08. Cover and page samples are the local print master. That listing does not prove the delivered book file matches those bytes. Price and availability are left off this card."
     }
   ]
 }
