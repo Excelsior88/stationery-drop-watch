@@ -1,6 +1,6 @@
 # Shop see-inside, 2026-11-08
 
-Candidate only. Not merged and not published.
+Published. Merge `5f10a1fc95047ef392a4cefb72470dc8cda9c42b` of approved head `b4e78fda15d5703feac34e564519b7f6c3e33058`. Checker run [42518952830](https://github.com/Excelsior88/stationery-drop-watch/actions/runs/42518952830) finished stock at `2026-11-08T20:13:54+00:00` and did not commit, because there were no status changes. Artifact `github-pages` `13632139522`, digest `sha256:d96651dd377cf7e4d4cdc5158513335806e9ee2e2cc729219a5de77e2e0e982b`. Cloudflare [42519090790](https://github.com/Excelsior88/stationery-drop-watch/actions/runs/42519090790) deployed that artifact to https://ac54660d.stationery-drop-watch.pages.dev. Public shop: https://stationerydropwatch.com/shop/
 
 ## What changed
 
@@ -40,17 +40,19 @@ The closed paperback card states each buyer fact once: paperback, ages 7 to 11, 
 
 ## Changed-fact inventory
 
-| Surface | Status | Note | Next |
+Checked on the public site after the deploy above.
+
+| Surface | Status | Source | Next |
 | --- | --- | --- | --- |
-| `/shop` Level Up Etsy card | Corrected | Coming-soon line removed. PDF front and three PDF pages added. Listing URL and sale note kept. | Owner review |
-| `/shop` Level Up paperback | Corrected | New card. Plain `/dp/B0HQW8273V` link. No hardcoded price or availability. | Owner review |
-| `/shop` Soft Days | Corrected | Weeks Mega fit claim removed. Three insert samples added. Existing tile kept. | Owner review |
-| `/shop` four Amazon and two adult PDF previews | Already consistent | Same jpg paths and captions. No larger-view link added. | None |
-| `/shop` FAQ and product offer schema | Already consistent | This page has no FAQ and no product offer schema, so no price was added there. | None |
-| Homepage product row | Corrected | Paperback and printable covers both show. No coming-soon line. Nine items scroll on a phone. | Owner review |
-| Homepage FAQ | Already consistent | Sells printed books and PDFs. No Level Up fit or coming-soon sentence. | None |
-| Guides, calendar, local time, MIDORI, grouped restocks, deploy guard | Already consistent | Not edited. | None |
-| Physical book equals the print master | Unverified | Public specs agree. File bytes were not compared with a delivered copy. | Do not claim a photo or a byte match |
-| Physical insert fit | Unverified | Source says it was not tested. | Leave the qualified sentence |
-| Soft Days marketing tile | Not used | Supplied, and not an interior. Existing tile already works. | None |
-| Merge and deploy | Approval blocked | This note is the review candidate. | Wait for the owner |
+| `/shop` Level Up PDF | Corrected | Live card. Coming-soon line is gone. Listing `4610143237` and the $6.99 launch note remain. Cover alt is the printable front. | None |
+| `/shop` Level Up paperback | Corrected | Live card. Plain `/dp/B0HQW8273V`, no price and no stock claim. Specs once. Print-file sentence is inside See inside. | None |
+| `/shop` Soft Days | Corrected | Live card. Three insert files. Fit sentence says it has not been tested. Listing `4611293526` remains. | None |
+| Existing six preview groups | Already consistent | The four Amazon spreads and two adult PDF sets still use the same jpg paths. | None |
+| Shop FAQ and offer schema | Already consistent | `/shop` has no FAQ and no product offer schema. | None |
+| Homepage product row | Corrected | Nine items, both Level Up editions, row scrolls, page does not. | None |
+| Homepage and tracker FAQ | Already consistent | Tracker FAQ still says printed books are on Amazon and PDFs and tip-ins are on Etsy. No coming-soon or fit claim. | None |
+| About | Already consistent | No Level Up sentence. | None |
+| Guides, calendar, local time, MIDORI, grouped restocks, deploy guard | Already consistent | Guide dates unchanged. MIDORI hash matches. Homepage restocks are still grouped. This deploy used the fresh-artifact guard. | None |
+| Delivered paperback bytes | Unverified | Public specs agree with the print-ready file. The live note does not claim the delivered file matches. | Do not claim a byte match |
+| Insert fit | Unverified | The live sentence says physical fit has not been tested. | Leave that sentence |
+| Social bios and banners | Unverified | This approval did not include profile edits. No checked page says a bio states these product facts. | None unless a bio is later found stating the old coming-soon line |
