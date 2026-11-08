@@ -62,12 +62,20 @@ HOBO_SHOPS = {s["id"] for s in stores["stores"] if not s.get("brand") and not s.
 # or (older dot grid entries) a canonical with a "brand" or a store entry with a "brand".
 DOTGRID_SHOPS = [s for s in stores["stores"] if s.get("brand")]
 SECTIONS = {  # non-Hobonichi sections in nav/footer order; each has one page (the GROUPS entry with that section)
+    # Slugs stay on the published URLs. Visible names describe what the page tracks.
+    # /archer-and-olive-dot-grid-journal/ covers all four dot-grid makers, not Archer and Olive alone.
+    # /travelers-company-limited-edition/ covers Regular size colors and limited editions. Renaming either
+    # URL needs a planned redirect, not a silent slug change.
     "dotgrid": dict(slug="archer-and-olive-dot-grid-journal", nav="Dot grid journals", name="dot grid journals",
-                    foot="Dot grid journaling", link="Dot grid journals", count="dot grid journals", amazon=None),
-    "travelers": dict(slug="travelers-company-limited-edition", nav="Traveler's Company", name="Traveler's Company notebooks and limited editions",
-                      foot="Traveler's Company", link="Notebooks and limited editions", count="Traveler's Company", amazon="travelers"),
+                    foot="Dot grid journaling", link="Dot grid journals", count="dot grid journals",
+                    one="dot grid journal", amazon=None),
+    "travelers": dict(slug="travelers-company-limited-edition", nav="Traveler's Company",
+                      name="Traveler's Notebook regular colors and limited editions",
+                      foot="Traveler's Company", link="Regular colors and limited editions", count="Traveler's Company",
+                      one="Traveler's Notebook regular-color and limited-edition", amazon="travelers"),
     "midori": dict(slug="midori-md-limited-edition", nav="MIDORI MD", name="MIDORI MD seasonal releases",
-                   foot="MIDORI MD", link="Seasonal releases", count="MIDORI MD", amazon="midori"),
+                   foot="MIDORI MD", link="Seasonal releases", count="MIDORI MD",
+                   one="MIDORI MD seasonal release", amazon="midori"),
 }
 
 def g_sec(g):
@@ -198,10 +206,16 @@ REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG + "/",
              "travelers-notebook-regular-size": SECTIONS["travelers"]["slug"] + "/#tracker"}  # Regular colors merged into the Traveler's Company page
 # Home is a hub; the Hobonichi tracker (the old homepage content) lives on its own page.
 HOBO_TRACKER = "hobonichi-restock-tracker/"
-# Header: the four trackers as plain visible links, then the rest. Wraps on narrow screens; nothing is hidden.
+# Header: one link per restock tracker, then the rest of the site. Wraps on narrow screens; nothing is hidden.
+# NAV is not part of the tracker count. The calendar, guides, and shop are resources, not extra trackers.
 NAV_TRACKERS = [(HOBO_TRACKER, "Hobonichi tracker")] + [(SECTIONS[k]["slug"] + "/", SECTIONS[k]["nav"]) for k in LIVE]
 NAV = [("hobonichi-2027.html", "2027 calendar"), ("guides/", "Guides"), ("shop/", "Planners and journals"),
        ("follow/", "Follow us"), ("about.html", "About")]
+
+def tracker_count_label():
+    """Eyebrow count of restock trackers only (Hobonichi plus each section that has listings)."""
+    n = len(NAV_TRACKERS)
+    return f"{n} restock tracker" if n == 1 else f"{n} restock trackers"
 SHOP_NAME = "Our planners and journals"  # h1 of /shop; nav and breadcrumb say "Planners and journals"
 # The workflow cron is "17,47 * * * *": two runs an hour. Every page says it the same way.
 CHECK_FREQ = "about every 30 minutes"
@@ -213,10 +227,19 @@ TITLE_SUFFIX = " · Stationery Drop Watch"
 BASE = "https://stationerydropwatch.com/"
 CNAME = "stationerydropwatch.com"
 OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (Hobonichi side)
-OG_ALT = f"Stationery Drop Watch: Hobonichi Techo 2027 restock tracker, books, Weeks and covers checked {CHECK_FREQ} across {N_HOBO} shops"
+# The card artwork is "Hobonichi Techo 2027 restock tracker / Books, Weeks & covers · checked about every 30 minutes".
+# It prints no shop count. This same file is the default image on the hub (all trackers), Hobonichi pages
+# (Hobonichi shops only), and guides, so a single number in the alt cannot be true on every page.
+# Hobonichi shop totals stay in Hobonichi copy, derived from N_SEC["hobonichi"]. The all-tracker total is N_STORES.
+OG_ALT = ("Stationery Drop Watch: Hobonichi Techo 2027 restock tracker. "
+          f"Books, Weeks and covers, checked {CHECK_FREQ}")
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
 OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked " + CHECK_FREQ
-CONTENT_LASTMOD = "2026-11-03"  # last copy/structure change on the home and restock pages (sitemap lastmod floor)
+OG_TRAVELERS = BASE + "assets/brand/og-travelers.png"
+# Matches the card: regular size colors, 2027 diary accessories, limited editions. No shop count on the artwork.
+OG_TRAVELERS_ALT = ("Stationery Drop Watch: Traveler's Notebook restock tracker. "
+                    "Regular size colors, 2027 diary accessories and limited editions, at official and independent shops, checked " + CHECK_FREQ)
+CONTENT_LASTMOD = "2026-11-08"  # last copy/structure change on the home and restock pages (sitemap lastmod floor)
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
 
@@ -687,7 +710,9 @@ def build_hobo_tracker():
 HUB_TRACKERS = {  # one line per tracker card on the hub homepage
     "hobonichi": ("Hobonichi Techo 2027", "Original A6, Cousin A5, Weeks, Weeks Mega and covers, at the official store and independent shops."),
     "dotgrid": ("Dot grid journals", ""),  # shop names filled in from stores.json
-    "travelers": ("Traveler's Company", "Traveler's notebooks, refills and limited editions."),
+    # Live listings are the five Regular colors, the ROAD TRIP exclusive, anniversary sets, and 2027 diary
+    # accessories. Refills and Passport size are not listings on this tracker (the size guide says so).
+    "travelers": ("Traveler's Company", "Regular size colors, plus limited editions: 2027 diary accessories, anniversary sets and shop exclusives."),
     "midori": ("MIDORI MD", "MD Notebook diaries and MIDORI MD seasonal releases."),
 }
 HUB_FAQ = ("What do you track?", "How often do you check the shops?", 'What does "Couldn\'t check" mean?',
@@ -743,9 +768,10 @@ def build_index():
     unk = f' <span class="unk-note">{s["unknown"]} couldn\'t be checked this run.</span>' if s["unknown"] else ""
     body = f"""
 <section class="hero">
-  {eyebrow("4 restock trackers", f"{N_STORES} shops", f"checked {CHECK_FREQ}")}
+  {eyebrow(tracker_count_label(), f"{N_STORES} shops", f"checked {CHECK_FREQ}")}
   <h1>Know the moment your planner or journal is back.</h1>
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
+  <p class="small section-switch">Also on the site, separate from the trackers: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Planners and journals</a>.</p>
   {signup()}
   <p class="muted small hub-status">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time> · {checked} of {len(prods)} listings checked successfully.{unk}</p>
 </section>
@@ -923,24 +949,26 @@ GROUPS = [
          guide="Dot grid journals come in several sizes, papers and colors, and each one sells out on its own. "
                "We check the exact variant named in each row, so \"In stock\" means that size and color, not just some version of the journal. "
                "To compare paper weight, pages and size across the four brands, see <a href=\"best-dot-grid-journals/\">best dot grid journals compared</a>.",
-         # The URL slug says "archer-and-olive" (kept so links don't break); the page covers every dot grid shop we check,
-         # with Archer and Olive featured first, so the title and description name them all.
+         # Published URL stays /archer-and-olive-dot-grid-journal/ so existing links keep working.
+         # The title, heading, nav, and breadcrumb name every maker we check, with Archer and Olive featured first.
          title=f"Dot grid journal restock tracker: {dotgrid_names()}",
          desc=f"Are {dotgrid_names()} dot grid journals in stock? Live size-by-size status from each maker's own store, checked {CHECK_FREQ}, with Archer and Olive featured first.",
          og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
-               "We track a focused set of flagship dot grid notebooks straight from each maker's own store, size by size and color by color. "
-               "Archer and Olive is featured first. This covers dot grid journals only; we don't track pens or other paper here, and Hobonichi and our other sections have their own pages."),
-    dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Company notebook and limited edition", section="travelers",
+               f"We track a focused set of flagship dot grid notebooks from {dotgrid_names()}, each on that maker's own store, size by size and color by color, plus Archer and Olive's dot grid refills. "
+               "Archer and Olive is featured first. This page covers those dot grid notebooks and refills, not pens or other paper, and Hobonichi and our other sections have their own pages."),
+    dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Notebook", section="travelers",
+         h1="Traveler's Notebook restock tracker: regular colors and limited editions",
          match=lambda p: section_of(p) == "travelers", eyebrow="Traveler's Company", search_hint="Sticker set, Olive, 20th…",
          guide="Traveler's Company makes its limited editions in small runs, and each shop gets its own allocation, so one shop can sell out while another still has stock. "
                "We also track the five standard Regular size notebooks: Black (No. 13714006), Brown (No. 13715006), Blue (No. 15239006), Camel (No. 15193006) and Olive (No. 15342006). "
                "Traveler's Company warns that counterfeits are sold in the US, so we only list the official US shop and authorized retailers. For refills, check the shops directly. "
                f'Choosing Regular, Passport, or the Card Size anniversary set: <a href="{TN_GUIDE_SLUG}/">Regular vs Passport vs Card Size</a>.',
-         title=f"Traveler's Notebook restock tracker: regular colors and limited editions",
+         # Published URL stays /travelers-company-limited-edition/. The heading names Regular colors and limited editions.
+         title="Traveler's Notebook restock tracker: regular colors and limited editions",
          desc="Are the Traveler's Notebook Regular size colors (Black, Brown, Blue, Camel, Olive), 2027 diary accessories and 20th anniversary sets in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
-         og_image=BASE + "assets/brand/og-travelers.png",
-         og_alt="Stationery Drop Watch: Traveler's Notebook and limited edition tracker, checked " + CHECK_FREQ,
+         og_image=OG_TRAVELERS,
+         og_alt=OG_TRAVELERS_ALT,
          intro="We track the five Regular size Traveler's Notebook colors (Black, Brown, Blue, Camel and Olive) plus Traveler's Company limited editions: the yearly diary accessories, anniversary sets and shop exclusives. "
                "We check the official Traveler's Company USA shop and independent shops, item by item. "
                "Hobonichi and our other sections have their own pages."),
@@ -956,8 +984,8 @@ GROUPS = [
                "We check the official MD PRODUCT USA store and independent shops, size by size. "
                "This covers MIDORI MD seasonal releases only; Hobonichi and our other sections have their own pages."),
 ]
-for _g in GROUPS:  # one name per page: H1 is "<product> restock tracker"; the <title> adds the live shop count
-    _g["h1"] = _g["product"] + " restock tracker"
+for _g in GROUPS:  # one name per page: H1 is "<product> restock tracker" unless the group sets a wider h1
+    _g.setdefault("h1", _g["product"] + " restock tracker")
 for _g in GROUPS:  # Hobonichi pages never pick up listings from another section
     if g_sec(_g) == "hobonichi":
         _g["match"] = (lambda m: lambda p: section_of(p) == "hobonichi" and m(p))(_g["match"])
@@ -1053,7 +1081,7 @@ def build_group(g, oe):
   A restock shows up here the moment a sold-out listing flips back to in stock or preorder between two checks.</p></div>'''
     others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and (g_sec(x) != "hobonichi") == ext)
     if ext:
-        others += f'<li><a href="#tracker">Every {E(SECTIONS[g_sec(g)]["name"].removesuffix("s"))} listing we track (this page)</a></li>'
+        others += f'<li><a href="#tracker">Every {E(SECTIONS[g_sec(g)]["one"])} listing we track (this page)</a></li>'
         if per_shop:
             shop_ids = sorted({l["store_id"] for l in ls}, key=lambda sid: rank[sid])
             shop_nav = "".join(f'<a class="chip" href="#shop-{E(sid)}">{E(next(x["name"] for x in stores["stores"] if x["id"] == sid))}</a>' for sid in shop_ids)
@@ -1363,7 +1391,7 @@ FAQ = [
     ("Which shops do you check?",
      "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
-     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 covers. {tracks} We don't track pens or everyday refills."),
+     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 covers. {tracks} We don't track pens."),
     ("What does \"Couldn't check\" mean?",
      "Our check of that listing failed, for example because the shop's site didn't respond. We show that instead of guessing whether it's in stock."),
     ("What does \"Not yet on sale\" mean?",
@@ -1377,8 +1405,8 @@ FAQ = [
 ]
 
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
-    "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color.",
-    "travelers": "On the Traveler's Company page, we track the five Regular size notebook colors plus limited editions: the 2027 diary accessories, anniversary sets and shop exclusives.",
+    "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color, plus Archer and Olive's dot grid refills.",
+    "travelers": "On the Traveler's Company page, we track the five Regular size notebook colors plus limited editions: the 2027 diary accessories, anniversary sets and shop exclusives. We don't track Passport size or refills there.",
     "midori": "On the MIDORI MD page, we track seasonal and limited MD releases (MIDORI's MD line is now sold as MD PRODUCT).",
 }
 
@@ -2152,8 +2180,7 @@ def build_tn_sizes():
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
     return fname, page(fname, title, desc, body,
                        ld=(crumbs_ld(("guides/", "Guides"), (fname, "Regular vs Passport vs Card Size")), art, faq_ld),
-                       og_type="article", og_image=BASE + "assets/brand/og-travelers.png",
-                       og_alt="Stationery Drop Watch: Traveler's Notebook and limited edition tracker, checked " + CHECK_FREQ)
+                       og_type="article", og_image=OG_TRAVELERS, og_alt=OG_TRAVELERS_ALT)
 
 
 def build_guides_index():
