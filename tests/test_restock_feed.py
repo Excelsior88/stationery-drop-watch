@@ -1,8 +1,12 @@
 """Recent restocks must show the latest check, not the status at the moment of the restock."""
 import datetime as dt
 import html
+import os
 import re
+import shutil
+import subprocess
 import sys
+import time
 import unittest
 from pathlib import Path
 
@@ -226,6 +230,19 @@ class RestockFeedTests(unittest.TestCase):
         self.assertIn('class="time-instant"', doc)
         self.assertIn(f'datetime="{now}"', doc)
 
+    def test_filter_controls_stay_hidden_without_has_support(self):
+        css = (ROOT / "site/assets/style.css").read_text()
+        hidden = css.find(".feed-controls{display:none}")
+        guard = css.find("@supports selector(:has(*))")
+        rule = css.find('.restocks:has(.restock-in:checked) .feed-item:not([data-now="in_stock"]){display:none}')
+        empty = css.find('.restocks:has(.restock-in:checked):not(:has(.feed-item[data-now="in_stock"])) .feed-empty{display:block}')
+        end = css.find("\n}", guard)
+        self.assertGreater(hidden, 0)
+        self.assertLess(hidden, guard)
+        self.assertLess(guard, rule)
+        self.assertLess(rule, empty)
+        self.assertLess(empty, end)
+
     def test_tracker_pages_use_the_same_current_status(self):
         oe = site.amazon_main(site.stock["products"])
         docs = [("index", site.build_index()), ("hobo", site.build_hobo_tracker())]
@@ -261,6 +278,73 @@ class RestockFeedTests(unittest.TestCase):
                     self.assertNotIn("in_stock", li)
                     self.assertNotIn("In stock", li)
         self.assertGreater(seen, 0)
+
+
+class RestockViewBrowserTests(unittest.TestCase):
+    """Synthetic listings only. Not shop data and not the live site."""
+
+    def test_chrome_toggles_filters_keyboard_and_time_zones(self):
+        chrome = "/usr/local/bin/google-chrome"
+        if not Path(chrome).exists() or not Path("/tmp/qa-browser/node_modules/puppeteer-core").exists():
+            self.skipTest("Chrome or puppeteer-core is not available")
+        out = Path("/tmp/qa-feed")
+        if out.exists():
+            shutil.rmtree(out)
+        (out / "assets").mkdir(parents=True)
+        shutil.copy(ROOT / "site/assets/style.css", out / "assets/style.css")
+        shutil.copy(ROOT / "site/assets/local-time.js", out / "assets/local-time.js")
+        newer, older = "2026-11-08T08:44:43+00:00", "2026-11-06T23:18:18+00:00"
+        def event(url, label, when):
+            return {"url": url, "label": label, "store": "Fixture", "at": when,
+                    "to": "in_stock", "from": "sold_out"}
+        mixed_events = [
+            event("https://example.test/sold", "Fixture sold out", newer),
+            event("https://example.test/sold", "Fixture sold out", older),
+            event("https://example.test/stocked", "Fixture in stock", newer),
+        ]
+        empty_events = [
+            event("https://example.test/sold", "Fixture sold out", newer),
+            event("https://example.test/preorder", "Fixture preorder", newer),
+            event("https://example.test/unknown", "Fixture unchecked", newer),
+            event("https://example.test/missing", "Fixture missing check", newer),
+        ]
+        products = [
+            {"url": "https://example.test/sold", "status": "sold_out"},
+            {"url": "https://example.test/stocked", "status": "in_stock"},
+            {"url": "https://example.test/preorder", "status": "preorder"},
+            {"url": "https://example.test/unknown", "status": "unknown"},
+        ]
+        orig = site.stock["products"]
+        try:
+            site.stock["products"] = products
+            mixed = site.RESTOCK_NOW_NOTE + site.restock_feed(mixed_events, feed_id="mixed")
+            empty = site.RESTOCK_NOW_NOTE + site.restock_feed(empty_events, feed_id="empty")
+        finally:
+            site.stock["products"] = orig
+
+        def wrap(body):
+            return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="/assets/style.css"></head><body>
+<main class="wrap"><section id="restocked"><h2>Synthetic fixture, not a shop</h2>{body}</section></main>
+<script src="/assets/local-time.js"></script>
+<script>DropWatchTime.showLocalTimes(document)</script>
+</body></html>"""
+        (out / "mixed.html").write_text(wrap(mixed))
+        (out / "empty.html").write_text(wrap(empty))
+        env = os.environ.copy()
+        env["NODE_PATH"] = "/tmp/qa-browser/node_modules"
+        env["FIXTURE_ORIGIN"] = "http://127.0.0.1:8770"
+        server = subprocess.Popen([sys.executable, "-m", "http.server", "8770", "--bind", "127.0.0.1"],
+                                  cwd=out, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        time.sleep(0.4)
+        try:
+            run = subprocess.run(["node", str(ROOT / "tests/restock_view_browser.mjs")],
+                                 cwd=ROOT, env=env, capture_output=True, text=True, timeout=90)
+        finally:
+            server.kill()
+            server.wait(timeout=5)
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertIn("browser restock view ok", run.stdout)
 
 
 if __name__ == "__main__":

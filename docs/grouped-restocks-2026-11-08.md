@@ -12,4 +12,6 @@ On the homepage and the Hobonichi tracker the set is the last 14 days, then the 
 
 ## Preview
 
-Screenshots are a local build from repository stock `run_finished` `2026-11-08T17:48:38+00:00`, not the live site.
+Screenshots `feed-desktop-all.png`, `feed-mobile-all.png`, `feed-desktop-instock.png`, `feed-mobile-instock.png`, `feed-desktop-history.png`, and `feed-mobile-history.png` are a local build from repository stock `run_finished` `2026-11-08T17:48:38+00:00`, not the live site. Those six pages did not load `local-time.js`, so the Eastern Time text is the no-JavaScript fallback, not a local-zone check.
+
+The All / In stock radios are hidden unless the browser supports `:has`. Without that selector the list stays the full All view, and there is no control that does nothing. Chrome, which supports `:has`, was driven through All, In stock now, and back, including a fixture whose rows are only sold out, preorder, couldn't check, and a missing check.
