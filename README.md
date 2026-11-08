@@ -19,6 +19,7 @@ Pens, inks and other paper are not tracked.
 - `content/editor_picks.json`: the "From the editor" house ad. Add another object to `books` to show a second book.
 - TODOs: grep for `TODO` / `data-todo` (newsletter form action, affiliate links, Associates tag).
 - The checker only reports what stores return. Failed checks show as "Couldn't check" and are never guessed.
+- Restock times and last-check times are stored as ISO timestamps and rendered as Eastern Time. `site/assets/local-time.js` rewrites `time.time-instant` into the visitor's time zone and names that zone. If the browser cannot, the Eastern Time label stays. Guide dates and the 2027 calendar dates are not rewritten.
 
 ## SEO
 

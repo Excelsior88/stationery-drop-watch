@@ -170,13 +170,15 @@ def brand_amazon(key):
     return f'<a class="az" target="_blank" href="{E(b["url"])}">{E(b["label"])}</a>'
 
 def fmt_et(iso):
-    """The one time format on the site: "Nov 3, 11:47 AM ET" (the year is added only when it isn't this year)."""
+    """No-JS label for one instant: "Nov 3, 11:47 AM ET" (the year is added only when it isn't this year).
+    "ET" is America/New_York. It is not the visitor's zone. local-time.js rewrites time.time-instant when it can."""
     t = dt.datetime.fromisoformat(iso).astimezone(ET)
     yr = f", {t.year}" if t.year != dt.datetime.now(ET).year else ""
     return t.strftime("%b %-d") + yr + t.strftime(", %-I:%M %p ET")
 
 def time_tag(iso):
-    return f'<time datetime="{E(iso)}">{E(fmt_et(iso))}</time>'
+    """An instant. datetime stays the stored ISO timestamp. The text is Eastern Time until local-time.js runs."""
+    return f'<time class="time-instant" datetime="{E(iso)}">{E(fmt_et(iso))}</time>'
 
 def checked_line(ls):
     """Every "checked" stamp on the site is the run's one check time (stock["run_finished"])."""
@@ -311,6 +313,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
 </div></footer>
+<script src="assets/local-time.js?v={ASSET_V['local-time.js']}" defer></script>
 <script src="assets/app.js?v={ASSET_V['app.js']}" defer></script>
 </body></html>"""
     # The site is served at the domain root, so make every local link root-relative ("assets/x" -> "/assets/x").
@@ -580,7 +583,8 @@ def soon_block():
     </section>"""
 
 # Recent restocks are a history of flips. The status pill is the latest check, not the flip.
-RESTOCK_NOW_NOTE = "The date is when it came back. The status is the latest check."
+RESTOCK_NOW_NOTE = ("The time is when it came back. It is Eastern Time here, and your time zone when the browser can show it. "
+                    "The status is the latest check.")
 
 def availability_now(url):
     """Latest known availability for one listing URL.
@@ -622,7 +626,7 @@ def build_hobo_tracker():
     else:
         start = tracking_start(prods)
         lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."
-        feed_html = f"""<div class="empty"><p><strong>{lead}</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
+        feed_html = f"""<div class="empty"><p><strong>{lead}</strong> Tracking started {time_tag(start)}.
   A restock shows up here the moment a sold-out item flips back to in stock or preorder between two checks.</p>
   <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet. Those are the ones we're watching.{f" {s['unknown']} couldn't be checked this run." if s['unknown'] else ""}</p></div>"""
 
@@ -678,7 +682,7 @@ def build_hobo_tracker():
     <div><b>{s['coming_soon']}</b><span>not yet on sale</span></div>
     {f'<div class="unk"><b>{s["unknown"]}</b><span>couldn' + "'" + 't check this run</span></div>' if s['unknown'] else ''}
   </div>
-  <p class="muted small">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time> · {checked} of {len(prods)} listings checked successfully.</p>
+  <p class="muted small">Last check: {time_tag(stock['run_finished'])} · {checked} of {len(prods)} listings checked successfully.</p>
 </section>
 
 <div class="layout{'' if side.strip() else ' solo'}">
@@ -751,7 +755,7 @@ def build_index():
     else:
         start = tracking_start(prods)
         lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."
-        feed_html = f"""<div class="empty"><p><strong>{lead}</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
+        feed_html = f"""<div class="empty"><p><strong>{lead}</strong> Tracking started {time_tag(start)}.
   A restock shows up here the moment a sold-out item flips back to in stock or preorder between two checks.</p>
   <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet.</p></div>"""
     guides = "".join(f'<li><a href="{h}">{E(t)}</a>{f"<p class=\"muted small\">{E(GUIDE_BLURBS[h])}</p>" if h in GUIDE_BLURBS else ""}</li>' for h, t in GUIDES)
@@ -773,7 +777,7 @@ def build_index():
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
   <p class="small section-switch">Also on the site, separate from the trackers: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Planners and journals</a>.</p>
   {signup()}
-  <p class="muted small hub-status">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time> · {checked} of {len(prods)} listings checked successfully.{unk}</p>
+  <p class="muted small hub-status">Last check: {time_tag(stock['run_finished'])} · {checked} of {len(prods)} listings checked successfully.{unk}</p>
 </section>
 
 <section class="hub-trackers" id="trackers" aria-labelledby="trackers-h">
@@ -1008,7 +1012,7 @@ def status_rows(ls, oe):
     rows = []
     for l in sorted(ls, key=lambda l: (order.get(l["status"], 9), l["store"])):
         since = l.get("status_since")
-        since_html = f'<span class="sub">since {E(fmt_et(since).rsplit(",", 1)[0])}</span>' if since and l["status"] != "unknown" else ""
+        since_html = f'<span class="sub">since {time_tag(since)}</span>' if since and l["status"] != "unknown" else ""
         rows.append(f"""<tr><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
   <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td></tr>""")
     return "".join(rows)
@@ -1077,7 +1081,7 @@ def build_group(g, oe):
         restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs)
     else:
         start = tracking_start(ls)
-        restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
+        restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started {time_tag(start)}.
   A restock shows up here the moment a sold-out listing flips back to in stock or preorder between two checks.</p></div>'''
     others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and (g_sec(x) != "hobonichi") == ext)
     if ext:
@@ -1106,7 +1110,7 @@ def build_group(g, oe):
   <h1>{E(g['h1'])}</h1>
   <p class="lede">{E(g['intro'])}</p>
   <p><strong>Right now:</strong> {right_now}
-  <span class="muted small">Last check: <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time>.</span></p>
+  <span class="muted small">Last check: {time_tag(stock['run_finished'])}.</span></p>
   {signup()}
 </section>
 <div class="layout">
@@ -1303,7 +1307,7 @@ def build_design(d, oe):
         restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs)
     else:
         start = tracking_start(ls) if ls else stock["run_started"]
-        restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
+        restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started {time_tag(start)}.
   A restock shows up here the moment a sold-out listing flips back to in stock or preorder between two checks.</p></div>'''
     # short FAQ, answered from this run's data
     names = lambda xs: ", ".join(sorted({l["store"] for l in xs})) or "none"
@@ -1334,7 +1338,9 @@ def build_design(d, oe):
            f"Every shop is checked {CHECK_FREQ}. Each status is exactly what the shop's public product data said at that time. \"Not yet on sale\" means the shop has a preview page up but isn't taking orders yet, and \"Couldn't check\" means our check failed, so we don't guess."),
           ("Can I get an alert when it's back?",
            "Yes. Sign up above for restock emails: we send one short email when a sold-out item comes back at any shop we track.")]
-    faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in qa) + "</section>"
+    when_html = time_tag(run)
+    faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(
+        f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a).replace(E(when), when_html, 1)}</p></details>' for q, a in qa) + "</section>"
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
     sources = "".join(f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(l["store"])}: {E(l.get("title") or l["label"])}</a></li>' for l in sorted(ls, key=lambda l: l["store"]))
@@ -1354,7 +1360,7 @@ def build_design(d, oe):
   <h1>{E(h1)}</h1>
   <p class="lede">{intro}</p>
   <p><strong>Right now:</strong> {right_now}
-  <span class="muted small">Last check: <time datetime="{E(run)}">{E(fmt_et(run))}</time>.</span></p>
+  <span class="muted small">Last check: {time_tag(run)}.</span></p>
   {signup()}
 </section>
 <div class="layout">
@@ -1387,7 +1393,9 @@ def design_lastmod(d):
 
 FAQ = [
     ("How often do you check the shops?",
-     "About every 30 minutes. A scheduled job reads each shop's public product data, then rebuilds this site with what it found."),
+     "About every 30 minutes. A scheduled job reads each shop's public product data, then rebuilds this site with what it found. "
+     "Restock times and last-check times are written as Eastern Time. A browser that can read them shows your local time zone instead and names that zone. "
+     "If it cannot, the Eastern Time label stays. Guide dates and the 2027 calendar dates stay as written."),
     ("Which shops do you check?",
      "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
@@ -1606,7 +1614,7 @@ def build_where_to_buy():
     fname = WTB_SLUG + "/"
     hobo = hobo_products()
     groups = [g for g in GROUPS if g_sec(g) == "hobonichi"]
-    last = f'<time datetime="{E(stock["run_finished"])}">{E(fmt_et(stock["run_finished"]))}</time>'
+    last = time_tag(stock["run_finished"])
     quick, secs = [], []
     for g in groups:
         ls = group_listings(g)
@@ -1650,7 +1658,10 @@ def build_where_to_buy():
         ("How do I get told when something restocks?",
          "Sign up for Stationery Drop Watch alerts. We check the shops about every 30 minutes and send one short email when a sold-out item comes back somewhere we track."),
     ]
-    faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
+    checked_at = fmt_et(stock["run_finished"])
+    faq_html = "".join(
+        f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a).replace(E(checked_at), time_tag(stock["run_finished"]), 1)}</p></details>'
+        for q, a in faq)
     body = f"""
 <article class="prose guide">
 {crumbs(("guides/", "Guides"), (fname, "Where to buy"))}
@@ -1758,7 +1769,7 @@ def build_vs():
 <div class="table-wrap"><table class="stock compare">
 <thead><tr><th></th><th>Original (A6)</th><th>Cousin (A5)</th><th>Weeks</th></tr></thead>
 <tbody>{rows_html}</tbody></table></div>
-<p class="muted small">Stock counts are what each shop's product data said at our last check, <time datetime="{E(stock['run_finished'])}">{E(fmt_et(stock['run_finished']))}</time>.</p>
+<p class="muted small">Stock counts are what each shop's product data said at our last check, {time_tag(stock['run_finished'])}.</p>
 
 <h2>Who each one suits</h2>
 <h3>Original (A6): a page a day you can carry</h3>
@@ -1878,7 +1889,7 @@ def build_dotgrid_guide():
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, {E(b)} (official product page).</li>'
                         for k, (u, t, b) in DG_SRC.items())
-    asof = f'<time datetime="{E(stock["run_finished"])}">{E(fmt_et(stock["run_finished"]))}</time>'
+    asof = time_tag(stock["run_finished"])
     body = f"""
 <article class="prose guide vs-page">
 {crumbs(("guides/", "Guides"), (fname, "Dot grid journals compared"))}
@@ -2276,7 +2287,7 @@ SHOP_INSIDE = {
 }
 
 import hashlib as _hl
-ASSET_V = {n: _hl.md5((SITE / 'assets' / n).read_bytes()).hexdigest()[:8] for n in ('style.css', 'app.js')}
+ASSET_V = {n: _hl.md5((SITE / 'assets' / n).read_bytes()).hexdigest()[:8] for n in ('style.css', 'app.js', 'local-time.js')}
 
 def shop_preview():
     return os.environ.get("DROPWATCH_SHOP_PREVIEW") == "1"
