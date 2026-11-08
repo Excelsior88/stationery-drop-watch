@@ -2360,16 +2360,19 @@ SHOP_SAMPLES = {
                 "Level Up Etsy digital: Week 2 Save Point with habit tracker, mood and XP. Authentic final PDF interior, complete page.",
                 "Week 2 save point, page 13. Sample from the printable PDF.", 812, 1050),
     ]},
-    "B0HQW8273V": {"class": " samples", "items": [
+    "B0HQW8273V": {
+        "class": " samples",
+        "note": "Sample pages from the print-ready file, not photographs of a printed copy.",
+        "items": [
         _sample("/assets/shop/inside/levelup-print-p009.webp",
                 "Level Up local print master: January 2027 Monday-start World Map calendar. Authentic final PDF interior, complete page.",
-                "January 2027 calendar, page 9. Sample from the local print master, not a photograph of the physical book.", 812, 1050),
+                "January 2027 calendar, page 9.", 812, 1050),
         _sample("/assets/shop/inside/levelup-print-p012.webp",
                 "Level Up local print master: Week 2 dated Monday-start Week Plan. Authentic final PDF interior, complete page.",
-                "Week 2 plan, January 4 to 10, page 12. Sample from the local print master, not a photograph of the physical book.", 812, 1050),
+                "Week 2 plan, January 4 to 10, page 12.", 812, 1050),
         _sample("/assets/shop/inside/levelup-print-p013.webp",
                 "Level Up local print master: Week 2 Save Point with habit tracker, mood and XP. Authentic final PDF interior, complete page.",
-                "Week 2 save point, page 13. Sample from the local print master, not a photograph of the physical book.", 812, 1050),
+                "Week 2 save point, page 13.", 812, 1050),
     ]},
     "soft-days": {"class": " samples inserts", "items": [
         _sample("/assets/shop/inside/softdays-weekly-color.webp",
@@ -2508,11 +2511,13 @@ def build_shop():
                     f'<figcaption>{E(s["caption"])} <a href="{E(s["src"])}" target="_blank" rel="noopener">Larger view</a></figcaption></figure>'
                     for s in sample["items"])
                 grid = "inside-grid" + sample["class"]
+                lead = f'<p class="muted small">{E(sample["note"])}</p>' if sample.get("note") else ""
             else:
                 figs = "".join(f'<figure><img src="/assets/shop/inside/{inside}-{f}.jpg" alt="{E(title)}: {E(cap)}" loading="lazy" decoding="async"><figcaption>{E(cap)}</figcaption></figure>'
                                for f, cap in SHOP_INSIDE[inside])
                 grid = "inside-grid" + (" spreads" if inside in AMAZON_LIST_PRICES else "")
-            ins = f'<details class="shop-inside"><summary>See inside</summary><div class="{grid}">{figs}</div></details>'
+                lead = ""
+            ins = f'<details class="shop-inside"><summary>See inside</summary>{lead}<div class="{grid}">{figs}</div></details>'
         if templates:
             lis = "".join(f"<li>{E(t)}</li>" for t in templates)
             ins += f'<details class="shop-inside"><summary>{E(templates_label)}</summary><ul class="small">{lis}</ul></details>'

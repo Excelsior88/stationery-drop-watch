@@ -36,7 +36,7 @@ WebP SHA-256 values below were calculated for this handoff. They are not an olde
 
 Cover alt text on the page is "Front cover of the Level Up! 2027 printable planner" and "Front cover of the Level Up! 2027 paperback planner." The handoff manifest called those covers interior or insert art. That wording is not used.
 
-Print page samples are labeled as the local print master, not photographs of a physical copy. Public Amazon details (168 pages, 8.5 × 11 in, full color, paperback, publication 8 Nov 2026) agree with that master. They do not prove the file Amazon delivers is the same bytes.
+The closed paperback card states each buyer fact once: paperback, ages 7 to 11, 168 pages, 8.5 × 11 in, full color, January to December 2027, Monday start, and the Reading Quest Log, Trophy Room, and Coin Bank. Inside the closed See inside control, one line says the samples are from the print-ready file, not photographs of a printed copy. Public Amazon details agree with that file. They do not prove the file Amazon delivers is the same bytes.
 
 ## Changed-fact inventory
 
