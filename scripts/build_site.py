@@ -614,16 +614,49 @@ def availability_now(url):
             return st, STATUS[st]
     return "unknown", "No current check"
 
-def restock_feed_item(c, extra=""):
-    """One restock row: when it came back, and the latest known availability beside that."""
-    st, label = availability_now(c["url"])
-    ex = extra(c) if callable(extra) else extra
-    return f"""<li class="feed-item"><span class="feed-now">now <span class="badge {E(st)}">{E(label)}</span></span>
-  <a href="{E(c['url'])}" rel="noopener" target="_blank">{E(c['label'])}</a> <span class="muted">at {E(c['store'])}</span>
-  {ex}<span class="feed-when">restocked {time_tag(c['at'])}</span></li>"""
+def restock_groups(events):
+    """One group per listing URL, newest event first. A different shop, variant, or edition has a different URL."""
+    groups, order = {}, []
+    for c in events:
+        key = c.get("url") or ""
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(c)
+    return [groups[k] for k in order]
 
-def restock_feed(events, extra=""):
-    return '<ol class="feed">' + "".join(restock_feed_item(c, extra) for c in events) + "</ol>"
+def restock_feed_item(c, extra=""):
+    """One listing: current availability, the newest restock, and any earlier ones in this list collapsed."""
+    events = c if isinstance(c, list) else [c]
+    newest = events[0]
+    st, label = availability_now(newest["url"])
+    ex = extra(newest) if callable(extra) else extra
+    earlier = events[1:]
+    history = ""
+    if earlier:
+        n = len(earlier)
+        word = "restock" if n == 1 else "restocks"
+        rows = "".join(f'<div class="feed-earlier">restocked {time_tag(old["at"])}</div>' for old in earlier)
+        history = f'<details class="feed-history"><summary>Earlier {word} ({n})</summary>{rows}</details>'
+    return f"""<li class="feed-item" data-now="{E(st)}"><span class="feed-now">now <span class="badge {E(st)}">{E(label)}</span></span>
+  <a href="{E(newest['url'])}" rel="noopener" target="_blank">{E(newest['label'])}</a> <span class="muted">at {E(newest['store'])}</span>
+  {ex}<span class="feed-when">restocked {time_tag(newest['at'])}</span>{history}</li>"""
+
+def restock_feed(events, extra="", feed_id="restocks", limit=None):
+    """Grouped restocks. `limit` is how many listings to show, not how many flips. In stock now is CSS-only."""
+    groups = restock_groups(events)
+    if limit is not None:
+        groups = groups[:limit]
+    fid = E(feed_id)
+    items = "".join(restock_feed_item(g, extra) for g in groups)
+    return f"""<div class="restocks" id="{fid}">
+  <div class="feed-controls" role="radiogroup" aria-label="Which restocks to show">
+    <label><input type="radio" name="{fid}-view" class="restock-all" checked> All</label>
+    <label><input type="radio" name="{fid}-view" class="restock-in"> In stock now</label>
+  </div>
+  <ol class="feed">{items}</ol>
+  <p class="feed-empty muted small">None of these are in stock now.</p>
+</div>"""
 
 def build_hobo_tracker():
     """The full Hobonichi tracker (the old homepage), now at HOBO_TRACKER. Copy, FAQ and FAQ schema unchanged."""
@@ -634,9 +667,9 @@ def build_hobo_tracker():
     restocks = [c for c in changes if c["url"] in urls and c["to"] in ("in_stock", "preorder") and c["from"] in ("sold_out", "coming_soon")]
     restocks.sort(key=lambda c: c["at"], reverse=True)
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)
-    recent = [c for c in restocks if dt.datetime.fromisoformat(c["at"]) >= cutoff][:12]
+    recent = [c for c in restocks if dt.datetime.fromisoformat(c["at"]) >= cutoff]
     if recent:
-        feed_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(recent)
+        feed_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(recent, feed_id="hobo-restocks", limit=12)
     else:
         start = tracking_start(prods)
         lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."
@@ -759,13 +792,13 @@ def build_index():
     restocks = [c for c in changes if c["url"] in sec_of_url and c["to"] in ("in_stock", "preorder") and c["from"] in ("sold_out", "coming_soon")]
     restocks.sort(key=lambda c: c["at"], reverse=True)
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)
-    recent = [c for c in restocks if dt.datetime.fromisoformat(c["at"]) >= cutoff][:12]
+    recent = [c for c in restocks if dt.datetime.fromisoformat(c["at"]) >= cutoff]
     short = {"hobonichi": "Hobonichi", **{k: SECTIONS[k]["nav"] for k in LIVE}}
     def hub_tag(c):
         sec = sec_of_url[c["url"]]
         return f'<a class="hub-tag" href="{href[sec]}">{E(short[sec])}</a>\n  '
     if recent:
-        feed_html = restock_feed(recent, hub_tag)
+        feed_html = restock_feed(recent, hub_tag, feed_id="hub-restocks", limit=12)
     else:
         start = tracking_start(prods)
         lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."
@@ -1092,7 +1125,7 @@ def build_group(g, oe):
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
                 key=lambda c: c["at"], reverse=True)[:10]
     if rs:
-        restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs)
+        restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs, feed_id=g["slug"] + "-restocks")
     else:
         start = tracking_start(ls)
         restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started {time_tag(start)}.
@@ -1318,7 +1351,7 @@ def build_design(d, oe):
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
                 key=lambda c: c["at"], reverse=True)[:10]
     if rs:
-        restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs)
+        restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs, feed_id=d["parent"] + "-" + d["slug"] + "-restocks")
     else:
         start = tracking_start(ls) if ls else stock["run_started"]
         restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started {time_tag(start)}.

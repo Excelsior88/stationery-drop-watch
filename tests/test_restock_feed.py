@@ -17,7 +17,7 @@ def feed_items(doc, section_id="restocked"):
     stop = chunk.find("</section>")
     if stop >= 0:
         chunk = chunk[:stop]
-    return re.findall(r'<li class="feed-item">(.*?)</li>', chunk, re.S)
+    return re.findall(r'<li class="feed-item\b.*?</li>', chunk, re.S)
 
 
 def badge(li):
@@ -107,34 +107,42 @@ class RestockFeedTests(unittest.TestCase):
             site.changes = orig_changes
 
         items = feed_items(doc)
-        by_when = {}
-        for li in items:
-            m = re.search(r'datetime="([^"]+)"', li)
-            self.assertIsNotNone(m)
-            by_when.setdefault(m.group(1), li)
-        self.assertIn(sold_at, by_when)
-        self.assertIn(again_at, by_when)
-        self.assertNotIn(old_at, by_when)
+        def item_for(url):
+            hits = [li for li in items if url in li]
+            self.assertEqual(len(hits), 1, url)
+            return hits[0]
+        sold = item_for("https://example.test/sold")
+        still = item_for("https://example.test/still")
+        failed = item_for("https://example.test/failed")
+        preorder = item_for("https://example.test/preorder")
+        self.assertNotIn("https://example.test/old", doc)
         self.assertNotIn("Gone Listing", doc)
         self.assertNotIn("https://example.test/missing", doc)
-        sold, still, failed, preorder = by_when[sold_at], by_when[still_at], by_when[failed_at], by_when[pre_at]
+        self.assertIn(sold_at, sold)
+        self.assertIn(again_at, sold)
+        self.assertLess(sold.find(sold_at), sold.find(again_at))
+        self.assertIn("<details", sold)
+        self.assertNotIn("<details open", sold)
         self.assertEqual(badge(sold), [("sold_out", "Sold out")])
         self.assertEqual(badge(still), [("in_stock", "In stock")])
         self.assertEqual(badge(failed), [("unknown", "Couldn't check")])
         self.assertEqual(badge(preorder), [("preorder", "Preorder")])
         for li in (sold, failed, preorder):
-            self.assertNotIn("in_stock", li)
-            self.assertNotIn("In stock", li)
+            self.assertNotIn('data-now="in_stock"', li)
+            self.assertNotIn(">In stock<", li)
+        self.assertIn('data-now="in_stock"', still)
         self.assertIn('href="https://example.test/sold"', sold)
         self.assertIn("Traveler&#x27;s Company USA (official)", sold)
         self.assertIn('href="/travelers-company-limited-edition/"', sold)
         self.assertIn("restocked", sold)
-        self.assertLess(doc.find(sold_at), doc.find(still_at))
-        self.assertLess(doc.find(still_at), doc.find(failed_at))
-        self.assertLess(doc.find(failed_at), doc.find(pre_at))
-        self.assertLess(doc.find(pre_at), doc.find(again_at))
+        self.assertLess(doc.find("https://example.test/sold"), doc.find("https://example.test/still"))
+        self.assertLess(doc.find("https://example.test/still"), doc.find("https://example.test/failed"))
+        self.assertLess(doc.find("https://example.test/failed"), doc.find("https://example.test/preorder"))
         self.assertIn("Every tracker, newest first. Last 14 days.", doc)
         self.assertIn(site.RESTOCK_NOW_NOTE, doc)
+        self.assertIn('class="restock-all" checked', doc)
+        self.assertIn('class="restock-in"', doc)
+        self.assertIn("None of these are in stock now.", doc)
 
     def test_homepage_keeps_newest_twelve_in_the_last_14_days(self):
         base = dt.datetime.now(dt.timezone.utc).replace(microsecond=0) + dt.timedelta(days=2)
@@ -162,6 +170,62 @@ class RestockFeedTests(unittest.TestCase):
         self.assertNotIn("https://example.test/limit-12", "".join(items))
         self.assertEqual(badge(items[0]), [("sold_out", "Sold out")])
 
+    def test_same_listing_groups_and_different_listings_stay_apart(self):
+        now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
+        def at(hours):
+            return (now + dt.timedelta(hours=hours)).isoformat()
+        newer, older = at(3), at(1)
+        events = [
+            {"url": "https://example.test/black", "to": "in_stock", "from": "sold_out", "at": newer,
+             "label": "Regular Black", "store": "Shop A"},
+            {"url": "https://example.test/black", "to": "in_stock", "from": "sold_out", "at": older,
+             "label": "Regular Black", "store": "Shop A"},
+            {"url": "https://example.test/black-other", "to": "in_stock", "from": "sold_out", "at": at(2),
+             "label": "Regular Black", "store": "Shop B"},
+        ]
+        products = [
+            {"url": "https://example.test/black", "status": "sold_out"},
+            {"url": "https://example.test/black-other", "status": "in_stock"},
+        ]
+        orig = site.stock["products"]
+        try:
+            site.stock["products"] = products
+            doc = site.restock_feed(events, feed_id="split")
+        finally:
+            site.stock["products"] = orig
+        items = feed_items(doc)
+        self.assertEqual(len(items), 2)
+        self.assertIn(newer, items[0])
+        self.assertIn(older, items[0])
+        self.assertIn("Earlier restock (1)", items[0])
+        self.assertIn('href="https://example.test/black"', items[0])
+        self.assertIn("Shop A", items[0])
+        self.assertNotIn("Shop B", items[0])
+        self.assertIn('data-now="sold_out"', items[0])
+        self.assertIn('href="https://example.test/black-other"', items[1])
+        self.assertIn("Shop B", items[1])
+        self.assertIn('data-now="in_stock"', items[1])
+        self.assertNotIn("<details", items[1])
+
+    def test_in_stock_view_excludes_unknown_preorder_and_sold_out(self):
+        now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
+        events = [{"url": f"https://example.test/{st}", "to": "in_stock", "from": "sold_out", "at": now,
+                   "label": st, "store": "Shop"} for st in ("in_stock", "preorder", "sold_out", "unknown")]
+        products = [{"url": e["url"], "status": e["label"]} for e in events]
+        orig = site.stock["products"]
+        try:
+            site.stock["products"] = products
+            doc = site.restock_feed(events, feed_id="filter")
+        finally:
+            site.stock["products"] = orig
+        self.assertEqual(doc.count('data-now="in_stock"'), 1)
+        for st in ("preorder", "sold_out", "unknown"):
+            self.assertIn(f'data-now="{st}"', doc)
+            self.assertNotIn(f'data-now="{st}" data-now="in_stock"', doc)
+        self.assertIn("None of these are in stock now.", doc)
+        self.assertIn('class="time-instant"', doc)
+        self.assertIn(f'datetime="{now}"', doc)
+
     def test_tracker_pages_use_the_same_current_status(self):
         oe = site.amazon_main(site.stock["products"])
         docs = [("index", site.build_index()), ("hobo", site.build_hobo_tracker())]
@@ -179,7 +243,7 @@ class RestockFeedTests(unittest.TestCase):
             by_url.setdefault(p["url"], set()).add(p.get("status"))
         seen = 0
         for name, doc in docs:
-            for li in re.findall(r'<li class="feed-item">(.*?)</li>', doc, re.S):
+            for li in re.findall(r'<li class="feed-item"[^>]*>(.*?)</li>', doc, re.S):
                 seen += 1
                 href = html.unescape(re.search(r'href="([^"]+)"', li).group(1))
                 badges = badge(li)
