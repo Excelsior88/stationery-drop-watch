@@ -298,6 +298,15 @@ a.az:hover{opacity:1}
 @media(max-width:760px){.shop-wide .shop-list{grid-template-columns:1fr}}
 @media(max-width:600px){.shop-wide .shop-card{grid-template-columns:1fr}}
 .inside-grid.spreads{grid-template-columns:1fr}
+/* New samples stay in the same collapsed disclosure. On a phone they stack so a page is not squeezed beside another. Narrow inserts stay one column at every width, and each image opens the same file larger. */
+.inside-zoom{display:block}
+.inside-zoom:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.inside-grid.inserts{grid-template-columns:1fr}
+.inside-grid.inserts figure:first-child{grid-column:auto}
+@media(max-width:600px){
+  .inside-grid.samples{grid-template-columns:1fr}
+  .inside-grid.samples figure:first-child{grid-column:auto}
+}
 
 /* Hub homepage */
 .hub-status{margin-top:12px}
@@ -325,11 +334,12 @@ a.az:hover{opacity:1}
 .hub-own-row img{width:100%;height:auto;aspect-ratio:2/3;object-fit:contain;background:var(--paper-2);border-radius:6px;border:1px solid var(--line);margin-bottom:4px}
 /* .sheet keeps this same 2/3 frame. The landscape file is letterboxed, not given its own shorter box. */
 .hub-own-row.cols-8{grid-template-columns:repeat(8,minmax(0,1fr))}
+.hub-own-row.cols-9{grid-template-columns:repeat(9,minmax(0,1fr))}
 .hub-own-t{font-weight:600;font-size:.88rem;line-height:1.25}
 .hub-own-row a:hover .hub-own-t{color:var(--accent)}
-@media (max-width:1000px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-own-row,.hub-own-row.cols-8{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:1000px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-own-row,.hub-own-row.cols-8{grid-template-columns:repeat(4,minmax(0,1fr))}.hub-own-row.cols-9{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){.hub-cols{grid-template-columns:1fr}}
-@media (max-width:560px){.hub-grid{grid-template-columns:1fr;gap:12px}.hub-own{padding:18px 16px}.hub-own-row{grid-template-columns:repeat(7,128px);overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}.hub-own-row.cols-8{grid-template-columns:repeat(8,128px)}.hub-own-row li{scroll-snap-align:start}}
+@media (max-width:560px){.hub-grid{grid-template-columns:1fr;gap:12px}.hub-own{padding:18px 16px}.hub-own-row{grid-template-columns:repeat(7,128px);overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}.hub-own-row.cols-8{grid-template-columns:repeat(8,128px)}.hub-own-row.cols-9{grid-template-columns:repeat(9,128px)}.hub-own-row li{scroll-snap-align:start}}
 .layout.solo{grid-template-columns:minmax(0,1fr)}
 /* Header, footer and every page's content share one column: .wrap (1180px max, 20px / 14px side padding) */
 .prose,.prose.shop-wide{max-width:none}
