@@ -1,5 +1,6 @@
 // Stationery Drop Watch: client-side table filtering. The check time is shown once per table (build_site.py).
 (function () {
+  if (window.DropWatchTime) window.DropWatchTime.showLocalTimes(document);
   // The Hobonichi tracker moved from the homepage to its own page. Old links such as /#listings, /#tracker or
   // /?product=x#tracker can't be redirected by the server (the part after # never reaches it), so forward them here.
   if (location.pathname === "/" || location.pathname === "/index.html") {
