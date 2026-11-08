@@ -241,6 +241,19 @@ OG_TRAVELERS = BASE + "assets/brand/og-travelers.png"
 # Matches the card: regular size colors, 2027 diary accessories, limited editions. No shop count on the artwork.
 OG_TRAVELERS_ALT = ("Stationery Drop Watch: Traveler's Notebook restock tracker. "
                     "Regular size colors, 2027 diary accessories and limited editions, at official and independent shops, checked " + CHECK_FREQ)
+OG_MIDORI = BASE + "assets/brand/og-midori.png"
+# The approved 8 Nov 2026 card. It says these words and does not mention the check cadence.
+OG_MIDORI_ALT = ("Stationery Drop Watch: MIDORI restock tracker. "
+                 "Diaries, diary stickers and paper. stationerydropwatch.com")
+MIDORI_OG_SHA = "1aa303925736d8469c7aae3c8e84c745e057451f82e2d95765deed23862cccde"
+
+def _require_midori_card():
+    import hashlib
+    digest = hashlib.sha256((ROOT / "site/assets/brand/og-midori.png").read_bytes()).hexdigest()
+    if digest != MIDORI_OG_SHA:
+        raise SystemExit("og-midori.png is not the approved 8 Nov 2026 artwork")
+
+_require_midori_card()
 CONTENT_LASTMOD = "2026-11-08"  # last copy/structure change on the home and restock pages (sitemap lastmod floor)
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
@@ -583,7 +596,8 @@ def soon_block():
     </section>"""
 
 # Recent restocks are a history of flips. The status pill is the latest check, not the flip.
-RESTOCK_NOW_NOTE = ("The time is when it came back. It is Eastern Time here, and your time zone when the browser can show it. "
+RESTOCK_NOW_NOTE = ("The time is when it came back. "
+                    '<span class="time-zone-note">Times are labeled Eastern Time.</span> '
                     "The status is the latest check.")
 
 def availability_now(url):
@@ -982,8 +996,8 @@ GROUPS = [
                "The plain MD notebooks stay in the catalog all year, so we don't track them here.",
          title=f"MIDORI MD seasonal release restock tracker",
          desc="Are the MIDORI MD Notebook Diary 2027, the 1 Day 1 Page diary and the 2027 diary stickers in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
-         og_image=BASE + "assets/brand/og-midori.png",
-         og_alt="Stationery Drop Watch: MIDORI MD seasonal release tracker, checked " + CHECK_FREQ,
+         og_image=OG_MIDORI,
+         og_alt=OG_MIDORI_ALT,
          intro="MIDORI's MD line is sold as MD PRODUCT in 2026. The dated 2027 diaries, diary stickers and online store limited editions come once a year, in set quantities. "
                "We check the official MD PRODUCT USA store and independent shops, size by size. "
                "This covers MIDORI MD seasonal releases only; Hobonichi and our other sections have their own pages."),
