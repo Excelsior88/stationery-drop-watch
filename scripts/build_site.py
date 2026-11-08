@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build the static site in site/ from stores.json, data/*.json and content/*.json.
-Never invents data: every status shown comes from data/stock.json written by checker.py."""
+Never invents data: every status shown comes from data/stock.json written by checker.py.
+A recent-restock row keeps the historical event time, and its status is the latest check."""
 import json, html, os, re, datetime as dt, shutil
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -555,6 +556,34 @@ def soon_block():
       <ul>{items}</ul>
     </section>"""
 
+# Recent restocks are a history of flips. The status pill is the latest check, not the flip.
+RESTOCK_NOW_NOTE = "The date is when it came back. The status is the latest check."
+
+def availability_now(url):
+    """Latest known availability for one listing URL.
+
+    Uses the current stock check only. The restock event's `to` value is the status at that
+    moment, not availability now. A missing, conflicting, or unrecognized check is not in stock.
+    """
+    hits = [p for p in stock["products"] if p.get("url") == url]
+    statuses = {p.get("status") for p in hits}
+    if len(statuses) == 1:
+        st = next(iter(statuses))
+        if st in STATUS:
+            return st, STATUS[st]
+    return "unknown", "No current check"
+
+def restock_feed_item(c, extra=""):
+    """One restock row: when it came back, and the latest known availability beside that."""
+    st, label = availability_now(c["url"])
+    ex = extra(c) if callable(extra) else extra
+    return f"""<li class="feed-item"><span class="feed-now">now <span class="badge {E(st)}">{E(label)}</span></span>
+  <a href="{E(c['url'])}" rel="noopener" target="_blank">{E(c['label'])}</a> <span class="muted">at {E(c['store'])}</span>
+  {ex}<span class="feed-when">restocked {time_tag(c['at'])}</span></li>"""
+
+def restock_feed(events, extra=""):
+    return '<ol class="feed">' + "".join(restock_feed_item(c, extra) for c in events) + "</ol>"
+
 def build_hobo_tracker():
     """The full Hobonichi tracker (the old homepage), now at HOBO_TRACKER. Copy, FAQ and FAQ schema unchanged."""
     prods = hobo_products()  # Hobonichi section only; dot grid shops live on their own page
@@ -566,10 +595,7 @@ def build_hobo_tracker():
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)
     recent = [c for c in restocks if dt.datetime.fromisoformat(c["at"]) >= cutoff][:12]
     if recent:
-        feed = "".join(f"""<li class="feed-item"><span class="badge {E(c['to'])}">{E(STATUS[c['to']])}</span>
-  <a href="{E(c['url'])}" rel="noopener" target="_blank">{E(c['label'])}</a> <span class="muted">at {E(c['store'])}</span>
-  <time datetime="{E(c['at'])}">{E(fmt_et(c['at']))}</time></li>""" for c in recent)
-        feed_html = f'<ol class="feed">{feed}</ol>'
+        feed_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(recent)
     else:
         start = tracking_start(prods)
         lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."
@@ -692,12 +718,11 @@ def build_index():
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)
     recent = [c for c in restocks if dt.datetime.fromisoformat(c["at"]) >= cutoff][:12]
     short = {"hobonichi": "Hobonichi", **{k: SECTIONS[k]["nav"] for k in LIVE}}
+    def hub_tag(c):
+        sec = sec_of_url[c["url"]]
+        return f'<a class="hub-tag" href="{href[sec]}">{E(short[sec])}</a>\n  '
     if recent:
-        feed = "".join(f"""<li class="feed-item"><span class="badge {E(c['to'])}">{E(STATUS[c['to']])}</span>
-  <a href="{E(c['url'])}" rel="noopener" target="_blank">{E(c['label'])}</a> <span class="muted">at {E(c['store'])}</span>
-  <a class="hub-tag" href="{href[sec_of_url[c['url']]]}">{E(short[sec_of_url[c['url']]])}</a>
-  <time datetime="{E(c['at'])}">{E(fmt_et(c['at']))}</time></li>""" for c in recent)
-        feed_html = f'<ol class="feed">{feed}</ol>'
+        feed_html = restock_feed(recent, hub_tag)
     else:
         start = tracking_start(prods)
         lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."
@@ -733,7 +758,7 @@ def build_index():
 <div class="hub-cols">
   <section class="card" id="restocked">
     <h2>Recent restocks</h2>
-    <p class="muted small">Every tracker, newest first. Last 14 days.</p>
+    <p class="muted small">Every tracker, newest first. Last 14 days.{' ' + RESTOCK_NOW_NOTE if recent else ''}</p>
     {feed_html}
   </section>
   <section class="card" id="guides">
@@ -1021,10 +1046,7 @@ def build_group(g, oe):
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
                 key=lambda c: c["at"], reverse=True)[:10]
     if rs:
-        feed = "".join(f"""<li class="feed-item"><span class="badge {E(c['to'])}">{E(STATUS[c['to']])}</span>
-  <a href="{E(c['url'])}" rel="noopener" target="_blank">{E(c['label'])}</a> <span class="muted">at {E(c['store'])}</span>
-  <time datetime="{E(c['at'])}">{E(fmt_et(c['at']))}</time></li>""" for c in rs)
-        restock_html = f'<ol class="feed">{feed}</ol>'
+        restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs)
     else:
         start = tracking_start(ls)
         restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
@@ -1250,9 +1272,7 @@ def build_design(d, oe):
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
                 key=lambda c: c["at"], reverse=True)[:10]
     if rs:
-        restock_html = '<ol class="feed">' + "".join(f"""<li class="feed-item"><span class="badge {E(c['to'])}">{E(STATUS[c['to']])}</span>
-  <a href="{E(c['url'])}" rel="noopener" target="_blank">{E(c['label'])}</a> <span class="muted">at {E(c['store'])}</span>
-  <time datetime="{E(c['at'])}">{E(fmt_et(c['at']))}</time></li>""" for c in rs) + "</ol>"
+        restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs)
     else:
         start = tracking_start(ls) if ls else stock["run_started"]
         restock_html = f'''<div class="empty"><p><strong>No restocks spotted yet.</strong> Tracking started <time datetime="{E(start)}">{E(fmt_et(start))}</time>.
@@ -2469,10 +2489,9 @@ _AMZ_NOTE = re.compile(r'class="btn btn-amz"[^>]*>[^<]*</a> <span class="muted s
 def check_amz_doc(fname, doc):
     """Build check: a design page's top Amazon note must not claim sold out while a listing on it is buyable or unchecked.
 
-    Only the stock table counts. Recent restocks reuse the same badge for an earlier flip
-    (sold out -> in stock), and that history is not the listing's status now. A later sell-out
-    still gets the sold-out note, and this check still fails if any current row is in stock,
-    on preorder, or unchecked."""
+    Only the stock table counts. A recent-restock row names the latest check too, but the
+    Amazon note is about the listings in the table. A later sell-out still gets the sold-out
+    note, and this check still fails if any current row is in stock, on preorder, or unchecked."""
     listings = "\n".join(m.group(1) for m in re.finditer(r'<table class="stock">(.*?)</table>', doc, re.S))
     if _AMZ_NOTE.search(doc) and re.search(r'<span class="badge (in_stock|preorder|unknown)">', listings):
         raise SystemExit(f"{fname}: top note claims sold out but a listing on the page is in stock, on preorder or unchecked")
