@@ -56,7 +56,9 @@ nav a[aria-current]{background:var(--ink);color:var(--paper)}
 .empty p{margin:.2em 0 .6em}
 .feed{list-style:none;margin:0;padding:0}
 .feed-item{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;padding:10px 0;border-bottom:1px dashed var(--line)}
-.feed-item time{margin-left:auto;font-size:.85rem;color:var(--ink-2)}
+.feed-now{font-size:.78rem;color:var(--ink-2);white-space:nowrap}
+.feed-now .badge{margin-left:4px}
+.feed-when{margin-left:auto;font-size:.85rem;color:var(--ink-2)}
 
 .filters{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 14px}
 .filters label{display:flex;flex-direction:column;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);gap:4px;flex:1 1 140px}
