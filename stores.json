@@ -42,6 +42,26 @@
    "type": "Weeks"
   },
   {
+   "id": "weeks-pink-sapphire",
+   "label": "Weeks · Colors: Pink Sapphire",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-sea-glass",
+   "label": "Weeks · Colors: Sea Glass",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-va-welcome",
+   "label": "Weeks · V&A: Welcome to the V&A",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-va-leicester",
+   "label": "Weeks · V&A: Leicester",
+   "type": "Weeks"
+  },
+  {
    "id": "weeks-mega-midnight-blue",
    "label": "Weeks Mega · Colors: Midnight Blue",
    "type": "Weeks Mega"
@@ -347,6 +367,38 @@
      "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_tdaisuke/",
      "source_key": "wb27_tdaisuke",
      "source_title": "tanakadaisuke: Starlight"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_colorspsapphire/",
+     "source_title": "Pink Sapphire",
+     "source_key": "wb27_colorspsapphire"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_colorssglass/",
+     "source_title": "Sea Glass",
+     "source_key": "wb27_colorssglass"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_vawelcome/",
+     "source_title": "Welcome to the V&A",
+     "source_key": "wb27_vawelcome"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_valeicester/",
+     "source_title": "Leicester",
+     "source_key": "wb27_valeicester"
     }
    ]
   },
@@ -459,6 +511,34 @@
      "type": "Weeks",
      "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-tanakadaisuke-starlight-english",
      "source_title": "Hobonichi Techo 2027 Weeks Planner | tanakadaisuke: Starlight | English"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-colors-pink-sapphire-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Colors: Pink Sapphire | English"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-colors-sea-glass-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Colors: Sea Glass | English"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-v-a-series-welcome-to-the-v-a-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | V&A Series: Welcome to the V&A | English"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-v-a-series-leicester-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | V&A Series: Leicester | English"
     }
    ]
   },
@@ -500,15 +580,15 @@
      "source_title": "Hobonichi Techo Weeks Mega - Colors: Midnight Blue"
     },
     {
-     "canonical": null,
-     "label": "Hobonichi Techo Weeks - Colors: Sea Glass",
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
      "type": "Weeks",
      "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-sea-glass",
      "source_title": "Hobonichi Techo Weeks - Colors: Sea Glass"
     },
     {
-     "canonical": null,
-     "label": "Hobonichi Techo Weeks - Colors: Pink Sapphire",
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
      "type": "Weeks",
      "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-pink-sapphire",
      "source_title": "Hobonichi Techo Weeks - Colors: Pink Sapphire"
@@ -543,6 +623,20 @@
      "type": "Weeks",
      "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-tanakadaisuke-starlight",
      "source_title": "Hobonichi Techo Weeks - tanakadaisuke: Starlight"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-v-a-series-welcome-to-the-v-a",
+     "source_title": "Hobonichi Techo Weeks - V&A Series: Welcome to the V&A"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-v-a-series-leicester",
+     "source_title": "Hobonichi Techo Weeks - V&A Series: Leicester"
     }
    ]
   },
@@ -581,15 +675,15 @@
      "source_title": "Hobonichi Techo 2027 MEGA Weeks Bow & Tie: Candy Dream"
     },
     {
-     "canonical": null,
-     "label": "Hobonichi Techo 2027 Weeks V&A Series: Welcome to the V&A",
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
      "type": "Weeks",
      "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-v-a-series-welcome-to-the-v-a",
      "source_title": "Hobonichi Techo 2027 Weeks V&A Series: Welcome to the V&A"
     },
     {
-     "canonical": null,
-     "label": "Hobonichi Techo 2027 Weeks V&A Series: Leicester",
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
      "type": "Weeks",
      "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",
      "source_title": "Hobonichi Techo 2027 Weeks V&A Series: Leicester"
@@ -700,6 +794,38 @@
      "variant_id": 43571640303683,
      "section": "midori",
      "source_title": "[MD 2027] 1-Day 1-Page · A5"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546059636803",
+     "source_title": "Colors: Pink Sapphire",
+     "variant_id": 43546059636803
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43545928269891",
+     "source_title": "Colors: Sea Glass",
+     "variant_id": 43545928269891
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546082246723",
+     "source_title": "V&A Series: Welcome to the V&A",
+     "variant_id": 43546082246723
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546076676163",
+     "source_title": "V&A Series: Leicester",
+     "variant_id": 43546076676163
     }
    ]
   },
@@ -793,6 +919,34 @@
      "type": "Weeks",
      "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-tanakadaisuke-starlight",
      "source_title": "Hobonichi 2027 English Weeks - tanakadaisuke: Starlight"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-colors-pink-sapphire",
+     "source_title": "Hobonichi 2027 English Weeks - Colors: Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-colors-sea-glass",
+     "source_title": "Hobonichi 2027 English Weeks - Colors: Sea Glass"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-v-a-series-welcome-to-the-v-a",
+     "source_title": "Hobonichi 2027 English Weeks - V&A Series: Welcome to the V&A"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-v-a-series-leicester",
+     "source_title": "Hobonichi 2027 English Weeks - V&A Series: Leicester"
     }
    ]
   },
@@ -927,6 +1081,34 @@
      "type": "Weeks",
      "url": "https://www.penboutique.com/products/hobonichi-2027-light-hard-cover-english-book-tanakadaisuke-starlight-tall-slim-weeks-january-start",
      "source_title": "Hobonichi 2027 Light Hard Cover English Book - Tanakadaisuke: Starlight - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-colors-pink-sapphire-english-january-start",
+     "source_title": "Hobonichi 2027 Light Hardcover Book - Colors: Pink Sapphire - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-colors-sea-glass-english-january-start",
+     "source_title": "Hobonichi 2027 Light Hardcover Book - Colors: Sea Glass - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-weeks-2027-va-series-welcome-to-the-va",
+     "source_title": "Hobonichi 2027 Light Hard Cover English Book - V&A Series: Welcome to the V&A - Tall & Slim (Weeks - January  Start)"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-techo-2027-weeks-va-leicester",
+     "source_title": "Hobonichi 2027 Light Hard Cover English Book - V&A Series: Leicester - Tall & Slim (Weeks - January  Start)"
     }
    ]
   },
@@ -1029,6 +1211,34 @@
      "type": "Weeks",
      "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-tanakadaisuke-starlight",
      "source_title": "Hobonichi Techo Weeks 2027 - tanakadaisuke: Starlight"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-pink-sapphire",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors: Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-sea-glass",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors: Sea Glass"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-v-a-series-welcome-to-the-v-a",
+     "source_title": "Hobonichi Techo Weeks 2027 - V&A Series: Welcome to the V&A"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-v-a-series-leicester",
+     "source_title": "Hobonichi Techo Weeks 2027 - V&A Series: Leicester"
     }
    ]
   },
@@ -1139,6 +1349,34 @@
      "type": "Weeks",
      "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-tanakadaisuke-starlight",
      "source_title": "Hobonichi Techo Weeks 2027 - tanakadaisuke: Starlight"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-pink-sapphire",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors: Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-sea-glass",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors: Sea Glass"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-v-a-series-welcome-to-the-v-a",
+     "source_title": "Hobonichi Techo Weeks 2027 - V&A Series: Welcome to the V&A"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-v-a-series-leicester",
+     "source_title": "Hobonichi Techo Weeks 2027 - V&A Series: Leicester"
     }
    ]
   },
@@ -1187,6 +1425,34 @@
      "type": "Cover",
      "url": "https://usa.kinokuniya.com/products/4580812708791",
      "source_title": "Yumi Kitagishi: White Cat House Cover - A6 Size (Original) - Hobonichi 2027"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://usa.kinokuniya.com/products/4580812709712",
+     "source_title": "Colors: Pink Sapphire - Weeks ENG - Hobonichi 2027"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://usa.kinokuniya.com/products/4580812709743",
+     "source_title": "Colors: Sea Glass - Weeks ENG - Hobonichi 2027"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://usa.kinokuniya.com/products/4580812709880",
+     "source_title": "V&A Series: Welcome to the V&A - Weeks ENG - Hobonichi 2027"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://usa.kinokuniya.com/products/4580812709873",
+     "source_title": "V&A Series: Leicester - Weeks ENG - Hobonichi 2027"
     }
    ]
   },
