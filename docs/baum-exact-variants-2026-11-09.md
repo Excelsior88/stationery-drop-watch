@@ -20,7 +20,7 @@ Official listings added on the existing pages:
 - Weeks Canaria Yellow, `wb27_colorscyellow`, https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_colorscyellow/
 - A6 cover White Cat House, `oc27_kitagishi`, https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_kitagishi/
 
-Read from `https://www.1101.com/store/techo/2027/items.json` on 2026-11-09, and from the product pages. Canaria Yellow is category `weeks`, a Weeks hardcover, weekly horizontal, English or Japanese, January start, Monday start. Size on that page: 188 × 94 × 10 mm, about 134 g. The Japanese sale `d27_9_wb27_colorscyellow_m` was not sold out. The English sale `d27_9_wb27_colorscyellow_me` was sold out. The existing bilingual rule reports the official row in stock when either language is live. White Cat House is category `cover_original`, an A6 Original cover, one sale `d27_1_oc27_kitagishi_c`, not sold out. It is not the Weeks White Cat Wallpaper book.
+Read from `https://www.1101.com/store/techo/2027/items.json` on 2026-11-09, and from the product pages. Canaria Yellow is category `weeks`, a Weeks hardcover, weekly horizontal, English or Japanese, January start, Monday start. Size on that page: 188 × 94 × 10 mm, about 134 g. The Japanese sale `d27_9_wb27_colorscyellow_m` was not sold out. The English sale `d27_9_wb27_colorscyellow_me` was sold out. The page says the official listing includes both languages. That sentence is the product identity. It does not mean the English book is in stock. The checker's existing rule marks the official row in stock when either language sale is live, so this row follows the Japanese sale. White Cat House is category `cover_original`, an A6 Original cover, one sale `d27_1_oc27_kitagishi_c`, not sold out. It is not the Weeks White Cat Wallpaper book.
 
 Omoi product objects are unchanged.
 
@@ -64,9 +64,32 @@ The February calendar line had cited Hobonichi for that date. It now cites Paper
 
 The Techo vs Cousin vs Weeks table still matches the cited English product pages: Original 148 × 105 × 15 mm, about 195 g, 464 pages; Cousin 210 × 148 × 18 mm, about 445 g, 544 pages; Weeks Colors Midnight Blue 188 × 94 × 10 mm, about 134 g, 240 pages, 75 English memo pages; Mega Candy Dream 384 pages and 219 English memo pages. The Japanese editions of those Weeks and Mega books list 71 and 215 memo pages. The table is labeled as the English January-start books. No comparison copy was changed.
 
+## Guard blast radius
+
+`named_variants_disagree` runs only for a Shopify row with no `variant_id`. A row with a variant id still uses `classify_shopify_variant`. Names `Default Title` and `-` are not named options. One named option, or several named options that are all available or all unavailable, keeps the old status. Mixed named options on a whole-product row become unknown. The guard was not weakened.
+
+Public stock `run_finished` `2026-11-09T03:56:46+00:00`. Every non-Baum Shopify whole-product row in that file is one variant or already unknown. 174 classified rows are `total_variants` 1 (73 in stock, 86 sold out, 15 not yet on sale). The five Omoi whole rows are already unknown, with no variant counts, because the fetch failed. None of those 179 rows is a partial-availability product, so none would newly become unknown.
+
+Live `.js` on 2026-11-09, passed through `classify_shopify`: Paper Mouse Original A6 is one `Default Title` and stays in stock; the 2027 sticker set is one `Default Title` and stays sold out; Wonder Pens Midnight Blue is one `Default Title` on a PREVIEW title and stays not yet on sale; Baum's Original A6 is one variant titled `-` and stays in stock.
+
+These catalog rows already store a variant id, so the guard does not read them. Their parent products do mix availability, and the exact ids in the catalog stay on their own status. Other options on those products are not tracked. Scope was not widened.
+
+| Product | Tracked variant ids | Last status of those ids |
+| --- | --- | --- |
+| Tokyo Pen Shop Traveler's notebook | 42876827304148, 42876827402452, 42876827369684, 42876827336916, 43664241295572 | Blue in stock; Black, Brown, Camel, Olive sold out |
+| Love Notebooks Traveler's notebook | 51593658335546, 51593658401082, 51593658433850, 51593658368314, 52467629588794 | Blue in stock; the other four sold out |
+| Archer and Olive Storybook in Navy | 48885118566555 A5, 48885118501019 B5 | both in stock |
+| Archer and Olive Songbird in Blue | 47128956928155 A5 dot grid, 47128956862619 B5 dot grid | A5 sold out, B5 in stock. The live product has 13 named options, 8 available. The other 11 ids are not tracked. Classifying the whole product would be unknown. |
+| Leuchtturm1917 hardcover Medium dotted | 48072862597365 Black, 48072862990581 Navy, 48072863842549 Sage | Sage in stock; Black and Navy sold out |
+| Leuchtturm1917 Bullet Journal Edition 2 | 48072859189493 Black, 48501811151093 Purple26 | Black in stock; Purple26 sold out |
+| Scribbles That Matter Dotted Journal Pro | 42136311300272, 42136311955632, 42136311070896 | both Charcoal sizes in stock; Bottle Green sold out |
+| Notebook Therapy Tsuki 160GSM | 30591991545971 Pink Sakura, 30591988203635 Mint Matcha | Mint in stock; Pink sold out |
+
+The two combined Baum URLs are still in that stock file, at 8 of 11 and 6 of 7, because this PR does not commit stock. They are no longer catalog rows. The next checker drops them instead of turning them into a fresh unknown event.
+
 ## Checks
 
-`python3 -m unittest discover -s tests` : 59 tests, OK. That includes a mixed available/sold-out product returning `unknown`, each variant keeping its own status, an existing Leicester URL keeping `first_seen` and `status_since`, and a new Midnight Blue URL adding no `changes.json` event. `node tests/local-time.test.js` passed.
+`python3 -m unittest discover -s tests` was 59 tests, OK, before this follow-up. The follow-up reran `tests.test_baum_exact_variants` only. That file covers a mixed available/sold-out product returning `unknown`, each variant keeping its own status, an existing Leicester URL keeping `first_seen` and `status_since`, a new Midnight Blue URL adding no `changes.json` event, the single-variant and same-availability shapes, and the current stock file having no non-Baum whole row the guard would flip. `node tests/local-time.test.js` passed in the earlier run and was not repeated.
 
 A local preview overlaid the verified statuses onto a copy of `data/stock.json`, built with `DROPWATCH_SITE_OUT`, and restored the repo stock file. The preview showed Leicester at Baum sold out, Sheep and Mega Sheep sold out on their own cards, Mega Midnight Blue at Baum in stock, official Canaria Yellow and White Cat House in stock, and no combined Weeks or Mega URL. Those overlay rows are not committed.
 
@@ -74,16 +97,18 @@ Browser checks on that preview: dot grid search "Apothecary" 15 cards to 1; Trav
 
 `https://www.amazon.com/dp/B0HQW8273V` opened as "Level Up! My 2027 Planner: For Kids Ages 7-11, January - December". No add-to-cart, payment, or account step was used. The shop's own Amazon links are plain `/dp/` URLs. Hobonichi search links on the family pages carry `tag=excelsior88-20`. Etsy listing `4610143237` returned HTTP 403 to this browser, so the listing page itself was not read. The href is that listing URL. Live `https://stationerydropwatch.com/hobonichi-2027`, `/about`, and `/privacy` returned 200. Extensionless paths 404 on the local static server; Pages serves them.
 
-Email delivery was not tested. The drop-alert webhook URL and key are repository secrets, not in this repo, and this branch does not ping them. JetPens and Nanami stay link-only.
+Signup forms on the built pages post to `https://buttondown.com/api/emails/embed-subscribe/dropwatch`. No form was submitted from this work, no test email was sent, and the drop-alert webhook was not pinged. Provider settings were not changed. The parent read the site's dropwatch Gmail and found a delivered Buttondown confirmation from Nov 2, 1:42 AM EST, and a new-subscriber notification from Nov 8, 12:06 AM EST that says the subscription came via stationerydropwatch.com. That is historical signup delivery. It is not a current end-to-end restock or webhook delivery. The subscriber address and any confirmation token are not recorded here. Amazon `B0HQW8273V` opened on the Level Up book. Etsy listing `4610143237` returned HTTP 403, so the listing body is unverified and not shown to be broken. Payment, account, and a full current delivery check stay unverified. JetPens and Nanami stay link-only.
 
 ## Status
 
 | Item | State |
 | --- | --- |
 | Baum Weeks and Mega each design has its own status | Corrected in this PR. Live site still shows the combined rows until merge and the next checker. |
-| Official Canaria Yellow and A6 White Cat House | Corrected in the catalog. Not on the live site until that checker run. |
+| Official Canaria Yellow and A6 White Cat House | Corrected in the catalog. Not on the live site until that checker run. Canaria's official in-stock result follows the Japanese sale. The English sale was sold out. |
 | February calendar citation | Corrected. |
 | August 25, August 31 launch times, October 1, October 15, restock-email scope, comparison specs | Already consistent with the sources above. |
 | Omoi URLs and history | Untouched. Still unknown. |
-| Etsy listing page content, newsletter delivery, webhook delivery | Unverified. Not treated as a bug. |
+| Non-Baum whole-product rows under the new guard | No row in the 2026-11-09T03:56:46Z stock would newly become unknown. Mixed products that already have a variant id stay on that id. |
+| Historical signup delivery | Verified from the site Gmail: Buttondown confirmation Nov 2, 1:42 AM EST, and a new-subscriber notice Nov 8, 12:06 AM EST via stationerydropwatch.com. |
+| Current restock email, webhook, payment, and the Etsy listing body | Unverified. Etsy returned 403. Not treated as a broken route. |
 | Merge and deploy | Awaiting approval. |
