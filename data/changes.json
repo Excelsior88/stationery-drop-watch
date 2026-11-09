@@ -349,5 +349,15 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-09T20:18:43+00:00",
+  "store_id": "simplepaper",
+  "store": "Simple Paper",
+  "label": "Traveler's notebook Regular size · Brown",
+  "url": "https://simplepaper.co/products/travelers-notebook-regular-brown",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
