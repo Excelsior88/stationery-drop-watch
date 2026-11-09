@@ -37,6 +37,11 @@
    "type": "Weeks"
   },
   {
+   "id": "weeks-starlight",
+   "label": "Weeks · tanakadaisuke: Starlight",
+   "type": "Weeks"
+  },
+  {
    "id": "weeks-mega-midnight-blue",
    "label": "Weeks Mega · Colors: Midnight Blue",
    "type": "Weeks Mega"
@@ -334,6 +339,14 @@
      "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_moomin/",
      "source_key": "oc27_moomin",
      "source_title": "My Yard (Pale Mint)"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_tdaisuke/",
+     "source_key": "wb27_tdaisuke",
+     "source_title": "tanakadaisuke: Starlight"
     }
    ]
   },
@@ -439,6 +452,13 @@
      "variant_id": 52779201396965,
      "section": "midori",
      "source_title": "Midori 2027 MD Monthly Diary Sticker · Large (7.9\" x 5.4\")"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-tanakadaisuke-starlight-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | tanakadaisuke: Starlight | English"
     }
    ]
   },
@@ -516,6 +536,13 @@
      "url": "https://www.atlasstationers.com/products/travelers-notebook-card-size-20th-anniversary-set-black",
      "section": "travelers",
      "source_title": "Traveler's Notebook - Card Size - 20th Anniversary Set - Black"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-tanakadaisuke-starlight",
+     "source_title": "Hobonichi Techo Weeks - tanakadaisuke: Starlight"
     }
    ]
   },
@@ -759,6 +786,13 @@
      "url": "https://wonderpens.ca/products/midori-md-notebook-diary-1-day-1-page-2027-a5",
      "section": "midori",
      "source_title": "Midori MD Notebook Diary 1 Day 1 Page 2027 - A5"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-tanakadaisuke-starlight",
+     "source_title": "Hobonichi 2027 English Weeks - tanakadaisuke: Starlight"
     }
    ]
   },
@@ -886,6 +920,13 @@
      "type": "Weeks Mega",
      "url": "https://www.penboutique.com/products/hobonichi-techo-2027-weeks-mega-midnight-blue",
      "source_title": "Hobonichi 2027 Mega Light Hard Cover English Book - Colors: Midnight Blue - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-light-hard-cover-english-book-tanakadaisuke-starlight-tall-slim-weeks-january-start",
+     "source_title": "Hobonichi 2027 Light Hard Cover English Book - Tanakadaisuke: Starlight - Tall & Slim (Weeks - January Start)"
     }
    ]
   },
@@ -981,6 +1022,13 @@
      "variant_id": 54255882764501,
      "section": "midori",
      "source_title": "MD Diary Sticker - 2027 · Large"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-tanakadaisuke-starlight",
+     "source_title": "Hobonichi Techo Weeks 2027 - tanakadaisuke: Starlight"
     }
    ]
   },
@@ -1084,6 +1132,13 @@
      "url": "https://www.jennibick.com/products/md-notebook-diary-1-day-1-page-2027-a5",
      "section": "midori",
      "source_title": "MD Notebook Diary 1 Day 1 Page 2027 - A5"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-tanakadaisuke-starlight",
+     "source_title": "Hobonichi Techo Weeks 2027 - tanakadaisuke: Starlight"
     }
    ]
   },
