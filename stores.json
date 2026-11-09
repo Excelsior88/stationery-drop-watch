@@ -62,6 +62,31 @@
    "type": "Weeks"
   },
   {
+   "id": "weeks-shirt-graph-plaid",
+   "label": "Weeks · Shirt Fabric: Graph Plaid",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-paper-frosty-jade",
+   "label": "Weeks · Paper Series: Frosty Jade",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-floral-remedy",
+   "label": "Weeks · Liberty Fabrics: Floral Remedy",
+   "type": "Weeks"
+  },
+  {
+   "id": "hon-a5-slash-navy",
+   "label": "HON A5 · Slash (Navy)",
+   "type": "HON"
+  },
+  {
+   "id": "hon-a6-slash-navy",
+   "label": "HON A6 · Slash (Navy)",
+   "type": "HON"
+  },
+  {
    "id": "weeks-mega-midnight-blue",
    "label": "Weeks Mega · Colors: Midnight Blue",
    "type": "Weeks Mega"
@@ -399,6 +424,54 @@
      "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_valeicester/",
      "source_title": "Leicester",
      "source_key": "wb27_valeicester"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_m_colorsmblue/",
+     "source_title": "Midnight Blue",
+     "source_key": "wb27_m_colorsmblue"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
+     "source_title": "Graph Plaid",
+     "source_key": "wb27_shirtfplaid"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_paperfjade/",
+     "source_title": "Frosty Jade",
+     "source_key": "wb27_paperfjade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_libertyfloral/",
+     "source_title": "Floral Remedy",
+     "source_key": "wb27_libertyfloral"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_hon_slashnv/",
+     "source_title": "Slash (Navy)",
+     "source_key": "cb27_hon_slashnv"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_hon_slashnv/",
+     "source_title": "Slash (Navy)",
+     "source_key": "ob27_hon_slashnv"
     }
    ]
   },
@@ -539,6 +612,41 @@
      "type": "Weeks",
      "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-v-a-series-leicester-english",
      "source_title": "Hobonichi Techo 2027 Weeks Planner | V&A Series: Leicester | English"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-shirt-fabric-graph-plaid-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Shirt Fabric: Graph Plaid | English"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-paper-series-frosty-jade-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Paper Series: Frosty Jade | English"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-liberty-fabrics-floral-remedy-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Liberty Fabrics: Floral Remedy | English"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a5-hon-planner-slash-navy-english-1",
+     "source_title": "Hobonichi Techo 2027 A5 HON Planner | Slash Navy | English"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a6-hon-planner-slash-navy-english",
+     "source_title": "Hobonichi Techo 2027 A6 HON Planner | Slash Navy | English"
     }
    ]
   },
@@ -637,6 +745,41 @@
      "type": "Weeks",
      "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-v-a-series-leicester",
      "source_title": "Hobonichi Techo Weeks - V&A Series: Leicester"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-shirt-fabric-graph-plaid",
+     "source_title": "Hobonichi Techo Weeks - Shirt Fabric: Graph Plaid"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-paper-series-frosty-jade",
+     "source_title": "Hobonichi Techo Weeks - Paper Series: Frosty Jade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-liberty-fabrics-floral-remedy",
+     "source_title": "Hobonichi Techo Weeks - Liberty Fabrics: Floral Remedy"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.atlasstationers.com/products/hobonichi-a5-hon-slash-navy-1",
+     "source_title": "Hobonichi A5 Hon - Slash (Navy)"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.atlasstationers.com/products/hobonichi-a6-hon-slash-navy-1",
+     "source_title": "Hobonichi A6 Hon - Slash (Navy)"
     }
    ]
   },
@@ -703,6 +846,20 @@
      "url": "https://bobodesignstudio.com/products/md-diary-sticker-2027-size-l",
      "section": "midori",
      "source_title": "MD Diary Sticker -2027 Size L"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-paper-series-jade",
+     "source_title": "Hobonichi Techo 2027 Weeks Paper Series: Jade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-liberty-fabrics-floral-remedy",
+     "source_title": "Hobonichi Techo 2027 Weeks Liberty Fabrics: Floral Remedy"
     }
    ]
   },
@@ -947,6 +1104,41 @@
      "type": "Weeks",
      "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-v-a-series-leicester",
      "source_title": "Hobonichi 2027 English Weeks - V&A Series: Leicester"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-shirt-fabric-graph-plaid",
+     "source_title": "Hobonichi 2027 English Weeks - Shirt Fabric: Graph Plaid"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-paper-series-frosty-jade",
+     "source_title": "Hobonichi 2027 English Weeks - Paper Series: Frosty Jade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-liberty-fabrics-floral-remedy",
+     "source_title": "Hobonichi 2027 English Weeks - Liberty Fabrics: Floral Remedy"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-hon-english-slash-navy",
+     "source_title": "Hobonichi 2027 A5 HON English - Slash (Navy)"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-hon-english-slash-navy",
+     "source_title": "Hobonichi 2027 A6 HON English - Slash (Navy)"
     }
    ]
   },
@@ -1003,6 +1195,20 @@
      "type": "Weeks Mega",
      "url": "https://laywines.com/products/hobonichi-weeks-mega-bow-and-tie-candy-dream-2027",
      "source_title": "Hobonichi Weeks MEGA Bow & Tie: Candy Dream 2027"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://laywines.com/products/hobonichi-a5-hon-slash-navy-2027",
+     "source_title": "Hobonichi A5 HON Slash (Navy) 2027"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://laywines.com/products/hobonichi-a6-hon-slash-navy-2027",
+     "source_title": "Hobonichi A6 HON Slash (Navy) 2027"
     }
    ]
   },
@@ -1109,6 +1315,48 @@
      "type": "Weeks",
      "url": "https://www.penboutique.com/products/hobonichi-techo-2027-weeks-va-leicester",
      "source_title": "Hobonichi 2027 Light Hard Cover English Book - V&A Series: Leicester - Tall & Slim (Weeks - January  Start)"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-light-hard-cover-english-book-shirt-fabric-graph-plaid-tall-slim-weeks-january-start",
+     "source_title": "Hobonichi 2027 Light Hard Cover English Book - Shirt Fabric: Graph Plaid - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-techo-2027-weeks-paper-series-frosty-jade",
+     "source_title": "Hobonichi 2027 Light Hardcover English Book - Paper Series: Frosty Jade - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-light-hard-cover-english-book-liberty-fabrics-floral-remedy-tall-slim-weeks-january-start",
+     "source_title": "Hobonichi 2027 Light Hard Cover English Book - Liberty Fabrics: Floral Remedy - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.penboutique.com/products/hobonichi-hon-a5-2027-english-january-start",
+     "source_title": "Hobonichi 2027 Light Hard Cover English Book - Slash (Navy) & HON Stamped - A5 (January Start)"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.penboutique.com/products/hobonichi-hon-a6-2027-english-slash-navy",
+     "source_title": "Hobonichi 2027 Light Hard Cover English Book - Slash (Navy) & HON Stamped - A6 (January Start)"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.penboutique.com/products/hobonichi-hon-light-hardcover-japanese-book-slash-navy-a6-january-start",
+     "source_title": "Hobonichi HON Light Hardcover Japanese Book - Slash Navy - A6 (January Start)"
     }
    ]
   },
@@ -1239,6 +1487,41 @@
      "type": "Weeks",
      "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-v-a-series-leicester",
      "source_title": "Hobonichi Techo Weeks 2027 - V&A Series: Leicester"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-shirt-fabric-graph-plaid",
+     "source_title": "Hobonichi Techo Weeks 2027 - Shirt Fabric: Graph Plaid"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-paper-series-frosty-jade",
+     "source_title": "Hobonichi Techo Weeks 2027 - Paper Series: Frosty Jade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-liberty-fabrics-floral-remedy",
+     "source_title": "Hobonichi Techo Weeks 2027 - Liberty Fabrics: Floral Remedy"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a5-slash-navy-english",
+     "source_title": "Hobonichi Techo HON 2027 - A5 - Slash Navy - English"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a6-slash-navy-english",
+     "source_title": "Hobonichi Techo HON 2027 - A6 - Slash Navy - English"
     }
    ]
   },
@@ -1377,6 +1660,34 @@
      "type": "Weeks",
      "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-v-a-series-leicester",
      "source_title": "Hobonichi Techo Weeks 2027 - V&A Series: Leicester"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-shirt-fabric-graph-plaid",
+     "source_title": "Hobonichi Techo Weeks 2027 - Shirt Fabric: Graph Plaid"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-paper-series-frosty-jade",
+     "source_title": "Hobonichi Techo Weeks 2027 - Paper Series: Frosty Jade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-liberty-fabrics-floral-remedy",
+     "source_title": "Hobonichi Techo Weeks 2027 - Liberty Fabrics: Floral Remedy"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-hon-2027-slash-navy",
+     "source_title": "Hobonichi Techo A5 Hon 2027 - Slash (Navy)"
     }
    ]
   },
@@ -1453,6 +1764,34 @@
      "type": "Weeks",
      "url": "https://usa.kinokuniya.com/products/4580812709873",
      "source_title": "V&A Series: Leicester - Weeks ENG - Hobonichi 2027"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://usa.kinokuniya.com/products/4580812709941",
+     "source_title": "Shirt Fabric: Graph Plaid - Weeks ENG - Hobonichi 2027"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://usa.kinokuniya.com/products/4580812709934",
+     "source_title": "Liberty Fabrics: Floral Remedy - Weeks ENG - Hobonichi 2027"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://usa.kinokuniya.com/products/4580812710305",
+     "source_title": "Slash (Navy) - A5 Size HON ENG - Hobonichi Techo 2027"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://usa.kinokuniya.com/products/4580812710268",
+     "source_title": "Slash (Navy) - A6 Size HON ENG - Hobonichi Techo 2027"
     }
    ]
   },
@@ -1502,28 +1841,28 @@
      "source_title": "Hobonichi Techo 2027 WEEKS MEGA Colors Planner Midnight Blue"
     },
     {
-     "canonical": null,
+     "canonical": "hon-a5-slash-navy",
      "label": "Hobonichi Techo 2027 HON A5 Slash Planner Navy",
      "type": "HON",
      "url": "https://omoionline.com/products/hobonichi-techo-2027-hon-a5-slash-planner-navy",
      "source_title": "Hobonichi Techo 2027 HON A5 Slash Planner Navy"
     },
     {
-     "canonical": null,
+     "canonical": "hon-a6-slash-navy",
      "label": "Hobonichi Techo 2027 HON A6 Slash Planner Navy",
      "type": "HON",
      "url": "https://omoionline.com/products/hobonichi-techo-2027-hon-a6-slash-planner-navy",
      "source_title": "Hobonichi Techo 2027 HON A6 Slash Planner Navy"
     },
     {
-     "canonical": null,
+     "canonical": "weeks-shirt-graph-plaid",
      "label": "Hobonichi Techo 2027 WEEKS Shirt Fabric Planner Graph Plaid",
      "type": "Weeks",
      "url": "https://omoionline.com/products/hobonichi-techo-2027-weeks-shirt-fabric-planner-graph-plaid",
      "source_title": "Hobonichi Techo 2027 WEEKS Shirt Fabric Planner Graph Plaid"
     },
     {
-     "canonical": null,
+     "canonical": "weeks-paper-frosty-jade",
      "label": "Hobonichi Techo 2027 WEEKS Paper Series Planner Jade",
      "type": "Weeks",
      "url": "https://omoionline.com/products/hobonichi-techo-2027-weeks-paper-series-planner-jade",
