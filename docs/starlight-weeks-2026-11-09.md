@@ -1,6 +1,6 @@
 # Starlight Weeks, 2026-11-09
 
-Not merged and not on the public site. The catalog change is in `stores.json`. The checker writes stock on its next run. This note does not add a status or a restock.
+Published. Merge `757f5844c61c44c9dfe502a50d73197aa9d29f0d` of reviewed head `9a699c08085d444f89f620f85d4486f8879e008d`. There were no pull-request checks. Checker [42550285198](https://github.com/Excelsior88/stationery-drop-watch/actions/runs/42550285198) ran `2026-11-09T02:19:33+00:00` to `2026-11-09T02:20:35+00:00`, found 0 new in-stock flips, and committed the seven new rows as `f62117c2ce3d9d9ed5dc8b792c18b979de7b09e3` because they were not timestamp-only. Artifact `github-pages` `13644789101`, digest `sha256:a15c394048bbe32a81b1df2f8bba87f39950b232d1cb11dbd376b2155fa0b6e5`. Cloudflare [42550603906](https://github.com/Excelsior88/stationery-drop-watch/actions/runs/42550603906) deployed that artifact to https://f38f00f1.stationery-drop-watch.pages.dev. Public page: https://stationerydropwatch.com/hobonichi-weeks-2027/starlight/
 
 ## Product
 
@@ -30,9 +30,15 @@ A first check of a new URL has no previous status, so it is not written to the r
 
 ## Surfaces
 
-| Surface | Status | Next |
-| --- | --- | --- |
-| Weeks tracker and `/hobonichi-weeks-2027/starlight/` | Implemented in the catalog and design list. Not on the public site until the checker runs | Review, then merge |
-| Live stock before this change | Already consistent. No Starlight canonical in the 2026-11-09T02:00:37Z public stock | None |
-| FAQ, guides, social bios | Already consistent. They do not name this design | None |
-| Delivered shop copies versus the official book | Unverified beyond the titles, type line, and JAN above | Do not add a shop that only shares the word Starlight |
+Checked on the public site after the deploy above. Stock `run_finished` `2026-11-09T02:20:35+00:00`.
+
+| Surface | Status | Source | Next |
+| --- | --- | --- | --- |
+| Seven Starlight listings | Corrected | Live `stock.json` matches the seven URLs. Wonder Pens is not yet on sale. The other six are sold out. `changes.json` has no event for these URLs. | None |
+| `/hobonichi-weeks-2027/starlight/` | Corrected | Same seven rows and statuses. Official listing is English and Japanese. The other shops are the English book. Hardcover, 2027, January start, Monday start. | None |
+| Weeks page and Hobonichi tracker | Corrected | Both list the seven URLs. Product filter and search return 7 of 7. Design link is present. Weeks is 42 listings at 11 shops. | None |
+| Sitemap and canonical | Corrected | Sitemap and the page canonical use `/hobonichi-weeks-2027/starlight`. | None |
+| Times | Already consistent | With JavaScript, the check time shows in the visitor zone. With JavaScript off, the same instants stay Eastern Time. | None |
+| FAQ and guides | Already consistent | They do not name this design or a closed Weeks list that would now be wrong. | None |
+| Social bios and banners | Unverified | This approval did not include profile edits. No checked page says a bio states this product. | None unless a bio is later found naming a fixed Weeks list |
+| A separate Japanese shop URL | Unverified | Not found at the tracked shops. The official page already covers both languages. | Do not add a URL that is only a name match |
