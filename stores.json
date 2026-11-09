@@ -97,6 +97,46 @@
    "type": "Weeks Mega"
   },
   {
+   "id": "weeks-moomin-snufkin",
+   "label": "Weeks · Moomin: A Day in the Life of Snufkin",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-sheep",
+   "label": "Weeks · Bow & Tie: Sheep Sheep Sheep",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-leather-forest",
+   "label": "Weeks · Leather: Forest Green",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-mega-sea-glass",
+   "label": "Weeks Mega · Colors: Sea Glass",
+   "type": "Weeks Mega"
+  },
+  {
+   "id": "weeks-mega-canaria-yellow",
+   "label": "Weeks Mega · Colors: Canaria Yellow",
+   "type": "Weeks Mega"
+  },
+  {
+   "id": "weeks-mega-poppy-red",
+   "label": "Weeks Mega · Colors: Poppy Red",
+   "type": "Weeks Mega"
+  },
+  {
+   "id": "weeks-mega-pink-sapphire",
+   "label": "Weeks Mega · Colors: Pink Sapphire",
+   "type": "Weeks Mega"
+  },
+  {
+   "id": "weeks-mega-sheep",
+   "label": "Weeks Mega · Bow & Tie: Sheep Sheep Sheep",
+   "type": "Weeks Mega"
+  },
+  {
    "id": "cover-a6-moomin",
    "label": "A6 cover · Moomin: My Yard (Pale Mint)",
    "type": "Cover"
@@ -472,6 +512,22 @@
      "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_hon_slashnv/",
      "source_title": "Slash (Navy)",
      "source_key": "ob27_hon_slashnv"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_colorscyellow/",
+     "source_key": "wb27_colorscyellow",
+     "source_title": "Canaria Yellow"
+    },
+    {
+     "canonical": "cover-a6-white-cat-house",
+     "label": "A6 cover · Yumi Kitagishi: White Cat House",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_kitagishi/",
+     "source_key": "oc27_kitagishi",
+     "source_title": "White Cat House"
     }
    ]
   },
@@ -891,20 +947,6 @@
     },
     {
      "canonical": null,
-     "label": "[Hobonichi 2027] Weeks (English)",
-     "type": "Weeks",
-     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english",
-     "source_title": "[Hobonichi 2027] Weeks (English)"
-    },
-    {
-     "canonical": null,
-     "label": "[Hobonichi 2027] Weeks MEGA (English)",
-     "type": "Weeks Mega",
-     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english",
-     "source_title": "[Hobonichi 2027] Weeks MEGA (English)"
-    },
-    {
-     "canonical": null,
      "label": "[Hobonichi 2027] Planner Book (A6 / English)",
      "type": "Book",
      "url": "https://www.baum-kuchen.net/products/hobonichi-2027-planner-book-a6-english",
@@ -983,6 +1025,118 @@
      "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546076676163",
      "source_title": "V&A Series: Leicester",
      "variant_id": 43546076676163
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43545982435395",
+     "variant_id": 43545982435395,
+     "source_title": "Colors: Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546058817603",
+     "variant_id": 43546058817603,
+     "source_title": "Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546062159939",
+     "variant_id": 43546062159939,
+     "source_title": "Moomin: At the Table"
+    },
+    {
+     "canonical": "weeks-moomin-snufkin",
+     "label": "Weeks · Moomin: A Day in the Life of Snufkin",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546068385859",
+     "variant_id": 43546068385859,
+     "source_title": "Moomin: A Day in the Life of Snufkin"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43733001928771",
+     "variant_id": 43733001928771,
+     "source_title": "Yumi Kitagishi: White Cat Wallpaper"
+    },
+    {
+     "canonical": "weeks-sheep",
+     "label": "Weeks · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546089291843",
+     "variant_id": 43546089291843,
+     "source_title": "Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "weeks-leather-forest",
+     "label": "Weeks · Leather: Forest Green",
+     "type": "Weeks",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546093191235",
+     "variant_id": 43546093191235,
+     "source_title": "Leather: Forest Green"
+    },
+    {
+     "canonical": "weeks-mega-sea-glass",
+     "label": "Weeks Mega · Colors: Sea Glass",
+     "type": "Weeks Mega",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english?variant=43546097352771",
+     "variant_id": 43546097352771,
+     "source_title": "Colors: Sea Glass"
+    },
+    {
+     "canonical": "weeks-mega-canaria-yellow",
+     "label": "Weeks Mega · Colors: Canaria Yellow",
+     "type": "Weeks Mega",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english?variant=43546097385539",
+     "variant_id": 43546097385539,
+     "source_title": "Colors: Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-mega-poppy-red",
+     "label": "Weeks Mega · Colors: Poppy Red",
+     "type": "Weeks Mega",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english?variant=43546097418307",
+     "variant_id": 43546097418307,
+     "source_title": "Colors: Poppy Red"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english?variant=43546097451075",
+     "variant_id": 43546097451075,
+     "source_title": "Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-mega-pink-sapphire",
+     "label": "Weeks Mega · Colors: Pink Sapphire",
+     "type": "Weeks Mega",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english?variant=43546097483843",
+     "variant_id": 43546097483843,
+     "source_title": "Colors: Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-mega-sheep",
+     "label": "Weeks Mega · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks Mega",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english?variant=43546097647683",
+     "variant_id": 43546097647683,
+     "source_title": "Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english?variant=67668417904707",
+     "variant_id": 67668417904707,
+     "source_title": "Bow & Tie: Candy Dream"
     }
    ]
   },
