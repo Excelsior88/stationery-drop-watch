@@ -359,5 +359,14 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-09T23:48:26+00:00",
+  "store_id": "penboutique",
+  "store": "Pen Boutique",
+  "label": "HON A6 · Slash (Navy)",
+  "url": "https://www.penboutique.com/products/hobonichi-hon-light-hardcover-japanese-book-slash-navy-a6-january-start",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
