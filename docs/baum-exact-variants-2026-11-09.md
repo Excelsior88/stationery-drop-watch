@@ -1,6 +1,10 @@
 # Exact Baum variants and two official listings, 2026-11-09
 
-Not published. This branch is waiting for an explicit merge approval. No checker run and no Cloudflare deploy have been started from it.
+Published. The owner approved head `92ed6c22745ff66c2f2ed72b3793eeba783b5276` at Nov 8, 11:48 PM EST. Merge commit `22f911d59d392648abea5313016ad2a06695ef1b` at `2026-11-09T04:50:02Z`. There were no pull-request check runs on that head. Checker [42563944987](https://github.com/Excelsior88/stationery-drop-watch/actions/runs/42563944987) ran from that merge and committed `94ad748dd17388edb49a18775fd3b24bd2ea95d4`. Its drop-alert webhook step was skipped. Cloudflare [42564119022](https://github.com/Excelsior88/stationery-drop-watch/actions/runs/42564119022) deployed artifact `13650990354`, digest `sha256:bbd36322045222ab0505c091b726f9ee1a8fe715ce1f5756b99a67869e0c025c`, from checker `42563944987`, to https://e96a24b8.stationery-drop-watch.pages.dev and https://stationerydropwatch.com/. Public stock `run_finished` is `2026-11-09T04:51:45+00:00`. 267 products. `changes.json` is still 37 events, newest `2026-11-08T17:48:00+00:00`. No restock event was added for a new variant or the two official URLs.
+
+The two combined Baum URLs are gone. All 11 Weeks variant links and all 7 Mega variant links are on the family pages. Pink Sapphire `43546059636803`, Sea Glass `43545928269891`, Welcome `43546082246723`, and Leicester `43546076676163` kept their earlier `first_seen` and `status_since`. Leicester at Baum is sold out. Sheep `43546089291843` and Mega Sheep `43546097647683` are sold out on their own cards. The other 14 new variant rows and the two official rows are first observations. Official Canaria Yellow is in stock because the Japanese sale was live; the English sale was sold out, and the page says the listing includes both languages. Official White Cat House, the A6 cover, is in stock beside Kinokuniya. The other 247 URLs that were already checked kept the same status and `first_seen`. The five Omoi URLs are still unknown, with their October 25 times. Weeks reads 38 of 106 checked listings in stock or on preorder at 8 of 11 shops, with 2 unchecked. Mega reads 13 of 20 checked at 6 of 9 shops, with 1 unchecked. Canaria Yellow reads 6 of 9. The home line is 262 of 267 listings checked, 5 unchecked.
+
+Historical signup evidence stays historical: a Buttondown confirmation read in the site Gmail for Nov 2, 1:42 AM EST, and a new-subscriber notice for Nov 8, 12:06 AM EST via stationerydropwatch.com. No address or confirmation token is stored. Current restock email, webhook delivery, payment, and the Etsy listing body remain unverified. Etsy returned 403 and is not shown to be a broken link.
 
 ## What changed
 
@@ -111,4 +115,4 @@ Signup forms on the built pages post to `https://buttondown.com/api/emails/embed
 | Non-Baum whole-product rows under the new guard | No row in the 2026-11-09T03:56:46Z stock would newly become unknown. Mixed products that already have a variant id stay on that id. |
 | Historical signup delivery | Verified from the site Gmail: Buttondown confirmation Nov 2, 1:42 AM EST, and a new-subscriber notice Nov 8, 12:06 AM EST via stationerydropwatch.com. |
 | Current restock email, webhook, payment, and the Etsy listing body | Unverified. Etsy returned 403. Not treated as a broken route. |
-| Merge and deploy | Awaiting approval. |
+| Merge and deploy | Published. Merge `22f911d`, checker `42563944987`, stock `94ad748`, Cloudflare `42564119022`. |
