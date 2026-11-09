@@ -1,6 +1,8 @@
 # Omoi gaps and Floral Remedy, 2026-11-09
 
-Not published. The five Omoi URLs are unchanged. Omoi's published catalog still has no Hobonichi product and those five paths still 404, so they stay "Couldn't check."
+Published. Merge of reviewed head `bdccd747ccb2111a24d7f84bc8923ec097782eb9` at `2026-11-09T03:55:08Z`. There were no pull-request checks on that commit. Checker [42558947060](https://github.com/Excelsior88/stationery-drop-watch/actions/runs/42558947060) ran `2026-11-09T03:55:20+00:00` to `2026-11-09T03:56:46+00:00` and committed `7da3220d332ce2f843e90589efe8834099a9f06b`. It did not add a restock event for any new URL. `changes.json` stayed at 37 events, newest `2026-11-08T17:48:00+00:00`. Cloudflare [42559118666](https://github.com/Excelsior88/stationery-drop-watch/actions/runs/42559118666) deployed artifact `13648726736`, digest `sha256:008686c6c4b8f999c6f1d06fb9f29470d4431f12b727d1dfa429932ee44d628e`, from that checker run, to https://40c293af.stationery-drop-watch.pages.dev. Public stock matches that run.
+
+The five Omoi URLs are unchanged. They are still unknown, HTTP 404, with their October 25 `first_seen` and `status_since`.
 
 ## Identity
 
