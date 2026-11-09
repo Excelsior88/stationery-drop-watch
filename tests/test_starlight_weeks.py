@@ -1,11 +1,14 @@
 """Hobonichi Weeks 2027 tanakadaisuke: Starlight is one design, not a Mega or a softcover.
 
-Shop URLs were read from each store's own product data. A new listing has no
-previous status, so the checker must not record a restock for it.
+Shop URLs were read from each store's own product data. Checker tests call
+check_hobonichi and main with a stand-in host, so a change in those functions
+fails here.
 """
 import json
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import scripts.checker as checker
 import scripts.build_site as site
@@ -22,17 +25,40 @@ URLS = {
 }
 
 
-def hobonichi_status(item):
-    """The same order of checks as check_hobonichi."""
-    sales = list((item.get("sales") or {}).values())
-    live = [s for s in sales if not s.get("soldout") and not s.get("unreleased")]
-    if item.get("soldout") or (sales and all(s.get("soldout") for s in sales)):
-        return "sold_out"
-    if sales and all(s.get("unreleased") for s in sales):
-        return "coming_soon"
-    if live:
-        return "in_stock"
-    return "unknown"
+class _Resp:
+    def __init__(self, payload):
+        self._payload = payload
+        self.ok = True
+        self.status_code = 200
+        self.text = ""
+        self.headers = {"content-type": "application/json"}
+
+    def json(self):
+        return self._payload
+
+
+def _host(payload=None, error=None):
+    class Host:
+        def __init__(self, base):
+            self.base = base
+
+        def get(self, url, check_robots=True):
+            if error:
+                raise error
+            return _Resp(payload)
+
+    return Host
+
+
+def _star_store():
+    return {"id": "1101", "name": "Hobonichi Online Store (official)", "platform": "hobonichi",
+            "url": "https://www.1101.com/store/techo/en/", "products": [{
+                "canonical": "weeks-starlight", "label": "Weeks · tanakadaisuke: Starlight", "type": "Weeks",
+                "url": URLS["1101"], "source_key": "wb27_tdaisuke", "source_title": "tanakadaisuke: Starlight"}]}
+
+
+def _feed(item):
+    return {"items": {"wb27_tdaisuke": item} if item is not None else {}}
 
 
 class StarlightWeeksTests(unittest.TestCase):
@@ -58,13 +84,27 @@ class StarlightWeeksTests(unittest.TestCase):
         urls = [p["url"] for s in self.cfg["stores"] for p in s["products"]]
         self.assertEqual(len(urls), len(set(urls)))
 
-    def test_official_feed_rules_and_a_missing_key(self):
+    def test_check_hobonichi_uses_the_feed_and_a_failed_fetch_stays_unknown(self):
+        store = _star_store()
         sold = {"soldout": 1, "sales": {"m": {"soldout": 1, "unreleased": 0}, "me": {"soldout": 1, "unreleased": 0}}}
-        self.assertEqual(hobonichi_status(sold), "sold_out")
-        restocked = {"soldout": 0, "sales": {"m": {"soldout": 1, "unreleased": 0}, "me": {"soldout": 0, "unreleased": 0}}}
-        self.assertEqual(hobonichi_status(restocked), "in_stock")
-        missing = {"soldout": 0, "sales": {}}
-        self.assertEqual(hobonichi_status(missing), "unknown")
+        one_live = {"soldout": 0, "sales": {"m": {"soldout": 1, "unreleased": 0}, "me": {"soldout": 0, "unreleased": 0}}}
+        with patch.object(checker, "Host", _host(_feed(sold))):
+            both = checker.check_hobonichi(store)[0]
+        with patch.object(checker, "Host", _host(_feed(one_live))):
+            english = checker.check_hobonichi(store)[0]
+        with patch.object(checker, "Host", _host(_feed(None))):
+            missing = checker.check_hobonichi(store)[0]
+        with patch.object(checker, "Host", _host(error=TimeoutError("timed out"))):
+            failed = checker.check_hobonichi(store)[0]
+        self.assertEqual(both["status"], "sold_out")
+        self.assertEqual(both["available_variants"], 0)
+        self.assertEqual(both["total_variants"], 2)
+        self.assertEqual(english["status"], "in_stock")
+        self.assertEqual(english["available_variants"], 1)
+        self.assertEqual(missing["status"], "unknown")
+        self.assertEqual(missing["error"], "item key not in feed")
+        self.assertEqual(failed["status"], "unknown")
+        self.assertIn("TimeoutError", failed["error"])
 
     def test_preview_title_is_not_yet_on_sale_and_a_plain_sold_out_is_not(self):
         preview = {"available": False, "title": "<b>PREVIEW</b> - Hobonichi 2027 - English Weeks - tanakadaisuke: Starlight",
@@ -77,11 +117,19 @@ class StarlightWeeksTests(unittest.TestCase):
                 "variants": [{"title": "Default Title", "available": False}], "tags": ["Hobonichi"]}
         self.assertEqual(checker.classify_shopify(sold)[0], "sold_out")
 
-    def test_a_first_observation_is_not_a_restock(self):
-        old = None
-        status = "sold_out"
-        recorded = bool(old and status != "unknown" and old["status"] not in ("unknown", status))
-        self.assertFalse(recorded)
+    def test_main_does_not_record_a_restock_for_a_new_listing(self):
+        tmp = Path(tempfile.mkdtemp())
+        (tmp / "stores.json").write_text(json.dumps({"stores": [_star_store()]}))
+        with patch.object(checker, "ROOT", tmp), patch.object(checker, "Host", _host(_feed({
+                "soldout": 1, "sales": {"m": {"soldout": 1, "unreleased": 0}, "me": {"soldout": 1, "unreleased": 0}}}))):
+            checker.main()
+        stock = json.loads((tmp / "data" / "stock.json").read_text())
+        changes = json.loads((tmp / "data" / "changes.json").read_text())
+        self.assertEqual([p["url"] for p in stock["products"]], [URLS["1101"]])
+        self.assertEqual(stock["products"][0]["status"], "sold_out")
+        self.assertEqual(stock["products"][0]["first_seen"], stock["products"][0]["status_since"])
+        self.assertEqual(changes, [])
+        self.assertEqual(stock["summary"]["sold_out"], 1)
 
     def test_design_page_links_only_this_canonical(self):
         design = next(d for d in site.DESIGNS if d["slug"] == "starlight")
@@ -96,8 +144,12 @@ class StarlightWeeksTests(unittest.TestCase):
         self.assertTrue(weeks["match"](star))
         self.assertFalse(weeks["match"](mega))
         self.assertIn("tanakadaisuke: Starlight", weeks["desc"])
-        self.assertIn("hardcover", site.design_about(design).lower())
-        self.assertIn("not a Weeks Mega", site.design_about(design))
+        about = site.design_about(design)
+        self.assertIn("2027 Weeks hardcover book, January start, Monday start", about)
+        self.assertIn("Hobonichi's own listing includes the English and Japanese books", about)
+        self.assertIn("The other shops on this page sell the English book", about)
+        self.assertNotIn("The shop listings here are the English book", about)
+        self.assertIn("not a Weeks Mega", about)
 
 
 if __name__ == "__main__":

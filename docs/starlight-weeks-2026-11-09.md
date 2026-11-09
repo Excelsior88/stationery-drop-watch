@@ -24,7 +24,7 @@ Some shops call this book a light hardcover. Pen Boutique uses that phrase for t
 | Yoseka Stationery | https://yosekastationery.com/products/hobonichi-techo-weeks-2027-tanakadaisuke-starlight | Title says Weeks 2027 Starlight. A search for the JAN returns this product |
 | Jenni Bick | https://www.jennibick.com/products/hobonichi-techo-weeks-2027-tanakadaisuke-starlight | Title says Weeks 2027 Starlight. SKU `HT-4580812709897` |
 
-No separate Japanese-book URL turned up at these shops. Baum-kuchen, Bobo Design Studio, Laywine's, and Omoi Zakka Shop did not return this book. Kinokuniya's results for the name were unrelated books. JetPens is not checked automatically, and Nanami Paper disallows the checker, so they were not added.
+The public design sentence says Hobonichi's own listing includes the English and Japanese books, and the other shops on the page sell the English book. No separate Japanese-book URL turned up at those shops. Baum-kuchen, Bobo Design Studio, Laywine's, and Omoi Zakka Shop did not return this book. Kinokuniya's results for the name were unrelated books. JetPens is not checked automatically, and Nanami Paper disallows the checker, so they were not added.
 
 A first check of a new URL has no previous status, so it is not written to the restock log.
 
