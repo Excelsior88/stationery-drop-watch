@@ -44,10 +44,21 @@ class Host:
         try: return self.s.get(url, timeout=TIMEOUT)
         finally: self.last = time.time()
 
+def named_variants_disagree(js):
+    """True when one Shopify product lists different designs and they are not all available or all unavailable."""
+    flags = []
+    for v in js.get("variants") or []:
+        name = (v.get("public_title") or v.get("title") or "").strip()
+        if name and name not in ("Default Title", "-"):
+            flags.append(bool(v.get("available")))
+    return len(flags) > 1 and len(set(flags)) > 1
+
 def classify_shopify(js):
     variants = js.get("variants") or []
     avail = [v for v in variants if v.get("available")]
     text = " ".join([js.get("title", "")] + [v.get("title") or "" for v in variants] + list(js.get("tags") or []))
+    if named_variants_disagree(js):
+        return "unknown", len(avail), len(variants), re.sub(r"<[^>]+>", "", js.get("title", ""))
     if js.get("available") or avail:
         status = "preorder" if PREORDER_RX.search(text) else "in_stock"
     else:
@@ -85,10 +96,13 @@ def check_shopify_store(store):
             vid = p.get("variant_id")   # optional: track one size/paper option, not the whole product
             r = h.get(p["url"].split("?")[0] + ".js"); rec["checked_at"] = now()
             if r.ok and r.headers.get("content-type", "").startswith(("application/json", "text/javascript", "application/javascript")):
-                res = classify_shopify_variant(r.json(), vid) if vid else classify_shopify(r.json())
+                js = r.json()
+                res = classify_shopify_variant(js, vid) if vid else classify_shopify(js)
                 if res:
                     st, a, t, title = res
                     rec.update(status=st, available_variants=a, total_variants=t, title=title, method="shopify .js variant" if vid else "shopify .js")
+                    if not vid and named_variants_disagree(js):
+                        rec["error"] = "named variants do not share one availability"
                 else:
                     rec["error"] = f"variant {vid} no longer on this product"
             elif vid:
