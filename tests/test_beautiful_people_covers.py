@@ -160,6 +160,9 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
             visible = re.sub(r"<meta[^>]*>", " ", visible)
             if design["slug"] in wanted:
                 self.assertEqual(doc.count(line), 1)
+                self.assertIn(f'<p class="suggest">{line}</p>', doc)
+                self.assertLess(doc.index(line), doc.index("Right now:"))
+                self.assertLess(doc.index("Right now:"), doc.index("Open a shop's name"))
                 self.assertIn(line, visible)
                 self.assertNotIn("Angela", re.search(r'name="description" content="([^"]*)"', doc).group(1))
                 self.assertNotIn("Angela", re.search(r'property="og:description" content="([^"]*)"', doc).group(1))

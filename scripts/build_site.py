@@ -1388,7 +1388,7 @@ def build_design(d, oe):
         right_now = (f"{len(buy)} of {len(ls) - len(unk) if unk else len(ls)} {'checked ' if unk else ''}listings are in stock or on preorder "
                      f"at {len({l['store_id'] for l in buy})} of {nshops(len({l['store_id'] for l in ls if l['status'] != 'unknown'})) + ' we could check' if unk else nshops(shops)}."
                      + (f" {len(unk)} couldn't be checked this run." if unk else ""))
-    thanks = ('<p class="muted small">Thank you to our follower Angela for suggesting we track these restocks.</p>\n  '
+    thanks = ('<p class="suggest">Thank you to our follower Angela for suggesting we track these restocks.</p>'
               if d["slug"] in {"nothing-to-hide-green", "nothing-to-hide-pink", "nothing-to-hide-yellow"} else "")
     table = (f"""<section class="card group-sec" id="stock">
   <div class="section-head"><h2>Stock by shop</h2><p class="muted small">{E(count_line(ls).capitalize())} · {checked_line(ls)}</p></div>
@@ -1398,7 +1398,7 @@ def build_design(d, oe):
     <tbody>{status_rows(ls, oe)}</tbody>
   </table></div>
   <p class="muted small">Open a shop's name to go straight to its listing.</p>
-  {thanks}{region_legend(l["store_id"] for l in ls)}
+  {region_legend(l["store_id"] for l in ls)}
 </section>""" if ls else f'<section class="card group-sec" id="stock"><h2>Stock by shop</h2><div class="empty"><p>No shop we check lists this design right now. See the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a> for everything we track.</p></div></section>')
     urls = {l["url"] for l in ls}
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
@@ -1466,6 +1466,7 @@ def build_design(d, oe):
   {eyebrow(ey, f"{shops} {'shop' if shops == 1 else 'shops'} checked {CHECK_FREQ}")}
   <h1>{E(h1)}</h1>
   <p class="lede">{intro}</p>
+  {thanks}
   <p><strong>Right now:</strong> {right_now}
   <span class="muted small">Last check: {time_tag(run)}.</span></p>
   {signup()}
