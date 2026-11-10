@@ -22,6 +22,9 @@ URLS = {
     "penboutique": "https://www.penboutique.com/products/hobonichi-2027-light-hard-cover-english-book-tanakadaisuke-starlight-tall-slim-weeks-january-start",
     "yoseka": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-tanakadaisuke-starlight",
     "jennibick": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-tanakadaisuke-starlight",
+    "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-tanakadaisuke-starlight-eng-tall-slim-jan-start",
+    "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-tanakadaisuke-starlight",
+    "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-starlight-english-tall-slim-jan-start",
 }
 
 
