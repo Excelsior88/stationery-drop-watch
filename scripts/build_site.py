@@ -224,6 +224,54 @@ CHECK_FREQ = "about every 30 minutes"
 N_HOBO = N_SEC["hobonichi"]   # Hobonichi shops we check
 N_DG = N_SEC["dotgrid"]        # dot grid shops we check
 TITLE_SUFFIX = " · Stationery Drop Watch"
+TITLE_LIMIT = 60  # search-result titles past this are cut off
+DESC_LIMIT = 160  # meta descriptions past this are cut off
+BRAND_SHORT = " · Drop Watch"
+
+# Guide templates hash their own source for the visible "updated" date. Short titles for those
+# pages are applied here, so the guide functions themselves stay byte-for-byte and the date does not move.
+TITLE_OVERRIDES = {
+    "Hobonichi Techo 2027 launch & restock calendar": "Hobonichi Techo 2027 calendar",
+    "Hobonichi Techo vs Cousin vs Weeks (2027): sizes, layouts, who each suits": "Hobonichi Techo vs Cousin vs Weeks",
+    "Best dot grid journals compared: Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy": "Best dot grid journals compared",
+    "Traveler's Notebook Regular vs Passport vs Card Size: Which Size Fits You?": "Traveler's Regular vs Passport vs Card Size",
+}
+DESC_OVERRIDES = {
+    "Dot grid journals compared: paper weight (gsm), pages, size and features for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, from each maker's page, plus live stock.":
+    "Dot grid journals compared: paper, pages, size and features for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, plus live stock.",
+    "Regular, Passport, or the limited Card Size set: leather cover and refill dimensions from TRAVELER'S COMPANY, which refills fit which cover, and which sizes this site tracks.":
+    "Regular, Passport, or the limited Card Size set: cover and refill sizes from TRAVELER'S COMPANY, which refills fit, and which sizes this site tracks.",
+}
+
+def seo_title(base):
+    """Document title of about 60 characters, key phrase first.
+
+    The full ' · Stationery Drop Watch' suffix stays only when the whole title still fits.
+    A shorter ' · Drop Watch' suffix is used when that fits and the long one does not.
+    A title that already names the site is left alone, so the brand is not repeated."""
+    text = " ".join(str(base).split())
+    for suffix in (TITLE_SUFFIX, BRAND_SHORT):
+        if text.endswith(suffix):
+            text = text[: -len(suffix)].rstrip(" ·")
+    text = TITLE_OVERRIDES.get(text, text)
+    if "Stationery Drop Watch" in text or text.endswith("Drop Watch"):
+        return text
+    if len(text) + len(TITLE_SUFFIX) <= TITLE_LIMIT:
+        return text + TITLE_SUFFIX
+    if len(text) + len(BRAND_SHORT) <= TITLE_LIMIT:
+        return text + BRAND_SHORT
+    return text
+
+def seo_desc(text):
+    """Meta description of about 160 characters, cut on a word if a template runs long."""
+    text = " ".join(str(text).split())
+    text = DESC_OVERRIDES.get(text, text)
+    if len(text) <= DESC_LIMIT:
+        return text
+    cut = text[: DESC_LIMIT - 1].rsplit(" ", 1)[0].rstrip(" ,;:—-")
+    if not cut.endswith("."):
+        cut += "."
+    return cut
 
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
@@ -278,8 +326,8 @@ def jsonld(obj):
 
 def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
     url = url_for(fname)
-    if not title.endswith(TITLE_SUFFIX):  # every page title ends with the site name
-        title += TITLE_SUFFIX
+    title = seo_title(title)  # brand suffix only when the title still fits in a search result
+    desc = seo_desc(desc)
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-"))  # Hobonichi product pages sit under the tracker
     guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "best-dot-grid-journals/", TN_GUIDE_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
     def cur(h):  # this page, or the page it sits under (product pages under the tracker, design pages under their section)
@@ -303,6 +351,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <meta name="twitter:title" content="{E(title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:image" content="{og_image}"><meta name="twitter:image:alt" content="{E(og_alt)}">
 <link rel="preload" href="assets/fonts/newsreader-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/style.css?v={ASSET_V['style.css']}">
+<link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png" sizes="180x180">
@@ -756,8 +805,8 @@ def build_hobo_tracker():
 {stock_data(rows)}
 """
     n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
-    return page(HOBO_TRACKER, "Hobonichi Techo 2027 restock tracker · Stationery Drop Watch",
-                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked {CHECK_FREQ}. Plus separate trackers for {sections_phrase()}.",
+    return page(HOBO_TRACKER, "Hobonichi Techo 2027 tracker",
+                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, plus separate trackers for other brands.",
                 body, ld=(faq_ld, crumbs_ld((HOBO_TRACKER, "Hobonichi tracker"))))
 
 HUB_TRACKERS = {  # one line per tracker card on the hub homepage
@@ -866,8 +915,8 @@ def build_index():
                              "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {sections_phrase()}. Statuses come straight from each shop's public product data.",
                              "logo": BASE + "assets/brand/icon-512.png", "email": "stationerydropwatch@gmail.com",
                              "sameAs": [s[2] for s in SOCIALS]}}
-    return page("index.html", "Hobonichi, dot grid, Traveler's Company & MIDORI MD restock tracker · Stationery Drop Watch",
-                f"Live restock checks {CHECK_FREQ} at {N_STORES} shops: Hobonichi Techo 2027 planners and covers, dot grid journals, Traveler's Company notebooks and MIDORI MD releases. See what's in stock now and get an email when a sold-out item is back.",
+    return page("index.html", "Hobonichi, dot grid & MIDORI tracker",
+                f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, dot grid journals, Traveler's notebooks and MIDORI MD, plus an email when a sold-out item is back.",
                 body, ld=(site_ld,))
 
 def build_hobonichi():
@@ -939,7 +988,7 @@ def build_privacy():
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
 </article>"""
-    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown), cookie-free Cloudflare Web Analytics and Amazon affiliate links.", body, ld=(crumbs_ld((fname, "Privacy")),))
+    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown), cookie-free Cloudflare Web Analytics and Amazon affiliate links. We don't set our own cookies.", body, ld=(crumbs_ld((fname, "Privacy")),))
 
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
@@ -964,7 +1013,7 @@ def build_about():
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
 </article>"""
-    return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks shops {CHECK_FREQ} for Hobonichi Techo 2027, {sections_phrase()} restocks, and why it never guesses stock.", body, ld=(crumbs_ld(("about.html", "About")),))
+    return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi, dot grid, Traveler's and MIDORI restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about.html", "About")),))
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
 # Every status on these pages comes from data/stock.json exactly as the checker wrote it.
@@ -975,34 +1024,34 @@ def _is_a6_book(p):
 GROUPS = [
     dict(slug="hobonichi-techo-2027-original-a6", short="Original A6", product="Hobonichi Techo 2027 Original (A6)",
          match=_is_a6_book,
-         desc="Is the Hobonichi Techo 2027 Original A6 book in stock? Live status for the English and Japanese A6 books at {shops} shops, checked about every 30 minutes.",
+         desc="Is the Hobonichi Original A6 in stock? Live status for the English and Japanese books at {shops} shops, with a link to each shop's listing. See each shop's page.",
          intro="The Original is Hobonichi's A6 one-page-a-day book, sold in an English and a Japanese edition. "
                "Below is what each shop we track reported at its last check: in stock, on preorder, sold out, or not on sale yet. "
                "If a check failed we say \"Couldn't check\" rather than guess."),
     dict(slug="hobonichi-techo-2027-cousin-a5", short="Cousin A5", product="Hobonichi Techo 2027 Cousin (A5)",
          match=lambda p: p.get("canonical") == "cousin-a5-en",
-         desc="Is the Hobonichi Techo 2027 Cousin A5 book in stock? Live status for the English Cousin at {shops} shops, checked about every 30 minutes, with every restock we spot.",
+         desc="Is the Hobonichi Cousin A5 in stock? Live status for the English Cousin at {shops} shops, with every restock we spot and a link to each listing. See each listing.",
          intro="The Cousin is the A5 version of the Techo, with a page a day and more room to write. "
                "Here's what each shop we track reported for the English Cousin at its last check."),
     dict(slug="hobonichi-weeks-2027", short="Weeks", product="Hobonichi Weeks 2027",
          match=lambda p: p["type"] == "Weeks",
-         desc="Is Hobonichi Weeks 2027 in stock? Live status for Midnight Blue, Canaria Yellow, Moomin, White Cat Wallpaper, tanakadaisuke: Starlight and more at {shops} shops, checked about every 30 minutes.",
+         desc="Is Hobonichi Weeks 2027 in stock? Live status for Midnight Blue, Canaria Yellow, tanakadaisuke: Starlight and more at {shops} shops. Open a shop's page to confirm.",
          intro="Weeks is Hobonichi's slim, wallet-size weekly planner, and the popular covers sell out fast. "
                "These are the 2027 Weeks listings we track, grouped by design, with the status each shop reported at its last check."),
     dict(slug="hobonichi-weeks-mega-2027", short="Weeks Mega", product="Hobonichi Weeks Mega 2027",
          match=lambda p: p["type"] == "Weeks Mega",
-         desc="Is Hobonichi Weeks Mega 2027 in stock? Live status for Midnight Blue, Bow & Tie: Candy Dream and more at {shops} shops, checked about every 30 minutes.",
+         desc="Is Hobonichi Weeks Mega 2027 in stock? Live status for each tracked design at {shops} shops, with a link to every shop's listing. Open a shop's page to confirm.",
          intro="Weeks Mega is the Weeks planner with extra blank pages at the back. "
                "Here's what each shop we track reported for the 2027 Weeks Mega listings at its last check."),
     dict(slug="hobonichi-techo-2027-hon", short="HON", product="Hobonichi Techo 2027 HON",
          match=lambda p: p["type"] == "HON",
-         desc="Is the Hobonichi Techo 2027 HON in stock? Live status for the A5 and A6 Slash (Navy) books at {shops} shops, checked about every 30 minutes.",
+         desc="Is the Hobonichi Techo 2027 HON in stock? Live status for the A5 and A6 Slash (Navy) books at {shops} shops, with a link to each listing. See each shop's page.",
          intro="The HON is Hobonichi's book with the cover attached. Slash (Navy) is tracked here in A5 and in A6. "
                "Hobonichi's own page for each size includes the English and Japanese books. "
                "A shop row names the language that shop sells."),
     dict(slug="hobonichi-techo-2027-covers", short="Covers", product="Hobonichi Techo 2027 cover",
          match=lambda p: p["type"] == "Cover",
-         desc="Are Hobonichi Techo 2027 covers in stock? Live status for A6 covers such as Moomin: My Yard and White Cat House, and the A5 beautiful people cover, at {shops} shops, checked about every 30 minutes.",
+         desc="Are Hobonichi Techo 2027 covers in stock? Live status for the tracked A6 and A5 covers at {shops} shops, with a link to each listing. Open a shop's page to confirm.",
          intro="Popular Hobonichi covers can sell out within minutes of a drop. "
                "We track a handful of 2027 covers: A6 covers for the Original, and one A5 cover for the Cousin. "
                "Here's what each shop reported at its last check."),
@@ -1017,7 +1066,7 @@ GROUPS = [
          # Published URL stays /archer-and-olive-dot-grid-journal/ so existing links keep working.
          # The title, heading, nav, and breadcrumb name every maker we check, with Archer and Olive featured first.
          title=f"Dot grid journal restock tracker: {dotgrid_names()}",
-         desc=f"Are {dotgrid_names()} dot grid journals in stock? Live size-by-size status from each maker's own store, checked {CHECK_FREQ}, with Archer and Olive featured first.",
+         desc=f"Are {dotgrid_names()} dot grid journals in stock? Live size-by-size status, Archer and Olive first.",
          og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
                f"We track a focused set of flagship dot grid notebooks from {dotgrid_names()}, each on that maker's own store, size by size and color by color, plus Archer and Olive's dot grid refills. "
@@ -1031,7 +1080,7 @@ GROUPS = [
                f'Choosing Regular, Passport, or the Card Size anniversary set: <a href="{TN_GUIDE_SLUG}/">Regular vs Passport vs Card Size</a>.',
          # Published URL stays /travelers-company-limited-edition/. The heading names Regular colors and limited editions.
          title="Traveler's Notebook restock tracker: regular colors and limited editions",
-         desc="Are the Traveler's Notebook Regular size colors (Black, Brown, Blue, Camel, Olive), 2027 diary accessories and 20th anniversary sets in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
+         desc="Are Traveler's Notebook Regular colors, 2027 diary accessories and anniversary sets in stock? Live status at {shops} official and independent shops. See each row.",
          og_image=OG_TRAVELERS,
          og_alt=OG_TRAVELERS_ALT,
          intro="We track the five Regular size Traveler's Notebook colors (Black, Brown, Blue, Camel and Olive) plus Traveler's Company limited editions: the yearly diary accessories, anniversary sets and shop exclusives. "
@@ -1042,7 +1091,7 @@ GROUPS = [
          guide="MIDORI makes the dated MD diaries and diary stickers once a year, so when a shop's allocation is gone it is usually gone until the next year's edition. "
                "The plain MD notebooks stay in the catalog all year, so we don't track them here.",
          title=f"MIDORI MD seasonal release restock tracker",
-         desc="Are the MIDORI MD Notebook Diary 2027, the 1 Day 1 Page diary and the 2027 diary stickers in stock? Live status at {shops} official and independent shops, checked " + CHECK_FREQ + ".",
+         desc="Are the MIDORI MD Notebook Diary 2027, the 1 Day 1 Page diary and the 2027 diary stickers in stock? Live status at {shops} shops. Each row links to that shop.",
          og_image=OG_MIDORI,
          og_alt=OG_MIDORI_ALT,
          intro="MIDORI's MD line is sold as MD PRODUCT in 2026. The dated 2027 diaries, diary stickers and online store limited editions come once a year, in set quantities. "
@@ -1094,6 +1143,46 @@ def list_filter(ls, hint):
       <label class="grow">Search<input data-filter="q" type="search" placeholder="{E(hint)}" autocomplete="off"></label>
       <button type="button" class="filter-reset" data-filter="reset">Reset</button>
     </form>"""
+
+def group_seo_title(g):
+    """Short document title. The visible H1 stays the longer product name."""
+    sec = g_sec(g)
+    if sec == "dotgrid":
+        return "Dot grid journal tracker"
+    if sec == "travelers":
+        return "Traveler's Notebook tracker"
+    if sec == "midori":
+        return "MIDORI MD tracker"
+    return f'Hobonichi {g["short"]} tracker'
+
+def design_family(parent_slug):
+    return {
+        "hobonichi-weeks-2027": "Weeks",
+        "hobonichi-weeks-mega-2027": "Weeks Mega",
+        "hobonichi-techo-2027-covers": "cover",
+        "hobonichi-techo-2027-hon": "HON",
+        "hobonichi-techo-2027-original-a6": "Original A6",
+        "hobonichi-techo-2027-cousin-a5": "Cousin",
+        DOTGRID_SLUG: "dot grid",
+        SECTIONS["travelers"]["slug"]: "Traveler's",
+        SECTIONS["midori"]["slug"]: "MIDORI",
+    }.get(parent_slug, "stock")
+
+def design_seo_title(d):
+    return f'{d["name"]} · {design_family(d["parent"])} stock'
+
+def design_seo_desc(d, shops):
+    word = "shop" if shops == 1 else "shops"
+    fam = design_family(d["parent"])
+    core = (f'Is {d["name"]} in stock? Live {fam} status at {shops} {word}, '
+            f'with a link to each shop\'s listing.')
+    # Longer pages of true detail are used only while the description stays within 160 characters.
+    for extra in (" Open the shop's page to confirm before you buy. Stock can change.",
+                  " Open the shop page to confirm this exact listing now.",
+                  " Confirm it on the shop's own page."):
+        if len(core + extra) <= DESC_LIMIT:
+            return core + extra
+    return core
 
 def build_group(g, oe):
     ls = group_listings(g)
@@ -1220,7 +1309,7 @@ def build_group(g, oe):
              "numberOfItems": len(ls), "itemListElement": [
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: (l.get("canonical") or "~", l["store"])))]}
-    title = g.get("title") or f'{g["h1"]}: live stock at {shops} {"shop" if shops == 1 else "shops"}'
+    title = group_seo_title(g)
     return fname, page(fname, title, g["desc"].format(shops=shops), body, ld=(crumbs_ld((fname, g["short"])), items),
                        og_image=g.get("og_image", OG_IMAGE), og_alt=g.get("og_alt", OG_ALT))
 
@@ -1509,9 +1598,8 @@ def build_design(d, oe):
              "numberOfItems": len(ls), "itemListElement": [
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: l["store"]))]}
-    title = f'{d["full"]}: live stock at {shops} {"shop" if shops == 1 else "shops"}'
-    desc = (f'Is {d["full"]} in stock? Live status at {shops} {"shop" if shops == 1 else "shops"}, checked {CHECK_FREQ}, '
-            f'with every restock we spot and a link to each shop\'s listing.')
+    title = design_seo_title(d)
+    desc = design_seo_desc(d, shops)
     return fname, page(fname, title, desc, body, ld=(crumbs_ld((parent["slug"] + "/", parent["short"]), (fname, d["name"])), items, faq_ld),
                        og_image=parent.get("og_image", OG_IMAGE), og_alt=parent.get("og_alt", OG_ALT))
 
@@ -1594,7 +1682,13 @@ def build_sitemap():
     tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
     urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), tn_mod), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-03")]
     def w3c(iso):
-        return iso if len(iso) == 10 else dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
+        if len(iso) == 10:
+            iso = iso + "T00:00:00+00:00"
+        when = dt.datetime.fromisoformat(iso)
+        if when.tzinfo is None:
+            when = when.replace(tzinfo=dt.timezone.utc)
+        return when.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     body = "".join(f"  <url><loc>{E(u)}</loc><lastmod>{w3c(m)}</lastmod></url>\n" for u, m in urls)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}</urlset>\n'
 
@@ -1632,8 +1726,8 @@ def build_404():
   <p class="eyebrow">Guides</p><ul class="link-list">{"".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES)}</ul>
 </section>
 </article>"""
-    return page("404.html", "Page not found · Stationery Drop Watch",
-                f"This page doesn't exist. Find the Hobonichi Techo 2027, {sections_phrase()} restock trackers here.", body, noindex=True)
+    return page("404.html", "Page not found",
+                "This page doesn't exist. The link may be old or mistyped. The Hobonichi, dot grid, Traveler's Notebook and MIDORI MD trackers are linked here. Pick one below.", body, noindex=True)
 
 # --- SEO guides (Hobonichi section) -------------------------------------------------------------
 # Editorial pages. Every stock status on them comes from data/stock.json (rebuilt about every 30 minutes by the
@@ -1835,8 +1929,8 @@ def build_where_to_buy():
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
-    return fname, page(fname, "Where to buy the Hobonichi Techo 2027: live stock by shop · Stationery Drop Watch",
-                       f"Where to buy the Hobonichi Techo 2027 Original A6, Cousin A5, Weeks and Weeks Mega: which of {n_shops} shops have each one in stock, checked {CHECK_FREQ}, plus restock tips.",
+    return fname, page(fname, "Where to buy Hobonichi Techo 2027",
+                       f"Where to buy the Hobonichi Techo 2027 Original A6, Cousin A5, Weeks and Weeks Mega: which of {n_shops} shops have each one in stock, plus restock tips. Stock changes.",
                        body, ld=(crumbs_ld(("guides/", "Guides"), (fname, "Where to buy the Hobonichi Techo 2027")), art, faq_ld))
 
 def build_vs():
@@ -2342,8 +2436,8 @@ def build_guides_index():
 </article>"""
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": t, "url": url_for(h)} for i, (h, t) in enumerate(GUIDES)]}
-    return fname, page(fname, "Guides: Hobonichi, dot grid journals, and Traveler's Notebook sizes · Stationery Drop Watch",
-                       "Guides from Stationery Drop Watch: where to buy the Hobonichi Techo 2027, Techo vs Cousin vs Weeks, the 2027 launch calendar, dot grid journals compared, and Traveler's Notebook Regular vs Passport vs Card Size.",
+    return fname, page(fname, "Stationery buying guides",
+                       "Guides from Stationery Drop Watch: where to buy Hobonichi 2027, Techo vs Cousin vs Weeks, the launch calendar, dot grid journals, and Traveler's sizes.",
                        body, ld=(crumbs_ld((fname, "Guides")), lst))
 
 # Soft Days listing confirmed by the owner on 2026-11-06.
@@ -2668,14 +2762,13 @@ def build_shop():
     etsy = "".join(etsy_card(e) for e in etsy_listings())
     if shop_inserts_public():
         lede = "Planners, journals, and printable inserts we make. Get a printed copy on Amazon, or a printable PDF on Etsy."
-        title = "Our planners and journals: printed books and printable inserts on Amazon and Etsy · Stationery Drop Watch"
-        desc = ("Planners, journals, and printable inserts made by Stationery Drop Watch: printed 2027 planners, including a kids paperback, a habit and mood tracker, "
-                "and a reading journal on Amazon, plus printable 2027 planner PDFs, including the kids planner, and undated narrow planner inserts on Etsy.")
+        title = "Our planners and journals"
+        desc = ("Planners and journals from Stationery Drop Watch: printed 2027 books on Amazon, and printable planner PDFs plus narrow inserts on Etsy. Both are made by us.")
         etsy_intro = '<p class="muted">Printable planner PDFs, and undated paper tip-ins you print and cut yourself.</p>'
     else:
         lede = "Planners and journals we make. Get a printed copy on Amazon or a printable PDF on Etsy."
-        title = "Our planners and journals: 2027 planners and journals on Amazon and Etsy · Stationery Drop Watch"
-        desc = "Planners and journals made by Stationery Drop Watch: printed 2027 planners, a habit and mood tracker, and a reading journal on Amazon, plus printable 2027 planner PDFs on Etsy, including a kids planner."
+        title = "Our planners and journals"
+        desc = "Planners and journals from Stationery Drop Watch: printed 2027 books on Amazon, and printable planner PDFs on Etsy. Both are made by us."
         etsy_intro = ""
     body = f"""
 <article class="prose shop shop-wide">
@@ -2715,8 +2808,8 @@ def build_follow():
 {signup()}
 <ul class="follow-list">{rows}</ul>
 </article>"""
-    return fname, page(fname, "Follow us · Stationery Drop Watch",
-                       "Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest, Facebook and Reddit for restock alerts and planner news.",
+    return fname, page(fname, "Follow us",
+                       "Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest, Facebook and Reddit for restock alerts and planner news. Pick one.",
                        body, ld=(crumbs_ld((fname, "Follow us")),))
 
 _NONE_CLAIM = re.compile(r"none of the [^<.]*?(had it|in stock|on preorder)|didn't have it in stock|(?<![\w])0 of \d+ (checked )?listings are in stock", re.I)
