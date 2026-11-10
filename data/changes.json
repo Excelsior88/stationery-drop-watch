@@ -560,5 +560,15 @@
   "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-mina-perhonen-felice-blue-a6",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T18:42:52+00:00",
+  "store_id": "wonder",
+  "store": "Wonder Pens",
+  "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+  "url": "https://wonderpens.ca/products/b-pre-order-b-travelers-notebook-2027-diary-plastic-sheet-regular",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
