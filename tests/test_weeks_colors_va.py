@@ -29,6 +29,9 @@ URLS = {
         "yoseka": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-pink-sapphire",
         "jennibick": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-pink-sapphire",
         "kinousa": "https://usa.kinokuniya.com/products/4580812709712",
+        "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-colors-pink-sapphire-eng-tall-slim-jan-start-planner",
+        "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-colors-pink-sapphire",
+        "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-pink-sapphire-english-tall-slim-jan-start",
     },
     SEA: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_colorssglass/",
@@ -40,6 +43,9 @@ URLS = {
         "yoseka": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-sea-glass",
         "jennibick": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-sea-glass",
         "kinousa": "https://usa.kinokuniya.com/products/4580812709743",
+        "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-colors-sea-glass-eng-tall-slim-jan-start-planner",
+        "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-colors-sea-glass",
+        "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-sea-glass-english-tall-slim-jan-start",
     },
     WELCOME: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_vawelcome/",
@@ -52,6 +58,9 @@ URLS = {
         "yoseka": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-v-a-series-welcome-to-the-v-a",
         "jennibick": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-v-a-series-welcome-to-the-v-a",
         "kinousa": "https://usa.kinokuniya.com/products/4580812709880",
+        "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-v-a-series-welcome-to-the-v-a-eng-tall-slim-jan-start",
+        "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-v-a-series-welcome-to-the-v-a",
+        "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-welcome-to-the-v-a-english-tall-slim-jan-start",
     },
     LEICESTER: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_valeicester/",
@@ -64,6 +73,9 @@ URLS = {
         "yoseka": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-v-a-series-leicester",
         "jennibick": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-v-a-series-leicester",
         "kinousa": "https://usa.kinokuniya.com/products/4580812709873",
+        "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester-eng-tall-slim-jan-start-planner",
+        "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-v-a-series-leicester",
+        "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-leicester-english-tall-slim-jan-start",
     },
 }
 KEYS = {PINK: "wb27_colorspsapphire", SEA: "wb27_colorssglass", WELCOME: "wb27_vawelcome", LEICESTER: "wb27_valeicester"}
