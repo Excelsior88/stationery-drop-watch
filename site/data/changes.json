@@ -378,5 +378,25 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-10T02:31:06+00:00",
+  "store_id": "lovenotebooks",
+  "store": "Lovenotebooks",
+  "label": "Traveler's notebook Regular size · Brown",
+  "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=51593658401082",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T02:31:14+00:00",
+  "store_id": "lovenotebooks",
+  "store": "Lovenotebooks",
+  "label": "Traveler's notebook Regular size · Olive",
+  "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=52467629588794",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
