@@ -33,8 +33,9 @@ class ShareImageAltTests(unittest.TestCase):
         self.assertIn("Books, Weeks and covers", site.OG_ALT)
         self.assertIn(site.CHECK_FREQ, site.OG_ALT)
         self.assertNotRegex(site.OG_ALT, SHOP_COUNT_RE)
-        self.assertNotIn(str(site.N_HOBO), site.OG_ALT)
-        self.assertNotIn(str(site.N_STORES), site.OG_ALT)
+        # The year 2027 contains the digits of a shop total. Match the count only as its own number.
+        self.assertNotRegex(site.OG_ALT, rf"(?<!\d){site.N_HOBO}(?!\d)")
+        self.assertNotRegex(site.OG_ALT, rf"(?<!\d){site.N_STORES}(?!\d)")
 
     def test_pages_that_share_the_default_card_use_that_alt(self):
         pages = {

@@ -1,0 +1,88 @@
+"""2027 beautiful people covers: catalog identity, baseline stock, no invented restock."""
+import json
+import unittest
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+import build_site as site  # noqa: E402
+
+A6 = "cover-a6-beautiful-people-green"
+A5 = "cover-a5-beautiful-people-pink"
+A6_URL = "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_bpeople/"
+A5_URL = "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_bpeople/"
+PAPER_A5 = "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-beautiful-people-nothing-to-hide-pink-1"
+JET_A6 = "https://www.jetpens.com/Hobonichi-Techo-2027-Cover-Only-A6-beautiful-people-Nothing-to-Hide-Green/pd/53982"
+JET_A5 = "https://www.jetpens.com/Hobonichi-Techo-2027-Cover-Only-A5-beautiful-people-Nothing-to-Hide-Pink/pd/53943"
+
+
+class BeautifulPeopleCoverTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.cfg = json.loads((ROOT / "stores.json").read_text())
+        cls.stock = json.loads((ROOT / "data/stock.json").read_text())
+        cls.changes = json.loads((ROOT / "data/changes.json").read_text())
+        cls.by_store = {s["id"]: s for s in cls.cfg["stores"]}
+
+    def products(self, cid):
+        return [p for s in self.cfg["stores"] for p in s.get("products") or [] if p.get("canonical") == cid]
+
+    def test_canonical_labels(self):
+        labels = {c["id"]: c["label"] for c in self.cfg["canonical"]}
+        self.assertEqual(labels[A6], "A6 cover · beautiful people: Nothing to Hide (Green)")
+        self.assertEqual(labels[A5], "A5 cover · beautiful people: Nothing to Hide (Pink)")
+
+    def test_official_rows_are_english_pages_with_feed_keys(self):
+        official = {p["canonical"]: p for p in self.by_store["1101"]["products"] if p.get("canonical") in (A6, A5)}
+        self.assertEqual(official[A6]["url"], A6_URL)
+        self.assertEqual(official[A6]["source_key"], "oc27_bpeople")
+        self.assertEqual(official[A5]["url"], A5_URL)
+        self.assertEqual(official[A5]["source_key"], "cc27_bpeople")
+        joined = " ".join(p["url"] for p in self.by_store["1101"]["products"])
+        self.assertNotIn("/ja/2027/", joined)
+
+    def test_checked_shops(self):
+        both = {"1101", "atlas", "wonder", "yoseka", "penboutique", "papermouse", "jennibick", "blesket", "journalshop", "buchan"}
+        a6_only = {"mlovewell"}
+        for sid in both:
+            ids = {p["canonical"] for p in self.by_store[sid]["products"]}
+            self.assertTrue({A6, A5} <= ids, sid)
+        self.assertIn(A6, {p["canonical"] for p in self.by_store["mlovewell"]["products"]})
+        self.assertNotIn(A5, {p["canonical"] for p in self.by_store["mlovewell"]["products"]})
+        self.assertNotIn("loft", self.by_store)
+
+    def test_paper_mouse_a5_uses_the_handle_that_exists(self):
+        urls = [p["url"] for p in self.products(A5) if "thepapermouse.com" in p["url"]]
+        self.assertEqual(urls, [PAPER_A5])
+
+    def test_jetpens_is_a_link_not_a_status(self):
+        self.assertEqual(self.by_store["jetpens"]["products"], [])
+        self.assertEqual(site.UNCHECKED_LINKS["hobonichi-techo-2027-covers/nothing-to-hide-green"][0]["url"], JET_A6)
+        self.assertEqual(site.UNCHECKED_LINKS["hobonichi-techo-2027-covers/nothing-to-hide-pink"][0]["url"], JET_A5)
+        self.assertFalse(any("jetpens.com" in (r.get("url") or "") for r in self.stock["products"]))
+
+    def test_design_pages_match_only_their_cover(self):
+        green = next(d for d in site.DESIGNS if d["slug"] == "nothing-to-hide-green")
+        pink = next(d for d in site.DESIGNS if d["slug"] == "nothing-to-hide-pink")
+        self.assertTrue(green["match"]({"canonical": A6}))
+        self.assertFalse(green["match"]({"canonical": A5}))
+        self.assertTrue(pink["match"]({"canonical": A5}))
+        self.assertFalse(pink["match"]({"canonical": "cover-a6-moomin"}))
+        self.assertIn("4580812708883", site.design_about(green))
+        self.assertIn("4580812709163", site.design_about(pink))
+        self.assertIn("A5", site.design_about(pink))
+
+    def test_baseline_does_not_invent_a_restock(self):
+        rows = [r for r in self.stock["products"] if r.get("canonical") in (A6, A5)]
+        self.assertEqual(len(rows), 21)
+        self.assertTrue(all(r["first_seen"] == r["status_since"] for r in rows))
+        self.assertTrue(all(r["status"] != "unknown" for r in rows))
+        urls = {r["url"] for r in rows}
+        self.assertFalse(any(c.get("url") in urls for c in self.changes))
+        official = {r["canonical"]: r["status"] for r in rows if r["store_id"] == "1101"}
+        self.assertEqual(official, {A6: "sold_out", A5: "sold_out"})
+
+
+if __name__ == "__main__":
+    unittest.main()
