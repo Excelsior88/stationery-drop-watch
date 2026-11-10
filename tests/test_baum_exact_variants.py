@@ -148,7 +148,7 @@ class BaumExactVariantTests(unittest.TestCase):
         self.assertIn("October 15", cal)
         self.assertIn("Techo books and the Drawer Pouch", cal)
         self.assertEqual(site.STATIC_LASTMOD["hobonichi-2027.html"], "2026-11-08")
-        self.assertIn("https://stationerydropwatch.com/hobonichi-2027</loc><lastmod>2026-11-08</lastmod>", site.build_sitemap())
+        self.assertIn("https://stationerydropwatch.com/hobonichi-2027</loc><lastmod>2026-11-08T00:00:00+00:00</lastmod>", site.build_sitemap())
         about = site.design_about(canaria)
         self.assertIn("includes the English and Japanese books", about)
         self.assertNotIn("English book is in stock", about)
