@@ -108,6 +108,12 @@ jobs:
       - name: Deploy (Direct Upload)
         if: success() && steps.gate.outputs.enabled == 'true'
         run: |
+          # wrangler compiles Pages Functions from ./functions in the working directory,
+          # not from the asset directory. The checker artifact keeps them in out/functions.
+          if [ -d out/functions ]; then
+            rm -rf functions
+            mv out/functions functions
+          fi
           npx --yes wrangler@4 pages deploy out \
             --project-name="$CF_PROJECT" --branch=main \
             --commit-hash="${{ github.event.workflow_run.head_sha }}" --commit-dirty=true
