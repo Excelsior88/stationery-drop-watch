@@ -368,5 +368,15 @@
   "url": "https://www.penboutique.com/products/hobonichi-hon-light-hardcover-japanese-book-slash-navy-a6-january-start",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-10T01:49:33+00:00",
+  "store_id": "lovenotebooks",
+  "store": "Lovenotebooks",
+  "label": "Traveler's notebook Regular size · Blue",
+  "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=51593658433850",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
