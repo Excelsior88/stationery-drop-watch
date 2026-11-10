@@ -542,5 +542,23 @@
   "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-leather-forest-green",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-10T17:18:17+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · Colors: Sea Glass",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-sea-glass",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-10T17:18:54+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "A6 cover · mina perhonen: felice (Blue)",
+  "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-mina-perhonen-felice-blue-a6",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
