@@ -71,16 +71,7 @@ jobs:
           if [ -z "$DROP_WEBHOOK_URL" ] || [ -z "$DROP_WEBHOOK_KEY" ]; then
             echo "::notice::Drop webhook secrets not set; skipping ping."; exit 0
           fi
-          python - <<'PY' > /tmp/ping.json
-          import json, os, datetime
-          changes = json.load(open("/tmp/new_in_stock.json"))
-          body = {"source": "stationery-drop-watch",
-                  "run_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
-                  "changes": changes}
-          if os.environ["TEST_PING"] == "true":
-              body["test"] = True
-          print(json.dumps(body))
-          PY
+          python scripts/new_in_stock.py --webhook /tmp/new_in_stock.json /tmp/ping.json
           code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 10 -X POST "$DROP_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $DROP_WEBHOOK_KEY" \

@@ -7,6 +7,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 import build_site as site  # noqa: E402
+import checker  # noqa: E402
+import new_in_stock  # noqa: E402
 
 A6 = "cover-a6-beautiful-people-green"
 A5 = "cover-a5-beautiful-people-pink"
@@ -106,6 +108,46 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
         self.assertTrue(all(r["first_seen"] == r["status_since"] for r in rows))
         self.assertFalse(any(c.get("url") in {r["url"] for r in rows} for c in self.changes))
         self.assertNotIn("nothing-to-hide-yellow", site.UNCHECKED_LINKS)
+
+    def test_later_in_stock_change_is_an_alert_for_every_new_row(self):
+        """The first observation stays quiet. A later sold-out, preview, or preorder
+        flip to in stock uses the same change and webhook path as every other listing."""
+        rows = [r for r in self.stock["products"] if r.get("canonical") in (A6, A5, WEEKS)]
+        self.assertEqual(len(rows), 32)
+        pages = {
+            A6: "hobonichi-techo-2027-covers/nothing-to-hide-green/",
+            A5: "hobonichi-techo-2027-covers/nothing-to-hide-pink/",
+            WEEKS: "hobonichi-weeks-2027/nothing-to-hide-yellow/",
+        }
+        when = "2026-11-11T16:00:00+00:00"
+        for row in rows:
+            first = dict(row, status="in_stock", checked_at=when)
+            quiet = checker.note_transition(None, first, [])
+            self.assertEqual(quiet, [], row["url"])
+            rec = dict(row, status="in_stock", checked_at=when)
+            changes = checker.note_transition(row, rec, [])
+            self.assertEqual(len(changes), 1, row["url"])
+            event = changes[0]
+            self.assertEqual(event["from"], row["status"])
+            self.assertEqual(event["to"], "in_stock")
+            self.assertEqual(event["label"], row["label"])
+            self.assertEqual(event["store"], row["store"])
+            self.assertEqual(event["store_id"], row["store_id"])
+            self.assertEqual(event["url"], row["url"])
+            self.assertEqual(event["at"], when)
+            self.assertEqual(site.design_page_for([row]), pages[row["canonical"]])
+            body = new_in_stock.webhook_body(new_in_stock.fresh_in_stock(self.changes, self.changes + changes), "2026-11-11T16:00:05+00:00")
+            self.assertEqual(body["source"], "stationery-drop-watch")
+            self.assertEqual(body["changes"], changes)
+            self.assertNotIn("test", body)
+        green = next(r for r in rows if r["canonical"] == A6 and r["store_id"] == "papermouse")
+        self.assertEqual(green["status"], "sold_out")
+        preview = next(r for r in rows if r["canonical"] == WEEKS and r["store_id"] == "wonder")
+        self.assertEqual(preview["status"], "coming_soon")
+        preorder = dict(green, status="preorder")
+        event = checker.note_transition(preorder, dict(green, status="in_stock", checked_at=when), [])[0]
+        self.assertEqual(event["from"], "preorder")
+        self.assertEqual(new_in_stock.fresh_in_stock([], [event])[0]["url"], green["url"])
 
 
 if __name__ == "__main__":

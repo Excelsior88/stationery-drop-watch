@@ -142,6 +142,23 @@ def check_hobonichi(store):
         out.append(rec)
     return out
 
+def note_transition(old, rec, changes):
+    """Record one listing against its previous row.
+
+    A first observation only sets first_seen. A later real status change is appended
+    with no product, cover, or Weeks filter. Unknown reads do not become events.
+    """
+    rec["first_seen"] = old.get("first_seen", rec["checked_at"]) if old else rec["checked_at"]
+    rec["status_since"] = old.get("status_since") if old and old["status"] == rec["status"] else rec["checked_at"]
+    if old and rec["status"] != "unknown" and old["status"] not in ("unknown", rec["status"]):
+        changes.append(dict(at=rec["checked_at"], store_id=rec["store_id"], store=rec["store"], label=rec["label"],
+                            url=rec["url"], **({"section": rec["section"]} if rec.get("section") else {}),
+                            **{"from": old["status"], "to": rec["status"]}))
+    elif old and rec["status"] == "unknown" and old["status"] != "unknown":
+        rec["status_since"] = old.get("status_since")  # transient failure: don't reset the clock
+    return changes
+
+
 def check_store(store):
     if store["platform"] == "shopify": return check_shopify_store(store)
     if store["platform"] == "hobonichi": return check_hobonichi(store)
@@ -157,15 +174,7 @@ def main():
     prev = {r["url"]: r for r in json.loads(stock_f.read_text())["products"]} if stock_f.exists() else {}
     changes = json.loads(changes_f.read_text()) if changes_f.exists() else []
     for r in results:
-        old = prev.get(r["url"])
-        r["first_seen"] = old.get("first_seen", r["checked_at"]) if old else r["checked_at"]
-        r["status_since"] = old.get("status_since") if old and old["status"] == r["status"] else r["checked_at"]
-        if old and r["status"] != "unknown" and old["status"] not in ("unknown", r["status"]):
-            changes.append(dict(at=r["checked_at"], store_id=r["store_id"], store=r["store"], label=r["label"],
-                                url=r["url"], **({"section": r["section"]} if r.get("section") else {}),
-                                **{"from": old["status"], "to": r["status"]}))
-        elif old and r["status"] == "unknown" and old["status"] != "unknown":
-            r["status_since"] = old.get("status_since")  # transient failure: don't reset the clock
+        note_transition(prev.get(r["url"]), r, changes)
     summary = {k: sum(1 for r in results if r["status"] == k) for k in ("in_stock", "preorder", "coming_soon", "sold_out", "unknown")}
     blocked = [dict(id=s["id"], name=s["name"], url=s["url"], reason=s.get("note")) for s in cfg["stores"] if s["platform"] not in ("shopify", "hobonichi")]
     stock_f.write_text(json.dumps(dict(run_started=started, run_finished=now(), summary=summary,
