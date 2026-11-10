@@ -18,11 +18,22 @@
     rows.sort((a, b) => (order[a.st] - order[b.st]) || a.s.localeCompare(b.s));
     const $ = id => document.getElementById(id);
     const f = { product: $("f-product"), type: $("f-type"), store: $("f-store"), status: $("f-status"), q: $("f-q") };
-    const params = new URLSearchParams(location.search);
-    for (const k in f) if (params.get(k)) f[k].value = params.get(k);
+    const readParams = () => {
+      const params = new URLSearchParams(location.search);
+      for (const k in f) f[k].value = params.get(k) || "";
+    };
+    readParams();
     const PAGE = 15; let limit = PAGE;
     const more = document.getElementById("more");
     more.addEventListener("click", () => { limit += 1e9; render(); });
+    let filterTimer = 0;
+    const syncUrl = (push) => {
+      const p = new URLSearchParams();
+      for (const k in f) if (f[k].value) p.set(k, f[k].value);
+      const next = location.pathname + (p.toString() ? "?" + p : "") + location.hash;
+      if (next === location.pathname + location.search + location.hash) return;
+      history[push ? "pushState" : "replaceState"](null, "", next);
+    };
     // Filters work on listings; the table then groups the matching listings by product:
     // one header row per product (name, type, design page, Amazon link), then one row per shop with its status.
     function groupRows(out) {
@@ -66,40 +77,88 @@
       }).join("") : `<tr class="empty-row"><td colspan="2">Nothing matches those filters.</td></tr>`;
       $("count").textContent = `Showing ${n} of ${out.length} matching listings in ${groups.length} ${groups.length === 1 ? "product" : "products"} (${rows.length} tracked)`;
     }
-    Object.values(f).forEach(el => el.addEventListener("input", () => { limit = PAGE; render(); }));
+    const reset = document.getElementById("f-reset");
+    const onFilter = (push) => { limit = PAGE; render(); syncUrl(push); };
+    Object.values(f).forEach(el => el.addEventListener("input", () => {
+      clearTimeout(filterTimer);
+      filterTimer = setTimeout(() => onFilter(el === f.q), el === f.q ? 250 : 0);
+    }));
+    if (reset) reset.addEventListener("click", () => {
+      for (const k in f) f[k].value = "";
+      onFilter(true);
+    });
+    window.addEventListener("popstate", () => { readParams(); limit = PAGE; render(); });
     render();
   }
-  // Section trackers (dot grid, Traveler's, MIDORI): one table per product, searched in place.
-  const cq = document.getElementById("card-q");
-  if (cq) {
-    const wrap = document.getElementById("tracker");
-    const cards = [...wrap.querySelectorAll(".group-sec")];
+  // Shop lists on family pages and design pages: search, store, and status, in place.
+  const form = document.querySelector("form.page-filter");
+  if (form) {
+    const wrap = form.closest("#tracker") || form.closest("#stock") || form.parentElement;
+    const cards = wrap.classList.contains("group-sec") ? [wrap] : [...wrap.querySelectorAll(".group-sec")];
     const heads = [...wrap.querySelectorAll(".shop-head")];
     const empty = wrap.querySelector(".card-empty");
-    const params = new URLSearchParams(location.search);
+    const qEl = form.querySelector("[data-filter=q]");
+    const storeEl = form.querySelector("[data-filter=store]");
+    const statusEl = form.querySelector("[data-filter=status]");
+    const reset = form.querySelector("[data-filter=reset]");
+    const read = () => {
+      const params = new URLSearchParams(location.search);
+      if (qEl) qEl.value = params.get("q") || "";
+      if (storeEl) storeEl.value = params.get("store") || "";
+      if (statusEl) statusEl.value = params.get("status") || "";
+    };
+    const write = (push) => {
+      const p = new URLSearchParams(location.search);
+      const set = (k, v) => { if (v) p.set(k, v); else p.delete(k); };
+      set("q", qEl && qEl.value.trim());
+      set("store", storeEl && storeEl.value);
+      set("status", statusEl && statusEl.value);
+      p.delete("product");
+      const next = location.pathname + (p.toString() ? "?" + p : "") + location.hash;
+      if (next !== location.pathname + location.search + location.hash)
+        history[push ? "pushState" : "replaceState"](null, "", next);
+    };
+    let timer = 0;
     const filter = () => {
-      const q = cq.value.trim().toLowerCase();
+      const q = (qEl.value || "").trim().toLowerCase();
+      const store = storeEl ? storeEl.value : "";
+      const status = statusEl ? statusEl.value : "";
       let shown = 0;
       for (const c of cards) {
         let any = false;
         for (const tr of c.querySelectorAll("tbody tr")) {
-          const hit = !q || (c.querySelector("h2,h3")?.textContent + " " + tr.textContent).toLowerCase().includes(q);
+          const text = ((c.querySelector("h2,h3")?.textContent || "") + " " + tr.textContent).toLowerCase();
+          const hit = (!q || text.includes(q)) && (!store || tr.getAttribute("data-store") === store) && (!status || tr.getAttribute("data-status") === status);
           tr.hidden = !hit; any = any || hit;
         }
-        c.hidden = !any; if (any) shown++;
+        const keep = c.contains(form);
+        c.hidden = !keep && (q || store || status) && !any;
+        if (any) shown++;
       }
-      for (const h of heads) {  // hide a shop heading when none of its cards are left
+      for (const h of heads) {
         let el = h.nextElementSibling, vis = false;
         while (el && !el.classList.contains("shop-head")) { if (el.classList.contains("group-sec") && !el.hidden) vis = true; el = el.nextElementSibling; }
         h.hidden = !vis;
       }
       if (empty) empty.hidden = shown > 0;
     };
-    if (params.get("q")) cq.value = params.get("q");
-    cq.addEventListener("input", filter);
+    const schedule = (push, wait) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { filter(); write(push); }, wait);
+    };
+    read();
+    if (qEl) qEl.addEventListener("input", () => schedule(true, 250));
+    if (storeEl) storeEl.addEventListener("input", () => schedule(true, 0));
+    if (statusEl) statusEl.addEventListener("input", () => schedule(true, 0));
+    if (reset) reset.addEventListener("click", () => {
+      if (qEl) qEl.value = "";
+      if (storeEl) storeEl.value = "";
+      if (statusEl) statusEl.value = "";
+      schedule(true, 0);
+    });
+    window.addEventListener("popstate", () => { read(); filter(); });
     filter();
-    // Old ?product=<id> links (from the grouped table) now scroll to that product's own table.
-    const pid = params.get("product");
+    const pid = new URLSearchParams(location.search).get("product");
     const target = pid && document.getElementById(pid);
     if (target) target.scrollIntoView();
   }

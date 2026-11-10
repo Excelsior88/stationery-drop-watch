@@ -311,11 +311,12 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <meta name="google-site-verification" content="TIX916oAoBcBQiw9fOlEYtdMJCR7GQYKtW67hfrmcA8" />
 {ld_html}
 </head><body>
+<a class="skip" href="#content">Skip to content</a>
 <header class="masthead"><div class="wrap">
-  <a class="brand" href="index.html" aria-label="Stationery Drop Watch home"><picture><source media="(max-width:340px)" srcset="assets/brand/icon.svg"><img class="brand-logo" src="assets/brand/logo.svg" alt="Stationery Drop Watch" width="248" height="44"></picture></a>
+  <a class="brand" href="index.html" aria-label="Stationery Drop Watch home"><picture><source media="(max-width:340px)" srcset="assets/brand/icon.svg"><img class="brand-logo" src="assets/brand/logo.svg" alt="" width="248" height="44"></picture></a>
   <nav class="site-nav" aria-label="Main">{nav}</nav>
 </div></header>
-<main class="wrap">{body}</main>
+<main id="content" class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
   <p><strong>Stationery Drop Watch</strong> checks {N_STORES} official and independent shops ({", ".join([f"{N_HOBO} for Hobonichi"] + [f"{N_SEC[k]} for {SECTIONS[k]['count']}" for k in LIVE])}) {CHECK_FREQ} for limited planner and journal restocks, so you don't have to keep refreshing tabs.</p>
   <p class="foot-links">Hobonichi: <a href="{HOBO_TRACKER}">Hobonichi tracker</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if g_sec(g) == "hobonichi")}</p>
@@ -532,12 +533,13 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
         for ls in ns_groups.values())
     return f"""<section class="card" id="tracker">
       <div class="section-head"><h2>Every listing we track</h2><p class="muted small"><span id="count"></span> · {checked_line(prods)}</p></div>
-      <form class="filters" onsubmit="return false">
+      <form class="filters" role="search" onsubmit="return false">
         <label>Product<select id="f-product"><option value="">All products</option>{prod_opts}{other_opt}</select></label>
         <label>Type<select id="f-type"><option value="">All types</option>{type_opts}</select></label>
         <label>Store<select id="f-store"><option value="">All stores</option>{store_opts}</select></label>
         <label>Status<select id="f-status"><option value="">Any status</option>{status_opts}</select></label>
-        <label class="grow">Search<input id="f-q" type="search" placeholder="{E(search_hint)}"></label>
+        <label class="grow">Search<input id="f-q" type="search" placeholder="{E(search_hint)}" autocomplete="off"></label>
+        <button type="button" class="filter-reset" id="f-reset">Reset</button>
       </form>
       <div class="table-wrap"><table class="stock">
         <thead><tr><th>Product, then each shop</th><th>Status</th></tr></thead>
@@ -1072,9 +1074,26 @@ def status_rows(ls, oe):
     for l in sorted(ls, key=lambda l: (order.get(l["status"], 9), l["store"])):
         since = l.get("status_since")
         since_html = f'<span class="sub">since {time_tag(since)}</span>' if since and l["status"] != "unknown" else ""
-        rows.append(f"""<tr><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
+        rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
   <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td></tr>""")
     return "".join(rows)
+
+def list_filter(ls, hint):
+    """Search, store, and status for a shop list. The table stays in the HTML, so it works with no JavaScript."""
+    if len(ls) < 2:
+        return ""
+    seen = []
+    for l in sorted(ls, key=lambda l: l["store"].lower()):
+        if l["store_id"] not in {s for s, _ in seen}:
+            seen.append((l["store_id"], l["store"]))
+    store_opts = "".join(f'<option value="{E(sid)}">{E(name)}</option>' for sid, name in seen)
+    status_opts = "".join(f'<option value="{k}">{STATUS[k]}</option>' for k in STATUS if any(l["status"] == k for l in ls))
+    return f"""<form class="filters page-filter card-filter" role="search" onsubmit="return false">
+      <label>Store<select data-filter="store"><option value="">All stores</option>{store_opts}</select></label>
+      <label>Status<select data-filter="status"><option value="">Any status</option>{status_opts}</select></label>
+      <label class="grow">Search<input data-filter="q" type="search" placeholder="{E(hint)}" autocomplete="off"></label>
+      <button type="button" class="filter-reset" data-filter="reset">Reset</button>
+    </form>"""
 
 def build_group(g, oe):
     ls = group_listings(g)
@@ -1156,8 +1175,7 @@ def build_group(g, oe):
     else:
         others += f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>'
         shop_nav = dg_tracker = ""
-    card_filter = (f'<form class="filters card-filter" role="search" onsubmit="return false"><label class="grow">Search this page'
-                   f'<input id="card-q" type="search" placeholder="{E(g["search_hint"])}"></label></form>') if ext else ""
+    card_filter = list_filter(ls, g.get("search_hint") or "Shop or design")
     ds = designs_of(g["slug"])
     design_nav = ('<nav class="chips" aria-label="Design pages"><span class="muted small">Design pages:</span> '
                   + "".join(f'<a class="chip" href="{design_fname(d)}">{E(d["name"])}</a>' for d in ds) + '</nav>') if ds else ""
@@ -1177,7 +1195,7 @@ def build_group(g, oe):
     <div id="tracker"{' class="card-filtered"' if ext else ''}>
     <div class="m-lead">{design_nav}{shop_nav}{card_filter}{''.join(parts[:lead_n])}</div>
     {''.join(parts[lead_n:])}
-    <p class="muted small card-empty" hidden>Nothing on this page matches that search.</p>
+    <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
     </div>
     {dg_tracker}
     <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
@@ -1392,11 +1410,13 @@ def build_design(d, oe):
               if d["slug"] in {"nothing-to-hide-green", "nothing-to-hide-pink", "nothing-to-hide-yellow"} else "")
     table = (f"""<section class="card group-sec" id="stock">
   <div class="section-head"><h2>Stock by shop</h2><p class="muted small">{E(count_line(ls).capitalize())} · {checked_line(ls)}</p></div>
+  {list_filter(ls, "Shop name")}
   {amz_btn}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
     <tbody>{status_rows(ls, oe)}</tbody>
   </table></div>
+  <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
   <p class="muted small">Open a shop's name to go straight to its listing.</p>
   {region_legend(l["store_id"] for l in ls)}
 </section>""" if ls else f'<section class="card group-sec" id="stock"><h2>Stock by shop</h2><div class="empty"><p>No shop we check lists this design right now. See the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a> for everything we track.</p></div></section>')
@@ -2389,6 +2409,16 @@ SHOP_ORDER = ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HQW8273
 ETSY_PRICE = ("$6.99", "20% off launch sale Oct 31 to Nov 30")
 # Interior previews, web-sized into assets/shop/inside/: our own Etsy listing images (etsy/printables/*/listing-images)
 # and, for the Amazon books, interior spreads Kiln exported from the print files (keyed by ASIN). (file stem, caption)
+def _inside_dim(inside, stem):
+    """Pixel size of a shop preview, so the image reserves its box before it loads."""
+    path = ROOT / "site/assets/shop/inside" / f"{inside}-{stem}.jpg"
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            return im.size
+    except Exception:
+        return (800, 600)
+
 SHOP_INSIDE = {
     "B0HPBDNS7F": [("monthly-calendar-goals-spread-p6-7", "January calendar and Goals & Priorities, pages 6-7"),
                    ("weekly-spread-p12-13", "Weekly spread, Jan 3 to 9, pages 12-13")],
@@ -2574,7 +2604,7 @@ def build_shop():
                 grid = "inside-grid" + sample["class"]
                 lead = f'<p class="muted small">{E(sample["note"])}</p>' if sample.get("note") else ""
             else:
-                figs = "".join(f'<figure><img src="/assets/shop/inside/{inside}-{f}.jpg" alt="{E(title)}: {E(cap)}" loading="lazy" decoding="async"><figcaption>{E(cap)}</figcaption></figure>'
+                figs = "".join(f'<figure><img src="/assets/shop/inside/{inside}-{f}.jpg" alt="{E(title)}: {E(cap)}" width="{_inside_dim(inside, f)[0]}" height="{_inside_dim(inside, f)[1]}" loading="lazy" decoding="async"><figcaption>{E(cap)}</figcaption></figure>'
                                for f, cap in SHOP_INSIDE[inside])
                 grid = "inside-grid" + (" spreads" if inside in AMAZON_LIST_PRICES else "")
                 lead = ""

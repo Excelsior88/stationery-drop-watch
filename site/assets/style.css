@@ -3,7 +3,7 @@
 @font-face{font-family:"Newsreader";src:url(fonts/newsreader-var.woff2) format("woff2");font-weight:500 700;font-style:normal;font-display:swap}
 :root{
   --paper:#fbf6ec; --paper-2:#f4ecdc; --card:#fffdf8; --ink:#2d2a32; --ink-2:#5b5560; --line:#e6dccb;
-  --accent:#c1553b; --accent-2:#9e3f29; --sage:#5f8a6b; --mustard:#c99a2e; --plum:#7a5c8a; --rose:#b34a4a;
+  --accent:#c1553b; --accent-2:#9e3f29; --sage:#5f8a6b; --mustard:#8a6412; --plum:#7a5c8a; --rose:#b34a4a;
   --serif:"Newsreader","Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --r:14px;
@@ -21,7 +21,9 @@ h1{font-size:clamp(2rem,4.5vw,3.1rem);margin:.2em 0 .3em;letter-spacing:-.01em}
 h2{font-size:1.45rem;margin:0 0 .6em}
 h3{font-size:1.15rem;margin:.1em 0 .4em}
 .muted{color:var(--ink-2)} .small{font-size:.88rem}
-.eyebrow{font:600 .74rem/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 .5em}
+.eyebrow{font:600 .74rem/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-2);margin:0 0 .5em}
+.skip{position:absolute;left:8px;top:8px;transform:translateY(-120%);background:#fff;color:var(--ink);padding:8px 12px;border-radius:8px;z-index:9}
+.skip:focus{transform:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 .masthead{background:rgba(251,246,236,.92);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;backdrop-filter:blur(6px)}
@@ -78,6 +80,9 @@ nav a[aria-current]{background:var(--ink);color:var(--paper)}
 .filters{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 14px}
 .filters label{display:flex;flex-direction:column;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);gap:4px;flex:1 1 140px}
 .filters .grow{flex:2 1 200px}
+button.filter-reset{align-self:end;flex:0 0 auto;width:auto;background:none;color:var(--ink);border:1.5px solid var(--ink);padding:8px 14px}
+button.filter-reset:hover{background:var(--ink);color:var(--paper)}
+input::placeholder{color:var(--ink-2);opacity:1}
 select,input{font:inherit;font-size:.95rem;text-transform:none;letter-spacing:0;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-height:40px;width:100%}
 select:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
@@ -96,6 +101,7 @@ table.stock{width:100%;border-collapse:collapse;font-size:.93rem}
 .badge.unknown{color:#555;background:#eee;border-color:#ccc}
 .empty-row td{text-align:center;color:var(--ink-2);padding:24px}
 details{margin-top:10px} summary{cursor:pointer}
+.oe-det summary{min-height:24px;padding:4px 0}
 
 .signup-form{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .signup-form input{flex:1 1 180px}
@@ -170,8 +176,8 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .stock time{white-space:nowrap}
 
 /* Amazon affiliate links: deliberately quiet so the stock status stays the focus */
-a.az{color:inherit;opacity:.75;font-size:.85em;text-decoration:underline dotted;text-underline-offset:2px}
-a.az:hover{opacity:1}
+a.az{color:var(--ink-2);font-size:.85em;text-decoration:underline dotted;text-underline-offset:2px}
+a.az:hover{color:var(--ink)}
 
 /* Amazon as main action, only for products unavailable at every tracked shop */
 .oe-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
