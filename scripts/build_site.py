@@ -1941,10 +1941,15 @@ def build_dotgrid_guide():
     # Build check: the guide's counts must come from exactly the tracker's listings.
     dg_group = next(g for g in GROUPS if g["slug"] == DOTGRID_SLUG.rstrip("/"))
     trk = group_listings(dg_group)
+    maker_ids = {sid for _, sid, _ in DG_COLS}
     guide_ls = [p for _, sid, _ in DG_COLS for p in col_ls(sid)]
-    if sorted(map(id, guide_ls)) != sorted(map(id, dg)) or count_line(guide_ls) != count_line(trk) or len(trk) != len(dg):
-        raise SystemExit(f"dot grid guide counts differ from tracker: guide {count_line(guide_ls)!r}, tracker {count_line(trk)!r}")
+    maker_ls = [p for p in dg if p["store_id"] in maker_ids]
+    # Each column is that maker's own shop. Other shops can sell the same notebooks, so the
+    # four columns are the maker listings only, and the tracker total is every shop.
+    if sorted(map(id, guide_ls)) != sorted(map(id, maker_ls)) or count_line(trk) != count_line(dg) or len(trk) != len(dg):
+        raise SystemExit(f"dot grid guide counts differ from tracker: makers {count_line(guide_ls)!r}, tracker {count_line(trk)!r}")
     dg_total = count_line(guide_ls)
+    dg_all = count_line(trk)
     def avail(store_id, canons):
         ls = col_ls(store_id)
         if not ls:
@@ -2019,7 +2024,7 @@ def build_dotgrid_guide():
 <div class="table-wrap"><table class="stock compare">
 <thead><tr><th></th>{"".join(f"<th>{E(h)}</th>" for h, _, _ in DG_COLS)}</tr></thead>
 <tbody>{rows_html}</tbody></table></div>
-<p class="muted small">Stock is what each maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop, the same listings as the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. Across all four: {E(dg_total)}.</p>
+<p class="muted small">Stock in each column is what that maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop. Other shops that sell the same notebooks are on the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. Across the four makers: {E(dg_total)}. Across every shop: {E(dg_all)}.</p>
 {az_html}
 
 <h2>Who each one suits</h2>
