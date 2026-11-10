@@ -1,5 +1,6 @@
 """2027 beautiful people covers: catalog identity, baseline stock, no invented restock."""
 import json
+import re
 import unittest
 from pathlib import Path
 import sys
@@ -148,6 +149,27 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
         event = checker.note_transition(preorder, dict(green, status="in_stock", checked_at=when), [])[0]
         self.assertEqual(event["from"], "preorder")
         self.assertEqual(new_in_stock.fresh_in_stock([], [event])[0]["url"], green["url"])
+
+    def test_angela_thanks_is_only_on_the_three_design_pages(self):
+        line = "Thank you to our follower Angela for suggesting we track these restocks."
+        oe = site.amazon_main(site.stock["products"])
+        wanted = {"nothing-to-hide-green", "nothing-to-hide-pink", "nothing-to-hide-yellow"}
+        for design in site.DESIGNS:
+            _, doc = site.build_design(design, oe)
+            visible = re.sub(r"<script[\s\S]*?</script>", " ", doc)
+            visible = re.sub(r"<meta[^>]*>", " ", visible)
+            if design["slug"] in wanted:
+                self.assertEqual(doc.count(line), 1)
+                self.assertIn(line, visible)
+                self.assertNotIn("Angela", re.search(r'name="description" content="([^"]*)"', doc).group(1))
+                self.assertNotIn("Angela", re.search(r'property="og:description" content="([^"]*)"', doc).group(1))
+                for block in re.findall(r'application/ld\+json">([\s\S]*?)</script>', doc):
+                    self.assertNotIn("Angela", block)
+            else:
+                self.assertNotIn("Angela", doc)
+        self.assertNotIn("Angela", site.build_index())
+        self.assertNotIn("Angela", site.build_group(next(g for g in site.GROUPS if g["slug"] == "hobonichi-techo-2027-covers"), oe)[1])
+        self.assertNotIn("Angela", site.build_group(next(g for g in site.GROUPS if g["slug"] == "hobonichi-weeks-2027"), oe)[1])
 
 
 if __name__ == "__main__":
