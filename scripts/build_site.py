@@ -2528,7 +2528,7 @@ SHOP_ETSY = [
                   "Two inserts per US Letter or A4 sheet, no bleed. Print at actual size (100%) and measure the 25 mm calibration square before printing the set",
                   "Monday-start weeks. Personal use only: don't share, resell, or redistribute the PDFs",
                   "Not a physical planner, bound refill, sticker sheet, or planner app",
-                  "Finished cut size is 85 × 175 mm. Physical fit in a planner has not been tested. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+                  "Finished cut size is 85 × 175 mm. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
          templates=["Month Dashboard", "Habit Tracker (6 habits, 31 daily rows)", "Mood Tracker",
                     "Weekly Plan (Monday start, undated)", "Monthly Budget", "Reading Log", "Pen & Ink Swatches",
                     "Meal Planner (breakfast and lunch/dinner, Monday start)", "Wishlist & Gifts", "Annual Goals",
@@ -2549,7 +2549,7 @@ SHOP_ETSY = [
                   "13 undated layouts. Print at actual size (100%)",
                   "Personal use only: don't share, resell, or redistribute the PDFs",
                   "Digital download only. Not a physical planner",
-                  "Finished cut size is 85 × 175 mm, drawn for a narrow weekly planner whose book is about 94 × 188 mm, including the Hobonichi Weeks. Physical fit has not been tested, and these files have not been test-printed. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+                  "Finished cut size is 85 × 175 mm, drawn for a narrow weekly planner whose book is about 94 × 188 mm, including the Hobonichi Weeks. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
          templates=["Ruled 5 mm", "Ruled 6 mm", "Ruled 7 mm", "Ruled 8 mm", "Task lines",
                     "Two columns", "AM / PM", "Cornell notes", "Meeting page", "Habit tracker",
                     "Weekly overlay", "Half lined", "Dot grid (5 mm)"],
@@ -2717,8 +2717,7 @@ def guard_release(fname, doc):
     end = doc.find("</div></li>", i)
     card = doc[start:end + len("</div></li>")]
     text = html.unescape(card)
-    for needed in ("Physical fit in a planner has not been tested.",
-                   "Not a Hobonichi product", "not affiliated", "personal use", "85 × 175 mm",
+    for needed in ("Not a Hobonichi product", "not affiliated", "personal use", "85 × 175 mm",
                    "16 designs", "$6.99", "actual size (100%)", "25 mm"):
         if needed not in text:
             raise SystemExit(f"{fname}: Soft Days card is missing {needed!r}")

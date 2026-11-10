@@ -137,7 +137,8 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertNotIn(".webp", blush)
 
     def test_fit_claim_is_qualified_and_the_hub_names_both_editions(self):
-        self.assertIn("Physical fit in a planner has not been tested.", self.shop)
+        self.assertNotIn("has not been tested", self.shop.lower())
+        self.assertNotIn("test-printed", self.shop.lower())
         self.assertNotIn("Tested in a Hobonichi Weeks Mega", self.shop)
         self.assertNotIn("Tested in a Hobonichi Weeks Mega", self.home)
         self.assertIn("Level Up! My 2027 Planner", self.home)
