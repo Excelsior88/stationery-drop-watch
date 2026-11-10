@@ -342,11 +342,12 @@ a.az:hover{color:var(--ink)}
 /* .sheet keeps this same 2/3 frame. The landscape file is letterboxed, not given its own shorter box. */
 .hub-own-row.cols-8{grid-template-columns:repeat(8,minmax(0,1fr))}
 .hub-own-row.cols-9{grid-template-columns:repeat(9,minmax(0,1fr))}
+.hub-own-row.cols-10{grid-template-columns:repeat(10,minmax(0,1fr))}
 .hub-own-t{font-weight:600;font-size:.88rem;line-height:1.25}
 .hub-own-row a:hover .hub-own-t{color:var(--accent)}
-@media (max-width:1000px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-own-row,.hub-own-row.cols-8{grid-template-columns:repeat(4,minmax(0,1fr))}.hub-own-row.cols-9{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:1000px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-own-row,.hub-own-row.cols-8{grid-template-columns:repeat(4,minmax(0,1fr))}.hub-own-row.cols-9,.hub-own-row.cols-10{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){.hub-cols{grid-template-columns:1fr}}
-@media (max-width:560px){.hub-grid{grid-template-columns:1fr;gap:12px}.hub-own{padding:18px 16px}.hub-own-row{grid-template-columns:repeat(7,128px);overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}.hub-own-row.cols-8{grid-template-columns:repeat(8,128px)}.hub-own-row.cols-9{grid-template-columns:repeat(9,128px)}.hub-own-row li{scroll-snap-align:start}}
+@media (max-width:560px){.hub-grid{grid-template-columns:1fr;gap:12px}.hub-own{padding:18px 16px}.hub-own-row{grid-template-columns:repeat(7,128px);overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}.hub-own-row.cols-8{grid-template-columns:repeat(8,128px)}.hub-own-row.cols-9{grid-template-columns:repeat(9,128px)}.hub-own-row.cols-10{grid-template-columns:repeat(10,128px)}.hub-own-row li{scroll-snap-align:start}}
 .layout.solo{grid-template-columns:minmax(0,1fr)}
 /* Header, footer and every page's content share one column: .wrap (1180px max, 20px / 14px side padding) */
 .prose,.prose.shop-wide{max-width:none}
