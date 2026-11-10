@@ -36,7 +36,8 @@ def pages():
     found.extend(site.build_group(g, oe) for g in site.GROUPS)
     found.extend(site.build_design(d, oe) for d in site.DESIGNS)
     for build in (site.build_where_to_buy, site.build_vs, site.build_dotgrid_guide,
-                  site.build_tn_sizes, site.build_guides_index, site.build_shop, site.build_follow):
+                  site.build_tn_sizes, site.build_guides_index, site.build_shop, site.build_follow,
+                  site.build_contact):
         found.append(build())
     return found
 
@@ -55,7 +56,7 @@ class SeoHeadTests(unittest.TestCase):
             self.assertNotIn("hourly", title.lower(), path)
             titles.append(title)
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 66)  # 65 sitemap URLs plus the noindex 404 page
+        self.assertEqual(len(titles), 67)  # 66 sitemap URLs plus the noindex 404 page
 
     def test_descriptions_match_social_tags_and_stay_under_160(self):
         descs = []
@@ -95,7 +96,7 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 65)
+        self.assertEqual(len(mods), 66)
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):

@@ -40,6 +40,8 @@ def tag_amazon_links(doc):
         a = m.group(0)
         if "data-own-product" in a:  # owner's own books: plain link, no Associates tag
             return a
+        if "data-plain-amazon" in a:  # policy pages, not product links: no Associates tag, no rel=sponsored
+            return a
         href = html.unescape(re.search(r'href="([^"]*)"', a).group(1))
         a = re.sub(r'href="[^"]*"', f'href="{E(amazon_link(href))}"', a)
         a = re.sub(r'\s(rel|data-todo)="[^"]*"', "", a)
@@ -372,7 +374,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p class="foot-links">Shop: <a href="shop/">{SHOP_NAME}</a> (printed on Amazon, printable PDFs on Etsy)</p>
   <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
   <p class="foot-links">Guides: {" · ".join(f'<a href="{h}">{E(t)}</a>' for h, t in GUIDES)}</p>
-{"".join(f'  <p class="foot-links">{E(SECTIONS[k]["foot"])}: <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["link"])}</a> <span class="muted">({E(shop_names(k))})</span></p>' + chr(10) for k in LIVE)}  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="privacy.html">Privacy</a> · <a href="mailto:stationerydropwatch@gmail.com">Contact</a></p>
+{"".join(f'  <p class="foot-links">{E(SECTIONS[k]["foot"])}: <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["link"])}</a> <span class="muted">({E(shop_names(k))})</span></p>' + chr(10) for k in LIVE)}  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="privacy.html">Privacy</a> · <a href="contact/">Contact</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
 </div></footer>
@@ -746,17 +748,32 @@ def build_hobo_tracker():
         since_html = f' <span class="oe-since">sold out since {time_tag(since)}</span>' if since else ""
         shops = "".join(f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(l["store"])}</a>{region_tag(l["store_id"])} <span class="badge {E(l["status"])}">{E(STATUS[l["status"]])}</span></li>' for l in m["listings"])
         n = len({l["store_id"] for l in m["listings"]})
-        amz_label = "View on Amazon" if m["exact"] else "Search Amazon"
+        amz_html = ""
+        if m["exact"]:  # a real product URL, unique to this row
+            amz_html = f'  <a class="oe-amz" href="{E(m["url"])}" target="_blank" title="{E(m["label"])}">View on Amazon</a>'
         return f"""<li class="oe-row"><div class="oe-name"><span class="oe-title">{name_html}</span>{since_html}
   <details class="oe-det"><summary>Shops we checked ({n})</summary><ul class="oe-shops">{shops}</ul></details></div>
-  <a class="oe-amz" href="{E(m['url'])}" target="_blank" title="{E(m['label'])}">{amz_label}</a></li>"""
+  {amz_html}</li>"""
     oe_groups = {}
     for m in sorted(out_everywhere.values(), key=lambda m: not m["exact"]):
         oe_groups.setdefault(m["note"], []).append(m)
+    shared = [m for m in out_everywhere.values() if not m["exact"]]
+    # One link per distinct Amazon store URL, instead of repeating that same URL on every row.
+    shared_html = ""
+    if shared:
+        seen = []
+        for m in shared:
+            if m["url"] not in {s["url"] for s in seen}:
+                seen.append(m)
+        bits = " · ".join(
+            f'<a class="oe-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a>' for m in seen)
+        word = "this link" if len(seen) == 1 else "these links"
+        shared_html = f'<p class="small">Rows without their own Amazon listing share {word}: {bits}.</p>'
     oe_html = (f"""<section class="card" id="sold-out-everywhere">
       <div class="section-head"><h2>Sold out at every shop we track</h2></div>
-      <p class="muted small">None of the shops we check can sell these right now. Amazon may still have them, so each row links there. A product leaves this list as soon as any shop we track has it in stock or on preorder.</p>
+      <p class="muted small">None of the shops we check can sell these right now. A row with its own Amazon listing links there. The others share one link to the Hobonichi store. A product leaves this list as soon as any shop we track has it in stock or on preorder.</p>
       {"".join(f'<h3 class="oe-group">{E(note)}</h3><ul class="oe-list compact">{"".join(oe_row(m) for m in ms)}</ul>' for note, ms in oe_groups.items())}
+      {shared_html}
     </section>""" if out_everywhere else "")
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a>: <span class="muted">{E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
 
@@ -984,7 +1001,7 @@ def build_privacy():
 <p>The site is hosted on Cloudflare Pages and uses Cloudflare Web Analytics to count visits. It doesn't use cookies or local storage and doesn't follow you across other sites. Cloudflare also handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
 <p>This site doesn't set its own cookies and doesn't run ad trackers.</p>
 <h2>Amazon and affiliate links</h2>
-<p>{E(AFFILIATE_NOTE)} When you open an Amazon link, Amazon may set its own cookies to credit the referral; that happens on Amazon's side under <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ" target="_blank" rel="noopener">Amazon's privacy notice</a>. Links to the shops we track are plain links, and what you do on their sites is covered by their own policies.</p>
+<p>{E(AFFILIATE_NOTE)} When you open an Amazon link, Amazon may set its own cookies to credit the referral; that happens on Amazon's side under <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ" data-plain-amazon target="_blank" rel="noopener">Amazon's privacy notice</a>. Links to the shops we track are plain links, and what you do on their sites is covered by their own policies.</p>
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
 </article>"""
@@ -1011,9 +1028,27 @@ def build_about():
 <h2>Affiliate links</h2>
 <p>{E(AFFILIATE_NOTE)} Buying through an Amazon link costs you nothing extra, and it never changes what the tracker shows.</p>
 <h2>Contact</h2>
-<p>Questions, corrections, or a shop we should track? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
+<p>Questions, corrections, or a shop we should track? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
     return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi, dot grid, Traveler's and MIDORI restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about.html", "About")),))
+
+def build_contact():
+    """Visible contact page. The address is plain text, wrapped so Cloudflare Email Obfuscation leaves it alone."""
+    fname = "contact/"
+    email = "admin@stationerydropwatch.com"
+    shown = f"<!--email_off-->{E(email)}<!--/email_off-->"
+    body = f"""
+<article class="prose">
+{crumbs((fname, "Contact"))}
+{eyebrow("Contact", "Stationery Drop Watch")}
+<h1>Contact</h1>
+<p class="lede">Stationery Drop Watch checks planner and journal stock at official stores and independent shops, and writes down what each shop last reported.</p>
+<p>Questions, corrections, a shop we should track, or a featured restock slot: {shown}</p>
+<p class="small"><a href="about.html">About</a> explains how the checks work. <a href="privacy.html">Privacy</a> explains the email list.</p>
+</article>"""
+    desc = ("How to reach Stationery Drop Watch: questions, corrections, a shop to add, "
+            "or a featured restock slot. The address is written on this page too.")
+    return fname, page(fname, "Contact", desc, body, ld=(crumbs_ld((fname, "Contact")),))
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
 # Every status on these pages comes from data/stock.json exactly as the checker wrote it.
@@ -1680,7 +1715,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
     tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), tn_mod), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-03")]
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), tn_mod), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-03"), (url_for("contact/"), "2026-11-10")]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2857,7 +2892,7 @@ def main():
         check_amz_doc(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_tn_sizes, build_guides_index, build_shop, build_follow):
+    for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_tn_sizes, build_guides_index, build_shop, build_follow, build_contact):
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
