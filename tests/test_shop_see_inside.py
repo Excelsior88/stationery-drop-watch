@@ -137,15 +137,27 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertNotIn(".webp", blush)
 
     def test_fit_claim_is_qualified_and_the_hub_names_both_editions(self):
-        self.assertIn("Physical fit in a planner has not been tested.", self.shop)
+        self.assertNotIn("has not been tested", self.shop.lower())
+        self.assertNotIn("test-printed", self.shop.lower())
         self.assertNotIn("Tested in a Hobonichi Weeks Mega", self.shop)
         self.assertNotIn("Tested in a Hobonichi Weeks Mega", self.home)
         self.assertIn("Level Up! My 2027 Planner", self.home)
         self.assertIn("Paperback", self.home)
         self.assertIn("Front cover of the Level Up! 2027 printable planner", self.home)
-        self.assertIn("hub-own-row cols-9", self.home)
+        self.assertIn("hub-own-row cols-10", self.home)
         self.assertIn("20% off launch sale Oct 31 to Nov 30", card(self.shop, "Level Up! My 2027 Kids Planner"))
-        self.assertEqual(site.shop_lastmod(), "2026-11-08")
+        self.assertEqual(site.shop_lastmod(), "2026-11-10")
+        grid = card(self.shop, "Lines for the Grid Page")
+        self.assertIn("https://www.etsy.com/listing/4614089507/lines-for-the-grid-page-printable-tip-in", grid)
+        self.assertIn("$6.99", grid)
+        self.assertIn("20% off launch sale Oct 31 to Nov 30", grid)
+        self.assertIn("not affiliated", grid.lower())
+        self.assertIn("dot grid (5 mm)", grid.lower())
+        self.assertIn("lines-grid-layouts.webp", grid)
+        self.assertIn("not a photograph of a printed copy", grid.lower())
+        self.assertNotIn("bullet journal", grid.lower())
+        self.assertNotIn("launch20", grid.lower())
+        self.assertIn("Lines for the Grid Page", self.home)
 
 
 if __name__ == "__main__":

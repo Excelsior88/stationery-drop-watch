@@ -894,7 +894,7 @@ def build_index():
                     b.get("cover_w", 200), b.get("cover_h", 300)))
     own += [(e["img"], e["alt"], e["title"], e.get("hub_sub", "Printable PDF"), e.get("img_class", ""), e.get("img_w", 200), e.get("img_h", 300))
             for e in etsy_listings()]
-    row_cls = "hub-own-row" + {8: " cols-8", 9: " cols-9"}.get(len(own), "")
+    row_cls = "hub-own-row" + {8: " cols-8", 9: " cols-9", 10: " cols-10"}.get(len(own), "")
     own_html = "".join(
         f'<li><a href="shop/"><img{f" class=\"{E(cls)}\"" if cls else ""} src="{E(img)}" alt="{E(alt)}" loading="lazy" decoding="async" width="{w}" height="{h}"><span class="hub-own-t">{E(t)}</span><span class="muted small">{E(sub)}</span></a></li>'
         for img, alt, t, sub, cls, w, h in own)
@@ -2528,13 +2528,33 @@ SHOP_ETSY = [
                   "Two inserts per US Letter or A4 sheet, no bleed. Print at actual size (100%) and measure the 25 mm calibration square before printing the set",
                   "Monday-start weeks. Personal use only: don't share, resell, or redistribute the PDFs",
                   "Not a physical planner, bound refill, sticker sheet, or planner app",
-                  "Finished cut size is 85 × 175 mm. Physical fit in a planner has not been tested. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+                  "Finished cut size is 85 × 175 mm. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
          templates=["Month Dashboard", "Habit Tracker (6 habits, 31 daily rows)", "Mood Tracker",
                     "Weekly Plan (Monday start, undated)", "Monthly Budget", "Reading Log", "Pen & Ink Swatches",
                     "Meal Planner (breakfast and lunch/dinner, Monday start)", "Wishlist & Gifts", "Annual Goals",
                     "Monthly Reset", "Order Tracker", "Stationery Inventory", "Brain Dump", "Dot Grid", "Lined Notes"],
          templates_label="16 templates",
          inside="soft-days"),
+    dict(id="lines-grid", kind="insert", sale_confirmed=True, price="$6.99",
+         title="Lines for the Grid Page",
+         img="assets/shop/lines-for-the-grid-page.webp", img_class="sheet", img_w=2000, img_h=2000,
+         url="https://www.etsy.com/listing/4614089507/lines-for-the-grid-page-printable-tip-in",
+         alt=("Lines for the Grid Page: a cream cover reading Lines for the Grid Page beside fanned liner pages "
+              "titled Task Lines, Cornell Notes, Habit Tracker, and Weekly Overlay."),
+         sub="Printable tip-in liners · personal use · instant download from Etsy",
+         hub_sub="Printable liners",
+         blurb=("Thirteen undated layouts that turn a narrow planner's grid memo page into lined pages. "
+                "Finished cut size is 85 × 175 mm. Warm and Soft Gray line colors. A digital download for personal use."),
+         details=["One zip: US Letter and A4 files (two liners per sheet, with crop marks and scale bars) plus single-page 85 × 175 mm files, in Warm and Soft Gray",
+                  "13 undated layouts. Print at actual size (100%)",
+                  "Personal use only: don't share, resell, or redistribute the PDFs",
+                  "Digital download only. Not a physical planner",
+                  "Finished cut size is 85 × 175 mm, drawn for a narrow weekly planner whose book is about 94 × 188 mm, including the Hobonichi Weeks. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+         templates=["Ruled 5 mm", "Ruled 6 mm", "Ruled 7 mm", "Ruled 8 mm", "Task lines",
+                    "Two columns", "AM / PM", "Cornell notes", "Meeting page", "Habit tracker",
+                    "Weekly overlay", "Half lined", "Dot grid (5 mm)"],
+         templates_label="13 layouts",
+         inside="lines-grid"),
 ]
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
@@ -2614,6 +2634,11 @@ SHOP_SAMPLES = {
                 "Soft Days soft colour: Pen & Ink Swatches. Authentic final PDF interior extracted at full insert boundary.",
                 "Pen & Ink Swatches. One Soft Days insert, not a separate swatch product.", 511, 1051),
     ]},
+    "lines-grid": {"class": " samples inserts", "note": "Layouts from the print file, not a photograph of a printed copy.", "items": [
+        _sample("/assets/shop/inside/lines-grid-layouts.webp",
+                "Lines for the Grid Page print file: the liner layouts, including ruled pages, task lines, Cornell notes, a habit tracker, a weekly overlay, and a dot grid, in Warm and Soft Gray.",
+                "The 13 layouts, from the print file.", 2700, 2025),
+    ]},
 }
 
 import hashlib as _hl
@@ -2661,7 +2686,9 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
-    # Shop facts changed 2026-11-08 (paperback listing, see-inside samples, fit wording).
+    # Shop facts changed 2026-11-10 (Lines for the Grid Page listing).
+    if any(e.get("id") == "lines-grid" and etsy_listing_url(e) for e in SHOP_ETSY):
+        return "2026-11-10"
     if any(e.get("kind") == "insert" and etsy_listing_url(e) for e in SHOP_ETSY):
         return "2026-11-08"
     return "2026-11-03"
@@ -2690,8 +2717,7 @@ def guard_release(fname, doc):
     end = doc.find("</div></li>", i)
     card = doc[start:end + len("</div></li>")]
     text = html.unescape(card)
-    for needed in ("Physical fit in a planner has not been tested.",
-                   "Not a Hobonichi product", "not affiliated", "personal use", "85 × 175 mm",
+    for needed in ("Not a Hobonichi product", "not affiliated", "personal use", "85 × 175 mm",
                    "16 designs", "$6.99", "actual size (100%)", "25 mm"):
         if needed not in text:
             raise SystemExit(f"{fname}: Soft Days card is missing {needed!r}")
@@ -2719,7 +2745,7 @@ def build_shop():
     for item in SHOP_ETSY:
         if not (ROOT / "site" / item["img"]).is_file():
             raise SystemExit(f"missing shop asset {item['img']}")
-        if item.get("kind") == "insert" and len(item.get("templates") or []) != 16:
+        if item.get("id") == "soft-days" and len(item.get("templates") or []) != 16:
             raise SystemExit(f"{item['title']} must list 16 templates")
     def srcset(img):  # Etsy mockups ship 600w + 1200w copies; Amazon covers use their single file
         if img.startswith("assets/shop/") and img.endswith("-planner.jpg"):
