@@ -323,8 +323,18 @@ def url_for(fname):
     """Absolute public URL: index.html -> BASE, 'slug/' -> BASE + 'slug/', 'about.html' -> BASE + 'about'."""
     return BASE + pretty(fname)
 
+PUBLIC_EMAIL = "admin@stationerydropwatch.com"
+
+def plain_email():
+    """Visible address, not a mailto link. The comments keep Cloudflare from obfuscating it."""
+    return f"<!--email_off-->{E(PUBLIC_EMAIL)}<!--/email_off-->"
+
 def jsonld(obj):
-    return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False).replace("</", "<\\/") + "</script>"
+    payload = json.dumps(obj, ensure_ascii=False).replace("</", "<\\/")
+    script = '<script type="application/ld+json">' + payload + "</script>"
+    if PUBLIC_EMAIL in payload:  # keep the publisher address literal in the page source
+        return "<!--email_off-->" + script + "<!--/email_off-->"
+    return script
 
 def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
     url = url_for(fname)
@@ -930,7 +940,7 @@ def build_index():
                "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
                "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
                              "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {sections_phrase()}. Statuses come straight from each shop's public product data.",
-                             "logo": BASE + "assets/brand/icon-512.png", "email": "stationerydropwatch@gmail.com",
+                             "logo": BASE + "assets/brand/icon-512.png", "email": PUBLIC_EMAIL,
                              "sameAs": [s[2] for s in SOCIALS]}}
     return page("index.html", "Hobonichi, dot grid & MIDORI tracker",
                 f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, dot grid journals, Traveler's notebooks and MIDORI MD, plus an email when a sold-out item is back.",
@@ -1003,7 +1013,7 @@ def build_privacy():
 <h2>Amazon and affiliate links</h2>
 <p>{E(AFFILIATE_NOTE)} When you open an Amazon link, Amazon may set its own cookies to credit the referral; that happens on Amazon's side under <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ" data-plain-amazon target="_blank" rel="noopener">Amazon's privacy notice</a>. Links to the shops we track are plain links, and what you do on their sites is covered by their own policies.</p>
 <h2>Contact</h2>
-<p>Questions, or want your email address removed? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>.</p>
+<p>Questions, or want your email address removed? Email {plain_email()}.</p>
 </article>"""
     return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown), cookie-free Cloudflare Web Analytics and Amazon affiliate links. We don't set our own cookies.", body, ld=(crumbs_ld((fname, "Privacy")),))
 
@@ -1024,19 +1034,18 @@ def build_about():
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
-<p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email <a href="mailto:stationerydropwatch@gmail.com?subject=Featured%20restock%20slot">stationerydropwatch@gmail.com</a> for rates and dates.</p>
+<p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email {plain_email()} for rates and dates.</p>
 <h2>Affiliate links</h2>
 <p>{E(AFFILIATE_NOTE)} Buying through an Amazon link costs you nothing extra, and it never changes what the tracker shows.</p>
 <h2>Contact</h2>
-<p>Questions, corrections, or a shop we should track? Email <a href="mailto:stationerydropwatch@gmail.com">stationerydropwatch@gmail.com</a>. The <a href="contact/">contact page</a> is there too.</p>
+<p>Questions, corrections, or a shop we should track? Email {plain_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
     return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi, dot grid, Traveler's and MIDORI restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about.html", "About")),))
 
 def build_contact():
     """Visible contact page. The address is plain text, wrapped so Cloudflare Email Obfuscation leaves it alone."""
     fname = "contact/"
-    email = "admin@stationerydropwatch.com"
-    shown = f"<!--email_off-->{E(email)}<!--/email_off-->"
+    shown = plain_email()
     body = f"""
 <article class="prose">
 {crumbs((fname, "Contact"))}
