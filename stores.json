@@ -966,6 +966,43 @@
      "url": "https://www.thepapermouse.com/products/traveler-s-notebook-regular-brown",
      "source_title": "TRAVELER'S notebook | Regular | Brown",
      "section": "travelers"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.thepapermouse.com/products/leuchtturm1917-hardcover-dot-grid-a5-notebook-sage",
+     "source_title": "Leuchtturm1917 Hardcover Dot Grid A5 Notebook | Sage"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.thepapermouse.com/products/leuchtturm1917-hardcover-dot-grid-a5-notebook-black",
+     "source_title": "Leuchtturm1917 Hardcover Dot Grid A5 Notebook | Black"
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://www.thepapermouse.com/products/traveler-s-notebook-card-size-20th-anniversary-set-black-limited-edition",
+     "source_title": "TRAVELER’S notebook Card Size 20th Anniversary Set | Black | Limited Edition",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://www.thepapermouse.com/products/travelers-notebook-plastic-sheet-regular-size-2027-edition",
+     "source_title": "TRAVELER'S notebook Plastic Sheet | Regular Size | 2027 Edition",
+     "section": "travelers"
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://www.thepapermouse.com/products/leuchtturm1917-a5-bullet-journal-edition-2-black",
+     "source_title": "Leuchtturm1917 A5 Bullet Journal Edition 2 | Black"
     }
    ]
   },
@@ -1246,6 +1283,86 @@
      "type": "Book",
      "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-japanese-original-book-monday-start",
      "source_title": "Hobonichi Techo A6 Japanese Original Book - Monday Start"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.atlasstationers.com/products/leuchtturm-a5-hardcover-notebook-dot-grid?variant=42872582865057",
+     "source_title": "Leuchtturm A5 Hardcover Notebook - Dot Grid · Black",
+     "variant_id": 42872582865057
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.atlasstationers.com/products/leuchtturm-a5-hardcover-notebook-dot-grid?variant=42872583094433",
+     "source_title": "Leuchtturm A5 Hardcover Notebook - Dot Grid · Navy",
+     "variant_id": 42872583094433
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.atlasstationers.com/products/leuchtturm-a5-hardcover-notebook-dot-grid?variant=42872583323809",
+     "source_title": "Leuchtturm A5 Hardcover Notebook - Dot Grid · Sage",
+     "variant_id": 42872583323809
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://www.atlasstationers.com/products/leuchtturm-a5-bullet-journal-edition-2?variant=43514758496417",
+     "source_title": "Leuchtturm A5 Bullet Journal Edition 2 · Black",
+     "variant_id": 43514758496417
+    },
+    {
+     "canonical": "tn-regular-olive",
+     "label": "Traveler's notebook Regular size · Olive (No. 15342006)",
+     "type": "Notebook",
+     "url": "https://www.atlasstationers.com/products/travelers-leather-notebook-regular-size-olive",
+     "source_title": "Traveler's Leather Notebook - Regular Size - Olive",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-regular-brown",
+     "label": "Traveler's notebook Regular size · Brown (No. 13715006)",
+     "type": "Notebook",
+     "url": "https://www.atlasstationers.com/products/travelers-leather-notebook-regular-size-brown",
+     "source_title": "Traveler's Leather Notebook - Regular Size - Brown",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-regular-camel",
+     "label": "Traveler's notebook Regular size · Camel (No. 15193006)",
+     "type": "Notebook",
+     "url": "https://www.atlasstationers.com/products/travelers-leather-notebook-regular-size-camel",
+     "source_title": "Traveler's Leather Notebook - Regular Size - Camel",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-regular-blue",
+     "label": "Traveler's notebook Regular size · Blue (No. 15239006)",
+     "type": "Notebook",
+     "url": "https://www.atlasstationers.com/products/travelers-leather-notebook-regular-size-blue",
+     "source_title": "Traveler's Leather Notebook - Regular Size - Blue",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-regular-black",
+     "label": "Traveler's notebook Regular size · Black (No. 13714006)",
+     "type": "Notebook",
+     "url": "https://www.atlasstationers.com/products/travelers-leather-notebook-regular-size-black",
+     "source_title": "Traveler's Leather Notebook - Regular Size - Black",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://www.atlasstationers.com/products/travelers-2027-plastic-sheet-regular-size",
+     "source_title": "Traveler's 2027 Plastic Sheet - Regular Size",
+     "section": "travelers"
     }
    ]
   },
@@ -1829,6 +1946,30 @@
      "type": "Weeks Mega",
      "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-mega-weeks-bow-tie-sheep-sheep-sheep",
      "source_title": "PREVIEW - Hobonichi 2027 - English MEGA Weeks - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://wonderpens.ca/products/b-pre-order-b-travelers-notebook-2027-diary-clear-folder-regular",
+     "source_title": "Traveler's Notebook 2027 Diary - Clear Folder (Regular)",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://wonderpens.ca/products/b-pre-order-b-travelers-notebook-2027-diary-plastic-sheet-regular",
+     "source_title": "Traveler's Notebook 2027 Diary - Plastic Sheet (Regular)",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://wonderpens.ca/products/b-pre-order-b-travelers-notebook-2027-diary-customized-sticker-set",
+     "source_title": "Traveler's Notebook 2027 Diary - Customized Sticker Set",
+     "section": "travelers"
     }
    ]
   },
@@ -2131,6 +2272,38 @@
      "type": "Cover",
      "url": "https://www.penboutique.com/products/hobonichi-original-a6-cover-mina-perhonen-felice-blue-2027",
      "source_title": "Hobonichi Japanese 2027 Cover - Minä Perhonen: Felice (Blue) - A6"
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://www.penboutique.com/products/leuchtturm-1917-bullet-journal-edition-2?variant=41764338532470",
+     "source_title": "Leuchtturm 1917 Bullet Journal (Edition 2) · Black",
+     "variant_id": 41764338532470
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.penboutique.com/products/leuchtturm-1917-hardcover-notebook-a5-dotted?variant=41769475342454",
+     "source_title": "Leuchtturm 1917 Hardcover Notebook - A5 - Dotted · Sage",
+     "variant_id": 41769475342454
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.penboutique.com/products/leuchtturm-1917-hardcover-notebook-a5-dotted?variant=41769475506294",
+     "source_title": "Leuchtturm 1917 Hardcover Notebook - A5 - Dotted · Navy",
+     "variant_id": 41769475506294
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.penboutique.com/products/leuchtturm-1917-hardcover-notebook-a5-dotted?variant=41769475604598",
+     "source_title": "Leuchtturm 1917 Hardcover Notebook - A5 - Dotted · Black",
+     "variant_id": 41769475604598
     }
    ]
   },
@@ -2440,6 +2613,62 @@
      "type": "Notebook",
      "url": "https://yosekastationery.com/products/travelers-notebook-regular-black",
      "source_title": "TRAVELER'S Notebook - Regular Size - Black",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://yosekastationery.com/products/travelers-notebook-regular-size-clear-folder-2027",
+     "source_title": "TRAVELER'S Notebook Regular Size Clear Folder 2027",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://yosekastationery.com/products/travelers-notebook-customized-sticker-set-for-2027-diary",
+     "source_title": "TRAVELER'S Notebook Customized Sticker Set for 2027 Diary",
+     "section": "travelers"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://yosekastationery.com/products/leuchtturm1917-hardcover-medium-notebook-a5-dot-grid?variant=42736827465941",
+     "source_title": "Leuchtturm1917 Hardcover Medium Notebook - A5 - Dot Grid · Black",
+     "variant_id": 42736827465941
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://yosekastationery.com/products/leuchtturm1917-hardcover-medium-notebook-a5-dot-grid?variant=42736827105493",
+     "source_title": "Leuchtturm1917 Hardcover Medium Notebook - A5 - Dot Grid · Sage",
+     "variant_id": 42736827105493
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://yosekastationery.com/products/leuchtturm1917-hardcover-medium-notebook-a5-dot-grid?variant=42736827334869",
+     "source_title": "Leuchtturm1917 Hardcover Medium Notebook - A5 - Dot Grid · Navy",
+     "variant_id": 42736827334869
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://yosekastationery.com/products/travelers-notebook-card-size-20th-anniversary-set-black",
+     "source_title": "TRAVELER'S Notebook - Card Size - 20th Anniversary Set - Black - Limit 1 Per Person",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-20th-customization-set",
+     "label": "Traveler's notebook 20th Anniversary Customization Set",
+     "type": "Customization set",
+     "url": "https://yosekastationery.com/products/travelers-notebook-20th-anniversary-customization-set",
+     "source_title": "TRAVELER'S Notebook 20th Anniversary Customization Set",
      "section": "travelers"
     }
    ]
@@ -3060,6 +3289,14 @@
      "variant_id": 67760199106864,
      "section": "midori",
      "source_title": "MD Notebook 2027 Page-A-Day Planners · A5"
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://omoionline.com/products/travelers-notebook-card-size-20th-anniversary-set-black",
+     "source_title": "TRAVELER’S notebook Card Size 20th Anniversary Set Black",
+     "section": "travelers"
     }
    ]
   },
@@ -3333,6 +3570,13 @@
      "url": "https://www.gouletpens.com/products/travelers-notebook-olive-regular",
      "section": "travelers",
      "source_title": "Traveler's Notebook - Olive (Regular)"
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://www.gouletpens.com/products/leuchtturm1917-bullet-journal-notebook-black-edition-2",
+     "source_title": "Leuchtturm1917 Bullet Journal Notebook - Black (Edition 2)"
     }
    ]
   },
@@ -3385,6 +3629,30 @@
      "url": "https://simplepaper.co/products/travelers-notebook-regular-olive",
      "section": "travelers",
      "source_title": "Traveler's Notebook - Regular - Olive"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://simplepaper.co/products/travelers-notebook-clear-folder-2027-regular",
+     "source_title": "Traveler's Notebook Clear Folder 2027 | Regular",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://simplepaper.co/products/travelers-notebook-plastic-sheet-2027-regular",
+     "source_title": "Traveler's Notebook Plastic Sheet 2027 | Regular",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://simplepaper.co/products/travelers-notebook-card-size-20th-anniversary-set-black-limit-1-per-person",
+     "source_title": "TRAVELER'S Notebook | Card Size | 20th Anniversary Set | Black | Limit 1 Per Customer",
+     "section": "travelers"
     }
    ]
   },
@@ -3442,6 +3710,64 @@
      "variant_id": 52467629588794,
      "section": "travelers",
      "source_title": "TRAVELER'S notebook Regular Size · Olive"
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://lovenotebooks.com/products/leuchtturm1917-bullet-journal-edition-2?variant=44655750709562",
+     "source_title": "Leuchtturm1917 Bullet Journal Edition 2 · Black",
+     "variant_id": 44655750709562
+    },
+    {
+     "canonical": "md-diary-sticker-2027-l",
+     "label": "MD Diary Stickers 2027 · Large",
+     "type": "Sticker set",
+     "url": "https://lovenotebooks.com/products/md-product-diary-sticker-2027?variant=54060353454394",
+     "source_title": "MD Product Diary Sticker 2027 - Three Sizes · Large",
+     "section": "midori",
+     "variant_id": 54060353454394
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://lovenotebooks.com/products/md-notebook-diary-a5-monthly-weekly-2027-planner",
+     "source_title": "MD Notebook Diary A5 Monthly-Weekly 2027 Planner",
+     "section": "midori"
+    },
+    {
+     "canonical": "md-diary-1day-2027-a5",
+     "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+     "type": "Diary",
+     "url": "https://lovenotebooks.com/products/md-notebook-diary-a5-page-a-day-daily-2027-planner",
+     "source_title": "MD Notebook Diary A5 Page a Day Daily 2027 Planner",
+     "section": "midori"
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://lovenotebooks.com/products/traveler-s-notebook-card-size-20th-anniversary-set?variant=53344918044986",
+     "source_title": "TRAVELER’S notebook Card Size 20th Anniversary Set · Black",
+     "section": "travelers",
+     "variant_id": 53344918044986
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://lovenotebooks.com/products/travelers-notebook-2027-customized-sticker-set",
+     "source_title": "TRAVELER'S notebook 2027 Diary Customized Sticker Set – 6 Sheets",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://lovenotebooks.com/products/travelers-notebook-regular-size-2027-clear-folder",
+     "source_title": "TRAVELER'S notebook Regular Size 2027 Limited-Edition Clear Folder",
+     "section": "travelers"
     }
    ]
   },
@@ -3668,6 +3994,68 @@
      "type": "HON",
      "url": "https://blesket.com/products/hobonichi-techo-2027-hon-slash-navy-eng-hon-a6-jan-start-planner",
      "source_title": "Hobonichi Techo 2027 HON Slash (Navy) [ENG/HON A6/Jan Start] Planner"
+    },
+    {
+     "canonical": "lt-120g-a5",
+     "label": "Leuchtturm1917 · Medium (A5) 120G dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://blesket.com/products/leuchtturm1917-hardcover-notebook-dotted-120g-edition-medium-black",
+     "source_title": "LEUCHTTURM1917 Hardcover Notebook Dotted 120G Edition Medium - Black"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://blesket.com/products/leuchtturm1917-medium-a5-hardcover-notebook-dotted-1?variant=39302362628130",
+     "source_title": "LEUCHTTURM1917 medium (A5) Hardcover Notebook Dotted · Black",
+     "variant_id": 39302362628130
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://blesket.com/products/midori-md-notebook-diary-2027-a5",
+     "source_title": "Midori MD Notebook Diary 2027 - A5",
+     "section": "midori"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://blesket.com/products/travelers-notebook-2027-clear-folder-regular-size-pre-order",
+     "source_title": "TRAVELER'S Notebook 2027 Clear Folder – Regular Size",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://blesket.com/products/travelers-notebook-2027-plastic-sheet-regular-size-pre-order",
+     "source_title": "TRAVELER'S Notebook 2027 Plastic Sheet – Regular Size",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://blesket.com/products/travelers-notebook-customized-sticker-set-for-2027-diary-pre-order",
+     "source_title": "TRAVELER'S Notebook Customized Sticker Set for 2027 Diary",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://blesket.com/products/travelers-notebook-card-size-20th-anniversary-set-black-pre-order",
+     "source_title": "TRAVELER'S Notebook Card Size 20th Anniversary Set – Black",
+     "section": "travelers"
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://blesket.com/products/leuchtturm1917-a5-bullet-journal-edition-2-black",
+     "source_title": "LEUCHTTURM1917 A5 Bullet Journal - Edition 2 - Black"
     }
    ]
   },
@@ -3915,6 +4303,54 @@
      "type": "Book",
      "url": "https://www.thejournalshop.com/products/hobonichi-techo-2027-japanese-original-book-a6-size-daily-jan-start-mon-start",
      "source_title": "Hobonichi Techo 2027 Japanese Original Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://www.thejournalshop.com/products/leuchtturm1917-bullet-journal-edition-2?variant=41993869459690",
+     "source_title": "Leuchtturm1917 Bullet Journal Edition 2 · Black",
+     "variant_id": 41993869459690
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://www.thejournalshop.com/products/md-paper-notebook-diary-2027-a5",
+     "source_title": "MD Paper Notebook Diary 2027 - A5",
+     "section": "midori"
+    },
+    {
+     "canonical": "md-diary-1day-2027-a5",
+     "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+     "type": "Diary",
+     "url": "https://www.thejournalshop.com/products/md-paper-notebook-diary-1-day-1-page-2027-a5",
+     "source_title": "MD Paper Notebook Diary 1 Day 1 Page 2027 - A5",
+     "section": "midori"
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://www.thejournalshop.com/products/traveler-s-notebook-card-size-20th-anniversary-set-limited-edition?variant=57620460241280",
+     "source_title": "Traveler’s Notebook Card Size 20th Anniversary Set – Limited Edition · Black set",
+     "section": "travelers",
+     "variant_id": 57620460241280
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://www.thejournalshop.com/products/leuchtturm1917-bullet-journal-edition-2-limited-colour-purple26",
+     "source_title": "Leuchtturm1917 Bullet Journal Edition 2 Limited Colour Purple26"
+    },
+    {
+     "canonical": "md-diary-sticker-2027-l",
+     "label": "MD Diary Stickers 2027 · Large",
+     "type": "Sticker set",
+     "url": "https://www.thejournalshop.com/products/md-diary-sticker-2027-l",
+     "source_title": "MD Diary Sticker 2027 [L]",
+     "section": "midori"
     }
    ]
   },
@@ -4157,6 +4593,67 @@
      "url": "https://www.buchanst.com/products/midori-md-notebook-diary-1-day-1-page-2027-a5",
      "section": "midori",
      "source_title": "Midori - MD Notebook Diary 1 Day 1 Page 2027 - A5"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.buchanst.com/products/leuchtturm-notebook-medium-a5-hardcover-251-numbered-pages-sage-dotted",
+     "source_title": "Leuchtturm1917 - Notebook Medium - A5 - Hardcover - Sage - Dotted"
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://www.buchanst.com/products/travelers-notebook-2027-customized-sticker-set",
+     "source_title": "Traveler's Notebook - 2027 Customized Sticker Set",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://www.buchanst.com/products/travelers-notebook-2027-plastic-sheet-regular-size",
+     "source_title": "Traveler's Notebook - 2027 Plastic Sheet - Regular Size",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://www.buchanst.com/products/travelers-notebook-2027-clear-folder-regular-size",
+     "source_title": "Traveler's Notebook - 2027 Clear Folder - Regular Size",
+     "section": "travelers"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.buchanst.com/products/leuchttrum-1917-a5-hardcover-notebook-251-numbered-pages-black?variant=47174065357079",
+     "source_title": "Leuchtturm1917 - Notebook Medium - A5 - Hardcover - Black · Dotted",
+     "variant_id": 47174065357079
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://www.buchanst.com/products/leuchtturm1917-bullet-journal-a5-edition-2-black",
+     "source_title": "Leuchtturm1917 - A5 Bullet Journal - Edition 2 - Black"
+    },
+    {
+     "canonical": "lt-hardcover-a5",
+     "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
+     "type": "Dot grid notebook",
+     "url": "https://www.buchanst.com/products/leuchttrum-1917-a5-2024-daily-planner-navy-english?variant=47244911837463",
+     "source_title": "Leuchtturm1917 - Notebook Medium - A5 - Hardcover - Navy · Dotted",
+     "variant_id": 47244911837463
+    },
+    {
+     "canonical": "lt-bullet-journal-ed2",
+     "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+     "type": "Dot grid notebook",
+     "url": "https://www.buchanst.com/products/leuchtturm1917-bullet-journal-edition-2-purple-26",
+     "source_title": "Leuchtturm1917 - Bullet Journal Edition 2 - Purple 26"
     }
    ]
   },
@@ -4227,6 +4724,62 @@
      "url": "https://www.mlovewell.com/products/travelers-notebook-regular-olive",
      "section": "travelers",
      "source_title": "Traveler's Notebook Regular - Olive"
+    },
+    {
+     "canonical": "md-diary-sticker-2027-l",
+     "label": "MD Diary Stickers 2027 · Large",
+     "type": "Sticker set",
+     "url": "https://www.mlovewell.com/products/md-product-diary-sticker-l-2027",
+     "source_title": "MD Product Diary Sticker L 2027",
+     "section": "midori"
+    },
+    {
+     "canonical": "md-diary-2027-a5",
+     "label": "MD Notebook Diary 2027 · A5",
+     "type": "Diary",
+     "url": "https://www.mlovewell.com/products/md-product-a5-2027-diary",
+     "source_title": "MD Product A5 2027 Diary",
+     "section": "midori"
+    },
+    {
+     "canonical": "md-diary-1day-2027-a5",
+     "label": "MD Notebook Diary 1 Day 1 Page 2027 · A5",
+     "type": "Diary",
+     "url": "https://www.mlovewell.com/products/md-product-a5-2027-diary-1-day-1-page",
+     "source_title": "MD Product A5 2027 Diary 1Day 1Page",
+     "section": "midori"
+    },
+    {
+     "canonical": "tn-2027-clear-folder-regular",
+     "label": "Traveler's notebook 2027 Clear Folder · Regular size",
+     "type": "Clear folder",
+     "url": "https://www.mlovewell.com/products/travelers-notebook-diary-2027-clear-folder-regular",
+     "source_title": "Traveler's Notebook Diary 2027 Clear Folder Regular",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-plastic-sheet-regular",
+     "label": "Traveler's notebook 2027 Plastic Sheet · Regular size",
+     "type": "Plastic sheet",
+     "url": "https://www.mlovewell.com/products/travelers-notebook-diary-2027-plastic-sheet-regular",
+     "source_title": "Traveler's Notebook Diary 2027 Plastic Sheet Regular",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-2027-sticker-set",
+     "label": "Traveler's notebook 2027 Customized Sticker Set",
+     "type": "Sticker set",
+     "url": "https://www.mlovewell.com/products/travelers-notebook-2027-diary-customized-sticker-set",
+     "source_title": "Traveler's Notebook 2027 Diary Customized Sticker Set",
+     "section": "travelers"
+    },
+    {
+     "canonical": "tn-20th-card-black",
+     "label": "Traveler's notebook Card Size 20th Anniversary Set · Black",
+     "type": "Notebook",
+     "url": "https://www.mlovewell.com/products/travelers-notebook-card-size-20th-anniversary-black-set",
+     "source_title": "TRAVELER'S Notebook — Card Size 20th Anniversary - Black Set",
+     "section": "travelers"
     }
    ]
   },
