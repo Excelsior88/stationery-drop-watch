@@ -77,6 +77,11 @@
    "type": "Weeks"
   },
   {
+   "id": "weeks-beautiful-people-yellow",
+   "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+   "type": "Weeks"
+  },
+  {
    "id": "hon-a5-slash-navy",
    "label": "HON A5 · Slash (Navy)",
    "type": "HON"
@@ -554,6 +559,14 @@
      "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_bpeople/",
      "source_key": "cc27_bpeople",
      "source_title": "Nothing to Hide (Pink)"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wc27_bpeople/",
+     "source_key": "wc27_bpeople",
+     "source_title": "Nothing to Hide (Yellow)"
     }
    ]
   },
@@ -743,6 +756,13 @@
      "type": "Cover",
      "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-beautiful-people-nothing-to-hide-pink-1",
      "source_title": "Hobonichi Techo A5 Cousin Cover | beautiful people: Nothing to Hide (Pink)"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-weeks-cover-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi Techo Weeks Cover | beautiful people: Nothing to Hide (Yellow)"
     }
    ]
   },
@@ -890,6 +910,13 @@
      "type": "Cover",
      "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-beautiful-people-nothing-to-hide-pink",
      "source_title": "Hobonichi Techo A5 Cousin Cover - beautiful people: Nothing to Hide (Pink)"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-cover-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi Techo Weeks Cover - beautiful people: Nothing to Hide (Yellow)"
     }
    ]
   },
@@ -1361,6 +1388,13 @@
      "type": "Cover",
      "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-beautiful-people-nothing-to-hide-pink",
      "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - beautiful people: Nothing to Hide (Pink)"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-weeks-cover-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "PREVIEW - Hobonichi 2027 - Weeks Cover - beautiful people: Nothing to Hide (Yellow)"
     }
    ]
   },
@@ -1593,6 +1627,13 @@
      "type": "Cover",
      "url": "https://www.penboutique.com/products/hobonichi-2027-cousin-cover-nothing-to-hide-pink-a5",
      "source_title": "Hobonichi 2027 Cousin Cover - Beautiful People: Nothing to Hide (Pink) - A5"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-weeks-cover-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi Weeks Cover - Beautiful people: Nothing to Hide - Yellow"
     }
    ]
   },
@@ -1772,6 +1813,13 @@
      "type": "Cover",
      "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-beautiful-people-nothing-to-hide-pink-a5",
      "source_title": "Hobonichi Techo Cousin Cover 2027 - beautiful people: Nothing to Hide (Pink) - A5"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-weeks-techo-cover-2027-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi Weeks Techo Cover 2027 - beautiful people: Nothing to Hide (Yellow)"
     }
    ]
   },
@@ -1952,6 +2000,13 @@
      "type": "Cover",
      "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-beautiful-people-nothing-to-hide-pink",
      "source_title": "Hobonichi Techo A5 Cousin Cover - beautiful people: Nothing to Hide (Pink)"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-cover-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi Techo Weeks Cover - beautiful people: Nothing to Hide (Yellow)"
     }
    ]
   },
@@ -2561,6 +2616,13 @@
      "type": "Cover",
      "url": "https://blesket.com/products/hobonichi-techo-2027-beautiful-people-nothing-to-hide-pink-a5-cover",
      "source_title": "Hobonichi Techo 2027 Beautiful People: Nothing to Hide (Pink) A5 Cover"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-weeks-beautiful-people-nothing-to-hide-yellow-tall-slim-cover",
+     "source_title": "Hobonichi Techo 2027 Weeks Beautiful People: Nothing to Hide (Yellow) [Tall & Slim] Cover"
     }
    ]
   },
@@ -2591,6 +2653,13 @@
      "type": "Cover",
      "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-beautiful-people-nothing-to-hide-pink",
      "source_title": "Hobonichi 2027 A5 Cousin Cover: beautiful people - Nothing to Hide (Pink)"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-cover-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi 2027 Weeks Cover: beautiful people - Nothing to Hide (Yellow)"
     }
    ]
   },
@@ -2621,6 +2690,13 @@
      "type": "Cover",
      "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-beautiful-people-nothing-to-hide-pink",
      "source_title": "Hobonichi Techo 2027 - A5 Cover Only - Beautiful People: Nothing to Hide (Pink)"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-cover-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi Techo 2027 - Weeks Cover - beautiful people: Nothing to Hide (Yellow)"
     }
    ]
   },
@@ -2644,6 +2720,13 @@
      "type": "Cover",
      "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-a6-planner-cover-only-beautiful-people-nothing-to-hide-green",
      "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - beautiful people: Nothing to Hide (Green)"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://www.mlovewell.com/products/hobonichi-techo-weeks-cover-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi Techo Weeks Cover - beautiful people: Nothing to Hide (Yellow)"
     }
    ]
   },

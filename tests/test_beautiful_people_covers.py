@@ -15,6 +15,8 @@ A5_URL = "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_bpeople/
 PAPER_A5 = "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-beautiful-people-nothing-to-hide-pink-1"
 JET_A6 = "https://www.jetpens.com/Hobonichi-Techo-2027-Cover-Only-A6-beautiful-people-Nothing-to-Hide-Green/pd/53982"
 JET_A5 = "https://www.jetpens.com/Hobonichi-Techo-2027-Cover-Only-A5-beautiful-people-Nothing-to-Hide-Pink/pd/53943"
+WEEKS = "weeks-beautiful-people-yellow"
+WEEKS_URL = "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wc27_bpeople/"
 
 
 class BeautifulPeopleCoverTests(unittest.TestCase):
@@ -82,6 +84,28 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
         self.assertFalse(any(c.get("url") in urls for c in self.changes))
         official = {r["canonical"]: r["status"] for r in rows if r["store_id"] == "1101"}
         self.assertEqual(official, {A6: "sold_out", A5: "sold_out"})
+
+    def test_weeks_cover_is_a_weeks_design_not_a_second_language_row(self):
+        labels = {c["id"]: c for c in self.cfg["canonical"]}
+        self.assertEqual(labels[WEEKS]["type"], "Weeks")
+        self.assertIn("Weeks cover", labels[WEEKS]["label"])
+        official = next(p for p in self.by_store["1101"]["products"] if p.get("canonical") == WEEKS)
+        self.assertEqual(official["url"], WEEKS_URL)
+        self.assertEqual(official["source_key"], "wc27_bpeople")
+        self.assertNotIn("/ja/2027/", official["url"])
+        yellow = next(d for d in site.DESIGNS if d["slug"] == "nothing-to-hide-yellow")
+        self.assertEqual(yellow["parent"], "hobonichi-weeks-2027")
+        self.assertTrue(yellow["match"]({"canonical": WEEKS}))
+        self.assertFalse(yellow["match"]({"canonical": A6}))
+        about = site.design_about(yellow)
+        self.assertIn("4580812710121", about)
+        self.assertIn("cover", about.lower())
+        self.assertIn("not the Weeks planner", about)
+        rows = [r for r in self.stock["products"] if r.get("canonical") == WEEKS]
+        self.assertEqual(len(rows), 11)
+        self.assertTrue(all(r["first_seen"] == r["status_since"] for r in rows))
+        self.assertFalse(any(c.get("url") in {r["url"] for r in rows} for c in self.changes))
+        self.assertNotIn("nothing-to-hide-yellow", site.UNCHECKED_LINKS)
 
 
 if __name__ == "__main__":

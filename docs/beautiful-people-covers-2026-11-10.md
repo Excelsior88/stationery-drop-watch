@@ -21,4 +21,12 @@ M.Lovewell lists the A6 cover by that title. Its barcode field is not the JAN. N
 
 Loft's pages include the JAN and say 在庫切れ, but they do not publish schema.org availability and the checker has no Loft reader. Loft is not in the catalog.
 
-JetPens is a link only, same as its other Hobonichi links. It is not a stock status.
+JetPens is a link only for the two covers, same as its other Hobonichi links. It is not a stock status.
+
+The Weeks item is a cover for the Weeks book, not the Weeks planner. Official key `wc27_bpeople`, English page only, the same way the other Weeks designs are keyed. The Japanese page is the same cover. JAN 4580812710121 is on the retailer product data. The official page titles it "Weeks Cover Only" and does not print the JAN.
+
+It is on the Weeks design page. Checked shops, all matched by that title and, except M.Lovewell, by the JAN: Hobonichi, Paper Mouse, Atlas, Wonder Pens, Pen Boutique, Yoseka, Jenni Bick, Blesket, The Journal Shop, and Buchan's. M.Lovewell's title matches; its barcode field is not the JAN. The official feed had `soldout: 1`. Wonder Pens still says PREVIEW and is not available, so the checker reports not yet on sale. The others are sold out. This is a first observation. `changes.json` has no event for it.
+
+Baum-kuchen, Bobo, Laywine's, Omoi, and both Kinokuniya stores did not return this cover. Kinokuniya search hits named "Nothing to Hide" are other books, not this Hobonichi cover.
+
+There is no Rakuten store in the catalog and the checker has no Rakuten reader, so Rakuten was not added. JetPens returned 403 and no confirmed product URL for this cover was found, so it is not linked here.
