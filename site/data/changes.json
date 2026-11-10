@@ -398,5 +398,104 @@
   "section": "travelers",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:17:44+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks Mega · Bow & Tie: Sheep Sheep Sheep",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_m_tiesheep/",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:18:21+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · Colors: Sea Glass",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-sea-glass",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:18:24+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · V&A: Welcome to the V&A",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-v-a-series-welcome-to-the-v-a",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:18:26+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · V&A: Leicester",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-v-a-series-leicester",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:18:29+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · Shirt Fabric: Graph Plaid",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-shirt-fabric-graph-plaid",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:18:31+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · Paper Series: Frosty Jade",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-paper-series-frosty-jade",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:18:34+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · Liberty Fabrics: Floral Remedy",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-liberty-fabrics-floral-remedy",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:18:37+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "HON A5 · Slash (Navy)",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a5-slash-navy-english",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:18:39+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "HON A6 · Slash (Navy)",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a6-slash-navy-english",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:19:06+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · Leather: Forest Green",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-leather-forest-green",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-10T16:19:14+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks Mega · Colors: Poppy Red",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-mega-2027-colors-poppy-red",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
