@@ -606,5 +606,23 @@
   "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-mina-perhonen-felice-blue",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-11T15:49:10+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks Mega · Colors: Poppy Red",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-mega-2027-colors-poppy-red",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-11T15:49:40+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "Weeks Mega · Colors: Canaria Yellow",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-canaria-yellow-1",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
