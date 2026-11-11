@@ -597,5 +597,14 @@
   "url": "https://blesket.com/products/hobonichi-techo-2027-hon-slash-navy-eng-a5-hon-jan-start-planner",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-11T12:19:58+00:00",
+  "store_id": "journalshop",
+  "store": "The Journal Shop",
+  "label": "A6 cover · mina perhonen: felice (Blue)",
+  "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-mina-perhonen-felice-blue",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
