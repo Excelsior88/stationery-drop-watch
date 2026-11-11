@@ -633,5 +633,15 @@
   "url": "https://usa.kinokuniya.com/products/4580812709712",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-11T19:49:11+00:00",
+  "store_id": "travelerscompanyusa",
+  "store": "Traveler's Company USA (official)",
+  "label": "Traveler's notebook ROAD TRIP Brown · Regular size (US exclusive)",
+  "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-brown-road-trip",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
