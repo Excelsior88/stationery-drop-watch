@@ -624,5 +624,14 @@
   "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-canaria-yellow-1",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-11T17:18:29+00:00",
+  "store_id": "kinousa",
+  "store": "Kinokuniya USA",
+  "label": "Weeks · Colors: Pink Sapphire",
+  "url": "https://usa.kinokuniya.com/products/4580812709712",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
