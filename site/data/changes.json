@@ -643,5 +643,14 @@
   "section": "travelers",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-11T21:18:03+00:00",
+  "store_id": "laywines",
+  "store": "Laywine's",
+  "label": "HON A6 · Slash (Navy)",
+  "url": "https://laywines.com/products/hobonichi-a6-hon-slash-navy-2027",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
