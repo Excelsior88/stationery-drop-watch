@@ -652,5 +652,14 @@
   "url": "https://laywines.com/products/hobonichi-a6-hon-slash-navy-2027",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-12T01:10:28+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "HON A5 · Slash (Navy)",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-a5-hon-2027-slash-navy",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
