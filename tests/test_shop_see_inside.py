@@ -144,7 +144,7 @@ class ShopSeeInsideTests(unittest.TestCase):
         # The homepage does not show our own product row. Both editions stay on /shop.
         self.assertNotIn('id="our-planners"', self.home)
         self.assertNotIn("hub-own", self.home)
-        self.assertIn('class="nav-shop"', self.home)
+        self.assertNotIn("nav-shop", self.home)
         self.assertIn(">Shop</a>", self.home)
         self.assertIn('class="foot-nav"', self.home)
         self.assertIn('href="/follow/">Follow us</a>', self.home)
@@ -154,7 +154,7 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertIn("Paperback", card(self.shop, "Level Up! My 2027 Planner"))
         self.assertIn("Front cover of the Level Up! 2027 printable planner", self.shop)
         self.assertIn("20% off launch sale Oct 31 to Nov 30", card(self.shop, "Level Up! My 2027 Kids Planner"))
-        self.assertEqual(site.shop_lastmod(), "2026-11-10")
+        self.assertEqual(site.shop_lastmod(), "2026-11-12")
         grid = card(self.shop, "Lines for the Grid Page")
         self.assertIn("https://www.etsy.com/listing/4614089507/lines-for-the-grid-page-printable-tip-in", grid)
         self.assertIn("$6.99", grid)

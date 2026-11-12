@@ -28,10 +28,16 @@ def plain(doc):
 
 
 class ShareImageAltTests(unittest.TestCase):
-    def test_default_alt_describes_the_hobonichi_card_without_a_shop_count(self):
-        self.assertIn("Hobonichi Techo 2027 restock tracker", site.OG_ALT)
-        self.assertIn("Books, Weeks and covers", site.OG_ALT)
+    def test_default_alt_names_every_tracker_without_a_shop_count(self):
+        self.assertIn("Hobonichi", site.OG_ALT)
+        self.assertIn("dot grid journals", site.OG_ALT)
+        self.assertIn("Traveler's Company", site.OG_ALT)
+        self.assertIn("MIDORI", site.OG_ALT)
         self.assertIn(site.CHECK_FREQ, site.OG_ALT)
+        title = site.seo_title("Hobonichi, dot grid, Traveler's Company, MIDORI")
+        self.assertLessEqual(len(title), 60)
+        self.assertIn("Traveler's Company", title)
+        self.assertIn("dot grid", title)
         self.assertNotRegex(site.OG_ALT, SHOP_COUNT_RE)
         # The year 2027 contains the digits of a shop total. Match the count only as its own number.
         self.assertNotRegex(site.OG_ALT, rf"(?<!\d){site.N_HOBO}(?!\d)")

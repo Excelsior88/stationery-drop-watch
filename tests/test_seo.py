@@ -105,6 +105,31 @@ class SeoHeadTests(unittest.TestCase):
             for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', doc):
                 json.loads(block)
 
+    def test_sold_out_description_is_a_finished_sentence(self):
+        doc = site.build_sold_out()[1]
+        desc = html.unescape(DESC_RE.search(doc).group(1))
+        og = html.unescape(re.search(r'property="og:description" content="([^"]*)"', doc).group(1))
+        tw = html.unescape(re.search(r'name="twitter:description" content="([^"]*)"', doc).group(1))
+        self.assertEqual(desc, og)
+        self.assertEqual(desc, tw)
+        self.assertLessEqual(len(desc), 155)
+        self.assertTrue(desc.endswith("."))
+        self.assertIn("restock page", desc)
+        self.assertNotIn("item's.", desc)
+
+    def test_guide_article_dates_come_from_the_first_publish(self):
+        where = site.build_where_to_buy()[1]
+        vs = site.build_vs()[1]
+        for doc in (where, vs):
+            art = next(json.loads(html.unescape(b.replace("<\\/", "</")))
+                       for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', doc)
+                       if '"Article"' in b)
+            self.assertEqual(art["datePublished"], "2026-10-29")
+            self.assertEqual(art["dateModified"], "2026-10-29")
+            self.assertNotIn(site.stock["run_finished"][:10], art["dateModified"])
+        dot = site.build_group(next(g for g in site.GROUPS if g["slug"] == "archer-and-olive-dot-grid-journal"), {})[1]
+        self.assertIn('href="/hobonichi-restock-tracker/">Hobonichi tracker</a>', dot)
+
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
         self.assertEqual(len(mods), 67)  # + /sold-out-everywhere/
@@ -117,11 +142,17 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_shop_sheet_keeps_its_pixels_and_is_smaller(self):
         from PIL import Image
-        path = ROOT / "site/assets/shop/soft-days-narrow-inserts.png"
-        with Image.open(path) as im:
-            self.assertEqual(im.size, (2700, 2025))
-        self.assertLess(path.stat().st_size, 400_000)
-        self.assertGreater(path.stat().st_size, 100_000)
+        small = ROOT / "site/assets/shop/soft-days-narrow-inserts-900.webp"
+        large = ROOT / "site/assets/shop/soft-days-narrow-inserts-1800.webp"
+        with Image.open(small) as im:
+            self.assertEqual(im.size, (900, 675))
+        with Image.open(large) as im:
+            self.assertEqual(im.size, (1800, 1350))
+        self.assertLess(small.stat().st_size, 200_000)
+        self.assertFalse((ROOT / "site/assets/shop/soft-days-narrow-inserts.png").exists())
+        shop = site.build_shop()[1]
+        self.assertIn("soft-days-narrow-inserts-900.webp 900w", shop)
+        self.assertIn("soft-days-narrow-inserts-1800.webp 1800w", shop)
 
 
 class NotFoundStatusTests(unittest.TestCase):
