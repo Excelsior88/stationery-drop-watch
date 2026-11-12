@@ -1565,14 +1565,8 @@ def build_group(g, oe):
     others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and (g_sec(x) != "hobonichi") == ext)
     if ext:
         others += f'<li><a href="#tracker">Every {E(SECTIONS[g_sec(g)]["one"])} listing we track (this page)</a></li>'
-        if per_shop:
-            shop_ids = sorted({l["store_id"] for l in ls}, key=lambda sid: rank[sid])
-            shop_nav = "".join(f'<a class="chip" href="#shop-{E(sid)}">{E(next(x["name"] for x in stores["stores"] if x["id"] == sid))}</a>' for sid in shop_ids)
-            shop_nav = f'<nav class="chips" aria-label="Shops on this page"><span class="muted small">Jump to a shop:</span> {shop_nav}</nav>'
-        else:
-            # The product groups are collapsed and searchable, so there is no jump row.
-            # Each group still has its id, and a link to that id opens the group.
-            shop_nav = ""
+        # Shop headings keep their anchors. The jump row repeated them.
+        shop_nav = ""
         dg_tracker = ""  # per-product tables are the one view; the old grouped table repeated every listing
     else:
         others += f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>'

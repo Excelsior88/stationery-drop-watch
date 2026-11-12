@@ -50,7 +50,7 @@ class PageFilterMarkupTests(unittest.TestCase):
 
     def test_jump_row_is_gone_and_design_pages_fold(self):
         for name, doc in self.docs:
-            self.assertNotIn(">Jump to:</span>", doc, name)
+            self.assertNotIn("Jump to", doc, name)
             self.assertNotIn('aria-label="Products on this page"', doc, name)
         for g in site.GROUPS:
             name = g["slug"] + "/"
@@ -67,6 +67,9 @@ class PageFilterMarkupTests(unittest.TestCase):
             # The old jump targets stay on the groups, so a #link still has somewhere to land.
             for cid in re.findall(r'<section class="group-sec" id="([^"]+)"', doc):
                 self.assertTrue(cid, name)
+            if g.get("per_shop"):
+                heads = re.findall(r'<h2 class="shop-head" id="(shop-[^"]+)"', doc)
+                self.assertGreaterEqual(len(heads), 2, name)
 
     def test_signup_is_one_list_and_shop_counts_agree(self):
         hobo = site.build_hobo_tracker()
