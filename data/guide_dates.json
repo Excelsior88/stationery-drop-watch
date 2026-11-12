@@ -1,18 +1,18 @@
 {
  "build_dotgrid_guide": {
-  "date": "2026-11-09",
-  "hash": "fdbc83bd7718606d"
+  "date": "2026-11-11",
+  "hash": "bc9807611c85f920"
  },
  "build_hobonichi": {
-  "date": "2026-11-08",
-  "hash": "f41338323bcdcb99"
+  "date": "2026-11-11",
+  "hash": "0bbe56b49e7d6f9d"
  },
  "build_tn_sizes": {
   "date": "2026-11-05",
   "hash": "d4182fcf5e4434e1"
  },
  "build_vs": {
-  "date": "2026-11-09",
-  "hash": "5f3fe97f35142a0d"
+  "date": "2026-11-11",
+  "hash": "bde0d04a112447b7"
  }
 }
