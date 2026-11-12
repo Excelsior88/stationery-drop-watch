@@ -747,5 +747,14 @@
   "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-colors-midnight-blue-english-january-start",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-12T21:49:43+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "Weeks Mega · Colors: Poppy Red",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-poppy-red-1",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
