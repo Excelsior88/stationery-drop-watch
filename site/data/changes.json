@@ -738,5 +738,14 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-12T21:17:54+00:00",
+  "store_id": "penboutique",
+  "store": "Pen Boutique",
+  "label": "Weeks · Colors: Midnight Blue",
+  "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-colors-midnight-blue-english-january-start",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
