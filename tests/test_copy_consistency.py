@@ -164,5 +164,21 @@ class HeroAndScopeTests(unittest.TestCase):
         self.assertNotIn("limited edition tracker", plain(guide))
 
 
+class FollowIconTests(unittest.TestCase):
+    def test_follow_page_uses_the_real_marks_in_one_color(self):
+        doc = site.build_follow()[1]
+        self.assertEqual(doc.count("<svg"), len(site.SOCIALS))
+        self.assertEqual(doc.count('aria-hidden="true" focusable="false"'), len(site.SOCIALS))
+        self.assertEqual(doc.count('fill="currentColor"'), len(site.SOCIALS))
+        self.assertNotIn(">IG<", doc)
+        self.assertNotIn(">r/<", doc)
+        for name in site.SOCIAL_GLYPHS:
+            self.assertIn(f"<h2 class=\"h3\">{name}</h2>", doc)
+            self.assertIn(f"Follow on {name}", doc)
+            self.assertIn(site.SOCIAL_GLYPHS[name][:24], doc)
+        for brand in ("#000000", "#1877F2", "#E4405F", "#FF4500", "#BD081C"):
+            self.assertNotIn(brand, doc)
+
+
 if __name__ == "__main__":
     unittest.main()
