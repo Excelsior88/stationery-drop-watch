@@ -141,10 +141,15 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertNotIn("test-printed", self.shop.lower())
         self.assertNotIn("Tested in a Hobonichi Weeks Mega", self.shop)
         self.assertNotIn("Tested in a Hobonichi Weeks Mega", self.home)
-        self.assertIn("Level Up! My 2027 Planner", self.home)
-        self.assertIn("Paperback", self.home)
-        self.assertIn("Front cover of the Level Up! 2027 printable planner", self.home)
-        self.assertIn("hub-own-row cols-10", self.home)
+        # The homepage does not show our own product row. Both editions stay on /shop.
+        self.assertNotIn('id="our-planners"', self.home)
+        self.assertNotIn("hub-own", self.home)
+        self.assertIn('class="nav-shop"', self.home)
+        self.assertIn(">Shop</a>", self.home)
+        self.assertIn('href="/shop/">Our planners and journals</a>', self.home)
+        self.assertIn("Level Up! My 2027 Planner", self.shop)
+        self.assertIn("Paperback", card(self.shop, "Level Up! My 2027 Planner"))
+        self.assertIn("Front cover of the Level Up! 2027 printable planner", self.shop)
         self.assertIn("20% off launch sale Oct 31 to Nov 30", card(self.shop, "Level Up! My 2027 Kids Planner"))
         self.assertEqual(site.shop_lastmod(), "2026-11-10")
         grid = card(self.shop, "Lines for the Grid Page")
@@ -157,7 +162,8 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertIn("not a photograph of a printed copy", grid.lower())
         self.assertNotIn("bullet journal", grid.lower())
         self.assertNotIn("launch20", grid.lower())
-        self.assertIn("Lines for the Grid Page", self.home)
+        self.assertIn("Lines for the Grid Page", self.shop)
+        self.assertNotIn("Lines for the Grid Page", self.home)
 
 
 if __name__ == "__main__":

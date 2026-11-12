@@ -1061,7 +1061,8 @@ def trust_strip(prods):
 {unk}'''
 
 def build_index():
-    """Hub homepage: hero and signup, the four trackers, recent restocks from every tracker, guides, our own products, FAQ."""
+    """Hub homepage: hero and signup, the four trackers, recent restocks from every tracker, guides, FAQ.
+    Our own products are not on this page. The header and footer Shop links go to /shop."""
     prods = stock["products"]
     s = {k: sum(p["status"] == k for p in prods) for k in STATUS}
     keys = ["hobonichi", *LIVE]
@@ -1102,20 +1103,6 @@ def build_index():
   A restock shows up here the moment a sold-out item flips back to in stock or preorder between two checks.</p>
   <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet.</p></div>"""
     guides = "".join(f'<li><a href="{h}">{E(t)}</a>{f"<p class=\"muted small\">{E(GUIDE_BLURBS[h])}</p>" if h in GUIDE_BLURBS else ""}</li>' for h, t in GUIDES)
-    books = {b["id"]: b for b in picks["books"]}
-    own = []
-    for a in SHOP_ORDER:
-        b = books[a]
-        if not b.get("cover"):
-            continue
-        own.append((b["cover"], b["cover_alt"], SHOP_LABELS[a], b["format"], "",
-                    b.get("cover_w", 200), b.get("cover_h", 300)))
-    own += [(e["img"], e["alt"], e["title"], e.get("hub_sub", "Printable PDF"), e.get("img_class", ""), e.get("img_w", 200), e.get("img_h", 300))
-            for e in etsy_listings()]
-    row_cls = "hub-own-row" + {8: " cols-8", 9: " cols-9", 10: " cols-10"}.get(len(own), "")
-    own_html = "".join(
-        f'<li><a href="shop/"><img{f" class=\"{E(cls)}\"" if cls else ""} src="{E(img)}" alt="{E(alt)}" loading="lazy" decoding="async" width="{w}" height="{h}"><span class="hub-own-t">{E(t)}</span><span class="muted small">{E(sub)}</span></a></li>'
-        for img, alt, t, sub, cls, w, h in own)
     faq_html, _ = faq_block(only=HUB_FAQ, sid="good-to-know")  # not "faq": app.js forwards /#faq to the Hobonichi tracker (old homepage links)
     body = f"""
 <section class="hero">
@@ -1146,12 +1133,6 @@ def build_index():
     <p class="small"><a href="guides/">All guides →</a></p>
   </section>
 </div>
-
-<section class="hub-own" id="our-planners" aria-labelledby="own-h">
-  <div class="section-head"><h2 id="own-h">{SHOP_NAME}</h2><a class="btn-ghost" href="shop/">See them all →</a></div>
-  <p class="muted small">{E(shop_hub_line())}</p>
-  <ul class="{row_cls}">{own_html}</ul>
-</section>
 
 {faq_html}
 """
@@ -2919,11 +2900,6 @@ def etsy_listings():
 def shop_inserts_public():
     """True when this build shows a printable insert (live listing, or an explicit preview)."""
     return any(e.get("kind") == "insert" for e in etsy_listings())
-
-def shop_hub_line():
-    if shop_inserts_public():
-        return "Planners, journals, and printable inserts we make: printed books on Amazon and printable PDFs on Etsy."
-    return "2027 planners and journals we make: printed books on Amazon and printable PDFs on Etsy."
 
 def shop_cta_line():
     if shop_inserts_public():
