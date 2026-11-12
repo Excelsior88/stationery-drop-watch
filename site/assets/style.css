@@ -483,13 +483,12 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 @media (max-width:700px){
   .hero .eyebrow,.hero .lede{display:none}
   .hero{padding-top:8px;padding-bottom:8px}
-  .trust-with-clip{align-items:flex-start;gap:10px}
+  .trust-with-clip{align-items:center;gap:12px}
   .clip{width:84px}
-  .trust{display:block;margin:0}
-  .trust li{display:inline;background:none;border:0;padding:0;border-radius:0;box-shadow:none}
-  .trust li+li::before{content:" · ";color:var(--ink-2)}
-  .trust b,.trust .trust-time,.trust .trust-k{display:inline;font:650 .92rem/1.45 var(--sans);letter-spacing:0;text-transform:none;color:var(--ink)}
-  .trust span{display:inline;font-size:.92rem}
+  .trust{display:flex;flex-direction:column;gap:6px;margin:0}
+  .trust li{display:block;background:none;border:0;padding:0;border-radius:0;box-shadow:none}
+  .trust b,.trust .trust-time,.trust .trust-k,.trust span{display:inline;font:600 .92rem/1.35 var(--sans);letter-spacing:0;text-transform:none;color:var(--ink)}
+  .trust .trust-cap{display:none}
   .hub-grid{grid-template-columns:1fr 1fr;gap:10px}
   .hub-art,.hub-card p:not(.hub-count){display:none}
   .hub-card a{padding:12px}

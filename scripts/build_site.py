@@ -1062,10 +1062,10 @@ def trust_strip(prods):
     checked = len(prods) - unknown
     unk = f'<p class="muted small trust-unk">{unknown} couldn\'t be checked this run.</p>' if unknown else ""
     facts = f'''<ul class="trust" aria-label="Inventory monitoring">
-  <li><b>{N_STORES}</b><span>shops checked</span></li>
-  <li><b>{E(CHECK_FREQ)}</b><span>check interval</span></li>
-  <li><span class="trust-k">Last check</span><span class="trust-time">{time_tag(stock["run_finished"])}</span></li>
-  <li><b>{checked} of {len(prods)}</b><span>listings checked successfully</span></li>
+  <li><b>{N_STORES}</b> <span>shops checked</span></li>
+  <li><b>{E(CHECK_FREQ)}</b> <span class="trust-cap">check interval</span></li>
+  <li><span class="trust-k">Last check</span> <span class="trust-time">{time_tag(stock["run_finished"])}</span></li>
+  <li><b>{checked} of {len(prods)}</b> <span>listings checked successfully</span></li>
 </ul>
 {unk}'''
     # Clip sits beside the facts. The file is a scaled copy of the approved art, with no caption.
