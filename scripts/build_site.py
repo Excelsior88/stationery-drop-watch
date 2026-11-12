@@ -1053,7 +1053,7 @@ HUB_TRACKERS = {  # one line per tracker card on the hub homepage
     "midori": ("MIDORI MD", "MD Notebook diaries and MIDORI MD seasonal releases."),
 }
 HUB_FAQ = ("How often do you check the shops?", "What do you track?",
-           'What does "Couldn\'t check" mean?', 'What does "Not yet on sale" mean?',
+           'What do "Not yet on sale" and "Couldn\'t check" mean?',
            "How do restock alerts work?", "Which shops do you check?", "Do you sell planners?")
 
 def hub_art(kind):
@@ -1912,10 +1912,10 @@ FAQ = [
      "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
      "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 and A5 covers. {tracks} We don't track pens."),
-    ("What does \"Couldn't check\" mean?",
-     "Our check of that listing failed, for example because the shop's site didn't respond. We show that instead of guessing whether it's in stock."),
-    ("What does \"Not yet on sale\" mean?",
-     "The shop has a preview page up for the product but isn't taking orders yet. That's different from sold out."),
+    ('What do "Not yet on sale" and "Couldn\'t check" mean?',
+     '"Not yet on sale" means the shop has a preview page up but isn\'t taking orders yet. That\'s different from sold out. '
+     '"Couldn\'t check" means our check failed, for example because the shop\'s site didn\'t respond, so we don\'t know. '
+     "We show that instead of guessing whether it's in stock."),
     ("Do you sell planners?",
      "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon and as printable PDFs on Etsy. "
      "The stationery we track is sold by the shops themselves; we just link you to them. "

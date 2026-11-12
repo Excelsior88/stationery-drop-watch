@@ -290,6 +290,21 @@ class PageFilterMarkupTests(unittest.TestCase):
         home_q = re.findall(r'<section class="card faq" id="good-to-know">.*?</section>', home, re.S)[0]
         home_names = re.findall(r"<summary>(.*?)</summary>", home_q)
         self.assertEqual([html.unescape(q) for q in home_names], list(site.HUB_FAQ))
+        self.assertEqual(len(home_names), 6)
+        self.assertNotIn('What does "Couldn&#x27;t check" mean?', home_q)
+        self.assertNotIn('What does "Not yet on sale" mean?', home_q)
+        status_q = site.TRACKER_FAQ[1][0]
+        home_answer = re.search(
+            rf"<summary>{re.escape(site.E(status_q))}</summary><p>(.*?)</p>", home).group(1)
+        self.assertIn("That's different from sold out.", html.unescape(home_answer))
+        self.assertIn("shop's site didn't respond", html.unescape(home_answer))
+        self.assertIn("instead of guessing", html.unescape(home_answer))
+        self.assertIn(site.TRACKER_FAQ[1][1].split(".")[0], html.unescape(home_answer))
+        home_start = home.rfind("<script", 0, home.index('"@type": "FAQPage"'))
+        home_end = home.index("</script>", home_start)
+        home_schema = json.loads(html.unescape(home[home_start:home_end].split(">", 1)[1].replace("<\\/", "</")))
+        self.assertEqual([q["name"] for q in home_schema["mainEntity"]], list(site.HUB_FAQ))
+        self.assertEqual(home_schema["mainEntity"][2]["acceptedAnswer"]["text"], html.unescape(home_answer))
         self.assertNotIn('faq-item" open', home_q)
         self.assertIn('href="/#good-to-know">FAQ</a>', home)
         faq_page = site.redirect_page("#good-to-know")
