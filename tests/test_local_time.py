@@ -44,7 +44,7 @@ class TimeTagTests(unittest.TestCase):
         self.assertIn("ET", html.unescape(doc))
         start = doc.find("FAQPage")
         schema = html.unescape(doc[start:start + 2500])
-        self.assertIn("PM ET", schema)
+        self.assertRegex(schema, r"\d{1,2}:\d{2} (AM|PM) ET")
         self.assertNotIn("time-instant", schema)
 
 

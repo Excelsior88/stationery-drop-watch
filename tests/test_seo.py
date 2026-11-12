@@ -35,7 +35,7 @@ def pages():
     oe = site.amazon_main(site.stock["products"])
     found.extend(site.build_group(g, oe) for g in site.GROUPS)
     found.extend(site.build_design(d, oe) for d in site.DESIGNS)
-    for build in (site.build_where_to_buy, site.build_vs, site.build_dotgrid_guide,
+    for build in (site.build_where_to_buy, site.build_vs, site.build_january_april, site.build_dotgrid_guide,
                   site.build_tn_sizes, site.build_guides_index, site.build_shop, site.build_follow,
                   site.build_contact):
         found.append(build())
@@ -56,7 +56,7 @@ class SeoHeadTests(unittest.TestCase):
             self.assertNotIn("hourly", title.lower(), path)
             titles.append(title)
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 67)  # 66 sitemap URLs plus the noindex 404 page
+        self.assertEqual(len(titles), 68)  # sitemap URLs plus the noindex 404, minus /sold-out-everywhere/
 
     def test_descriptions_match_social_tags_and_stay_under_160(self):
         descs = []
@@ -79,7 +79,7 @@ class SeoHeadTests(unittest.TestCase):
             self.assertIsNotNone(bar, path)
             current = re.findall(r'href="([^"]+)"[^>]*aria-current=page', bar.group(1))
             self.assertLessEqual(len(current), 1, (path, current))
-            if path == "hobonichi-techo-vs-cousin-vs-weeks/":
+            if path in ("hobonichi-techo-vs-cousin-vs-weeks/", "hobonichi-january-start-vs-april-start/"):
                 self.assertEqual(current, ["/guides/"])
             elif path.startswith(("hobonichi-techo-", "hobonichi-weeks-")):
                 self.assertEqual(current, ["/" + site.HOBO_TRACKER])
@@ -132,7 +132,7 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 67)  # + /sold-out-everywhere/
+        self.assertEqual(len(mods), 68)  # + /sold-out-everywhere/ and the January vs April guide
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):
@@ -153,6 +153,45 @@ class SeoHeadTests(unittest.TestCase):
         shop = site.build_shop()[1]
         self.assertIn("soft-days-narrow-inserts-900.webp 900w", shop)
         self.assertIn("soft-days-narrow-inserts-1800.webp 1800w", shop)
+
+    def test_january_april_guide_publishes_the_approved_wording(self):
+        path, doc = site.build_january_april()
+        self.assertEqual(path, "hobonichi-january-start-vs-april-start/")
+        title = html.unescape(TITLE_RE.search(doc).group(1))
+        desc = html.unescape(DESC_RE.search(doc).group(1))
+        self.assertLessEqual(len(title), 60)
+        self.assertIn("January-start vs April-start", title)
+        self.assertLessEqual(len(desc), 155)
+        self.assertGreaterEqual(len(desc), 140)
+        self.assertTrue(desc.startswith("Hobonichi's April-start (Spring) techo"))
+        self.assertIn('<link rel="canonical" href="https://stationerydropwatch.com/hobonichi-january-start-vs-april-start/">', doc)
+        self.assertIn('property="og:title"', doc)
+        self.assertIn('name="twitter:image:alt"', doc)
+        self.assertIn("<h1>Hobonichi Techo January-start vs April-start</h1>", doc)
+        self.assertIn("goes on sale every year on February 1st", doc)
+        self.assertIn("9:00 PM Eastern on January 31", doc)
+        self.assertIn("it may be restocked for the April-start release.", doc)
+        self.assertIn("<h2>Questions</h2>", doc)
+        self.assertNotIn("<h2>FAQ</h2>", doc)
+        self.assertNotIn("Jump to", doc)
+        self.assertNotIn("Our planners and journals", doc)
+        self.assertNotIn('<details class="faq-item" open', doc)
+        questions = re.findall(r'<details class="faq-item"><summary>(.*?)</summary><p>(.*?)</p></details>', doc)
+        self.assertEqual(len(questions), 3)
+        blocks = [json.loads(html.unescape(b.replace("<\\/", "</")))
+                  for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', doc)]
+        art = next(b for b in blocks if b.get("@type") == "Article")
+        faq = next(b for b in blocks if b.get("@type") == "FAQPage")
+        self.assertEqual(art["datePublished"], "2026-11-12")
+        self.assertEqual(art["dateModified"], "2026-11-12")
+        visible = [(html.unescape(q), html.unescape(a)) for q, a in questions]
+        schema = [(q["name"], q["acceptedAnswer"]["text"]) for q in faq["mainEntity"]]
+        self.assertEqual(visible, schema)
+        self.assertIn('href="/hobonichi-restock-tracker/">Hobonichi tracker</a>', doc)
+        self.assertIn("https://stationerydropwatch.com/hobonichi-january-start-vs-april-start/", site.build_sitemap())
+        self.assertIn('href="/hobonichi-january-start-vs-april-start/"', site.build_index())
+        self.assertIn('href="/hobonichi-january-start-vs-april-start/"', site.build_guides_index()[1])
+        self.assertIn('href="/hobonichi-january-start-vs-april-start/"', site.build_hobo_tracker())
 
 
 class NotFoundStatusTests(unittest.TestCase):
