@@ -32,7 +32,7 @@ class PageFilterMarkupTests(unittest.TestCase):
     def test_every_multi_shop_list_has_the_same_filter(self):
         for name, doc in self.docs:
             if name == "hobonichi-restock-tracker/":
-                for needle in ('id="f-product"', 'id="f-type"', 'id="f-store"', 'id="f-status"', 'id="f-q"', 'id="f-reset"'):
+                for needle in ('id="f-product"', 'id="f-type"', 'id="f-store"', 'id="f-status"', 'id="f-q"', 'id="f-reset"', 'aria-label="Filters"'):
                     self.assertIn(needle, doc, name)
                 self.assertIn("<noscript>", doc, name)
                 continue
@@ -40,6 +40,7 @@ class PageFilterMarkupTests(unittest.TestCase):
             if rows < 2:
                 continue
             self.assertIn('class="filters page-filter card-filter"', doc, name)
+            self.assertIn('aria-label="Filters"', doc, name)
             self.assertIn('data-filter="store"', doc, name)
             self.assertIn('data-filter="status"', doc, name)
             self.assertIn('data-filter="q"', doc, name)

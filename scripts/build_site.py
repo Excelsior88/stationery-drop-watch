@@ -774,7 +774,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
     noscript_rows = tracker_static(rows)
     return f"""<section class="card" id="tracker">
       <div class="section-head"><h2>Every listing we track</h2><p class="muted small"><span id="count"></span> · {checked_line(prods)}</p></div>
-      <form class="filters" id="filters" role="search" onsubmit="return false">
+      <form class="filters" id="filters" role="search" aria-label="Filters" onsubmit="return false">
         <details class="filter-more" open>
           <summary>Filters</summary>
           <div class="filter-fields">
@@ -1411,7 +1411,7 @@ def list_filter(ls, hint):
                       + "".join(f'<option value="{E(v)}">{E(v)}</option>' for v in langs) + '</select></label>')
         if any(not listing_language(l) for l in ls):
             lang_note = '<p class="muted small filter-note">Language is taken from the shop\'s own title. Listings that don\'t name one stay under All languages.</p>'
-    return f"""<form class="filters page-filter card-filter" id="filters" role="search" onsubmit="return false">
+    return f"""<form class="filters page-filter card-filter" id="filters" role="search" aria-label="Filters" onsubmit="return false">
       <details class="filter-more" open>
         <summary>Filters</summary>
         <div class="filter-fields">
