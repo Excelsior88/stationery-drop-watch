@@ -1062,10 +1062,12 @@ def trust_strip(prods):
     checked = len(prods) - unknown
     missed = (f' <span class="trust-miss">{unknown} couldn\'t be checked this run.</span>'
               if unknown else "")
+    # One pattern on every card: the figure first, the short label after it in the text.
+    # "Every 30 min" is the same half-hour check; other pages still say CHECK_FREQ.
     facts = f'''<ul class="trust" aria-label="Inventory monitoring">
   <li><b>{N_STORES}</b> <span>shops checked</span></li>
-  <li><b>{E(CHECK_FREQ)}</b> <span class="trust-cap">check interval</span></li>
-  <li><span class="trust-k">Last check</span> <span class="trust-time">{time_tag(stock["run_finished"])}</span></li>
+  <li><b>Every 30 min</b> <span>check interval</span></li>
+  <li><b class="trust-when">{time_tag(stock["run_finished"])}</b> <span>last check</span></li>
   <li><b>{checked} of {len(prods)}</b> <span>listings checked successfully</span>{missed}</li>
 </ul>'''
     # Clip sits beside the cards, about their height on a wide screen. The file is a scaled copy of the approved art, with no caption.
