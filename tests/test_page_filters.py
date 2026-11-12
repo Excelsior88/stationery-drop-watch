@@ -47,6 +47,24 @@ class PageFilterMarkupTests(unittest.TestCase):
             self.assertIn("Nothing on this page matches those filters.", doc, name)
             self.assertGreaterEqual(rows, 2, name)
 
+    def test_product_groups_start_collapsed(self):
+        for name, doc in self.docs:
+            if name == "hobonichi-restock-tracker/":
+                blocks = re.findall(r"<details class=\"fam-block\"[^>]*>", doc)
+                self.assertGreaterEqual(len(blocks), 2, name)
+                self.assertTrue(all(" open" not in tag for tag in blocks), blocks[:2])
+                self.assertIn('class="fam-name"', doc)
+                self.assertIn("listings in stock", doc)
+                continue
+            sections = re.findall(r'<section class="group-sec"', doc)
+            folds = re.findall(r'<details class="card group-fold">', doc)
+            if sections:
+                self.assertEqual(len(folds), len(sections), name)
+                self.assertNotIn('group-fold" open', doc, name)
+                self.assertNotIn('<section class="card group-sec"', doc, name)
+            else:
+                self.assertEqual(folds, [], name)
+
     def test_angela_line_is_unchanged(self):
         thanks = "Thank you to our follower Angela for suggesting we track these restocks."
         hits = [name for name, doc in self.docs if thanks in doc]
@@ -115,6 +133,17 @@ class PageFilterBrowserTests(unittest.TestCase):
 <input id="f-q" type="search"><button type="button" id="f-reset">Reset</button></form>
 <p id="count"></p><table><tbody id="rows"></tbody></table><button id="more" hidden></button>
 <script id="stock-data" type="application/json">[{"g":"sage","p":"Sage","gn":"Sage","c":"sage","t":"Cover","s":"Atlas","sid":"atlas","st":"in_stock","u":"https://example.test/sage","title":"Sage dotted","az":"","azl":""},{"g":"black","p":"Black","gn":"Black","c":"black","t":"Cover","s":"Yoseka","sid":"yoseka","st":"sold_out","u":"https://example.test/black","title":"Black","az":"","azl":""}]</script>
+<script src="/assets/local-time.js"></script><script src="/assets/app.js"></script>
+</body></html>""")
+        (out / "fam.html").write_text("""<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body>
+<form onsubmit="return false">
+<select id="f-product"><option value="">All products</option></select>
+<select id="f-type"><option value="">All types</option><option value="Book">Book</option></select>
+<select id="f-store"><option value="">All stores</option></select>
+<select id="f-status"><option value="">Any status</option><option value="in_stock">In stock</option></select>
+<input id="f-q" type="search"><button type="button" id="f-reset">Reset</button></form>
+<p id="count"></p><div id="rows"></div><button id="more" hidden></button>
+<script id="stock-data" type="application/json">[{"g":"a6-en","p":"English","gn":"English book","c":"original-a6-en","t":"Book","s":"Atlas","sid":"atlas","st":"in_stock","u":"https://example.test/a","title":"","az":"","azl":"","fam":"original-a6","famn":"Original A6","fo":0},{"g":"weeks","p":"Weeks","gn":"Weeks book","c":"weeks-en","t":"Book","s":"Yoseka","sid":"yoseka","st":"sold_out","u":"https://example.test/w","title":"","az":"","azl":"","fam":"weeks","famn":"Weeks","fo":1}]</script>
 <script src="/assets/local-time.js"></script><script src="/assets/app.js"></script>
 </body></html>""")
         env = os.environ.copy()

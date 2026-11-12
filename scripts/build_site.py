@@ -720,13 +720,14 @@ def compare_product(ls):
         items.append(
             f'<li><span class="compare-shop"><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region}{variant}{title}{row_az}</span>'
             f'<span class="badge {E(r["st"])}">{STATUS[r["st"]]}</span></li>')
-    return f'''<article class="compare">
+    anchor = f' id="{E(h["g"])}"' if re.fullmatch(r"[A-Za-z][\w-]*", h.get("g") or "") else ""
+    return f'''<article class="compare"{anchor}>
   <header class="compare-head"><h3>{name}</h3><p class="compare-tally">{E(shop_tally(ls))}</p><p class="sub">{" · ".join(b for b in bits if b)}</p>{az}</header>
   <ul class="compare-shops">{"".join(items)}</ul>
 </article>'''
 
 def tracker_static(rows):
-    """No-JS listing groups: the Hobonichi families the data already uses, each one collapsible."""
+    """No-JS listing groups. Families start closed; the summary is a real control, so they still open."""
     order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
     fam_order = [g["slug"] for g in GROUPS if g_sec(g) == "hobonichi"] + ["other"]
     by_fam = {}
@@ -744,7 +745,7 @@ def tracker_static(rows):
         name = groups[0][0].get("famn") or "Other"
         all_rows = [r for ls in groups for r in ls]
         body = "".join(compare_product(ls) for ls in groups)
-        parts.append(f'''<details class="fam-block" open>
+        parts.append(f'''<details class="fam-block" id="{E(fam)}">
   <summary><span class="fam-name">{E(name)}</span><span class="fam-meta">{E(in_stock_tally([r["st"] for r in all_rows]))}</span></summary>
   <div class="fam-products">{body}</div>
 </details>''')
@@ -1510,8 +1511,10 @@ def build_group(g, oe):
             feat = ' <span class="badge featured">Featured</span>' if not parts and g.get("featured") else ""
             parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a>{region_tag(sid)}</span>{feat}
   <span class="muted small">{E(count_line(sls).capitalize())}</span></h2>""")
-        parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
-  <div class="section-head"><{hx}>{E(name)}</{hx}><p class="muted small">{E(count_line(sl, g.get('unit', 'listings')).capitalize())} · {checked_line(sl)}</p></div>
+        meta = f"{E(count_line(sl, g.get('unit', 'listings')).capitalize())} · {checked_line(sl)}"
+        parts.append(f"""<details class="card group-fold">
+  <summary><{hx} class="fam-name">{E(name)}</{hx}><span class="fam-meta">{meta}</span></summary>
+  <section class="group-sec" id="{E(cid or 'other')}">
   {amz_btn}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
@@ -1519,7 +1522,7 @@ def build_group(g, oe):
   </table></div>
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}{dp_link}</p>
   {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
-</section>""")
+</section></details>""")
     unk = [l for l in ls if l["status"] == "unknown"]
     if len(unk) == len(ls):
         right_now = ("we couldn't reach the shop for this listing at the last check, so its status is unknown." if len(ls) == 1 else f"we couldn't check any of these {len(ls)} listings at the last check, so their status is unknown.")

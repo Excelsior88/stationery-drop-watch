@@ -69,6 +69,20 @@ async function run() {
     await page.click("#f-reset");
     await page.waitForFunction(() => !location.search);
     check("tracker reset clears the URL", (await page.evaluate(() => location.search)) === "", await page.evaluate(() => location.search));
+
+    await page.goto(base + "/fam.html", { waitUntil: "networkidle0" });
+    const closed = await page.$$eval("details.fam-block", (els) => els.map((d) => ({ name: d.querySelector(".fam-name").textContent, open: d.open, meta: d.querySelector(".fam-meta").textContent })));
+    check("families start collapsed with a stock count", closed.length === 2 && closed.every((d) => !d.open && /listings in stock/.test(d.meta)) && closed.some((d) => d.name === "Original A6"), JSON.stringify(closed));
+    await page.focus("#f-q");
+    await page.keyboard.type("Weeks");
+    await page.waitForFunction(() => document.querySelectorAll("details.fam-block").length === 1 && document.querySelector("details.fam-block").open);
+    check("search expands only the matching family", true, "");
+    await page.click("#f-reset");
+    await page.waitForFunction(() => document.querySelectorAll("details.fam-block").length === 2 && [...document.querySelectorAll("details.fam-block")].every((d) => !d.open));
+    check("reset collapses every family", true, "");
+    await page.goto(base + "/fam.html#original-a6-en", { waitUntil: "networkidle0" });
+    const linked = await page.$eval("#original-a6", (d) => d.open && d.contains(document.getElementById("original-a6-en")));
+    check("a link inside a family opens that family", linked, "");
   } finally {
     await browser.close();
   }
