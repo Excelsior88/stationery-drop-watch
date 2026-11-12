@@ -263,9 +263,6 @@ a.az:hover{color:var(--ink)}
 .site-nav{row-gap:4px}
 .nav-trackers,.nav-rest{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .nav-trackers{margin-right:10px}
-.nav-trackers a{font-weight:650;color:var(--ink)}
-a.nav-shop{border:1px solid var(--line);color:var(--ink-2)}
-a.nav-shop[aria-current]{border-color:transparent}
 @media (max-width:900px){.site-nav{justify-content:center}.nav-trackers,.nav-rest{justify-content:center}.nav-trackers{border-right:0;padding-right:0;margin-right:0;width:100%}}
 
 /* Sold out everywhere: one compact row per product, grouped under the shared status note */
