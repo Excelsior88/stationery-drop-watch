@@ -68,6 +68,47 @@ class PageFilterMarkupTests(unittest.TestCase):
             for cid in re.findall(r'<section class="group-sec" id="([^"]+)"', doc):
                 self.assertTrue(cid, name)
 
+    def test_signup_is_one_list_and_shop_counts_agree(self):
+        hobo = site.build_hobo_tracker()
+        self.assertIn("<h1>Hobonichi 2027 restock tracker</h1>", hobo)
+        self.assertNotIn("Know the moment your planner is back", hobo)
+        self.assertIn("Hobonichi 2027 restock tracker", hobo)
+        for name, doc in self.docs:
+            if "signup-strip" not in doc:
+                continue
+            label = re.search(r'class="strip-label"[^>]*>(.*?)</label>', doc)
+            self.assertIsNotNone(label, name)
+            self.assertEqual(label.group(1), "Get every restock alert by email", name)
+            self.assertNotIn("next time", label.group(1))
+            self.assertNotRegex(label.group(1), r"\bis back\b")
+            note = re.search(r'class="strip-note">(.*?)</p>', doc).group(1)
+            self.assertIn("multiple emails a day", note, name)
+            self.assertNotRegex(note, r"\d+ emails a day")
+        for g in site.GROUPS:
+            ls = site.group_listings(g)
+            tracked, checked, _ = site.shop_sets(ls)
+            name, doc = site.build_group(g, site.amazon_main(site.stock["products"]))
+            self.assertIn(f"{site.nshops(len(tracked))} ·", doc.split("<h1>")[0], name)
+            sentence = re.search(r"<strong>Right now:</strong>\s*(.*?)\s*<", doc, re.S).group(1)
+            if checked:
+                self.assertIn(f"of {site.nshops(len(checked))} checked", sentence, name)
+            if len(tracked) != len(checked):
+                missed = len(tracked) - len(checked)
+                self.assertIn(f"{missed} of {site.nshops(len(tracked))} couldn't be checked", sentence, name)
+        for d in site.DESIGNS:
+            ls = site.design_listings(d)
+            if not ls:
+                continue
+            tracked, checked, _ = site.shop_sets(ls)
+            doc = next(doc for n, doc in self.docs if n == site.design_fname(d))
+            self.assertIn(f"{site.nshops(len(tracked))} ·", doc.split("<h1>")[0], d["slug"])
+            sentence = re.search(r"<strong>Right now:</strong>\s*(.*?)\s*<", doc, re.S).group(1)
+            if checked:
+                self.assertIn(f"of {site.nshops(len(checked))} checked", sentence, d["slug"])
+            if len(tracked) != len(checked):
+                missed = len(tracked) - len(checked)
+                self.assertIn(f"{missed} of {site.nshops(len(tracked))} couldn't be checked", sentence, d["slug"])
+
     def test_product_groups_start_collapsed(self):
         for name, doc in self.docs:
             if name == "hobonichi-restock-tracker/":
