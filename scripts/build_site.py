@@ -207,7 +207,8 @@ DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
 TN_GUIDE_SLUG = "travelers-notebook-regular-vs-passport-vs-card-size"
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG + "/",
-             "travelers-notebook-regular-size": SECTIONS["travelers"]["slug"] + "/#tracker"}  # Regular colors merged into the Traveler's Company page
+             "travelers-notebook-regular-size": SECTIONS["travelers"]["slug"] + "/#tracker",  # Regular colors merged into the Traveler's Company page
+             "faq": "#good-to-know"}  # /faq -> the homepage FAQ ("Good to know")
 # Home is a hub; the Hobonichi tracker (the old homepage content) lives on its own page.
 HOBO_TRACKER = "hobonichi-restock-tracker/"
 # Header: one link per restock tracker, then the rest of the site. Wraps on narrow screens; nothing is hidden.
@@ -918,7 +919,7 @@ def build_index():
     own_html = "".join(
         f'<li><a href="shop/"><img{f" class=\"{E(cls)}\"" if cls else ""} src="{E(img)}" alt="{E(alt)}" loading="lazy" decoding="async" width="{w}" height="{h}"><span class="hub-own-t">{E(t)}</span><span class="muted small">{E(sub)}</span></a></li>'
         for img, alt, t, sub, cls, w, h in own)
-    faq_html, _ = faq_block(only=HUB_FAQ, sid="good-to-know")
+    faq_html, _ = faq_block(only=HUB_FAQ, sid="good-to-know")  # not "faq": app.js forwards /#faq to the Hobonichi tracker (old homepage links)
     unk = f' <span class="unk-note">{s["unknown"]} couldn\'t be checked this run.</span>' if s["unknown"] else ""
     body = f"""
 <section class="hero">
