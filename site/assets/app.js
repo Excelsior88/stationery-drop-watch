@@ -265,6 +265,16 @@
       timer = setTimeout(() => { filter(); write(push); }, wait);
     };
     read();
+    // Old dot-grid links pointed at a shop heading (#shop-archerolive). The list is grouped
+    // by product now, so that hash opens the store filter instead of a missing heading.
+    const shopHash = () => {
+      const m = /^shop-([A-Za-z0-9_-]+)$/.exec((location.hash || "").slice(1));
+      if (!m || !storeEl) return false;
+      if (![...storeEl.options].some(o => o.value === m[1])) return false;
+      storeEl.value = m[1];
+      return true;
+    };
+    const fromShop = shopHash();
     if (qEl) qEl.addEventListener("input", () => schedule(true, 250));
     if (storeEl) storeEl.addEventListener("input", () => schedule(true, 0));
     if (statusEl) statusEl.addEventListener("input", () => schedule(true, 0));
@@ -280,9 +290,16 @@
       skipHash = true;
       schedule(true, 0);
     });
-    window.addEventListener("hashchange", () => openGroupHash(true));
-    window.addEventListener("popstate", () => { read(); filter(); });
+    window.addEventListener("hashchange", () => {
+      if (shopHash()) { filter(); const first = wrap.querySelector("details.group-fold:not([hidden])"); if (first) first.scrollIntoView({ block: "start" }); return; }
+      openGroupHash(true);
+    });
+    window.addEventListener("popstate", () => { read(); shopHash(); filter(); });
     filter();
+    if (fromShop) {
+      const first = wrap.querySelector("details.group-fold:not([hidden])");
+      if (first) first.scrollIntoView({ block: "start" });
+    }
     const pid = new URLSearchParams(location.search).get("product");
     const target = pid && document.getElementById(pid);
     if (target) target.scrollIntoView();
