@@ -355,7 +355,15 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     trk = "".join(nav_a(h, t) for h, t in NAV_TRACKERS)
     # Trackers lead. Shop is a separate link at the end of the rest of the nav, not a fifth tracker.
     rest = "".join(nav_a(h, t) for h, t in NAV) + nav_a("shop/", "Shop", "nav-shop")
-    nav = f'<span class="nav-trackers">{trk}</span><span class="nav-rest">{rest}</span>'
+    nav_inner = f'<span class="nav-trackers">{trk}</span><span class="nav-rest">{rest}</span>'
+    # Desktop shows the bar. Narrow screens use a Menu disclosure, which opens without JavaScript.
+    nav = (f'<nav class="site-nav site-nav-bar" aria-label="Main">{nav_inner}</nav>'
+           f'<details class="nav-menu"><summary>Menu</summary>'
+           f'<nav class="site-nav site-nav-panel" aria-label="Main">{nav_inner}</nav></details>')
+    foot_items = list(NAV_TRACKERS) + [
+        ("guides/", "Guides"), ("hobonichi-2027.html", "2027 calendar"), ("shop/", "Shop"),
+        ("about.html", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy.html", "Privacy")]
+    foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
 <html lang="en"><head>
@@ -387,12 +395,9 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 </div></header>
 <main id="content" class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
-  <p><strong>Stationery Drop Watch</strong> checks {N_STORES} official and independent shops ({", ".join([f"{N_HOBO} for Hobonichi"] + [f"{N_SEC[k]} for {SECTIONS[k]['count']}" for k in LIVE])}) {CHECK_FREQ} for limited planner and journal restocks, so you don't have to keep refreshing tabs.</p>
-  <p class="foot-links">Hobonichi: <a href="{HOBO_TRACKER}">Hobonichi tracker</a> · {" · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if g_sec(g) == "hobonichi")}</p>
-  <p class="foot-links">Shop: <a href="shop/">{SHOP_NAME}</a> (printed on Amazon, printable PDFs on Etsy)</p>
-  <p class="foot-links">Follow: {" · ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(n)}</a>' for n, h, u, note, ic in SOCIALS)} · <a href="follow/">All socials</a></p>
-  <p class="foot-links">Guides: {" · ".join(f'<a href="{h}">{E(t)}</a>' for h, t in GUIDES)}</p>
-{"".join(f'  <p class="foot-links">{E(SECTIONS[k]["foot"])}: <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["link"])}</a> <span class="muted">({E(shop_names(k))})</span></p>' + chr(10) for k in LIVE)}  <p class="foot-links">Site: <a href="about.html">About</a> · <a href="about.html#sponsor">Featured shop slot</a> · <a href="privacy.html">Privacy</a> · <a href="contact/">Contact</a></p>
+  <p class="foot-brand"><strong>Stationery Drop Watch</strong> checks {N_STORES} shops {CHECK_FREQ}.</p>
+  <nav class="foot-nav" aria-label="Footer">{foot_nav}</nav>
+  <p class="foot-follow"><a href="follow/">Follow us</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
 </div></footer>
@@ -889,19 +894,23 @@ def restock_feed_item(c, extra=""):
   <span class="feed-body"><a href="{E(newest['url'])}" rel="noopener" target="_blank">{E(newest['label'])}</a> <span class="muted">at {E(newest['store'])}</span>
   {ex}<span class="feed-when">restocked {time_tag(newest['at'])}</span></span>{history}</li>"""
 
-def restock_feed(events, extra="", feed_id="restocks", limit=None):
-    """Grouped restocks. `limit` is how many listings to show, not how many flips. In stock now is CSS-only."""
+def restock_feed(events, extra="", feed_id="restocks", limit=None, fold=False):
+    """Grouped restocks. `limit` is how many listings to show, not how many flips. In stock now is CSS-only.
+    `fold` adds a disclosure for sold-out rows. It stays open without JavaScript. Narrow screens
+    start it closed from app.js and show in-stock rows first. Desktop leaves the time order alone."""
     groups = restock_groups(events)
     if limit is not None:
         groups = groups[:limit]
     fid = E(feed_id)
     items = "".join(restock_feed_item(g, extra) for g in groups)
+    fold_html = '<details class="feed-fold" open><summary>Show earlier restocks</summary></details>' if fold else ""
     return f"""<div class="restocks" id="{fid}">
   <div class="feed-controls" role="radiogroup" aria-label="Which restocks to show">
     <label><input type="radio" name="{fid}-view" class="restock-all" checked> All</label>
     <label><input type="radio" name="{fid}-view" class="restock-in"> In stock now</label>
   </div>
   <ol class="feed">{items}</ol>
+  {fold_html}
   <p class="feed-empty muted small">None of these are in stock now.</p>
 </div>"""
 
@@ -1052,13 +1061,18 @@ def trust_strip(prods):
     unknown = sum(p["status"] == "unknown" for p in prods)
     checked = len(prods) - unknown
     unk = f'<p class="muted small trust-unk">{unknown} couldn\'t be checked this run.</p>' if unknown else ""
-    return f'''<ul class="trust" aria-label="Inventory monitoring">
+    facts = f'''<ul class="trust" aria-label="Inventory monitoring">
   <li><b>{N_STORES}</b><span>shops checked</span></li>
   <li><b>{E(CHECK_FREQ)}</b><span>check interval</span></li>
   <li><span class="trust-k">Last check</span><span class="trust-time">{time_tag(stock["run_finished"])}</span></li>
   <li><b>{checked} of {len(prods)}</b><span>listings checked successfully</span></li>
 </ul>
 {unk}'''
+    # Clip sits beside the facts. The file is a scaled copy of the approved art, with no caption.
+    return f'''<div class="trust-with-clip">
+  <div class="trust-copy">{facts}</div>
+  <img class="clip" src="assets/brand/clip.webp" width="360" height="539" alt="Clip, the Stationery Drop Watch paper clip, checking stock" loading="lazy" decoding="async">
+</div>'''
 
 def build_index():
     """Hub homepage: hero and signup, the four trackers, recent restocks from every tracker, guides, FAQ.
@@ -1095,7 +1109,7 @@ def build_index():
         sec = sec_of_url[c["url"]]
         return f'<a class="hub-tag" href="{href[sec]}">{E(short[sec])}</a>\n  '
     if recent:
-        feed_html = restock_feed(recent, hub_tag, feed_id="hub-restocks", limit=12)
+        feed_html = restock_feed(recent, hub_tag, feed_id="hub-restocks", limit=12, fold=True)
     else:
         start = tracking_start(prods)
         lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."

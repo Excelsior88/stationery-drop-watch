@@ -149,7 +149,7 @@ class HeroAndScopeTests(unittest.TestCase):
         self.assertIn("Olive", text)
         self.assertIn("For refills, check the shops directly.", text)
         self.assertIn("Every Traveler's Notebook regular-color and limited-edition listing we track", text)
-        self.assertIn("Regular colors and limited editions", text)  # footer link
+        self.assertIn('href="/travelers-company-limited-edition/">Traveler\'s Company</a>', text)  # compact footer link
         home = plain(site.build_index())
         self.assertIn("Traveler's Notebook regular colors and limited editions", home)
         self.assertNotIn("across 13 shops", doc)
