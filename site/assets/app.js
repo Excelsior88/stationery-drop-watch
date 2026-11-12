@@ -20,10 +20,12 @@
   if (location.hash === "#sold-out-everywhere" && here !== "/sold-out-everywhere/" && here !== "/sold-out-everywhere/index.html") {
     location.replace("/sold-out-everywhere/" + location.search);
   } else if (here === "/" || here === "/index.html") {
-    const moved = { tracker: "tracker", listings: "tracker", "by-product": "by-product", faq: "faq", rows: "tracker" };
+    const moved = { tracker: "tracker", listings: "tracker", "by-product": "by-product", rows: "tracker" };
     const h = location.hash.slice(1), q = new URLSearchParams(location.search);
     const filt = ["product", "type", "store", "status", "q"].some(k => q.get(k));
-    if (moved[h] || filt) location.replace("/hobonichi-restock-tracker/" + location.search + (moved[h] ? "#" + moved[h] : (h ? "#" + h : "#tracker")));
+    // Old /#faq and /faq land on this page's Good to know, not the Hobonichi tracker.
+    if (h === "faq" && !filt) location.replace("/#good-to-know" + location.search);
+    else if (moved[h] || filt) location.replace("/hobonichi-restock-tracker/" + location.search + (moved[h] ? "#" + moved[h] : (h ? "#" + h : "#tracker")));
   }
   const LABEL = { in_stock: "In stock", preorder: "Preorder", coming_soon: "Not yet on sale", sold_out: "Sold out", unknown: "Couldn't check" };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));

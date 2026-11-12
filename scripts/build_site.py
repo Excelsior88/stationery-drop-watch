@@ -1008,7 +1008,7 @@ def build_hobo_tracker():
     rows = tracker_rows(prods, out_everywhere)
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a>: <span class="muted">{E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
 
-    faq_html, faq_ld = faq_block()
+    faq_html, faq_ld = tracker_good_to_know(HOBO_NOTE_Q, HOBO_NOTE)
     more = "".join(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a></li>' for g in GROUPS if g_sec(g) == "hobonichi")
     tracker_html = tracker_block(prods, rows, "Moomin, Cousin, Midnight Blue…", '<option value="__other">Other 2027 items</option>',
         f'<details class="muted small"><summary>Stores we list but don\'t check automatically</summary><ul>{not_checked}</ul></details>',
@@ -1052,8 +1052,9 @@ HUB_TRACKERS = {  # one line per tracker card on the hub homepage
     "travelers": ("Traveler's Company", "Regular size colors, plus limited editions: 2027 diary accessories, anniversary sets and shop exclusives."),
     "midori": ("MIDORI MD", "MD Notebook diaries and MIDORI MD seasonal releases."),
 }
-HUB_FAQ = ("What do you track?", "How often do you check the shops?", 'What does "Couldn\'t check" mean?',
-           'What does "Not yet on sale" mean?', "How do restock alerts work?")
+HUB_FAQ = ("How often do you check the shops?", "What do you track?",
+           'What does "Couldn\'t check" mean?', 'What does "Not yet on sale" mean?',
+           "How do restock alerts work?", "Which shops do you check?", "Do you sell planners?")
 
 def hub_art(kind):
     """Small inline drawing in the existing palette. Not a retailer or manufacturer photo."""
@@ -1133,7 +1134,7 @@ def build_index():
   A restock shows up here the moment a sold-out item flips back to in stock or preorder between two checks.</p>
   <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet.</p></div>"""
     guides = "".join(f'<li><a href="{h}">{E(t)}</a>{f"<p class=\"muted small\">{E(GUIDE_BLURBS[h])}</p>" if h in GUIDE_BLURBS else ""}</li>' for h, t in GUIDES)
-    faq_html, _ = faq_block(only=HUB_FAQ, sid="good-to-know")  # not "faq": app.js forwards /#faq to the Hobonichi tracker (old homepage links)
+    faq_html, faq_ld = faq_block(only=HUB_FAQ, sid="good-to-know")
     body = f"""
 <section class="hero">
   {eyebrow(tracker_count_label(), f"{N_STORES} shops", f"checked {CHECK_FREQ}")}
@@ -1174,7 +1175,7 @@ def build_index():
                              "sameAs": [s[2] for s in SOCIALS]}}
     return page("index.html", "Hobonichi, dot grid & MIDORI tracker",
                 f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, dot grid journals, Traveler's notebooks and MIDORI MD, plus free email alerts for every restock we track.",
-                body, ld=(site_ld,))
+                body, ld=(site_ld, faq_ld))
 
 def build_hobonichi():
     body = """
@@ -1334,6 +1335,7 @@ GROUPS = [
          match=is_dotgrid,
          eyebrow="Dot grid journaling", unit="listings",
          open_hint="Open a row to go straight to that exact size and color on the shop's site",
+         guide_q="Do sizes, papers and colors sell out on their own?",
          guide="Dot grid journals come in several sizes, papers and colors, and each one sells out on its own. "
                "We check the exact variant named in each row, so \"In stock\" means that size and color, not just some version of the journal. "
                "To compare paper weight, pages and size across the four brands, see <a href=\"best-dot-grid-journals/\">best dot grid journals compared</a>.",
@@ -1348,6 +1350,7 @@ GROUPS = [
     dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Notebook", section="travelers",
          h1="Traveler's Notebook restock tracker: regular colors and limited editions",
          match=lambda p: section_of(p) == "travelers", eyebrow="Traveler's Company", search_hint="Sticker set, Olive, 20th…",
+         guide_q="How do Traveler's Company allocations and Regular notebooks work?",
          guide="Traveler's Company makes its limited editions in small runs, and each shop gets its own allocation, so one shop can sell out while another still has stock. "
                "We also track the five standard Regular size notebooks: Black (No. 13714006), Brown (No. 13715006), Blue (No. 15239006), Camel (No. 15193006) and Olive (No. 15342006). "
                "Traveler's Company warns that counterfeits are sold in the US, so we only list the official US shop and authorized retailers. For refills, check the shops directly. "
@@ -1362,6 +1365,7 @@ GROUPS = [
                "Hobonichi and our other sections have their own pages."),
     dict(slug=SECTIONS["midori"]["slug"], short="MIDORI MD", product="MIDORI MD seasonal release", section="midori",
          match=lambda p: section_of(p) == "midori", eyebrow="MIDORI MD", search_hint="Diary 2027, 1 Day 1 Page, Stickers…",
+         guide_q="When do the dated MD diaries and stickers come back?",
          guide="MIDORI makes the dated MD diaries and diary stickers once a year, so when a shop's allocation is gone it is usually gone until the next year's edition. "
                "The plain MD notebooks stay in the catalog all year, so we don't track them here.",
          title=f"MIDORI MD seasonal release restock tracker",
@@ -1579,6 +1583,7 @@ def build_group(g, oe):
     links = "".join(f'<li><a href="{design_fname(d)}">{E(d["name"])}</a></li>' for d in ds)
     design_nav = (f'<details class="design-fold"><summary>Design pages ({len(ds)})</summary>'
                   f'<ul class="link-list">{links}</ul></details>') if ds else ""
+    faq_html, faq_ld = tracker_good_to_know(g.get("guide_q", HOBO_NOTE_Q), g.get("guide", HOBO_NOTE))
     body = f"""
 <div class="product-page">
 {crumbs((g["slug"] + "/", g["short"]))}
@@ -1598,14 +1603,7 @@ def build_group(g, oe):
     <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
     </div>
     {dg_tracker}
-    <section class="card"><h2>Good to know</h2>
-      <ul>
-        <li>Statuses are exactly what each shop's public product data said at the time shown. Always confirm on the shop's page before you buy.</li>
-        <li>"Not yet on sale" means the shop has a preview page up but isn't taking orders yet. "Couldn't check" means our check failed, so we don't know.</li>
-        <li>We don't show prices, because they change and differ by shop. Check the shop's page.</li>
-        <li>{g.get('guide', 'For launch dates and how restocks usually go, see the <a href="hobonichi-2027.html">Hobonichi 2027 launch &amp; restock calendar</a>.')}</li>
-      </ul>
-    </section>
+    {faq_html}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
     {"" if ext else guides_block()}
   </div>
@@ -1617,7 +1615,7 @@ def build_group(g, oe):
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: (l.get("canonical") or "~", l["store"])))]}
     title = group_seo_title(g)
-    return fname, page(fname, title, g["desc"].format(shops=shops), body, ld=(crumbs_ld((fname, g["short"])), items),
+    return fname, page(fname, title, g["desc"].format(shops=shops), body, ld=(crumbs_ld((fname, g["short"])), items, faq_ld),
                        og_image=g.get("og_image", OG_IMAGE), og_alt=g.get("og_alt", OG_ALT))
 
 def group_lastmod(g):
@@ -1933,22 +1931,47 @@ FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
     "midori": "On the MIDORI MD page, we track seasonal and limited MD releases (MIDORI's MD line is now sold as MD PRODUCT).",
 }
 
+HOBO_NOTE_Q = "Where are launch dates and how restocks usually go?"
+HOBO_NOTE = ('For launch dates and how restocks usually go, see the '
+             '<a href="hobonichi-2027.html">Hobonichi 2027 launch &amp; restock calendar</a>.')
+TRACKER_FAQ = (
+    ("What do the statuses mean?",
+     "Statuses are exactly what each shop's public product data said at the time shown. Always confirm on the shop's page before you buy."),
+    ('What do "Not yet on sale" and "Couldn\'t check" mean?',
+     '"Not yet on sale" means the shop has a preview page up but isn\'t taking orders yet. "Couldn\'t check" means our check failed, so we don\'t know.'),
+    ("Why don't you show prices?",
+     "We don't show prices, because they change and differ by shop. Check the shop's page."),
+)
+
+def tracker_good_to_know(question, answer_html):
+    """The same three questions on every tracker, then that tracker's own note. All closed."""
+    plain = html.unescape(re.sub(r"<[^>]+>", "", answer_html))
+    pairs = [(q, E(a), a) for q, a in TRACKER_FAQ] + [(question, answer_html, plain)]
+    html_ = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{body}</p></details>' for q, body, _plain in pairs)
+    ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain_a}} for q, _body, plain_a in pairs]}
+    return f'<section class="card faq" id="faq"><h2>Good to know</h2>{html_}</section>', ld
+
 def faq_block(only=None, sid="faq"):
-    """only: a subset of FAQ questions (the hub shows a short version, without FAQPage markup)."""
+    """only: questions to show, in that order. None shows the full list."""
     n = len({p["store_id"] for p in stock["products"]})
     # {shop} is a link in the page and the plain URL in the FAQ structured data
     secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + (", each checked on its own store" if k == "dotgrid" else "") for k in LIVE)
     secs += ". Some shops sell more than one brand, so they're counted once in the total"
     tracks = " ".join(FAQ_TRACKS[k] for k in LIVE)
-    pairs = []
+    answers = []
     for q, a in FAQ:
         if q == "Do you sell planners?" and shop_inserts_public():
             a = ("Yes, our own: we make planners, journals, and printable planner inserts, and sell them on our shop page ({shop}). "
                  "Printed books are on Amazon. Printable PDFs, including undated paper tip-ins, are on Etsy. "
                  "The stationery we track is sold by the shops themselves; we just link you to them. "
                  "Amazon links on the site are affiliate links, and we say so on every page; links to the shops we track are plain links.")
-        if only is None or q in only:
-            pairs.append((q, a))
+        answers.append((q, a))
+    if only is None:
+        pairs = answers
+    else:
+        by_q = dict(answers)
+        pairs = [(q, by_q[q]) for q in only]
     qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_names()), shop=url_for("shop/")),
            E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in pairs]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)

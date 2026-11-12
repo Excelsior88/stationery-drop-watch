@@ -3,6 +3,8 @@
 The table is in the HTML, so the listings are there with no JavaScript. The browser test
 drives the real app.js with synthetic rows, not shop data.
 """
+import html
+import json
 import os
 import re
 import urllib.request
@@ -246,6 +248,55 @@ class PageFilterMarkupTests(unittest.TestCase):
         self.assertIn('location.replace("/sold-out-everywhere/"', js)
         self.assertIn("Sold out at every shop we track (${n} shops).", js)
         self.assertIn("Sold out at the only shop we track.", js)
+
+    def test_good_to_know_is_the_same_three_questions_plus_one_note(self):
+        shared = [q for q, _a in site.TRACKER_FAQ]
+        removed = (
+            "How often do you check the shops?",
+            "Which shops do you check?",
+            "What do you track?",
+            "Do you sell planners?",
+            "How do restock alerts work?",
+        )
+        pages = [("hobonichi-restock-tracker/", site.build_hobo_tracker())]
+        oe = site.amazon_main(site.stock["products"])
+        for g in site.GROUPS:
+            pages.append(site.build_group(g, oe))
+        for name, doc in pages:
+            questions = re.findall(r'<details class="faq-item"><summary>(.*?)</summary>', doc)
+            self.assertEqual(questions[:3], [site.E(q) for q in shared], name)
+            self.assertEqual(len(questions), 4, name)
+            self.assertNotIn('faq-item" open', doc, name)
+            self.assertNotIn("<ul>\n        <li>Statuses are exactly", doc, name)
+            for q in removed:
+                self.assertNotIn(q, doc, name)
+            start = doc.rfind("<script", 0, doc.index('"@type": "FAQPage"'))
+            end = doc.index("</script>", start)
+            schema = json.loads(html.unescape(doc[start:end].split(">", 1)[1].replace("<\\/", "</")))
+            self.assertEqual([q["name"] for q in schema["mainEntity"]], [html.unescape(x) for x in questions], name)
+        hobo = site.build_hobo_tracker()
+        self.assertIn("Hobonichi 2027 launch", hobo)
+        dot = next(doc for n, doc in pages if n.startswith("archer-and-olive"))
+        self.assertIn("best dot grid journals compared", dot)
+        self.assertIn("sells out on its own", dot)
+        tn = next(doc for n, doc in pages if "travelers-company" in n)
+        self.assertIn("No. 13714006", tn)
+        self.assertIn("counterfeit", tn)
+        self.assertIn("Regular vs Passport vs Card Size", tn)
+        midori = next(doc for n, doc in pages if "midori-md" in n)
+        self.assertIn("once a year", midori)
+        self.assertIn("plain MD notebooks", midori)
+        home = site.build_index()
+        home_q = re.findall(r'<section class="card faq" id="good-to-know">.*?</section>', home, re.S)[0]
+        home_names = re.findall(r"<summary>(.*?)</summary>", home_q)
+        self.assertEqual([html.unescape(q) for q in home_names], list(site.HUB_FAQ))
+        self.assertNotIn('faq-item" open', home_q)
+        self.assertIn('href="/#good-to-know">FAQ</a>', home)
+        faq_page = site.redirect_page("#good-to-know")
+        self.assertIn("https://stationerydropwatch.com/#good-to-know", faq_page)
+        js = (ROOT / "site/assets/app.js").read_text()
+        self.assertIn('location.replace("/#good-to-know"', js)
+        self.assertNotIn('faq: "faq"', js)
 
     def test_product_groups_start_collapsed(self):
         for name, doc in self.docs:
