@@ -1066,13 +1066,13 @@ def trust_strip(prods):
   <li><b>{E(CHECK_FREQ)}</b> <span class="trust-cap">check interval</span></li>
   <li><span class="trust-k">Last check</span> <span class="trust-time">{time_tag(stock["run_finished"])}</span></li>
   <li><b>{checked} of {len(prods)}</b> <span>listings checked successfully</span></li>
-</ul>
-{unk}'''
-    # Clip sits beside the facts. The file is a scaled copy of the approved art, with no caption.
+</ul>'''
+    # Clip sits beside the cards, about their height on a wide screen. The file is a scaled copy of the approved art, with no caption.
     return f'''<div class="trust-with-clip">
-  <div class="trust-copy">{facts}</div>
+  {facts}
   <img class="clip" src="assets/brand/clip.webp" width="360" height="539" alt="Clip, the Stationery Drop Watch paper clip, checking stock" loading="lazy" decoding="async">
-</div>'''
+</div>
+{unk}'''
 
 def build_index():
     """Hub homepage: hero and signup, the four trackers, recent restocks from every tracker, guides, FAQ.
