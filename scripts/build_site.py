@@ -424,23 +424,18 @@ SIGNUP_COPY = {
              "An occasional email when we release a new planner or journal, plus our restock alerts. No spam, unsubscribe anytime."),
 }
 
-# Item, tracker and brand pages name what the page tracks, but it's still the one Buttondown list: every subscriber
-# gets every restock email. Copy must never suggest item-only alerts, and never promise a number of emails.
+# One Buttondown list: every subscriber gets every restock email. The label never names a single item.
+# The note may say a subscriber can get multiple emails a day. It must not give a daily number.
 # SPEED_LINE is backed by data/changes.json (Oct 26-Nov 11, 2026): of 19 restocks where we also saw the sell-out,
 # 7 sold out within an hour and 14 within 6 hours. Re-check it before changing the wording.
 SPEED_LINE = "Restocks often sell out within hours."
 LIST_LINE = "The list covers every restock we track, so it could be multiple emails a day. Free, and you can unsubscribe anytime."
+ONE_LIST_LABEL = "Get every restock alert by email"
 
-def signup_for(subject, back=None):
-    """Signup box for an item, tracker or brand page. subject: what the page tracks. back: True if nothing is buyable
-    now ("...when X is back"), False if something is ("...the next time X restocks"), None for a brand/tracker line."""
-    if back is None:
-        label = f"Get restock alerts, including {subject}"
-    elif back:
-        label = f"Get restock alerts, including when {subject} is back"
-    else:
-        label = f"Get restock alerts, including the next time {subject} restocks"
-    return signup(label=label, note=f"{SPEED_LINE} {LIST_LINE}")
+def signup_for(subject=None, back=None):
+    """Signup box for a product, design, or tracker page. subject and back stay so callers can name the page,
+    but the label is always the one list. New pages inherit this wording."""
+    return signup(label=ONE_LIST_LABEL, note=f"{SPEED_LINE} {LIST_LINE}")
 
 def signup(kind="alerts", label=None, note=None):
     """The site's one signup box (one per page, right under the page intro). Buttondown's standard HTML embed form
@@ -822,6 +817,39 @@ def tracking_start(ls):
     """When we started tracking these listings: the earliest first_seen in the data (never the current run)."""
     return min((l["first_seen"] for l in ls if l.get("first_seen")), default=stock["run_started"])
 
+def shop_sets(ls):
+    """Tracked shops have a listing. Checked shops have at least one listing whose status is not unknown."""
+    tracked = {l["store_id"] for l in ls}
+    checked = {l["store_id"] for l in ls if l["status"] != "unknown"}
+    buying = {l["store_id"] for l in ls if l["status"] in BUYABLE}
+    return tracked, checked, buying
+
+def right_now_sentence(ls):
+    """Stock sentence for a hero. Shop counts come from shop_sets, the same sets as the eyebrow."""
+    if not ls:
+        return "none of the shops we check list this right now."
+    tracked, checked, buying = shop_sets(ls)
+    unk = [l for l in ls if l["status"] == "unknown"]
+    buy = [l for l in ls if l["status"] in BUYABLE]
+    if not checked:
+        if len(ls) == 1:
+            return "we couldn't reach the shop for this listing at the last check, so its status is unknown."
+        return f"we couldn't check any of these {len(ls)} listings at the last check, so their status is unknown."
+    listed = len(ls) - len(unk)
+    listed_word = "checked listings" if unk else "listings"
+    sentence = (f"{len(buy)} of {listed} {listed_word} are in stock or on preorder "
+                f"at {len(buying)} of {nshops(len(checked))} checked")
+    missed = len(tracked) - len(checked)
+    if missed:
+        sentence += f". {missed} of {nshops(len(tracked))} couldn't be checked this run"
+        if len(unk) != missed:
+            word = "listing" if len(unk) == 1 else "listings"
+            sentence += f" ({len(unk)} {word})"
+    elif unk:
+        word = "listing" if len(unk) == 1 else "listings"
+        sentence += f". {len(unk)} {word} couldn't be checked this run"
+    return sentence + "."
+
 def count_line(ls, unit="listings"):
     """'X of N in stock or on preorder', counting only listings we actually checked this run.
     Failed checks are reported as their own number; we never fold them into "not in stock"."""
@@ -991,7 +1019,7 @@ def build_hobo_tracker():
 {crumbs((HOBO_TRACKER, "Hobonichi tracker"))}
 <section class="hero">
   {eyebrow("Hobonichi Techo 2027", f"{len({p['store_id'] for p in prods})} Hobonichi shops", f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}")}
-  <h1>Know the moment your planner is back.</h1>
+  <h1>Hobonichi 2027 restock tracker</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
   <p class="shop-cta"><a class="btn-ghost" href="shop/">{SHOP_NAME} →</a> <span class="muted small">{shop_cta_line()}</span></p>
   <p class="small section-switch">Also tracked: {" · ".join(f'<a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE)}</p>
@@ -1029,8 +1057,8 @@ def build_hobo_tracker():
 {stock_data(rows)}
 """
     n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
-    return page(HOBO_TRACKER, "Hobonichi Techo 2027 tracker",
-                f"Is your Hobonichi Techo 2027 back in stock? Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, plus separate trackers for other brands.",
+    return page(HOBO_TRACKER, "Hobonichi 2027 restock tracker",
+                f"Hobonichi 2027 restock tracker. Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, plus separate trackers for other brands.",
                 body, ld=(faq_ld, crumbs_ld((HOBO_TRACKER, "Hobonichi tracker"))))
 
 HUB_TRACKERS = {  # one line per tracker card on the hub homepage
@@ -1523,13 +1551,7 @@ def build_group(g, oe):
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}{dp_link}</p>
   {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
 </section></details>""")
-    unk = [l for l in ls if l["status"] == "unknown"]
-    if len(unk) == len(ls):
-        right_now = ("we couldn't reach the shop for this listing at the last check, so its status is unknown." if len(ls) == 1 else f"we couldn't check any of these {len(ls)} listings at the last check, so their status is unknown.")
-    else:
-        right_now = (f"{len(buy)} of {len(ls) - len(unk) if unk else len(ls)} {'checked ' if unk else ''}listings are in stock or on preorder "
-                     f"at {len({l['store_id'] for l in buy})} of {nshops(len({l['store_id'] for l in ls if l['status'] != 'unknown'})) + ' we could check' if unk else nshops(shops)}."
-                     + (f" {len(unk)} couldn't be checked this run." if unk else ""))
+    right_now = right_now_sentence(ls)
     lead_n = 2 if per_shop else 1  # shop-by-shop pages: first shop heading + its first card
     urls = {l["url"] for l in ls}
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
@@ -1543,14 +1565,8 @@ def build_group(g, oe):
     others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and (g_sec(x) != "hobonichi") == ext)
     if ext:
         others += f'<li><a href="#tracker">Every {E(SECTIONS[g_sec(g)]["one"])} listing we track (this page)</a></li>'
-        if per_shop:
-            shop_ids = sorted({l["store_id"] for l in ls}, key=lambda sid: rank[sid])
-            shop_nav = "".join(f'<a class="chip" href="#shop-{E(sid)}">{E(next(x["name"] for x in stores["stores"] if x["id"] == sid))}</a>' for sid in shop_ids)
-            shop_nav = f'<nav class="chips" aria-label="Shops on this page"><span class="muted small">Jump to a shop:</span> {shop_nav}</nav>'
-        else:
-            # The product groups are collapsed and searchable, so there is no jump row.
-            # Each group still has its id, and a link to that id opens the group.
-            shop_nav = ""
+        # Shop headings keep their anchors. The jump row repeated them.
+        shop_nav = ""
         dg_tracker = ""  # per-product tables are the one view; the old grouped table repeated every listing
     else:
         others += f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>'
@@ -1564,7 +1580,7 @@ def build_group(g, oe):
 <div class="product-page">
 {crumbs((g["slug"] + "/", g["short"]))}
 <section class="hero">
-  {eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), f"{shops} {'shop' if shops == 1 else 'shops'}", f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}") if ext and not g.get("parent") else eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), f"{shops} {'shop' if shops == 1 else 'shops'} checked {CHECK_FREQ}")}
+  {eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), nshops(shops), f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}") if ext and not g.get("parent") else eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), nshops(shops), f"checked {CHECK_FREQ}")}
   <h1>{E(g['h1'])}</h1>
   <p class="lede">{E(g['intro'])}</p>
   <p><strong>Right now:</strong> {right_now}
@@ -1781,12 +1797,8 @@ def build_design(d, oe):
                f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
     if not ls:
         right_now = "none of the shops we check list this design right now. We'll show it here again if a shop adds it."
-    elif len(unk) == len(ls):
-        right_now = ("we couldn't reach the shop for this listing at the last check, so its status is unknown." if len(ls) == 1 else f"we couldn't check any of these {len(ls)} listings at the last check, so their status is unknown.")
     else:
-        right_now = (f"{len(buy)} of {len(ls) - len(unk) if unk else len(ls)} {'checked ' if unk else ''}listings are in stock or on preorder "
-                     f"at {len({l['store_id'] for l in buy})} of {nshops(len({l['store_id'] for l in ls if l['status'] != 'unknown'})) + ' we could check' if unk else nshops(shops)}."
-                     + (f" {len(unk)} couldn't be checked this run." if unk else ""))
+        right_now = right_now_sentence(ls)
     thanks = ('<p class="suggest">Thank you to our follower Angela for suggesting we track these restocks.</p>'
               if d["slug"] in {"nothing-to-hide-green", "nothing-to-hide-pink", "nothing-to-hide-yellow"} else "")
     table = (f"""<section class="card group-sec" id="stock">
@@ -1837,7 +1849,7 @@ def build_design(d, oe):
           (f'Where can I buy {d["full"]}?', a2),
           ("How often do you check?",
            f"Every shop is checked {CHECK_FREQ}. Each status is exactly what the shop's public product data said at that time. \"Not yet on sale\" means the shop has a preview page up but isn't taking orders yet, and \"Couldn't check\" means our check failed, so we don't guess."),
-          ("Can I get an alert when it's back?",
+          ("Can I get restock alerts?",
            f"Yes, sign up above. It's one free list for every restock we track, not just {d['full']}, so it could be multiple emails a day. You can unsubscribe anytime.")]
     when_html = time_tag(run)
     faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(
@@ -1864,7 +1876,7 @@ def build_design(d, oe):
 <div class="product-page">
 {crumbs((parent["slug"] + "/", parent["short"]), (fname, d["name"]))}
 <section class="hero">
-  {eyebrow(ey, f"{shops} {'shop' if shops == 1 else 'shops'} checked {CHECK_FREQ}")}
+  {eyebrow(ey, nshops(shops), f"checked {CHECK_FREQ}")}
   <h1>{E(h1)}</h1>
   <p class="lede">{intro}</p>
   {thanks}
@@ -2439,7 +2451,7 @@ def build_dotgrid_guide():
         ("Which ones come with page numbers and an index?",
          "Leuchtturm1917 (numbered pages and a blank table of contents) and Scribbles That Matter (numbered pages, an index, a key page and a pen test page). "
          "Archer and Olive's and Notebook Therapy's product pages don't mention numbered pages or an index."),
-        ("How do I know when a sold-out dot grid journal is back?",
+        ("How do the email alerts work?",
          f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up for the free email alerts. The list covers every restock we track, including sold-out sizes and colors coming back, so it could be multiple emails a day, and you can unsubscribe anytime."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
