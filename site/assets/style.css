@@ -111,7 +111,6 @@ table.stock{width:100%;border-collapse:collapse;font-size:.93rem}
 .badge.unknown{color:#555;background:#eee;border-color:#ccc}
 .empty-row td{text-align:center;color:var(--ink-2);padding:24px}
 details{margin-top:10px} summary{cursor:pointer}
-.oe-det summary{min-height:24px;padding:4px 0}
 
 .signup-form{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .signup-form input{flex:1 1 180px}
@@ -164,7 +163,6 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
   /* one column: flatten both columns and re-order (first main section, then the Featured shop if one is booked) */
   .layout{display:flex;flex-direction:column}
   .main-col,.side-col{display:contents}
-  .m-top{order:-3}
   .m-lead>*{order:-2}
   .layout .sponsor{order:-1}
 }
@@ -190,16 +188,10 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 a.az{color:var(--ink-2);font-size:.85em;text-decoration:underline dotted;text-underline-offset:2px}
 a.az:hover{color:var(--ink)}
 
-/* Amazon as main action, only for products unavailable at every tracked shop */
-.oe-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.oe-item{display:flex;align-items:center;gap:14px;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff}
-.oe-item h3{font-size:1.02rem;margin:0}
-.oe-note{margin:2px 0 0;font-size:.82rem;color:var(--rose)}
-.oe-shops{margin:.3em 0 0;padding-left:1.1em}
+/* Amazon as a quiet extra action on a sold-out row */
 .btn-amz{background:var(--accent);border-color:var(--accent);color:#fff!important;white-space:nowrap;flex:none}
 .btn-amz:hover{background:var(--accent-2);border-color:var(--accent-2)}
 .btn-sm{display:inline-block;margin-top:6px;padding:4px 12px;font-size:.8rem;min-height:0}
-@media (max-width:560px){.oe-item{flex-direction:column;align-items:stretch}.oe-item .btn-amz{text-align:center}}
 
 /* Product restock pages, product links, FAQ */
 .crumbs{display:block;font-size:.86rem;color:var(--ink-2);padding-top:22px;margin:0 0 14px}
@@ -210,7 +202,6 @@ a.az:hover{color:var(--ink)}
 .faq-item{border-top:1px dashed var(--line);padding:10px 0;margin:0}
 .faq-item summary{font-weight:600}
 .faq-item p{margin:.5em 0 .2em;color:var(--ink-2)}
-.foot-links a{white-space:nowrap}
 
 /* Dot grid journaling page: per-shop blocks */
 .design-fold{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0}
@@ -219,9 +210,6 @@ a.az:hover{color:var(--ink)}
 .design-fold>summary::before{content:"";position:absolute;left:16px;top:20px;width:.45em;height:.45em;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(-45deg)}
 .design-fold[open]>summary::before{transform:rotate(45deg);top:18px}
 .design-fold .link-list{margin:0;padding:0 16px 14px 2.2em}
-.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 18px}
-.chip{display:inline-block;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fffdf8;color:#2d2a32;text-decoration:none;font-size:.9rem}
-.chip:hover{border-color:#c1553b;color:#c1553b}
 .shop-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:28px 0 10px;font-size:1.45rem}
 .shop-head a{color:#2d2a32;text-decoration:none}
 .shop-head a:hover{color:#c1553b}
@@ -243,7 +231,6 @@ a.az:hover{color:var(--ink)}
 .guide-list{list-style:none;padding:0}
 .guide-list li{margin:0 0 1rem}
 @media (max-width:420px){nav{justify-content:center;gap:2px}nav a{padding:5px 7px;font-size:.82rem}}
-.shop-cta{margin:10px 0}
 .shop-list{list-style:none;padding:0;display:grid;gap:22px}
 .shop-card{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start;padding:16px;border:1px solid #e6dccb;border-radius:12px;background:#fff}
 .shop-card h3{margin:0 0 2px}.shop-card ul{padding-left:18px}
@@ -273,22 +260,6 @@ a.az:hover{color:var(--ink)}
 .nav-trackers,.nav-rest{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .nav-trackers{margin-right:10px}
 @media (max-width:900px){.site-nav{justify-content:center}.nav-trackers,.nav-rest{justify-content:center}.nav-trackers{border-right:0;padding-right:0;margin-right:0;width:100%}}
-
-/* Sold out everywhere: one compact row per product, grouped under the shared status note */
-.oe-group{font-family:inherit;font-size:.8rem;font-weight:600;color:var(--rose);margin:12px 0 6px;letter-spacing:.01em}
-.oe-list.compact{gap:0;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
-.oe-row{display:flex;gap:12px;align-items:baseline;justify-content:space-between;padding:6px 12px;border-top:1px solid var(--line)}
-.oe-row:first-child{border-top:0}
-.oe-name{min-width:0;font-size:.92rem;line-height:1.35}
-.oe-title{font-weight:600}
-.oe-title a{color:var(--ink)}
-.oe-since{font-size:.78rem;color:var(--rose);margin-left:4px}
-.oe-det{display:inline;margin:0 0 0 6px;font-size:.78rem;color:var(--ink-2)}
-.oe-det summary{display:inline;cursor:pointer;white-space:nowrap;text-decoration:underline dotted;text-underline-offset:2px}
-.oe-det[open]{display:block;margin:2px 0 0}
-.oe-det .oe-shops{margin:.2em 0 .1em;padding-left:1.1em;font-size:.85rem}
-.oe-amz{flex:none;white-space:nowrap;font-size:.8rem;font-weight:600;padding:2px 9px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--ink)}
-.oe-amz:hover{border-color:var(--accent);color:var(--accent)}
 
 /* Every listing we track: grouped by product (header row), shops and statuses underneath */
 #rows tr.grp th{position:static;text-transform:none;letter-spacing:0;font:inherit;color:var(--ink);background:var(--paper-2);border-top:1px solid var(--line);padding:9px 12px}
@@ -334,7 +305,6 @@ a.az:hover{color:var(--ink)}
 
 /* Hub homepage */
 .hub-status{margin-top:12px}
-.hub-status .unk-note{color:var(--ink)}
 .hub-trackers{margin:8px 0 26px}
 .hub-trackers>h2{margin:0 0 12px}
 .hub-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
@@ -350,21 +320,9 @@ a.az:hover{color:var(--ink)}
 .hub-cols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:20px;align-items:start}
 .hub-tag{font-size:.78rem;padding:1px 8px;border:1px solid var(--line);border-radius:999px;color:var(--ink-2);text-decoration:none;background:var(--paper-2)}
 .hub-guides li{margin-bottom:10px}.hub-guides p{margin:2px 0 0}
-.hub-own{margin:28px 0;padding:22px 24px;background:var(--card);border:1px solid var(--line);border-radius:14px}
-.hub-own .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.hub-own h2{margin:0}
-.hub-own-row{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:14px}
-.hub-own-row a{display:flex;flex-direction:column;gap:3px;color:var(--ink);text-decoration:none}
-.hub-own-row img{width:100%;height:auto;aspect-ratio:2/3;object-fit:contain;background:var(--paper-2);border-radius:6px;border:1px solid var(--line);margin-bottom:4px}
-/* .sheet keeps this same 2/3 frame. The landscape file is letterboxed, not given its own shorter box. */
-.hub-own-row.cols-8{grid-template-columns:repeat(8,minmax(0,1fr))}
-.hub-own-row.cols-9{grid-template-columns:repeat(9,minmax(0,1fr))}
-.hub-own-row.cols-10{grid-template-columns:repeat(10,minmax(0,1fr))}
-.hub-own-t{font-weight:600;font-size:.88rem;line-height:1.25}
-.hub-own-row a:hover .hub-own-t{color:var(--accent)}
-@media (max-width:1000px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-own-row,.hub-own-row.cols-8{grid-template-columns:repeat(4,minmax(0,1fr))}.hub-own-row.cols-9,.hub-own-row.cols-10{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:1000px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){.hub-cols{grid-template-columns:1fr}}
-@media (max-width:560px){.hub-grid{grid-template-columns:1fr;gap:12px}.hub-own{padding:18px 16px}.hub-own-row{grid-template-columns:repeat(7,128px);overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}.hub-own-row.cols-8{grid-template-columns:repeat(8,128px)}.hub-own-row.cols-9{grid-template-columns:repeat(9,128px)}.hub-own-row.cols-10{grid-template-columns:repeat(10,128px)}.hub-own-row li{scroll-snap-align:start}}
+@media (max-width:560px){.hub-grid{grid-template-columns:1fr;gap:12px}}
 .layout.solo{grid-template-columns:minmax(0,1fr)}
 /* Header, footer and every page's content share one column: .wrap (1180px max, 20px / 14px side padding) */
 .prose,.prose.shop-wide{max-width:none}
@@ -453,7 +411,6 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 #filters{scroll-margin-top:calc(var(--mast) + 8px)}
 .shop-head,.group-sec,.fam-block,.group-fold,.compare{scroll-margin-top:calc(var(--mast) + 12px)}
 .filter-note{margin:-4px 0 12px}
-.chip{min-height:44px;display:inline-flex;align-items:center}
 .fam-block{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0 0 12px;padding:0 14px 6px}
 .fam-block>summary,.group-fold>summary{display:flex;align-items:baseline;justify-content:space-between;gap:12px;min-height:48px;padding:12px 0 12px 1.2em;cursor:pointer;list-style:none;position:relative}
 .fam-block>summary::-webkit-details-marker,.group-fold>summary::-webkit-details-marker{display:none}

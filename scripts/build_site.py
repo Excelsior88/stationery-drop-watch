@@ -281,12 +281,10 @@ def seo_desc(text):
 BASE = "https://stationerydropwatch.com/"
 CNAME = "stationerydropwatch.com"
 OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (Hobonichi side)
-# The card artwork is "Hobonichi Techo 2027 restock tracker / Books, Weeks & covers · checked about every 30 minutes".
-# It prints no shop count. This same file is the default image on the hub (all trackers), Hobonichi pages
-# (Hobonichi shops only), and guides, so a single number in the alt cannot be true on every page.
-# Hobonichi shop totals stay in Hobonichi copy, derived from N_SEC["hobonichi"]. The all-tracker total is N_STORES.
-OG_ALT = ("Stationery Drop Watch: Hobonichi Techo 2027 restock tracker. "
-          f"Books, Weeks and covers, checked {CHECK_FREQ}")
+# The default card file is still the Hobonichi artwork. It is also the image on the hub and
+# the utility pages, so the alt names every tracker. It prints no shop count.
+OG_ALT = ("Stationery Drop Watch: restock tracker for Hobonichi, dot grid journals, "
+          f"Traveler's Company and MIDORI, checked {CHECK_FREQ}")
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
 OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked " + CHECK_FREQ
 OG_TRAVELERS = BASE + "assets/brand/og-travelers.png"
@@ -306,7 +304,7 @@ def _require_midori_card():
         raise SystemExit("og-midori.png is not the approved 8 Nov 2026 artwork")
 
 _require_midori_card()
-CONTENT_LASTMOD = "2026-11-08"  # last copy/structure change on the home and restock pages (sitemap lastmod floor)
+CONTENT_LASTMOD = "2026-11-12"  # floor for pages whose HTML changed in the Nov 12 refresh
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
 
@@ -356,7 +354,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
         return f'<a href="{h}"{attrs}>{E(t)}</a>'
     trk = "".join(nav_a(h, t) for h, t in NAV_TRACKERS)
     # Trackers lead. Shop is a separate link at the end of the rest of the nav, not a fifth tracker.
-    rest = "".join(nav_a(h, t) for h, t in NAV) + nav_a("shop/", "Shop", "nav-shop")
+    rest = "".join(nav_a(h, t) for h, t in NAV) + nav_a("shop/", "Shop")
     nav_inner = f'<span class="nav-trackers">{trk}</span><span class="nav-rest">{rest}</span>'
     # Desktop shows the bar. Narrow screens use a Menu disclosure, which opens without JavaScript.
     nav = (f'<nav class="site-nav site-nav-bar" aria-label="Main">{nav_inner}</nav>'
@@ -1173,7 +1171,7 @@ def build_index():
                              "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {sections_phrase()}. Statuses come straight from each shop's public product data.",
                              "logo": BASE + "assets/brand/icon-512.png", "email": PUBLIC_EMAIL,
                              "sameAs": [s[2] for s in SOCIALS]}}
-    return page("index.html", "Hobonichi, dot grid & MIDORI tracker",
+    return page("index.html", "Hobonichi, dot grid, Traveler's Company, MIDORI",
                 f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, dot grid journals, Traveler's notebooks and MIDORI MD, plus free email alerts for every restock we track.",
                 body, ld=(site_ld, faq_ld))
 
@@ -1571,6 +1569,7 @@ def build_group(g, oe):
   A restock shows up here the moment a sold-out listing flips back to in stock or preorder between two checks.</p></div>'''
     others = "".join(f'<li><a href="{x["slug"]}/">{E(x["short"])}</a></li>' for x in GROUPS if x is not g and (g_sec(x) != "hobonichi") == ext)
     if ext:
+        others = f'<li><a href="{HOBO_TRACKER}">Hobonichi tracker</a></li>' + others
         others += f'<li><a href="#tracker">Every {E(SECTIONS[g_sec(g)]["one"])} listing we track (this page)</a></li>'
         # Shop headings keep their anchors. The jump row repeated them.
         shop_nav = ""
@@ -1901,7 +1900,7 @@ def build_design(d, oe):
 
 def design_lastmod(d):
     ls = design_listings(d)
-    return latest(*[l.get("status_since") for l in ls], *[l.get("first_seen") for l in ls], DESIGNS_LASTMOD)
+    return latest(*[l.get("status_since") for l in ls], *[l.get("first_seen") for l in ls], DESIGNS_LASTMOD, CONTENT_LASTMOD)
 
 FAQ = [
     ("How often do you check the shops?",
@@ -1992,7 +1991,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-08", "about.html": "2026-11-03", "privacy.html": "2026-11-04"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-12", "privacy.html": "2026-11-12"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -2002,7 +2001,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
     tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), tn_mod), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-03"), (url_for("contact/"), "2026-11-10"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], "2026-11-11"))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), latest(tn_mod, CONTENT_LASTMOD)), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-12"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2282,7 +2281,7 @@ def build_where_to_buy():
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": "Where to buy the Hobonichi Techo 2027",
-           "dateModified": stock["run_finished"], "url": url_for(fname), "image": OG_IMAGE,
+           "datePublished": "2026-10-29", "dateModified": "2026-10-29", "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -2374,7 +2373,7 @@ def build_vs():
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": "Hobonichi Techo vs Cousin vs Weeks: which 2027 planner fits you?",
-           "dateModified": GUIDES_LASTMOD, "url": url_for(fname), "image": OG_IMAGE,
+           "datePublished": GUIDES_LASTMOD, "dateModified": GUIDES_LASTMOD, "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -2826,7 +2825,7 @@ SHOP_ETSY = [
                   "Printable PDF. The paperback is a separate book on this page."]),
     dict(id="soft-days", kind="insert", gated=True, sale_confirmed=True, price="$6.99",
          title="Soft Days Narrow Planner Inserts",
-         img="assets/shop/soft-days-narrow-inserts.png", img_class="sheet", img_w=2700, img_h=2025,
+         img="assets/shop/soft-days-narrow-inserts-900.webp", img_class="sheet", img_w=900, img_h=675,
          url="https://www.etsy.com/listing/4611293526/soft-days-narrow-planner-inserts",
          alt=('Soft Days Narrow Planner Insert Set: four fanned printed tip-in sheets titled Month Dashboard, '
               'Habit Tracker, Weekly Plan, and Meal Planner, on a pale background. The sheet reads '
@@ -2995,9 +2994,10 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
-    # Shop facts changed 2026-11-10 (Lines for the Grid Page listing).
+    # Shop facts changed 2026-11-10 (Lines for the Grid Page listing). The Nov 12
+    # refresh changed the page HTML, so the sitemap floor is that later date.
     if any(e.get("id") == "lines-grid" and etsy_listing_url(e) for e in SHOP_ETSY):
-        return "2026-11-10"
+        return "2026-11-12"
     if any(e.get("kind") == "insert" and etsy_listing_url(e) for e in SHOP_ETSY):
         return "2026-11-08"
     return "2026-11-03"
@@ -3060,6 +3060,9 @@ def build_shop():
         if img.startswith("assets/shop/") and img.endswith("-planner.jpg"):
             b = img[:-4]
             return f' srcset="/{E(b)}-600.jpg 600w, /{E(b)}-1200.jpg 1200w"'
+        if img == "assets/shop/soft-days-narrow-inserts-900.webp":
+            return (' srcset="/assets/shop/soft-days-narrow-inserts-900.webp 900w, '
+                    '/assets/shop/soft-days-narrow-inserts-1800.webp 1800w"')
         return ""
     def card(img, alt, title, sub, blurb, details, href, btn, own, price, inside=None, *,
              img_class="", dims=None, note="", templates=None, templates_label="Templates", card_id=""):
@@ -3258,7 +3261,7 @@ def build_sold_out():
 <p class="muted small">"Sold out" is exactly what each shop's public product data said. "Not yet on sale" means the shop has a preview page up but isn't taking orders. The raw data is public: <a href="data/stock.json">stock.json</a>.</p>
 </article>"""
     return fname, page(fname, f"Sold out everywhere: {count} to watch",
-                       f"Stationery items that no shop we track has in stock or on preorder right now, from our last check. Rebuilt {CHECK_FREQ}, with a link to each item's restock page.",
+                       "Items no shop we track has in stock or on preorder, with a link to each item's restock page. Updated about every 30 minutes.",
                        body, ld=(crumbs_ld((fname, "Sold out everywhere")),))
 
 def build_follow():
