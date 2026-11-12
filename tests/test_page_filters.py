@@ -65,6 +65,30 @@ class PageFilterMarkupTests(unittest.TestCase):
             else:
                 self.assertEqual(folds, [], name)
 
+    def test_long_guide_lists_start_collapsed(self):
+        _name, where = site.build_where_to_buy()
+        slugs = [g["slug"] for g in site.GROUPS if site.g_sec(g) == "hobonichi" and site.group_listings(g)]
+        folds = re.findall(r'<details class="card group-fold" id="([^"]+)">', where)
+        self.assertEqual(folds, slugs)
+        self.assertNotIn('group-fold" open', where)
+        self.assertLess(where.index('id="quick"'), where.index("group-fold"))
+        self.assertLess(where.index("<h1>"), where.index("group-fold"))
+        src = where.index("<h2>Sources</h2>")
+        self.assertNotIn("<details", where[src:where.index("</ol>", src)])
+        self.assertIn('id="tips"', where)
+        vs = site.build_vs()[1]
+        article = vs[vs.index("<h2>Side by side</h2>"):vs.index("<h2>Sources</h2>")]
+        self.assertNotIn("group-fold", article)
+        self.assertIn("<h2>Sources</h2>", vs)
+        guides = site.build_guides_index()[1]
+        self.assertIn('id="design-pages"', guides)
+        self.assertLess(guides.index("<h2>Restock pages for single designs</h2>"), guides.index('<h3 class="fam-name">Hobonichi</h3>'))
+        dot = site.build_dotgrid_guide()[1]
+        self.assertNotIn("group-fold", dot[dot.index("<h2>Side by side</h2>"):dot.index("<h2>Sources</h2>")])
+        tn = site.build_tn_sizes()[1]
+        self.assertIn("<h2>Sources</h2>", tn)
+        self.assertNotIn("group-fold", tn[tn.index("<table"):tn.index("<h2>Sources</h2>")])
+
     def test_angela_line_is_unchanged(self):
         thanks = "Thank you to our follower Angela for suggesting we track these restocks."
         hits = [name for name, doc in self.docs if thanks in doc]

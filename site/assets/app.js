@@ -290,4 +290,21 @@
     const target = pid && document.getElementById(pid);
     if (target) target.scrollIntoView();
   }
+  // A #anchor inside a closed group (a guide section, a family, a product) opens that group.
+  const openLinkedDetails = (scroll) => {
+    const raw = (location.hash || "").slice(1);
+    if (!raw) return;
+    let id = raw;
+    try { id = decodeURIComponent(raw); } catch (e) { return; }
+    const el = document.getElementById(id);
+    if (!el) return;
+    let node = el;
+    while (node) {
+      if (node.tagName === "DETAILS") node.open = true;
+      node = node.parentElement;
+    }
+    if (scroll) el.scrollIntoView({ block: "start" });
+  };
+  window.addEventListener("hashchange", () => openLinkedDetails(true));
+  openLinkedDetails(true);
 })();

@@ -456,7 +456,10 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 .group-fold>summary::before{left:16px;top:26px}
 .group-fold:not([open])>summary::before{top:24px}
 .group-fold>summary .fam-name{margin:0;font-size:1.28rem;line-height:1.2}
-.group-fold>.group-sec{padding:0 24px 18px}
+.group-fold>.group-sec,.group-fold>.group-body,.group-fold>ul.link-list{padding:0 24px 18px}
+.card>.group-fold>summary{padding:12px 0 12px 1.4em}
+.card>.group-fold>summary::before{left:0}
+.card>.group-fold>ul.link-list{padding:0 0 12px 1.4em}
 .fam-name{font-family:var(--serif);font-size:1.28rem}
 .fam-meta{font-weight:500;font-size:.82rem;color:var(--ink-2);text-align:right}
 .compare{padding:12px 0 14px;border-top:1px solid var(--line)}

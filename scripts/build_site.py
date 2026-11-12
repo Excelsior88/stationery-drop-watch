@@ -2048,12 +2048,24 @@ H_SRC = {  # official Hobonichi pages used for product facts
     "shop": ("https://www.1101.com/store/techo/en/2027/pc/shopping_guide/", "Hobonichi Techo 2027 shopping guide"),
 }
 
+def _long_list(heading, hx, items_html, n, meta):
+    """A long link list starts closed. Short lists stay in the article."""
+    if n < 8:
+        return f'<{hx}>{heading}</{hx}>{items_html}'
+    return f'''<details class="card group-fold">
+  <summary><{hx} class="fam-name">{heading}</{hx}><span class="fam-meta">{E(meta)}</span></summary>
+  {items_html}
+</details>'''
+
 def design_links_block(sec="hobonichi", hx="h2"):
     """Design pages of one section (or every section with sec=None), for guides and the guides index."""
     def sec_of(d):
         return next(g_sec(g) for g in GROUPS if g["slug"] == d["parent"])
-    items = "".join(f'<li><a href="{design_fname(d)}">{E(d["full"])}</a></li>' for d in DESIGNS if sec is None or sec_of(d) == sec)
-    return f'<{hx}>Restock pages for single designs</{hx}><ul class="link-list">{items}</ul>' if items else ""
+    ds = [d for d in DESIGNS if sec is None or sec_of(d) == sec]
+    if not ds:
+        return ""
+    items = f'<ul class="link-list">' + "".join(f'<li><a href="{design_fname(d)}">{E(d["full"])}</a></li>' for d in ds) + "</ul>"
+    return _long_list("Restock pages for single designs", hx, items, len(ds), f"{len(ds)} pages")
 
 def design_index_block():
     """Every design page, grouped by family: the design-pages index on /guides/."""
@@ -2061,9 +2073,17 @@ def design_index_block():
     out = []
     for k, t in fam:
         ds = [d for d in DESIGNS if next(g_sec(g) for g in GROUPS if g["slug"] == d["parent"]) == k]
-        if ds:
-            out.append(f'<h3>{E(t)}</h3><ul class="link-list">' + "".join(
-                f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)))}</span></li>' for d in ds) + "</ul>")
+        if not ds:
+            continue
+        items = '<ul class="link-list">' + "".join(
+            f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)))}</span></li>' for d in ds) + "</ul>"
+        if len(ds) >= 8:
+            out.append(f'''<details class="group-fold">
+  <summary><h3 class="fam-name">{E(t)}</h3><span class="fam-meta">{len(ds)} pages</span></summary>
+  {items}
+</details>''')
+        else:
+            out.append(f'<h3>{E(t)}</h3>{items}')
     return f'<section class="card" id="design-pages"><h2>Restock pages for single designs</h2><p class="muted small">{len(DESIGNS)} pages, one per planner or journal design we track. Counts come from the same checks as the trackers.</p>{"".join(out)}</section>'
 
 
@@ -2141,13 +2161,14 @@ def build_where_to_buy():
         az = _exact_amazon(ls)
         az_html = ("<p class=\"small\">Also on Amazon (exact listings, affiliate links): " + " · ".join(
             f'<a class="az" href="https://www.amazon.com/dp/{E(a)}" target="_blank">{E(n)}</a>' for a, n in az.items()) + "</p>") if az else ""
-        secs.append(f'''<section class="card" id="{E(g["slug"])}">
-  <div class="section-head"><h2>{E(g["product"])}</h2><p class="muted small">{E(count_line(ls).capitalize())}</p></div>
+        secs.append(f'''<details class="card group-fold" id="{E(g["slug"])}">
+  <summary><h2 class="fam-name">{E(g["product"])}</h2><span class="fam-meta">{E(count_line(ls).capitalize())}</span></summary>
+  <div class="group-body">
   {_shop_table(ls)}
-  {"" if secs else region_legend(l["store_id"] for l in hobo)}
   {az_html}
   <p class="small"><a href="{g["slug"]}/">Full {E(g["short"])} restock page</a> <span class="muted">· every listing, when it last changed, and recent restocks</span></p>
-</section>''')
+  </div>
+</details>''')
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a> <span class="muted">· {E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
     # Live, data-driven tip: products sold out at one shop we track while another shop has them.
     split = {}
@@ -2187,6 +2208,7 @@ def build_where_to_buy():
       <ul>{"".join(quick)}</ul>
       <p class="muted small">"Not yet on sale" means a preview page is up but the shop isn't taking orders. "Couldn't check" means our check failed, so we don't know. Always confirm on the shop's page before you buy. We don't show prices; check the shop.</p>
     </section>
+    {region_legend(l["store_id"] for l in hobo)}
     {"".join(secs)}
     <section class="card"><h2>Shops we list but can't check</h2>
       <p class="muted small">Their sites block automated checks, so we link to them without a status.</p>
