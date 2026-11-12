@@ -28,7 +28,7 @@ def build():
     ux0, ux1 = X + w1 + 6, X + w1 + w2 - 22
     parts.append(f'<path d="M{ux0:.1f} 250 Q{(ux0+ux1)/2:.1f} 242 {ux1:.1f} 248" fill="none" stroke="{MUSTARD}" '
                  f'stroke-width="5" stroke-linecap="round"/>')
-    sub = "Hobonichi, dot grid journals & more, checked every 30 minutes across 20 shops."
+    sub = "Hobonichi, Traveler's Company, MIDORI MD + dot grid journals. 27 shops checked about every 30 minutes."
     size = 28  # shrink only if the subline would run past the safe area (x 1420) / ribbon
     while True:
         p3, w3 = text_path(SERIF, sub, size, X + 2, 306, {"wght": 420, "opsz": 24})

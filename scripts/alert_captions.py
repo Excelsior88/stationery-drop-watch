@@ -10,6 +10,8 @@ import unicodedata
 X_LIMIT, X_URL_LEN, BSKY_LIMIT = 280, 23, 300
 PRICE_RE = re.compile(r"(US\$|C\$|CA\$|S\$|A\$|\$|€|£|¥|₹)\s?\d|\b\d[\d,]*(\.\d{1,2})?\s?(USD|CAD|EUR|GBP|SGD|AUD|JPY)\b|\bprice", re.I)
 BANNED_RE = re.compile(r"bullet\s*journal|#dotgrid\b|\bdotgrid\b", re.I)
+# Official Leuchtturm product name is "Bullet Journal Edition 2"; allow that phrase only.
+OFFICIAL_BJ_PRODUCT_RE = re.compile(r"bullet\s*journal\s*edition(?:\s*\d+)?", re.I)
 BRAND_TAGS = {"leuchtturm": "#Leuchtturm1917", "archer": "#ArcherAndOlive", "scribbles": "#ScribblesThatMatter"}
 
 
@@ -24,7 +26,9 @@ def check_text(text, kind, where="text"):
         raise AlertTextError(f"{where}: kind is 'new' but the text says back in stock/restock: {text!r}")
     if PRICE_RE.search(text):
         raise AlertTextError(f"{where}: prices are not allowed in alerts: {text!r}")
-    if BANNED_RE.search(text):
+    # Strip official product-name hits before the generic "bullet journal" ban.
+    scrubbed = OFFICIAL_BJ_PRODUCT_RE.sub("EDITION_PRODUCT", text)
+    if BANNED_RE.search(scrubbed):
         raise AlertTextError(f"{where}: banned wording (bullet journal / #DotGrid / dotgrid): {text!r}")
 
 

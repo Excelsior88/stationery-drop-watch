@@ -19,6 +19,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import alert_captions as cap  # noqa: E402
+import clip_mascot  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOGO = os.path.join(ROOT, "site/assets/brand/logo-1600.png")
@@ -211,6 +212,7 @@ def planner(local, note, kind, from_label, doodle, w=720, h=414):
 def headline_layout(d, head, store, product, variant):
     """Find the largest scale at which headline, store, product and variant fit between y=180 and y=500."""
     W, TOP, BOT = 968, 193, 500  # r5: first baseline 268 at full size
+    WV = 780  # product/variant lines sit beside the left washi tape (x<~180, y>~430): keep them narrower
     for s in [x / 100 for x in range(100, 39, -3)]:
         hs = 104 * s
         fH, fHi = F(NR, hs, 600, opsz=72), F(NRI, hs, 600, opsz=72)
@@ -221,9 +223,9 @@ def headline_layout(d, head, store, product, variant):
             continue
         ps = max(24, 34 * min(1, s * 1.15)); vs = max(26, 40 * min(1, s * 1.15))
         try:
-            fP, ps, pl = fit_lines(d, product, lambda z: F(IN, z, 700, opsz=32), [z for z in range(round(ps), 19, -1)], W, 2)
+            fP, ps, pl = fit_lines(d, product, lambda z: F(IN, z, 700, opsz=32), [z for z in range(round(ps), 19, -1)], WV, 2)
             if variant:
-                fV, vs, vl = fit_lines(d, variant, lambda z: F(NRI, z, 600, opsz=40), [z for z in range(round(vs), 21, -1)], W, 2)
+                fV, vs, vl = fit_lines(d, variant, lambda z: F(NRI, z, 600, opsz=40), [z for z in range(round(vs), 21, -1)], WV, 2)
             else:
                 fV, vl = None, []
         except ValueError:
@@ -275,6 +277,9 @@ def build(store, product, variant, local, kind, from_label, note, doodle):
     d = ImageDraw.Draw(im)
     d.rectangle((0, S - 70, S, S), fill=INK)
     d.text((S / 2, S - 26), "stationerydropwatch.com", font=F(IN, 26, 700), fill=PAPER, anchor="ms")
+    # Clip: cheer pose for back-in-stock and now-available singles. Kept small in
+    # the lower-left margin, above the footer, so names, the planner and the URL stay clear.
+    clip_mascot.place_for_kind(im, kind, layout="alert")
     return im.convert("RGB")
 
 
