@@ -756,5 +756,14 @@
   "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-poppy-red-1",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-12T23:18:14+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "Original A6 book (English)",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-2027-english-original-book-a6-size-daily-jan-start-mon-start",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
