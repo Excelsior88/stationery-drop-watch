@@ -802,7 +802,7 @@ def build_hobo_tracker():
         shared_html = f'<p class="small">Rows without their own Amazon listing share {word}: {bits}.</p>'
     oe_html = (f"""<section class="card" id="sold-out-everywhere">
       <div class="section-head"><h2>Sold out at every shop we track</h2></div>
-      <p class="muted small">None of the shops we check can sell these right now. A row with its own Amazon listing links there. The others share one link to the Hobonichi store. A product leaves this list as soon as any shop we track has it in stock or on preorder.</p>
+      <p class="muted small">None of the shops we check can sell these right now. A row with its own Amazon listing links there. The others share one link to the Hobonichi store. A product leaves this list as soon as any shop we track has it in stock or on preorder. <a href="sold-out-everywhere/">See what's sold out across every tracker</a>.</p>
       {"".join(f'<h3 class="oe-group">{E(note)}</h3><ul class="oe-list compact">{"".join(oe_row(m) for m in ms)}</ul>' for note, ms in oe_groups.items())}
       {shared_html}
     </section>""" if out_everywhere else "")
@@ -926,7 +926,7 @@ def build_index():
   {eyebrow(tracker_count_label(), f"{N_STORES} shops", f"checked {CHECK_FREQ}")}
   <h1>Know the moment your planner or journal is back.</h1>
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
-  <p class="small section-switch">Also on the site, separate from the trackers: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Planners and journals</a>.</p>
+  <p class="small section-switch">Also on the site, separate from the trackers: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Planners and journals</a> · <a href="sold-out-everywhere/">Sold out everywhere</a>.</p>
   {signup()}
   <p class="muted small hub-status">Last check: {time_tag(stock['run_finished'])} · {checked} of {len(prods)} listings checked successfully.{unk}</p>
 </section>
@@ -1752,7 +1752,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
     tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
-    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), tn_mod), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-03"), (url_for("contact/"), "2026-11-10")]
+    urls += [(url_for(WTB_SLUG + "/"), hobo_mod), (url_for(VS_SLUG + "/"), GUIDES_LASTMOD), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), tn_mod), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-03"), (url_for("contact/"), "2026-11-10"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], "2026-11-11"))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2892,6 +2892,77 @@ SOCIALS = [  # (platform, handle, url, note, icon letter)
     ("Reddit", "u/stationerydropwatch", "https://www.reddit.com/user/stationerydropwatch/", "Where we join planner conversations.", "r/"),
 ]
 
+SOLDOUT_SLUG = "sold-out-everywhere"
+SEC_LABEL = {"hobonichi": "Hobonichi Techo 2027", **{k: SECTIONS[k]["nav"] for k in SECTIONS}}
+
+def sold_out_everywhere():
+    """Items (listings grouped by product_key) that no shop we track has in stock or on preorder, from this run's
+    stock.json. Strict, so the page never overstates: at least one listing is sold out, every other listing is sold out
+    or not yet on sale, and none failed to check this run (an unchecked shop might have it)."""
+    canon = {c["id"]: c["label"] for c in stores["canonical"]}
+    by = {}
+    for p in stock["products"]:
+        by.setdefault(product_key(p), []).append(p)
+    items, skipped = [], 0
+    for key, ls in by.items():
+        sts = [l["status"] for l in ls]
+        if any(x in BUYABLE for x in sts) or "sold_out" not in sts:
+            continue
+        if "unknown" in sts:
+            skipped += 1
+            continue
+        name = canon.get(ls[0].get("canonical") or "") or (ls[0].get("title") or ls[0]["label"])
+        page_ = design_page_for(ls)
+        group = next((g for g in GROUPS if any(g["match"](l) for l in ls)), None)
+        items.append(dict(name=name, ls=ls, page=page_, group=group, sec=section_of(ls[0]),
+                          sold=len({l["store_id"] for l in ls if l["status"] == "sold_out"}),
+                          soon=len({l["store_id"] for l in ls if l["status"] == "coming_soon"}),
+                          since=max(l.get("status_since") or l["checked_at"] for l in ls if l["status"] == "sold_out")))
+    order = ["hobonichi"] + list(SECTIONS)
+    items.sort(key=lambda x: (order.index(x["sec"]) if x["sec"] in order else 99, x["name"].lower()))
+    return items, skipped
+
+def build_sold_out():
+    fname = SOLDOUT_SLUG + "/"
+    items, skipped = sold_out_everywhere()
+    run = stock["run_finished"]
+    def li(x):
+        where = f'Sold out at {nshops(x["sold"])}' + (f', not yet on sale at {nshops(x["soon"])}' if x["soon"] else "")
+        since = f' · sold out at every check since {time_tag(x["since"])}'
+        if x["page"]:
+            link = f'<a href="{x["page"]}">{E(x["name"])}</a>'
+            more = ""
+        elif x["group"]:
+            link = f'<strong>{E(x["name"])}</strong>'
+            more = f' <span class="small">No page of its own yet. It\'s listed on the <a href="{x["group"]["slug"]}/">{E(x["group"]["short"])} restock page</a>.</span>'
+        else:
+            link, more = f'<strong>{E(x["name"])}</strong>', ' <span class="small">No page of its own yet.</span>'
+        return f'<li>{link}{more}<br><span class="muted small">{where}{since}</span></li>'
+    secs = ""
+    for sec in dict.fromkeys(x["sec"] for x in items):
+        rows = "".join(li(x) for x in items if x["sec"] == sec)
+        secs += f'<section class="card"><h2>{E(SEC_LABEL.get(sec, sec))}</h2><ul class="link-list soldout-list">{rows}</ul></section>'
+    if not items:
+        secs = '<section class="card"><p>Nothing right now: every item we track is in stock or on preorder at one shop or more, or isn\'t on sale yet.</p></section>'
+    n = len(items)
+    count = f"{n} item{'s' if n != 1 else ''}"
+    note = (f'<p class="muted small">Left out this run: {skipped} item{"s" if skipped != 1 else ""} we couldn\'t check at every shop, '
+            'so we can\'t say they\'re sold out everywhere.</p>') if skipped else ""
+    body = f"""
+<article class="prose soldout">
+{crumbs((fname, "Sold out everywhere"))}
+{eyebrow("Sold out everywhere", count, f"checked {CHECK_FREQ}")}
+<h1>Sold out everywhere we track</h1>
+<p class="lede">Items that no shop we track has in stock or on preorder at the last check ({time_tag(run)}). Each one links to its page with every shop's status. This list rebuilds on every check, so items drop off as soon as a shop has them again.</p>
+{signup()}
+{secs}
+{note}
+<p class="muted small">"Sold out" is exactly what each shop's public product data said. "Not yet on sale" means the shop has a preview page up but isn't taking orders. The raw data is public: <a href="data/stock.json">stock.json</a>.</p>
+</article>"""
+    return fname, page(fname, f"Sold out everywhere: {count} to watch",
+                       f"Stationery items that no shop we track has in stock or on preorder right now, from our last check. Rebuilt {CHECK_FREQ}, with a link to each item's restock page.",
+                       body, ld=(crumbs_ld((fname, "Sold out everywhere")),))
+
 def build_follow():
     fname = "follow/"
     rows = "".join(f"""<li class="follow-card"><span class="follow-ico" aria-hidden="true">{E(ic)}</span>
@@ -2955,7 +3026,7 @@ def main():
         check_amz_doc(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_tn_sizes, build_guides_index, build_shop, build_follow, build_contact):
+    for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_tn_sizes, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
