@@ -404,7 +404,7 @@ SIGNUP_ACTION = f"https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}
 
 SIGNUP_COPY = {
     "alerts": ("Get restock alerts by email",
-               "One short email when a sold-out item comes back somewhere we track. No spam, unsubscribe anytime."),
+               "The list covers every restock we track, so it could be multiple emails a day. Free, and you can unsubscribe anytime."),
     "shop": ("Hear about new planners and journals",
              "An occasional email when we release a new planner or journal, plus our restock alerts. No spam, unsubscribe anytime."),
 }
@@ -918,7 +918,7 @@ def build_index():
     own_html = "".join(
         f'<li><a href="shop/"><img{f" class=\"{E(cls)}\"" if cls else ""} src="{E(img)}" alt="{E(alt)}" loading="lazy" decoding="async" width="{w}" height="{h}"><span class="hub-own-t">{E(t)}</span><span class="muted small">{E(sub)}</span></a></li>'
         for img, alt, t, sub, cls, w, h in own)
-    faq_html, _ = faq_block(only=HUB_FAQ, sid="good-to-know", home=True)
+    faq_html, _ = faq_block(only=HUB_FAQ, sid="good-to-know")
     unk = f' <span class="unk-note">{s["unknown"]} couldn\'t be checked this run.</span>' if s["unknown"] else ""
     body = f"""
 <section class="hero">
@@ -963,7 +963,7 @@ def build_index():
                              "logo": BASE + "assets/brand/icon-512.png", "email": PUBLIC_EMAIL,
                              "sameAs": [s[2] for s in SOCIALS]}}
     return page("index.html", "Hobonichi, dot grid & MIDORI tracker",
-                f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, dot grid journals, Traveler's notebooks and MIDORI MD, plus an email when a sold-out item is back.",
+                f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, dot grid journals, Traveler's notebooks and MIDORI MD, plus free email alerts for every restock we track.",
                 body, ld=(site_ld,))
 
 def build_hobonichi():
@@ -992,7 +992,7 @@ def build_hobonichi():
   <li>Live stock by product: """ + " · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS) + """.</li>
   <li>Buying direct from Hobonichi is the only way to get store-exclusive extras, but it ships from Japan and tariffs may apply in the US <a href="#s-papermouse">[Paper Mouse]</a>.</li>
   <li>Which shops have it right now: <a href="where-to-buy-hobonichi-2027/">where to buy the Hobonichi Techo 2027</a>. Choosing a size: <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a>.</li>
-  <li><a href="#alerts">Sign up for alerts</a> (above) and we'll email you when something flips back to in stock.</li>
+  <li><a href="#alerts">Sign up for alerts</a> (above) and we'll email you about every restock we track, so it could be multiple emails a day.</li>
 </ul>
 
 <h2>Sources</h2>
@@ -1695,7 +1695,8 @@ FAQ = [
      "The stationery we track is sold by the shops themselves; we just link you to them. "
      "Amazon links on the site are affiliate links, and we say so on every page; links to the shops we track are plain links."),
     ("How do restock alerts work?",
-     "Sign up with your email and you'll get one short email when a sold-out item comes back somewhere we track. It's free and you can unsubscribe anytime."),
+     "Sign up with your email and you'll get an email about every restock we track, so it could be multiple emails a day. "
+     "It's one free list, and you can unsubscribe anytime."),
 ]
 
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
@@ -1704,10 +1705,7 @@ FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
     "midori": "On the MIDORI MD page, we track seasonal and limited MD releases (MIDORI's MD line is now sold as MD PRODUCT).",
 }
 
-ALERTS_A = ("Sign up with your email and you'll get an email about every restock we track, so it could be multiple emails a day. "
-            "It's one free list, and you can unsubscribe anytime.")
-
-def faq_block(only=None, sid="faq", home=False):
+def faq_block(only=None, sid="faq"):
     """only: a subset of FAQ questions (the hub shows a short version, without FAQPage markup)."""
     n = len({p["store_id"] for p in stock["products"]})
     # {shop} is a link in the page and the plain URL in the FAQ structured data
@@ -1721,8 +1719,6 @@ def faq_block(only=None, sid="faq", home=False):
                  "Printed books are on Amazon. Printable PDFs, including undated paper tip-ins, are on Etsy. "
                  "The stationery we track is sold by the shops themselves; we just link you to them. "
                  "Amazon links on the site are affiliate links, and we say so on every page; links to the shops we track are plain links.")
-        if q == "How do restock alerts work?" and not home:  # the homepage keeps its original answer
-            a = ALERTS_A
         if only is None or q in only:
             pairs.append((q, a))
     qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_names()), shop=url_for("shop/")),
@@ -1981,7 +1977,7 @@ def build_where_to_buy():
         <li><strong>Watch for preorders.</strong> Restocks don't always show up as "in stock". At the October 1 wave, some shops took preorders for earlier sell-outs. We count preorders as available. <a href="hobonichi-2027.html">See the 2027 calendar</a>.</li>
         <li><strong>Don't mistake "not yet on sale" for sold out.</strong> Shops put up preview pages before items go on sale.</li>
         <li><strong>Sign up at the official store too.</strong> Hobonichi's restock notification emails cover the Techo books and the Drawer Pouch, not accessories, and don't guarantee you'll get one <a href="#src-shop">[Hobonichi]</a>. Many independent shops offer their own restock sign-ups on product pages <a href="#src-pm">[Paper Mouse]</a>.</li>
-        <li><strong>Get our alerts.</strong> We check about every 30 minutes and email you when a sold-out item comes back. <a href="#alerts">Sign up above</a>.</li>
+        <li><strong>Get our alerts.</strong> We check about every 30 minutes and email you about every restock we track, so it could be multiple emails a day. <a href="#alerts">Sign up above</a>.</li>
       </ul>
     </section>
 <h2>Which one should you get?</h2>
@@ -2080,7 +2076,7 @@ def build_vs():
 <p><a href="hobonichi-weeks-2027/">Live Weeks stock</a> · <a href="hobonichi-weeks-mega-2027/">Weeks Mega</a></p>
 
 <h2>Where to buy</h2>
-<p>Stock changes fast, and one shop is often sold out while another has it. See <a href="{WTB_SLUG}/">where to buy the Hobonichi Techo 2027</a> for every shop we track, edition by edition, or <a href="#alerts">sign up above</a> and we'll email you when a sold-out one comes back.</p>
+<p>Stock changes fast, and one shop is often sold out while another has it. See <a href="{WTB_SLUG}/">where to buy the Hobonichi Techo 2027</a> for every shop we track, edition by edition, or <a href="#alerts">sign up above</a> for email alerts on every restock we track. It could be multiple emails a day, and you can unsubscribe anytime.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
@@ -2186,7 +2182,7 @@ def build_dotgrid_guide():
          "Leuchtturm1917 (numbered pages and a blank table of contents) and Scribbles That Matter (numbered pages, an index, a key page and a pen test page). "
          "Archer and Olive's and Notebook Therapy's product pages don't mention numbered pages or an index."),
         ("How do I know when a sold-out dot grid journal is back?",
-         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up for the free email alerts and we'll tell you when a sold-out size or color comes back. The list covers every restock we track, so it could be multiple emails a day, and you can unsubscribe anytime."),
+         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up for the free email alerts. The list covers every restock we track, including sold-out sizes and colors coming back, so it could be multiple emails a day, and you can unsubscribe anytime."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, {E(b)} (official product page).</li>'
@@ -2231,7 +2227,7 @@ def build_dotgrid_guide():
 <p><a href="{DOTGRID_SLUG}/#shop-notebooktherapy">Live Notebook Therapy stock</a></p>
 
 <h2>Where to buy</h2>
-<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> and we'll email you when a sold-out one comes back. More guides are on the <a href="guides/">guides page</a>.</p>
+<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for email alerts on every restock we track. It could be multiple emails a day, and you can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
