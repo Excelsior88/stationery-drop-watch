@@ -1060,19 +1060,19 @@ def trust_strip(prods):
     """Shops, cadence, last check, and the honest checked-successfully count. No availability bar."""
     unknown = sum(p["status"] == "unknown" for p in prods)
     checked = len(prods) - unknown
-    unk = f'<p class="muted small trust-unk">{unknown} couldn\'t be checked this run.</p>' if unknown else ""
+    missed = (f' <span class="trust-miss">{unknown} couldn\'t be checked this run.</span>'
+              if unknown else "")
     facts = f'''<ul class="trust" aria-label="Inventory monitoring">
   <li><b>{N_STORES}</b> <span>shops checked</span></li>
   <li><b>{E(CHECK_FREQ)}</b> <span class="trust-cap">check interval</span></li>
   <li><span class="trust-k">Last check</span> <span class="trust-time">{time_tag(stock["run_finished"])}</span></li>
-  <li><b>{checked} of {len(prods)}</b> <span>listings checked successfully</span></li>
+  <li><b>{checked} of {len(prods)}</b> <span>listings checked successfully</span>{missed}</li>
 </ul>'''
     # Clip sits beside the cards, about their height on a wide screen. The file is a scaled copy of the approved art, with no caption.
     return f'''<div class="trust-with-clip">
   {facts}
   <img class="clip" src="assets/brand/clip.webp" width="360" height="539" alt="Clip, the Stationery Drop Watch paper clip, checking stock" loading="lazy" decoding="async">
-</div>
-{unk}'''
+</div>'''
 
 def build_index():
     """Hub homepage: hero and signup, the four trackers, recent restocks from every tracker, guides, FAQ.
