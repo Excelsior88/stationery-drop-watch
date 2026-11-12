@@ -2067,16 +2067,16 @@ def design_index_block():
     return f'<section class="card" id="design-pages"><h2>Restock pages for single designs</h2><p class="muted small">{len(DESIGNS)} pages, one per planner or journal design we track. Counts come from the same checks as the trackers.</p>{"".join(out)}</section>'
 
 def _fmt_head(icon, label):
-    """Small drawing beside the column name. The label already names it, so the drawing is hidden from assistive tech."""
-    return f'<span class="fmt-head">{icon}<span>{label}</span></span>'
+    """Drawing above the column name. The label already names it, so the drawing is hidden from assistive tech."""
+    return f'<span class="fmt-head"><span class="fmt-art">{icon}</span><span>{label}</span></span>'
 
 def book_icon(kind):
     """Closed book at the same relative scale as the format guide: A6 smaller, A5 larger, Weeks tall and narrow."""
     w, h = {"a6": (99, 142), "a5": (142, 204), "weeks": (88, 182)}[kind]
-    scale = 34 / 204
+    scale = 85 / 204
     dw, dh = round(w * scale), round(h * scale)
     spine = round(w * 0.12)
-    return (f'<svg class="fmt-icon" viewBox="0 0 {w} {h}" width="{dw}" height="{dh}" aria-hidden="true" focusable="false">'
+    return (f'<svg class="fmt-icon" style="--iw:{dw}px;--ih:{dh}px" viewBox="0 0 {w} {h}" width="{dw}" height="{dh}" aria-hidden="true" focusable="false">'
             f'<rect x="3" y="3" width="{w - 6}" height="{h - 6}" fill="#e9ddc5"/>'
             f'<rect x="3" y="3" width="{spine}" height="{h - 6}" fill="#c5baa0"/>'
             f'<rect x="3" y="3" width="{w - 6}" height="{h - 6}" fill="none" stroke="#699173" stroke-width="6"/>'
@@ -2089,13 +2089,13 @@ def cover_icon(kind):
         "passport": (134, 98, "#5e7f62"),
         "card": (110, 75, "#d1992e"),
     }[kind]
-    scale = 48 / 220
+    scale = 92 / 220
     dw, dh = round(width * scale), round(height * scale)
     # The real refill sits only a few millimetres inside the cover. At icon size that
     # line would fall on the edge, so the dash is inset enough to read as the refill.
     x, y = width * 0.14, height * 0.1
     rw, rh = width - 2 * x, height - 2 * y
-    return (f'<svg class="fmt-icon" viewBox="0 0 {width} {height}" width="{dw}" height="{dh}" aria-hidden="true" focusable="false">'
+    return (f'<svg class="fmt-icon" style="--iw:{dw}px;--ih:{dh}px" viewBox="0 0 {width} {height}" width="{dw}" height="{dh}" aria-hidden="true" focusable="false">'
             f'<rect x="1" y="1" width="{width - 2}" height="{height - 2}" rx="4" fill="{fill}"/>'
             f'<rect x="{x:.1f}" y="{y:.1f}" width="{rw:.1f}" height="{rh:.1f}" rx="2" fill="none" stroke="#f4efe4" stroke-width="4" stroke-dasharray="7 5"/>'
             f'</svg>')

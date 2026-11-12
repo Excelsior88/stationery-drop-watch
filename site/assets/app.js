@@ -307,4 +307,25 @@
   };
   window.addEventListener("hashchange", () => openLinkedDetails(true));
   openLinkedDetails(true);
+  // Stock tables sit in a horizontal scroller, so a CSS sticky header sticks to that
+  // box and slides under the site header. Keep the header row just below the site header.
+  const pinTableHeads = () => {
+    const mastEl = document.querySelector(".masthead");
+    if (!mastEl) return;
+    const mast = mastEl.getBoundingClientRect().bottom;
+    document.querySelectorAll("table.stock thead").forEach(thead => {
+      const cells = [...thead.querySelectorAll("th")];
+      cells.forEach(th => { th.style.transform = ""; });
+      const wrap = thead.closest(".table-wrap") || thead.parentElement;
+      const wr = wrap.getBoundingClientRect();
+      const hr = thead.getBoundingClientRect();
+      const room = wr.bottom - hr.height;
+      let shift = 0;
+      if (hr.top < mast && room > mast) shift = Math.min(mast - hr.top, Math.max(0, room - hr.top));
+      if (shift) cells.forEach(th => { th.style.transform = "translateY(" + shift + "px)"; });
+    });
+  };
+  window.addEventListener("scroll", pinTableHeads, { passive: true });
+  window.addEventListener("resize", pinTableHeads);
+  pinTableHeads();
 })();
