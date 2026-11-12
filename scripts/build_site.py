@@ -1127,7 +1127,7 @@ def build_index():
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
   {signup()}
   {trust_strip(prods)}
-  <p class="small section-switch">Also on the site, separate from the trackers: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a href="sold-out-everywhere/">Sold out everywhere</a>.</p>
+  <p class="small section-switch">More on the site: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a href="sold-out-everywhere/">Sold out everywhere</a>.</p>
 </section>
 
 <section class="hub-trackers" id="trackers" aria-labelledby="trackers-h">

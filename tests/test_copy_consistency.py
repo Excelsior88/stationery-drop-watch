@@ -100,7 +100,7 @@ class HeroAndScopeTests(unittest.TestCase):
         doc = plain(site.build_index())
         self.assertIn(site.tracker_count_label(), doc)
         self.assertIn(f"{site.N_STORES} shops", doc)
-        self.assertIn("Also on the site, separate from the trackers:", doc)
+        self.assertIn("More on the site:", doc)
         self.assertIn("2027 calendar", doc)
         self.assertIn('href="/guides/"', site.build_index())
         self.assertIn('href="/shop/"', site.build_index())
