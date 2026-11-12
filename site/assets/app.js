@@ -1,9 +1,6 @@
 // Stationery Drop Watch: client-side table filtering. The check time is shown once per table (build_site.py).
 (function () {
   if (window.DropWatchTime) window.DropWatchTime.showLocalTimes(document);
-  document.querySelectorAll("details.filter-more").forEach(d => {
-    if (window.matchMedia("(max-width: 640px)").matches) d.open = false;
-  });
   document.querySelectorAll("details.feed-fold").forEach(d => { d.open = false; });
   const mast = document.querySelector(".masthead");
   const filterBar = document.querySelector("#filters");
@@ -108,7 +105,7 @@
         if (node.tagName === "DETAILS") node.open = true;
         node = node.parentElement;
       }
-      if (scroll) el.scrollIntoView({ block: "start" });
+      if (scroll) revealHash(el);
     }
     function render() {
       const q = f.q.value.trim().toLowerCase();
@@ -223,7 +220,7 @@
         if (node.tagName === "DETAILS") node.open = true;
         node = node.parentElement;
       }
-      if (scroll) el.scrollIntoView({ block: "start" });
+      if (scroll) revealHash(el);
     };
     const filter = () => {
       const q = (qEl.value || "").trim().toLowerCase();
@@ -303,8 +300,14 @@
       if (node.tagName === "DETAILS") node.open = true;
       node = node.parentElement;
     }
-    if (scroll) el.scrollIntoView({ block: "start" });
+    if (scroll) revealHash(el);
   };
+  function revealHash(el) {
+    const box = el.closest("details") || el;
+    const go = () => box.scrollIntoView({ block: "start" });
+    go();
+    requestAnimationFrame(go);
+  }
   window.addEventListener("hashchange", () => openLinkedDetails(true));
   openLinkedDetails(true);
   // Stock tables sit in a horizontal scroller, so a CSS sticky header sticks to that

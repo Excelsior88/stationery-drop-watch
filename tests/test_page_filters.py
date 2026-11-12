@@ -32,7 +32,7 @@ class PageFilterMarkupTests(unittest.TestCase):
     def test_every_multi_shop_list_has_the_same_filter(self):
         for name, doc in self.docs:
             if name == "hobonichi-restock-tracker/":
-                for needle in ('id="f-product"', 'id="f-type"', 'id="f-store"', 'id="f-status"', 'id="f-q"', 'id="f-reset"'):
+                for needle in ('id="f-product"', 'id="f-type"', 'id="f-store"', 'id="f-status"', 'id="f-q"', 'id="f-reset"', 'aria-label="Filters"'):
                     self.assertIn(needle, doc, name)
                 self.assertIn("<noscript>", doc, name)
                 continue
@@ -40,12 +40,33 @@ class PageFilterMarkupTests(unittest.TestCase):
             if rows < 2:
                 continue
             self.assertIn('class="filters page-filter card-filter"', doc, name)
+            self.assertIn('aria-label="Filters"', doc, name)
             self.assertIn('data-filter="store"', doc, name)
             self.assertIn('data-filter="status"', doc, name)
             self.assertIn('data-filter="q"', doc, name)
             self.assertIn('data-filter="reset"', doc, name)
             self.assertIn("Nothing on this page matches those filters.", doc, name)
             self.assertGreaterEqual(rows, 2, name)
+
+    def test_jump_row_is_gone_and_design_pages_fold(self):
+        for name, doc in self.docs:
+            self.assertNotIn(">Jump to:</span>", doc, name)
+            self.assertNotIn('aria-label="Products on this page"', doc, name)
+        for g in site.GROUPS:
+            name = g["slug"] + "/"
+            doc = next(doc for n, doc in self.docs if n == name)
+            ds = site.designs_of(g["slug"])
+            if not ds:
+                self.assertNotIn("design-fold", doc, name)
+                continue
+            self.assertIn(f"<summary>Design pages ({len(ds)})</summary>", doc, name)
+            self.assertNotIn('class="design-fold" open', doc, name)
+            self.assertNotIn(">Design pages:</span>", doc, name)
+            for d in ds:
+                self.assertIn(f'href="/{site.design_fname(d)}"', doc, name)
+            # The old jump targets stay on the groups, so a #link still has somewhere to land.
+            for cid in re.findall(r'<section class="group-sec" id="([^"]+)"', doc):
+                self.assertTrue(cid, name)
 
     def test_product_groups_start_collapsed(self):
         for name, doc in self.docs:
