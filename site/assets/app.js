@@ -1,6 +1,20 @@
 // Stationery Drop Watch: client-side table filtering. The check time is shown once per table (build_site.py).
 (function () {
   if (window.DropWatchTime) window.DropWatchTime.showLocalTimes(document);
+  document.querySelectorAll("details.filter-more").forEach(d => {
+    if (window.matchMedia("(max-width: 640px)").matches) d.open = false;
+  });
+  const mast = document.querySelector(".masthead");
+  const filterBar = document.querySelector("#filters");
+  if (mast || filterBar) {
+    const pinMast = () => {
+      if (mast) document.documentElement.style.setProperty("--mast", Math.ceil(mast.getBoundingClientRect().height) + "px");
+      if (filterBar) document.documentElement.style.setProperty("--filter-h", Math.ceil(filterBar.getBoundingClientRect().height) + "px");
+    };
+    pinMast();
+    window.addEventListener("resize", pinMast);
+    if (filterBar && typeof ResizeObserver !== "undefined") new ResizeObserver(pinMast).observe(filterBar);
+  }
   // The Hobonichi tracker moved from the homepage to its own page. Old links such as /#listings, /#tracker or
   // /?product=x#tracker can't be redirected by the server (the part after # never reaches it), so forward them here.
   if (location.pathname === "/" || location.pathname === "/index.html") {
@@ -17,7 +31,11 @@
     const order = { in_stock: 0, preorder: 1, coming_soon: 2, sold_out: 3, unknown: 4 };
     rows.sort((a, b) => (order[a.st] - order[b.st]) || a.s.localeCompare(b.s));
     const $ = id => document.getElementById(id);
-    const f = { product: $("f-product"), type: $("f-type"), store: $("f-store"), status: $("f-status"), q: $("f-q") };
+    const f = {};
+    ["product", "type", "store", "status", "q", "size", "lang"].forEach(k => {
+      const el = $("f-" + k);
+      if (el) f[k] = el;
+    });
     const readParams = () => {
       const params = new URLSearchParams(location.search);
       for (const k in f) f[k].value = params.get(k) || "";
@@ -49,32 +67,72 @@
     const azLink = (r, cls) => r.azm
       ? `<a class="btn btn-amz btn-sm" href="${esc(r.az)}" target="_blank" rel="sponsored noopener">${esc(r.azl)}</a>`
       : `<a class="az${cls ? " " + cls : ""}" href="${esc(r.az)}" target="_blank" rel="sponsored noopener">${esc(r.azl)}</a>`;
+    function tally(ls) {
+      const n = ls.length;
+      const unk = ls.filter(r => r.st === "unknown").length;
+      const inn = ls.filter(r => r.st === "in_stock").length;
+      if (!n) return "No listings";
+      if (unk === n) return n === 1 ? "couldn't check this listing" : "couldn't check these " + n + " listings";
+      if (unk) return inn + " of " + (n - unk) + " checked listings in stock · " + unk + " couldn't be checked";
+      return inn + " of " + n + " listings in stock";
+    }
+    function shopTally(ls) {
+      const shops = new Set(ls.map(r => r.sid)).size;
+      const inShops = new Set(ls.filter(r => r.st === "in_stock").map(r => r.sid)).size;
+      return tally(ls) + " · " + inShops + " of " + shops + " " + (shops === 1 ? "shop" : "shops") + " in stock";
+    }
+    function productCard(ls) {
+      const h = ls[0];
+      const sameAz = ls.every(r => r.az === h.az && !!r.azm === !!h.azm);
+      const shops = new Set(ls.map(r => r.sid)).size;
+      const bits = [esc(h.t), shops + " " + (shops === 1 ? "shop" : "shops")];
+      if (h.dp) bits.push(`<a href="${esc(h.dp)}">Design page</a>`);
+      const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span>` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}${r.az && !sameAz ? azLink(r) : ""}</span><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></li>`).join("");
+      return `<article class="compare"><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${h.az && sameAz ? azLink(h, "grp-az") : ""}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
+    }
     function render() {
       const q = f.q.value.trim().toLowerCase();
       const out = rows.filter(r =>
         (!f.product.value || (f.product.value === "__other" ? !r.c : r.c === f.product.value)) &&
-        (!f.type.value || r.t === f.type.value) &&
+        (!f.type || !f.type.value || r.t === f.type.value) &&
         (!f.store.value || r.sid === f.store.value) &&
         (!f.status.value || r.st === f.status.value) &&
+        (!f.size || !f.size.value || (r.sz || "") === f.size.value) &&
+        (!f.lang || !f.lang.value || (r.lg || "") === f.lang.value) &&
         (!q || (r.p + " " + r.gn + " " + r.title + " " + r.s).toLowerCase().includes(q)));
       const groups = groupRows(out);
+      const hasFam = groups.some(ls => ls[0].fam);
+      if (hasFam && limit === PAGE) limit = 1e9;
       const shownGroups = []; let n = 0;
       for (const g of groups) { if (n >= limit) break; shownGroups.push(g); n += g.length; }
       more.hidden = n >= out.length;
       more.textContent = `Show all ${out.length} listings`;
-      $("rows").innerHTML = shownGroups.length ? shownGroups.map(ls => {
-        const h = ls[0];
-        const sameAz = ls.every(r => r.az === h.az && !!r.azm === !!h.azm);
-        const shops = new Set(ls.map(r => r.sid)).size;
-        return `<tr class="grp"><th colspan="2" scope="rowgroup"><div class="grp-head">
-          <span class="grp-name">${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</span>
-          <span class="sub">${esc(h.t)} · ${shops} ${shops === 1 ? "shop" : "shops"}${h.dp ? ` · <a href="${esc(h.dp)}">Design page</a>` : ""}</span>
-          ${h.az && sameAz ? azLink(h, "grp-az") : ""}</div></th></tr>` +
-          ls.map(r => `<tr class="child">
-          <td><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span>` : ""}<span class="sub variant">${esc(r.p)}</span>${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}${r.az && !sameAz ? `<span class="sub">${azLink(r)}</span>` : ""}</td>
-          <td><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></td>
-        </tr>`).join("");
-      }).join("") : `<tr class="empty-row"><td colspan="2">Nothing matches those filters.</td></tr>`;
+      const box = $("rows");
+      let html;
+      if (!shownGroups.length) {
+        html = box.tagName === "TBODY"
+          ? `<tr class="empty-row"><td colspan="2">Nothing matches those filters.</td></tr>`
+          : `<p class="empty-row">Nothing matches those filters.</p>`;
+      } else if (!hasFam) {
+        html = shownGroups.map(productCard).join("");
+      } else {
+        const fams = [];
+        for (const g of shownGroups) {
+          const key = g[0].fam || "";
+          let bucket = fams.find(item => item.key === key);
+          if (!bucket) {
+            bucket = { key, name: g[0].famn || "Other", fo: g[0].fo == null ? 99 : g[0].fo, items: [] };
+            fams.push(bucket);
+          }
+          bucket.items.push(g);
+        }
+        fams.sort((a, b) => a.fo - b.fo);
+        html = fams.map(fam => {
+          const flat = fam.items.flat();
+          return `<details class="fam-block" open><summary><span class="fam-name">${esc(fam.name)}</span><span class="fam-meta">${esc(tally(flat))}</span></summary><div class="fam-products">${fam.items.map(productCard).join("")}</div></details>`;
+        }).join("");
+      }
+      box.innerHTML = html;
       $("count").textContent = `Showing ${n} of ${out.length} matching listings in ${groups.length} ${groups.length === 1 ? "product" : "products"} (${rows.length} tracked)`;
     }
     const reset = document.getElementById("f-reset");
@@ -100,12 +158,16 @@
     const qEl = form.querySelector("[data-filter=q]");
     const storeEl = form.querySelector("[data-filter=store]");
     const statusEl = form.querySelector("[data-filter=status]");
+    const sizeEl = form.querySelector("[data-filter=size]");
+    const langEl = form.querySelector("[data-filter=lang]");
     const reset = form.querySelector("[data-filter=reset]");
     const read = () => {
       const params = new URLSearchParams(location.search);
       if (qEl) qEl.value = params.get("q") || "";
       if (storeEl) storeEl.value = params.get("store") || "";
       if (statusEl) statusEl.value = params.get("status") || "";
+      if (sizeEl) sizeEl.value = params.get("size") || "";
+      if (langEl) langEl.value = params.get("lang") || "";
     };
     const write = (push) => {
       const p = new URLSearchParams(location.search);
@@ -113,6 +175,8 @@
       set("q", qEl && qEl.value.trim());
       set("store", storeEl && storeEl.value);
       set("status", statusEl && statusEl.value);
+      set("size", sizeEl && sizeEl.value);
+      set("lang", langEl && langEl.value);
       p.delete("product");
       const next = location.pathname + (p.toString() ? "?" + p : "") + location.hash;
       if (next !== location.pathname + location.search + location.hash)
@@ -123,12 +187,14 @@
       const q = (qEl.value || "").trim().toLowerCase();
       const store = storeEl ? storeEl.value : "";
       const status = statusEl ? statusEl.value : "";
+      const size = sizeEl ? sizeEl.value : "";
+      const lang = langEl ? langEl.value : "";
       let shown = 0;
       for (const c of cards) {
         let any = false;
         for (const tr of c.querySelectorAll("tbody tr")) {
           const text = ((c.querySelector("h2,h3")?.textContent || "") + " " + tr.textContent).toLowerCase();
-          const hit = (!q || text.includes(q)) && (!store || tr.getAttribute("data-store") === store) && (!status || tr.getAttribute("data-status") === status);
+          const hit = (!q || text.includes(q)) && (!store || tr.getAttribute("data-store") === store) && (!status || tr.getAttribute("data-status") === status) && (!size || tr.getAttribute("data-size") === size) && (!lang || tr.getAttribute("data-lang") === lang);
           tr.hidden = !hit; any = any || hit;
         }
         const keep = c.contains(form);
@@ -150,10 +216,14 @@
     if (qEl) qEl.addEventListener("input", () => schedule(true, 250));
     if (storeEl) storeEl.addEventListener("input", () => schedule(true, 0));
     if (statusEl) statusEl.addEventListener("input", () => schedule(true, 0));
+    if (sizeEl) sizeEl.addEventListener("input", () => schedule(true, 0));
+    if (langEl) langEl.addEventListener("input", () => schedule(true, 0));
     if (reset) reset.addEventListener("click", () => {
       if (qEl) qEl.value = "";
       if (storeEl) storeEl.value = "";
       if (statusEl) statusEl.value = "";
+      if (sizeEl) sizeEl.value = "";
+      if (langEl) langEl.value = "";
       schedule(true, 0);
     });
     window.addEventListener("popstate", () => { read(); filter(); });

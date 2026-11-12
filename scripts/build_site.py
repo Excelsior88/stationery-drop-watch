@@ -214,14 +214,15 @@ HOBO_TRACKER = "hobonichi-restock-tracker/"
 # Header: one link per restock tracker, then the rest of the site. Wraps on narrow screens; nothing is hidden.
 # NAV is not part of the tracker count. The calendar, guides, and shop are resources, not extra trackers.
 NAV_TRACKERS = [(HOBO_TRACKER, "Hobonichi tracker")] + [(SECTIONS[k]["slug"] + "/", SECTIONS[k]["nav"]) for k in LIVE]
-NAV = [("hobonichi-2027.html", "2027 calendar"), ("guides/", "Guides"), ("shop/", "Planners and journals"),
+# Shop stays in the header, after the trackers, and is not one of them.
+NAV = [("hobonichi-2027.html", "2027 calendar"), ("guides/", "Guides"),
        ("follow/", "Follow us"), ("about.html", "About")]
 
 def tracker_count_label():
     """Eyebrow count of restock trackers only (Hobonichi plus each section that has listings)."""
     n = len(NAV_TRACKERS)
     return f"{n} restock tracker" if n == 1 else f"{n} restock trackers"
-SHOP_NAME = "Our planners and journals"  # h1 of /shop; nav and breadcrumb say "Planners and journals"
+SHOP_NAME = "Our planners and journals"  # h1 of /shop; breadcrumb says "Planners and journals". The header link says Shop.
 # The workflow cron is "17,47 * * * *": two runs an hour. Every page says it the same way.
 CHECK_FREQ = "about every 30 minutes"
 N_HOBO = N_SEC["hobonichi"]   # Hobonichi shops we check
@@ -346,9 +347,15 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     def cur(h):  # this page, or the page it sits under (product pages under the tracker, design pages under their section)
         return (h == fname or (hobo_page and h == HOBO_TRACKER) or (guide_page and h == "guides/")
                 or (h in [x for x, _ in NAV_TRACKERS] and h.endswith("/") and fname.startswith(h)))
-    trk = "".join(f'<a href="{h}"{" aria-current=page" if cur(h) else ""}>{E(t)}</a>' for h, t in NAV_TRACKERS)
-    nav = (f'<span class="nav-trackers">{trk}</span><span class="nav-rest">'
-           + "".join(f'<a href="{h}"{" aria-current=page" if cur(h) else ""}>{E(t)}</a>' for h, t in NAV) + '</span>')
+    def nav_a(h, t, cls=""):
+        attrs = f' class="{cls}"' if cls else ""
+        if cur(h):
+            attrs += " aria-current=page"
+        return f'<a href="{h}"{attrs}>{E(t)}</a>'
+    trk = "".join(nav_a(h, t) for h, t in NAV_TRACKERS)
+    # Trackers lead. Shop is a separate link at the end of the rest of the nav, not a fifth tracker.
+    rest = "".join(nav_a(h, t) for h, t in NAV) + nav_a("shop/", "Shop", "nav-shop")
+    nav = f'<span class="nav-trackers">{trk}</span><span class="nav-rest">{rest}</span>'
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
 <html lang="en"><head>
@@ -598,47 +605,201 @@ def check_amz_note(ls, note):
     if any(l["status"] not in NOT_BUYABLE for l in ls):
         raise SystemExit(f"top Amazon note '{note}' contradicts a listing that is buyable or unchecked: {ls[0]['url']}")
 
+# Size and language come only from fields the checker already stores (type, label, title).
+# A listing that does not name one is left blank. It is never guessed, and it is never counted as in stock.
+_ISO_SIZE = re.compile(r"\b(A4|A5|A6|A7|B5|B6|B7)\b", re.I)
+_SIZE_RANK = {name: i for i, name in enumerate(
+    ["A6", "A5", "A4", "A7", "B6", "B5", "B7", "Weeks", "Weeks Mega", "Regular", "Card", "Large"])}
+
+def listing_blob(p):
+    return " ".join(x for x in (p.get("label"), p.get("title"), p.get("canonical")) if x)
+
+def listing_size(p):
+    """Named size only. Weeks and Weeks Mega are the type field. Paper sizes and Regular/Card/Large
+    are read from the listing's own label or title."""
+    t = p.get("type") or ""
+    if t in ("Weeks", "Weeks Mega"):
+        return t
+    blob = listing_blob(p)
+    m = _ISO_SIZE.search(blob)
+    if m:
+        return m.group(1).upper()
+    low = blob.lower()
+    if "card size" in low:
+        return "Card"
+    if re.search(r"\bregular(?:\s+size)?\b", low):
+        return "Regular"
+    if re.search(r"\blarge\b", low) or re.search(r"\bsize l\b", low):
+        return "Large"
+    return ""
+
+def listing_language(p):
+    """English or Japanese only when that listing's label or title says so.
+    A title that names both is not treated as one language."""
+    blob = " ".join(x for x in (p.get("label"), p.get("title")) if x)
+    found = []
+    for word in re.findall(r"\b(English|Japanese)\b", blob, re.I):
+        name = "English" if word.lower() == "english" else "Japanese"
+        if name not in found:
+            found.append(name)
+    return found[0] if len(found) == 1 else ""
+
+def listing_family(p):
+    """Hobonichi family from the same groups the restock pages already use."""
+    for g in GROUPS:
+        if g_sec(g) == "hobonichi" and g["match"](p):
+            return g["short"], g["slug"]
+    return "Other", "other"
+
+def facet_values(items, fn):
+    vals = []
+    for it in items:
+        v = fn(it)
+        if v and v not in vals:
+            vals.append(v)
+    vals.sort(key=lambda v: (_SIZE_RANK.get(v, 50), v))
+    return vals
+
+def show_language_filter(items, fn):
+    seen = {fn(it) for it in items}
+    named = seen - {""}
+    return bool(named) and ("" in seen or len(named) > 1)
+
+def in_stock_tally(statuses):
+    """In-stock count. unknown is not in stock, and it is not folded into the checked total."""
+    n = len(statuses)
+    unk = sum(s == "unknown" for s in statuses)
+    inn = sum(s == "in_stock" for s in statuses)
+    if not n:
+        return "No listings"
+    if unk == n:
+        return "couldn't check this listing" if n == 1 else f"couldn't check these {n} listings"
+    if unk:
+        return f"{inn} of {n - unk} checked listings in stock · {unk} couldn't be checked"
+    return f"{inn} of {n} listings in stock"
+
+def shop_tally(ls):
+    shops = len({r["sid"] for r in ls})
+    in_shops = len({r["sid"] for r in ls if r["st"] == "in_stock"})
+    word = "shop" if shops == 1 else "shops"
+    return f"{in_stock_tally([r['st'] for r in ls])} · {in_shops} of {shops} {word} in stock"
+
+def _az_link(r, primary=False):
+    if not r.get("az"):
+        return ""
+    cls = "btn btn-amz btn-sm" if r.get("azm") else "az"
+    if primary and r.get("azm"):
+        cls = "btn btn-amz btn-sm"
+    return f'<a class="{cls}" href="{E(r["az"])}" target="_blank" rel="sponsored noopener">{E(r["azl"])}</a>'
+
+def compare_product(ls):
+    """One product, every shop that lists it, so the statuses sit next to each other."""
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    ls = sorted(ls, key=lambda r: (order.get(r["st"], 9), r["s"].lower()))
+    h = ls[0]
+    same_az = all(r.get("az") == h.get("az") and bool(r.get("azm")) == bool(h.get("azm")) for r in ls)
+    name = f'<a href="{E(h["dp"])}">{E(h["gn"])}</a>' if h.get("dp") else E(h["gn"])
+    shops = len({r["sid"] for r in ls})
+    bits = [E(h.get("t") or ""), f"{shops} {'shop' if shops == 1 else 'shops'}"]
+    if h.get("dp"):
+        bits.append(f'<a href="{E(h["dp"])}">Design page</a>')
+    az = _az_link(h, primary=True) if h.get("az") and same_az else ""
+    items = []
+    for r in ls:
+        region = f' <span class="region" title="Shop\'s home country">{E(r["rg"])}</span>' if r.get("rg") else ""
+        variant = f'<span class="sub variant">{E(r["p"])}</span>' if r.get("p") and r["p"] != r.get("gn") else ""
+        title = f'<span class="sub">{E(r["title"])}</span>' if r.get("title") and r["title"] not in (r.get("gn"), r.get("p")) else ""
+        row_az = _az_link(r) if r.get("az") and not same_az else ""
+        items.append(
+            f'<li><span class="compare-shop"><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region}{variant}{title}{row_az}</span>'
+            f'<span class="badge {E(r["st"])}">{STATUS[r["st"]]}</span></li>')
+    return f'''<article class="compare">
+  <header class="compare-head"><h3>{name}</h3><p class="compare-tally">{E(shop_tally(ls))}</p><p class="sub">{" · ".join(b for b in bits if b)}</p>{az}</header>
+  <ul class="compare-shops">{"".join(items)}</ul>
+</article>'''
+
+def tracker_static(rows):
+    """No-JS listing groups: the Hobonichi families the data already uses, each one collapsible."""
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    fam_order = [g["slug"] for g in GROUPS if g_sec(g) == "hobonichi"] + ["other"]
+    by_fam = {}
+    for r in rows:
+        by_fam.setdefault(r.get("fam") or "other", {}).setdefault(r["g"], []).append(r)
+    parts = []
+    for fam in fam_order:
+        products = by_fam.get(fam)
+        if not products:
+            continue
+        groups = sorted(products.values(), key=lambda ls: (
+            min(order.get(r["st"], 9) for r in ls),
+            -len({r["sid"] for r in ls}),
+            ls[0].get("gn", "").lower()))
+        name = groups[0][0].get("famn") or "Other"
+        all_rows = [r for ls in groups for r in ls]
+        body = "".join(compare_product(ls) for ls in groups)
+        parts.append(f'''<details class="fam-block" open>
+  <summary><span class="fam-name">{E(name)}</span><span class="fam-meta">{E(in_stock_tally([r["st"] for r in all_rows]))}</span></summary>
+  <div class="fam-products">{body}</div>
+</details>''')
+    return "".join(parts)
+
 def tracker_block(prods, rows, search_hint, other_opt="", extra=""):
-    """Filterable table of every listing in `prods` (driven by assets/app.js)."""
+    """Filterable list of every listing in `prods` (driven by assets/app.js).
+    Without JavaScript the same groups are in the page, inside noscript."""
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
     sids = {p["store_id"] for p in prods}
     store_opts = "".join(f'<option value="{E(x["id"])}">{E(x["name"])}</option>' for x in stores["stores"] if x["id"] in sids)
     prod_opts = "".join(f'<option value="{E(k)}">{E(v)}</option>' for k, v in canon.items() if any(p.get("canonical") == k for p in prods))
     type_opts = "".join(f'<option value="{E(t)}">{E(t)}</option>' for t in sorted({p["type"] for p in prods}))
     status_opts = "".join(f'<option value="{k}">{v}</option>' for k, v in STATUS.items() if any(p["status"] == k for p in prods))
-    ns_groups = {}
-    for r in sorted(rows, key=lambda r: (r["gn"].lower(), r["s"].lower())):
-        ns_groups.setdefault(r["g"], []).append(r)
-    noscript_rows = "".join(
-        f'<tr class="grp"><th colspan="2" scope="rowgroup">{E(ls[0]["gn"])} <span class="sub">{E(ls[0]["t"])}</span></th></tr>'
-        + "".join(f'<tr class="child"><td><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region_tag(r["sid"])}<span class="sub variant">{E(r["p"])}</span></td><td><span class="badge {r["st"]}">{STATUS[r["st"]]}</span></td></tr>' for r in ls)
-        for ls in ns_groups.values())
+    sizes = facet_values(prods, listing_size)
+    langs = [v for v in ("English", "Japanese") if any(listing_language(p) == v for p in prods)]
+    size_label = (f'<label>Size<select id="f-size"><option value="">All sizes</option>'
+                  + "".join(f'<option value="{E(v)}">{E(v)}</option>' for v in sizes) + '</select></label>') if len(sizes) >= 2 else ""
+    lang_label = ""
+    lang_note = ""
+    if show_language_filter(prods, listing_language):
+        lang_label = (f'<label>Language<select id="f-lang"><option value="">All languages</option>'
+                      + "".join(f'<option value="{E(v)}">{E(v)}</option>' for v in langs) + '</select></label>')
+        if any(not listing_language(p) for p in prods):
+            lang_note = '<p class="muted small filter-note">Language is taken from the shop\'s own title. Listings that don\'t name one stay under All languages.</p>'
+    noscript_rows = tracker_static(rows)
     return f"""<section class="card" id="tracker">
       <div class="section-head"><h2>Every listing we track</h2><p class="muted small"><span id="count"></span> · {checked_line(prods)}</p></div>
-      <form class="filters" role="search" onsubmit="return false">
-        <label>Product<select id="f-product"><option value="">All products</option>{prod_opts}{other_opt}</select></label>
-        <label>Type<select id="f-type"><option value="">All types</option>{type_opts}</select></label>
-        <label>Store<select id="f-store"><option value="">All stores</option>{store_opts}</select></label>
-        <label>Status<select id="f-status"><option value="">Any status</option>{status_opts}</select></label>
+      <form class="filters" id="filters" role="search" onsubmit="return false">
+        <details class="filter-more" open>
+          <summary>Filters</summary>
+          <div class="filter-fields">
+            <label>Product<select id="f-product"><option value="">All products</option>{prod_opts}{other_opt}</select></label>
+            <label>Type<select id="f-type"><option value="">All types</option>{type_opts}</select></label>
+            {size_label}
+            {lang_label}
+            <label>Store<select id="f-store"><option value="">All stores</option>{store_opts}</select></label>
+            <label>Status<select id="f-status"><option value="">Any status</option>{status_opts}</select></label>
+          </div>
+        </details>
         <label class="grow">Search<input id="f-q" type="search" placeholder="{E(search_hint)}" autocomplete="off"></label>
         <button type="button" class="filter-reset" id="f-reset">Reset</button>
       </form>
-      <div class="table-wrap"><table class="stock">
-        <thead><tr><th>Product, then each shop</th><th>Status</th></tr></thead>
-        <tbody id="rows"><noscript>{noscript_rows}</noscript></tbody>
-      </table></div>
+      {lang_note}
+      <div id="rows" class="tracker-groups"><noscript>{noscript_rows}</noscript></div>
       <button type="button" id="more" class="btn-ghost more" hidden>Show all</button>
-      <p class="muted small">"Not yet on sale" means the store has a preview page up but isn't taking orders yet.</p>
+      <p class="muted small">Groups can be collapsed. "Not yet on sale" means the store has a preview page up but isn't taking orders yet. "Couldn't check" is a failed check, not a sold-out guess.</p>
       {region_legend(p["store_id"] for p in prods)}
       {extra}
     </section>"""
 
 def tracker_rows(prods, out_everywhere):
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
-    rows = [dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st=p["status"],
+    fam_index = {g["slug"]: i for i, g in enumerate(g for g in GROUPS if g_sec(g) == "hobonichi")}
+    rows = []
+    for p in prods:
+        famn, fam = listing_family(p)
+        rows.append(dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st=p["status"],
                  u=p["url"], at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
                  va=p.get("available_variants"), tv=p.get("total_variants"),
-                 az=amazon_for(p.get("canonical"), p["url"])[0], azl=amazon_for(p.get("canonical"), p["url"])[1]) for p in prods]
+                 sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99),
+                 az=amazon_for(p.get("canonical"), p["url"])[0], azl=amazon_for(p.get("canonical"), p["url"])[1]))
     for r in rows:  # product unavailable at every tracked shop: Amazon becomes the main action
         m = out_everywhere.get(r["u"] if exact_only(r["c"]) else r["g"])
         if m:
@@ -722,9 +883,11 @@ def restock_feed_item(c, extra=""):
         word = "restock" if n == 1 else "restocks"
         rows = "".join(f'<div class="feed-earlier">restocked {time_tag(old["at"])}</div>' for old in earlier)
         history = f'<details class="feed-history"><summary>Earlier {word} ({n})</summary>{rows}</details>'
-    return f"""<li class="feed-item" data-now="{E(st)}"><span class="feed-now">now <span class="badge {E(st)}">{E(label)}</span></span>
-  <a href="{E(newest['url'])}" rel="noopener" target="_blank">{E(newest['label'])}</a> <span class="muted">at {E(newest['store'])}</span>
-  {ex}<span class="feed-when">restocked {time_tag(newest['at'])}</span>{history}</li>"""
+    # Current status leads. A restock that has since sold out is not styled as still available.
+    tone = {"in_stock": "live", "preorder": "hold", "sold_out": "sold"}.get(st, "past")
+    return f"""<li class="feed-item" data-tone="{tone}" data-now="{E(st)}"><span class="feed-now">now <span class="badge {E(st)}">{E(label)}</span></span>
+  <span class="feed-body"><a href="{E(newest['url'])}" rel="noopener" target="_blank">{E(newest['label'])}</a> <span class="muted">at {E(newest['store'])}</span>
+  {ex}<span class="feed-when">restocked {time_tag(newest['at'])}</span></span>{history}</li>"""
 
 def restock_feed(events, extra="", feed_id="restocks", limit=None):
     """Grouped restocks. `limit` is how many listings to show, not how many flips. In stock now is CSS-only."""
@@ -820,6 +983,7 @@ def build_hobo_tracker():
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
   <p class="shop-cta"><a class="btn-ghost" href="shop/">{SHOP_NAME} →</a> <span class="muted small">{shop_cta_line()}</span></p>
   <p class="small section-switch">Also tracked: {" · ".join(f'<a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE)}</p>
+  <p class="small"><a class="chip" href="#filters">Filter the full list</a></p>
   {signup_for("Hobonichi Techo 2027 books and covers")}
   <div class="stats{' five' if s['unknown'] else ''}">
     <div><b>{s['in_stock']}</b><span>in stock</span></div>
@@ -868,11 +1032,38 @@ HUB_TRACKERS = {  # one line per tracker card on the hub homepage
 HUB_FAQ = ("What do you track?", "How often do you check the shops?", 'What does "Couldn\'t check" mean?',
            'What does "Not yet on sale" mean?', "How do restock alerts work?")
 
+def hub_art(kind):
+    """Small inline drawing in the existing palette. Not a retailer or manufacturer photo."""
+    common = 'viewBox="0 0 160 64" width="160" height="64" aria-hidden="true" focusable="false"'
+    ink, paper, accent, sage = "#2d2a32", "#fffdf8", "#c1553b", "#5f8a6b"
+    if kind == "hobonichi":
+        body = f'<rect x="52" y="6" width="56" height="52" rx="3" fill="{paper}" stroke="{ink}" stroke-width="2"/><path d="M52 16 h56" stroke="{accent}" stroke-width="8"/><path d="M96 6 v16 l5-3 5 3 V6" fill="{accent}"/><path d="M64 30 h32 M64 38 h32 M64 46 h18" stroke="{sage}" stroke-width="2" stroke-linecap="round"/>'
+    elif kind == "dotgrid":
+        dots = "".join(f'<circle cx="{x}" cy="{y}" r="1.3" fill="{ink}"/>' for x in range(58, 110, 8) for y in range(18, 54, 8))
+        body = f'<rect x="48" y="6" width="64" height="52" rx="3" fill="{paper}" stroke="{ink}" stroke-width="2"/>{dots}'
+    elif kind == "travelers":
+        body = f'<rect x="46" y="8" width="68" height="48" rx="2" fill="#f4ecdc" stroke="{ink}" stroke-width="2"/><path d="M46 14 h68 M58 8 v48" stroke="{accent}" stroke-width="2"/><path d="M100 18c8 6 8 22 0 28" fill="none" stroke="{sage}" stroke-width="2"/>'
+    else:
+        body = f'<rect x="54" y="8" width="52" height="48" rx="2" fill="{paper}" stroke="{ink}" stroke-width="2"/><path d="M54 20 h52" stroke="{sage}" stroke-width="6"/><path d="M66 32 h28 M66 40 h28" stroke="{ink}" stroke-width="1.6" stroke-linecap="round"/>'
+    return f'<svg {common}>{body}</svg>'
+
+def trust_strip(prods):
+    """Shops, cadence, last check, and the honest checked-successfully count. No availability bar."""
+    unknown = sum(p["status"] == "unknown" for p in prods)
+    checked = len(prods) - unknown
+    unk = f'<p class="muted small trust-unk">{unknown} couldn\'t be checked this run.</p>' if unknown else ""
+    return f'''<ul class="trust" aria-label="Inventory monitoring">
+  <li><b>{N_STORES}</b><span>shops checked</span></li>
+  <li><b>{E(CHECK_FREQ)}</b><span>check interval</span></li>
+  <li><span class="trust-k">Last check</span><span class="trust-time">{time_tag(stock["run_finished"])}</span></li>
+  <li><b>{checked} of {len(prods)}</b><span>listings checked successfully</span></li>
+</ul>
+{unk}'''
+
 def build_index():
     """Hub homepage: hero and signup, the four trackers, recent restocks from every tracker, guides, our own products, FAQ."""
     prods = stock["products"]
     s = {k: sum(p["status"] == k for p in prods) for k in STATUS}
-    checked = sum(v for k, v in s.items() if k != "unknown")
     keys = ["hobonichi", *LIVE]
     href = {"hobonichi": HOBO_TRACKER, **{k: SECTIONS[k]["slug"] + "/" for k in LIVE}}
     cards = []
@@ -882,11 +1073,17 @@ def build_index():
         name, line = HUB_TRACKERS[k]
         if k == "dotgrid":
             line = f"{dotgrid_names()}, each checked on its own store."
-        extra = (f' · {st["preorder"]} on preorder' if st["preorder"] else "") + (f' · {st["unknown"]} couldn\'t be checked' if st["unknown"] else "")
+        bits = [f"{N_SEC[k]} shops"]
+        if st["preorder"]:
+            bits.append(f'{st["preorder"]} on preorder')
+        if st["unknown"]:
+            bits.append(f'{st["unknown"]} couldn\'t be checked')
+        # in_stock is status == "in_stock" only. unknown is not counted as in stock.
         cards.append(f"""<li class="hub-card"><a href="{href[k]}">
+  <span class="hub-art">{hub_art(k)}</span>
   <h3>{E(name)}</h3><p>{E(line)}</p>
-  <p class="hub-count"><b>{st["in_stock"]}</b> in stock now <span class="muted small">of {len(ps)} listings · {N_SEC[k]} shops{E(extra)}</span></p>
-  <span class="hub-go">Open the tracker →</span></a></li>""")
+  <p class="hub-count"><b>{st["in_stock"]}</b> of {len(ps)} listings in stock <span class="muted small">{E(" · ".join(bits))}</span></p>
+  <span class="hub-go">View tracker</span></a></li>""")
     sec_of_url = {p["url"]: section_of(p) for p in prods}
     restocks = [c for c in changes if c["url"] in sec_of_url and c["to"] in ("in_stock", "preorder") and c["from"] in ("sold_out", "coming_soon")]
     restocks.sort(key=lambda c: c["at"], reverse=True)
@@ -920,15 +1117,16 @@ def build_index():
         f'<li><a href="shop/"><img{f" class=\"{E(cls)}\"" if cls else ""} src="{E(img)}" alt="{E(alt)}" loading="lazy" decoding="async" width="{w}" height="{h}"><span class="hub-own-t">{E(t)}</span><span class="muted small">{E(sub)}</span></a></li>'
         for img, alt, t, sub, cls, w, h in own)
     faq_html, _ = faq_block(only=HUB_FAQ, sid="good-to-know")  # not "faq": app.js forwards /#faq to the Hobonichi tracker (old homepage links)
-    unk = f' <span class="unk-note">{s["unknown"]} couldn\'t be checked this run.</span>' if s["unknown"] else ""
     body = f"""
 <section class="hero">
   {eyebrow(tracker_count_label(), f"{N_STORES} shops", f"checked {CHECK_FREQ}")}
-  <h1>Know the moment your planner or journal is back.</h1>
+  <h1>Never miss a stationery restock.</h1>
+  <p class="hero-shops">We check {N_STORES} shops for you</p>
+  <p class="suggest">Know the moment your planner or journal is back.</p>
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
-  <p class="small section-switch">Also on the site, separate from the trackers: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Planners and journals</a> · <a href="sold-out-everywhere/">Sold out everywhere</a>.</p>
   {signup()}
-  <p class="muted small hub-status">Last check: {time_tag(stock['run_finished'])} · {checked} of {len(prods)} listings checked successfully.{unk}</p>
+  {trust_strip(prods)}
+  <p class="small section-switch">Also on the site, separate from the trackers: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a href="sold-out-everywhere/">Sold out everywhere</a>.</p>
 </section>
 
 <section class="hub-trackers" id="trackers" aria-labelledby="trackers-h">
@@ -1188,7 +1386,7 @@ def status_rows(ls, oe):
     for l in sorted(ls, key=lambda l: (order.get(l["status"], 9), l["store"])):
         since = l.get("status_since")
         since_html = f'<span class="sub">since {time_tag(since)}</span>' if since and l["status"] != "unknown" else ""
-        rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
+        rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
   <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td></tr>""")
     return "".join(rows)
 
@@ -1202,12 +1400,31 @@ def list_filter(ls, hint):
             seen.append((l["store_id"], l["store"]))
     store_opts = "".join(f'<option value="{E(sid)}">{E(name)}</option>' for sid, name in seen)
     status_opts = "".join(f'<option value="{k}">{STATUS[k]}</option>' for k in STATUS if any(l["status"] == k for l in ls))
-    return f"""<form class="filters page-filter card-filter" role="search" onsubmit="return false">
-      <label>Store<select data-filter="store"><option value="">All stores</option>{store_opts}</select></label>
-      <label>Status<select data-filter="status"><option value="">Any status</option>{status_opts}</select></label>
+    sizes = facet_values(ls, listing_size)
+    langs = [v for v in ("English", "Japanese") if any(listing_language(l) == v for l in ls)]
+    size_label = (f'<label>Size<select data-filter="size"><option value="">All sizes</option>'
+                  + "".join(f'<option value="{E(v)}">{E(v)}</option>' for v in sizes) + '</select></label>') if len(sizes) >= 2 else ""
+    lang_label = ""
+    lang_note = ""
+    if show_language_filter(ls, listing_language):
+        lang_label = (f'<label>Language<select data-filter="lang"><option value="">All languages</option>'
+                      + "".join(f'<option value="{E(v)}">{E(v)}</option>' for v in langs) + '</select></label>')
+        if any(not listing_language(l) for l in ls):
+            lang_note = '<p class="muted small filter-note">Language is taken from the shop\'s own title. Listings that don\'t name one stay under All languages.</p>'
+    return f"""<form class="filters page-filter card-filter" id="filters" role="search" onsubmit="return false">
+      <details class="filter-more" open>
+        <summary>Filters</summary>
+        <div class="filter-fields">
+          {size_label}
+          {lang_label}
+          <label>Store<select data-filter="store"><option value="">All stores</option>{store_opts}</select></label>
+          <label>Status<select data-filter="status"><option value="">Any status</option>{status_opts}</select></label>
+        </div>
+      </details>
       <label class="grow">Search<input data-filter="q" type="search" placeholder="{E(hint)}" autocomplete="off"></label>
       <button type="button" class="filter-reset" data-filter="reset">Reset</button>
-    </form>"""
+    </form>
+    {lang_note}"""
 
 def group_seo_title(g):
     """Short document title. The visible H1 stays the longer product name."""
