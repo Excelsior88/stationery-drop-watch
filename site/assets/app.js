@@ -108,7 +108,7 @@
         if (node.tagName === "DETAILS") node.open = true;
         node = node.parentElement;
       }
-      if (scroll) el.scrollIntoView({ block: "start" });
+      if (scroll) revealHash(el);
     }
     function render() {
       const q = f.q.value.trim().toLowerCase();
@@ -223,7 +223,7 @@
         if (node.tagName === "DETAILS") node.open = true;
         node = node.parentElement;
       }
-      if (scroll) el.scrollIntoView({ block: "start" });
+      if (scroll) revealHash(el);
     };
     const filter = () => {
       const q = (qEl.value || "").trim().toLowerCase();
@@ -303,8 +303,14 @@
       if (node.tagName === "DETAILS") node.open = true;
       node = node.parentElement;
     }
-    if (scroll) el.scrollIntoView({ block: "start" });
+    if (scroll) revealHash(el);
   };
+  function revealHash(el) {
+    const box = el.closest("details") || el;
+    const go = () => box.scrollIntoView({ block: "start" });
+    go();
+    requestAnimationFrame(go);
+  }
   window.addEventListener("hashchange", () => openLinkedDetails(true));
   openLinkedDetails(true);
   // Stock tables sit in a horizontal scroller, so a CSS sticky header sticks to that

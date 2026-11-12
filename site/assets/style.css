@@ -212,6 +212,12 @@ a.az:hover{color:var(--ink)}
 .foot-links a{white-space:nowrap}
 
 /* Dot grid journaling page: per-shop blocks */
+.design-fold{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0}
+.design-fold>summary{display:flex;align-items:center;min-height:48px;padding:12px 16px 12px 2.2em;cursor:pointer;list-style:none;position:relative;font-weight:600}
+.design-fold>summary::-webkit-details-marker{display:none}
+.design-fold>summary::before{content:"";position:absolute;left:16px;top:20px;width:.45em;height:.45em;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(-45deg)}
+.design-fold[open]>summary::before{transform:rotate(45deg);top:18px}
+.design-fold .link-list{margin:0;padding:0 16px 14px 2.2em}
 .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 18px}
 .chip{display:inline-block;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fffdf8;color:#2d2a32;text-decoration:none;font-size:.9rem}
 .chip:hover{border-color:#c1553b;color:#c1553b}
@@ -453,6 +459,7 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 .fam-block>summary::before,.group-fold>summary::before{content:"";position:absolute;left:0;top:22px;width:.45em;height:.45em;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg)}
 .fam-block:not([open])>summary::before,.group-fold:not([open])>summary::before{transform:rotate(-45deg);top:24px}
 .card.group-fold{padding:0;margin:0 0 12px}
+.group-fold{scroll-margin-top:calc(var(--mast) + var(--filter-h, 0px) + 8px)}
 .group-fold>summary{padding:16px 24px 16px 2.4em}
 .group-fold>summary::before{left:16px;top:26px}
 .group-fold:not([open])>summary::before{top:24px}

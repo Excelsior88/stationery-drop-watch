@@ -1547,17 +1547,19 @@ def build_group(g, oe):
             shop_ids = sorted({l["store_id"] for l in ls}, key=lambda sid: rank[sid])
             shop_nav = "".join(f'<a class="chip" href="#shop-{E(sid)}">{E(next(x["name"] for x in stores["stores"] if x["id"] == sid))}</a>' for sid in shop_ids)
             shop_nav = f'<nav class="chips" aria-label="Shops on this page"><span class="muted small">Jump to a shop:</span> {shop_nav}</nav>'
-        else:  # products span several shops: jump by product instead
-            shop_nav = "".join(f'<a class="chip" href="#{E(cid)}">{E(canon[cid].removeprefix("Traveler\'s notebook "))}</a>' for cid in order if cid)
-            shop_nav = f'<nav class="chips" aria-label="Products on this page"><span class="muted small">Jump to:</span> {shop_nav}</nav>'
+        else:
+            # The product groups are collapsed and searchable, so there is no jump row.
+            # Each group still has its id, and a link to that id opens the group.
+            shop_nav = ""
         dg_tracker = ""  # per-product tables are the one view; the old grouped table repeated every listing
     else:
         others += f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>'
         shop_nav = dg_tracker = ""
     card_filter = list_filter(ls, g.get("search_hint") or "Shop or design")
     ds = designs_of(g["slug"])
-    design_nav = ('<nav class="chips" aria-label="Design pages"><span class="muted small">Design pages:</span> '
-                  + "".join(f'<a class="chip" href="{design_fname(d)}">{E(d["name"])}</a>' for d in ds) + '</nav>') if ds else ""
+    links = "".join(f'<li><a href="{design_fname(d)}">{E(d["name"])}</a></li>' for d in ds)
+    design_nav = (f'<details class="design-fold"><summary>Design pages ({len(ds)})</summary>'
+                  f'<ul class="link-list">{links}</ul></details>') if ds else ""
     body = f"""
 <div class="product-page">
 {crumbs((g["slug"] + "/", g["short"]))}

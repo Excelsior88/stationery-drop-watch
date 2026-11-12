@@ -47,6 +47,26 @@ class PageFilterMarkupTests(unittest.TestCase):
             self.assertIn("Nothing on this page matches those filters.", doc, name)
             self.assertGreaterEqual(rows, 2, name)
 
+    def test_jump_row_is_gone_and_design_pages_fold(self):
+        for name, doc in self.docs:
+            self.assertNotIn(">Jump to:</span>", doc, name)
+            self.assertNotIn('aria-label="Products on this page"', doc, name)
+        for g in site.GROUPS:
+            name = g["slug"] + "/"
+            doc = next(doc for n, doc in self.docs if n == name)
+            ds = site.designs_of(g["slug"])
+            if not ds:
+                self.assertNotIn("design-fold", doc, name)
+                continue
+            self.assertIn(f"<summary>Design pages ({len(ds)})</summary>", doc, name)
+            self.assertNotIn('class="design-fold" open', doc, name)
+            self.assertNotIn(">Design pages:</span>", doc, name)
+            for d in ds:
+                self.assertIn(f'href="/{site.design_fname(d)}"', doc, name)
+            # The old jump targets stay on the groups, so a #link still has somewhere to land.
+            for cid in re.findall(r'<section class="group-sec" id="([^"]+)"', doc):
+                self.assertTrue(cid, name)
+
     def test_product_groups_start_collapsed(self):
         for name, doc in self.docs:
             if name == "hobonichi-restock-tracker/":
