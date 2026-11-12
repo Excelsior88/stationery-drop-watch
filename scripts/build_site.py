@@ -802,7 +802,7 @@ def build_hobo_tracker():
         shared_html = f'<p class="small">Rows without their own Amazon listing share {word}: {bits}.</p>'
     oe_html = (f"""<section class="card" id="sold-out-everywhere">
       <div class="section-head"><h2>Sold out at every shop we track</h2></div>
-      <p class="muted small">None of the shops we check can sell these right now. A row with its own Amazon listing links there. The others share one link to the Hobonichi store. A product leaves this list as soon as any shop we track has it in stock or on preorder.</p>
+      <p class="muted small">None of the shops we check can sell these right now. A row with its own Amazon listing links there. The others share one link to the Hobonichi store. A product leaves this list as soon as any shop we track has it in stock or on preorder. <a href="sold-out-everywhere/">See what's sold out across every tracker</a>.</p>
       {"".join(f'<h3 class="oe-group">{E(note)}</h3><ul class="oe-list compact">{"".join(oe_row(m) for m in ms)}</ul>' for note, ms in oe_groups.items())}
       {shared_html}
     </section>""" if out_everywhere else "")
