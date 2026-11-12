@@ -96,12 +96,9 @@ class PageFilterMarkupTests(unittest.TestCase):
             tracked, checked, _ = site.shop_sets(ls)
             name, doc = site.build_group(g, site.amazon_main(site.stock["products"]))
             self.assertIn(f"{site.nshops(len(tracked))} ·", doc.split("<h1>")[0], name)
-            sentence = re.search(r"<strong>Right now:</strong>\s*(.*?)\s*<", doc, re.S).group(1)
-            if checked:
-                self.assertIn(f"of {site.nshops(len(checked))} checked", sentence, name)
-            if len(tracked) != len(checked):
-                missed = len(tracked) - len(checked)
-                self.assertIn(f"{missed} of {site.nshops(len(tracked))} couldn't be checked", sentence, name)
+            self.assertIn(f"{len(checked)} of {site.nshops(len(tracked))} checked", doc, name)
+            unk = sum(1 for l in ls if l["status"] == "unknown")
+            self.assertIn(f'<div class="unk"><b>{unk}</b><span>couldn\'t check this run</span></div>', doc, name)
         for d in site.DESIGNS:
             ls = site.design_listings(d)
             if not ls:
@@ -109,12 +106,146 @@ class PageFilterMarkupTests(unittest.TestCase):
             tracked, checked, _ = site.shop_sets(ls)
             doc = next(doc for n, doc in self.docs if n == site.design_fname(d))
             self.assertIn(f"{site.nshops(len(tracked))} ·", doc.split("<h1>")[0], d["slug"])
-            sentence = re.search(r"<strong>Right now:</strong>\s*(.*?)\s*<", doc, re.S).group(1)
-            if checked:
-                self.assertIn(f"of {site.nshops(len(checked))} checked", sentence, d["slug"])
-            if len(tracked) != len(checked):
-                missed = len(tracked) - len(checked)
-                self.assertIn(f"{missed} of {site.nshops(len(tracked))} couldn't be checked", sentence, d["slug"])
+            self.assertIn(f"{len(checked)} of {site.nshops(len(tracked))} checked", doc, d["slug"])
+            unk = sum(1 for l in ls if l["status"] == "unknown")
+            self.assertIn(f'<div class="unk"><b>{unk}</b><span>couldn\'t check this run</span></div>', doc, d["slug"])
+
+    def test_every_tracker_uses_the_same_section_order(self):
+        markers = [
+            ("hero", r'<section class="hero'),
+            ("stats", r'class="stats five"'),
+            ("signup", r'class="signup-strip"'),
+            ("recent", r"<h2>Recent restocks</h2>"),
+            ("list", r'id="tracker"'),
+            ("good", r"<h2>Good to know</h2>"),
+            ("more", r'<p class="eyebrow">More restock pages</p>'),
+        ]
+        expected = [key for key, _pat in markers]
+        pages = [("hobonichi-restock-tracker/", site.build_hobo_tracker())]
+        oe = site.amazon_main(site.stock["products"])
+        for g in site.GROUPS:
+            pages.append(site.build_group(g, oe))
+        sequences = {}
+        for name, doc in pages:
+            body = doc.split("<footer", 1)[0]
+            found = []
+            for key, pat in markers:
+                match = re.search(pat, body)
+                self.assertIsNotNone(match, name + " missing " + key)
+                found.append((match.start(), key))
+            found.sort()
+            sequences[name] = [key for _pos, key in found]
+            self.assertEqual(sequences[name], expected, name)
+            self.assertNotIn("m-lead", body, name)
+            self.assertEqual(body.count('class="stats five"'), 1, name)
+            self.assertIn(">in stock<", body, name)
+            self.assertIn(">preorder<", body, name)
+            self.assertIn(">sold out<", body, name)
+            self.assertIn(">not yet on sale<", body, name)
+            self.assertIn(">couldn't check this run<", body, name)
+            if "design-fold" in body:
+                self.assertLess(body.index("<h2>Recent restocks</h2>"), body.index("design-fold"), name)
+                self.assertLess(body.index("design-fold"), body.index('class="filters'), name)
+                self.assertNotIn('class="design-fold" open', body, name)
+        self.assertEqual(len(sequences), 1 + len(site.GROUPS))
+
+    def test_sold_out_note_is_inside_the_product_group(self):
+        oe = site.amazon_main(site.stock["products"])
+
+        def sentence(n):
+            if n > 1:
+                return f"Sold out at every shop we track ({n} shops)."
+            return "Sold out at the only shop we track."
+
+        for g in site.GROUPS:
+            _name, doc = site.build_group(g, oe)
+            buckets = {}
+            for listing in site.group_listings(g):
+                buckets.setdefault(site.listing_group_id(listing), []).append(listing)
+            expected = {}
+            for sl in buckets.values():
+                if {l["status"] for l in sl} != {"sold_out"}:
+                    continue
+                text = sentence(len({l["store_id"] for l in sl}))
+                expected[text] = expected.get(text, 0) + 1
+            for text, count in expected.items():
+                self.assertEqual(doc.count(text), count, (g["slug"], text))
+
+        prods = site.hobo_products()
+        rows = site.tracker_rows(prods, site.amazon_main(prods))
+        groups = {}
+        for row in rows:
+            groups.setdefault(row["g"], []).append(row)
+        hobo = site.build_hobo_tracker()
+        expected = {}
+        for ls in groups.values():
+            if {r["st"] for r in ls} != {"sold_out"}:
+                continue
+            text = sentence(len({r["sid"] for r in ls}))
+            expected[text] = expected.get(text, 0) + 1
+        for text, count in expected.items():
+            self.assertEqual(hobo.count(text), count, text)
+        self.assertEqual(
+            site.sold_everywhere_html([
+                {"status": "sold_out", "store_id": "a"},
+                {"status": "sold_out", "store_id": "b"},
+            ]),
+            '<p class="muted small">Sold out at every shop we track (2 shops).</p>')
+        self.assertEqual(
+            site.sold_everywhere_html([{"status": "sold_out", "store_id": "a"}]),
+            '<p class="muted small">Sold out at the only shop we track.</p>')
+        self.assertEqual(site.sold_everywhere_html([
+            {"status": "sold_out", "store_id": "a"},
+            {"status": "unknown", "store_id": "b"},
+        ]), "")
+        self.assertEqual(site.sold_everywhere_html([{"status": "coming_soon", "store_id": "a"}]), "")
+        card = site.compare_product([
+            {"st": "sold_out", "sid": "a", "s": "Alpha", "gn": "Camel", "g": "tn-regular-camel",
+             "p": "Camel", "t": "Notebook", "u": "https://example.test/a", "rg": "", "title": "",
+             "az": "https://www.amazon.com/dp/TEST?tag=excelsior88-20", "azl": "View on Amazon", "azm": 1},
+            {"st": "sold_out", "sid": "b", "s": "Beta", "gn": "Camel", "g": "tn-regular-camel",
+             "p": "Camel", "t": "Notebook", "u": "https://example.test/b", "rg": "", "title": "",
+             "az": "https://www.amazon.com/dp/TEST?tag=excelsior88-20", "azl": "View on Amazon", "azm": 1},
+        ])
+        self.assertIn("Sold out at every shop we track (2 shops).", card)
+        self.assertIn("https://www.amazon.com/dp/TEST?tag=excelsior88-20", card)
+        self.assertEqual(card.count("Sold out at every shop we track (2 shops)."), 1)
+        one = site.compare_product([{
+            "st": "sold_out", "sid": "a", "s": "Alpha", "gn": "Camel", "g": "tn-regular-camel",
+            "p": "Camel", "t": "Notebook", "u": "https://example.test/a", "rg": "", "title": "",
+        }])
+        self.assertIn("Sold out at the only shop we track.", one)
+        mixed = site.compare_product([
+            {"st": "in_stock", "sid": "a", "s": "Alpha", "gn": "Camel", "g": "tn-regular-camel",
+             "p": "Camel", "t": "Notebook", "u": "https://example.test/a", "rg": "", "title": ""},
+            {"st": "sold_out", "sid": "b", "s": "Beta", "gn": "Camel", "g": "tn-regular-camel",
+             "p": "Camel", "t": "Notebook", "u": "https://example.test/b", "rg": "", "title": ""},
+        ])
+        self.assertNotIn("Sold out at every shop we track", mixed)
+        self.assertNotIn("Sold out at the only shop we track", mixed)
+        self.assertNotIn('id="sold-out-everywhere"', hobo)
+        self.assertNotIn("Restock pages by product", hobo)
+        self.assertNotIn("<h2>Sold out at every shop we track</h2>", hobo)
+        fold_at = hobo.index('id="by-product"')
+        fold = hobo[fold_at:hobo.index("</details>", fold_at)]
+        self.assertIn("<summary>Design pages (", fold)
+        self.assertNotIn(" open", fold[:fold.index(">")])
+        more_at = hobo.index("More restock pages")
+        self.assertLess(hobo.index("<h2>Good to know</h2>"), more_at)
+        for g in site.GROUPS:
+            if site.g_sec(g) != "hobonichi":
+                continue
+            self.assertIn(f'href="/{g["slug"]}/"', hobo[more_at:])
+            for d in site.designs_of(g["slug"]):
+                self.assertIn(f'href="/{site.design_fname(d)}"', fold)
+        for match in site.amazon_main(prods).values():
+            self.assertIn(match["url"], hobo)
+        self.assertIn('href="/sold-out-everywhere/"', site.build_index())
+        js = (ROOT / "site/assets/app.js").read_text()
+        self.assertIn('location.hash === "#sold-out-everywhere"', js)
+        self.assertIn('location.replace("/sold-out-everywhere/"', js)
+        self.assertIn("Sold out at every shop we track (${n} shops).", js)
+        self.assertIn("Sold out at the only shop we track.", js)
 
     def test_product_groups_start_collapsed(self):
         for name, doc in self.docs:

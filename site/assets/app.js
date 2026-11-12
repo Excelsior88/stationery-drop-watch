@@ -15,8 +15,12 @@
   }
   // The Hobonichi tracker moved from the homepage to its own page. Old links such as /#listings, /#tracker or
   // /?product=x#tracker can't be redirected by the server (the part after # never reaches it), so forward them here.
-  if (location.pathname === "/" || location.pathname === "/index.html") {
-    const moved = { tracker: "tracker", listings: "tracker", "by-product": "by-product", "sold-out-everywhere": "sold-out-everywhere", faq: "faq", rows: "tracker" };
+  // #sold-out-everywhere used to be a block on the tracker. That list now lives on its own page.
+  const here = location.pathname;
+  if (location.hash === "#sold-out-everywhere" && here !== "/sold-out-everywhere/" && here !== "/sold-out-everywhere/index.html") {
+    location.replace("/sold-out-everywhere/" + location.search);
+  } else if (here === "/" || here === "/index.html") {
+    const moved = { tracker: "tracker", listings: "tracker", "by-product": "by-product", faq: "faq", rows: "tracker" };
     const h = location.hash.slice(1), q = new URLSearchParams(location.search);
     const filt = ["product", "type", "store", "status", "q"].some(k => q.get(k));
     if (moved[h] || filt) location.replace("/hobonichi-restock-tracker/" + location.search + (moved[h] ? "#" + moved[h] : (h ? "#" + h : "#tracker")));
@@ -79,6 +83,12 @@
       const inShops = new Set(ls.filter(r => r.st === "in_stock").map(r => r.sid)).size;
       return tally(ls) + " · " + inShops + " of " + shops + " " + (shops === 1 ? "shop" : "shops") + " in stock";
     }
+    function soldEverywhereNote(ls) {
+      if (!ls.length || ls.some(r => r.st !== "sold_out")) return "";
+      const n = new Set(ls.map(r => r.sid)).size;
+      const text = n > 1 ? `Sold out at every shop we track (${n} shops).` : "Sold out at the only shop we track.";
+      return `<p class="muted small">${text}</p>`;
+    }
     function productCard(ls) {
       const h = ls[0];
       const anchor = h.c && /^[A-Za-z][\w-]*$/.test(h.c) ? ` id="${esc(h.c)}"` : "";
@@ -87,7 +97,7 @@
       const bits = [esc(h.t), shops + " " + (shops === 1 ? "shop" : "shops")];
       if (h.dp) bits.push(`<a href="${esc(h.dp)}">Design page</a>`);
       const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span>` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}${r.az && !sameAz ? azLink(r) : ""}</span><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></li>`).join("");
-      return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${h.az && sameAz ? azLink(h, "grp-az") : ""}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
+      return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${h.az && sameAz ? azLink(h, "grp-az") : ""}${soldEverywhereNote(ls)}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
     }
     let honorHash = true;
     const filtersActive = () => Object.values(f).some(el => (el.value || "").trim() !== "");
