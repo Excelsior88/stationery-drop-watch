@@ -450,7 +450,7 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 .filter-more>summary{display:none}
 .filter-fields label{flex:1 1 140px}
 #filters{scroll-margin-top:calc(var(--mast) + 8px)}
-.fam-block,.compare{scroll-margin-top:calc(var(--mast) + var(--filter-h, 9rem) + 8px)}
+.shop-head,.group-sec,.fam-block,.group-fold,.compare{scroll-margin-top:calc(var(--mast) + 12px)}
 .filter-note{margin:-4px 0 12px}
 .chip{min-height:44px;display:inline-flex;align-items:center}
 .fam-block{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0 0 12px;padding:0 14px 6px}
@@ -459,7 +459,9 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 .fam-block>summary::before,.group-fold>summary::before{content:"";position:absolute;left:0;top:22px;width:.45em;height:.45em;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg)}
 .fam-block:not([open])>summary::before,.group-fold:not([open])>summary::before{transform:rotate(-45deg);top:24px}
 .card.group-fold{padding:0;margin:0 0 12px}
-.group-fold{scroll-margin-top:calc(var(--mast) + var(--filter-h, 0px) + 8px)}
+@media (min-width:641px){
+  .shop-head,.group-sec,.fam-block,.group-fold,.compare{scroll-margin-top:calc(var(--mast) + var(--filter-h, 0px) + 12px)}
+}
 .group-fold>summary{padding:16px 24px 16px 2.4em}
 .group-fold>summary::before{left:16px;top:26px}
 .group-fold:not([open])>summary::before{top:24px}

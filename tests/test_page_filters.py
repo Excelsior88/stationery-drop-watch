@@ -67,9 +67,13 @@ class PageFilterMarkupTests(unittest.TestCase):
             # The old jump targets stay on the groups, so a #link still has somewhere to land.
             for cid in re.findall(r'<section class="group-sec" id="([^"]+)"', doc):
                 self.assertTrue(cid, name)
-            if g.get("per_shop"):
-                heads = re.findall(r'<h2 class="shop-head" id="(shop-[^"]+)"', doc)
-                self.assertGreaterEqual(len(heads), 2, name)
+            self.assertNotIn('class="shop-head"', doc, name)
+            if g["slug"] == "archer-and-olive-dot-grid-journal":
+                self.assertIn("Leuchtturm1917 · Hardcover Medium (A5) dotted notebook", doc)
+                self.assertIn("Leuchtturm1917 · Bullet Journal Edition 2", doc)
+                self.assertIn("Leuchtturm1917 · Medium (A5) 120G dotted notebook", doc)
+                self.assertIn(">A5 Notepad Refill · white dot grid<", doc)
+                self.assertIn(">A5 Soft Cover Refill Notebook · white dot grid<", doc)
 
     def test_signup_is_one_list_and_shop_counts_agree(self):
         hobo = site.build_hobo_tracker()

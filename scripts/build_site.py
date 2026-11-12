@@ -1346,7 +1346,7 @@ GROUPS = [
          intro="Popular Hobonichi covers can sell out within minutes of a drop. "
                "We track a handful of 2027 covers: A6 covers for the Original, and one A5 cover for the Cousin. "
                "Here's what each shop reported at its last check."),
-    dict(slug=DOTGRID_SLUG, short="Dot grid journals", product="Dot grid journal", section="dotgrid", featured=True, per_shop=True,
+    dict(slug=DOTGRID_SLUG, short="Dot grid journals", product="Dot grid journal", section="dotgrid", featured=True,
          search_hint="Tsuki, B5, Charcoal…",
          match=is_dotgrid,
          eyebrow="Dot grid journaling", unit="listings",
@@ -1355,13 +1355,13 @@ GROUPS = [
                "We check the exact variant named in each row, so \"In stock\" means that size and color, not just some version of the journal. "
                "To compare paper weight, pages and size across the four brands, see <a href=\"best-dot-grid-journals/\">best dot grid journals compared</a>.",
          # Published URL stays /archer-and-olive-dot-grid-journal/ so existing links keep working.
-         # The title, heading, nav, and breadcrumb name every maker we check, with Archer and Olive featured first.
+         # The title, heading, nav, and breadcrumb name every maker we check.
          title=f"Dot grid journal restock tracker: {dotgrid_names()}",
-         desc=f"Are {dotgrid_names()} dot grid journals in stock? Live size-by-size status, Archer and Olive first.",
+         desc=f"Are {dotgrid_names()} dot grid journals in stock? Live size-by-size status at each maker's shop.",
          og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
                f"We track a focused set of flagship dot grid notebooks from {dotgrid_names()}, each on that maker's own store, size by size and color by color, plus Archer and Olive's dot grid refills. "
-               "Archer and Olive is featured first. This page covers those dot grid notebooks and refills, not pens or other paper, and Hobonichi and our other sections have their own pages."),
+               "This page covers those dot grid notebooks and refills, not pens or other paper, and Hobonichi and our other sections have their own pages."),
     dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Notebook", section="travelers",
          h1="Traveler's Notebook restock tracker: regular colors and limited editions",
          match=lambda p: section_of(p) == "travelers", eyebrow="Traveler's Company", search_hint="Sticker set, Olive, 20th…",
@@ -1402,6 +1402,15 @@ def latest(*isos):
 
 def group_listings(g):
     return [p for p in stock["products"] if g["match"](p)]
+
+def listing_group_id(l):
+    """Group key for a listing. The canonical id is the data's own product identity.
+    ao-refills is the exception: that one id covers a notepad refill and a soft-cover refill notebook,
+    so those labels stay in separate groups instead of being treated as one product."""
+    cid = l.get("canonical") or ""
+    if cid == "ao-refills":
+        return cid + "|" + (l.get("label") or l["url"])
+    return cid
 
 def row_amz(l, oe):
     """Per-size Amazon button for other brands' listings (their oe entries are keyed by listing URL)."""
@@ -1507,8 +1516,10 @@ def build_group(g, oe):
     buy = [l for l in ls if l["status"] in BUYABLE]
     sections = {}
     for l in ls:
-        sections.setdefault(l.get("canonical") or "", []).append(l)
-    order = [c["id"] for c in stores["canonical"] if c["id"] in sections] + ([""] if "" in sections else [])
+        sections.setdefault(listing_group_id(l), []).append(l)
+    known = [c["id"] for c in stores["canonical"] if c["id"] in sections]
+    extra = [k for k in sections if k not in known and k != ""]
+    order = known + extra + ([""] if "" in sections else [])
     ext = g_sec(g) != "hobonichi"  # non-Hobonichi sections carry their own tracker table on the page
     per_shop = g.get("per_shop")  # dot grid: every product sits in one maker's store, so the page goes shop by shop
     if per_shop:  # shops in stores.json order (Archer and Olive first)
@@ -1518,7 +1529,12 @@ def build_group(g, oe):
     seen_shop = set()
     for cid in order:
         sl = sections[cid]
-        name = canon.get(cid) or ("Other designs and editions" if len(order) > 1 else "Listings")
+        if cid in canon:
+            name = canon[cid]
+        elif "|" in cid:
+            name = cid.split("|", 1)[1]
+        else:
+            name = "Other designs and editions" if len(order) > 1 else "Listings"
         m = page_amz(sl, oe) if cid else None
         amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
                    f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
@@ -1542,7 +1558,7 @@ def build_group(g, oe):
         meta = f"{E(count_line(sl, g.get('unit', 'listings')).capitalize())} · {checked_line(sl)}"
         parts.append(f"""<details class="card group-fold">
   <summary><{hx} class="fam-name">{E(name)}</{hx}><span class="fam-meta">{meta}</span></summary>
-  <section class="group-sec" id="{E(cid or 'other')}">
+  <section class="group-sec" id="{E(re.sub(r'[^A-Za-z0-9]+', '-', cid).strip('-') or 'other')}">
   {amz_btn}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
