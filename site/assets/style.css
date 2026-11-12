@@ -457,6 +457,8 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 .group-fold:not([open])>summary::before{top:24px}
 .group-fold>summary .fam-name{margin:0;font-size:1.28rem;line-height:1.2}
 .group-fold>.group-sec,.group-fold>.group-body,.group-fold>ul.link-list{padding:0 24px 18px}
+.guide-figure{margin:0 0 1.4em}
+.guide-figure img{display:block;width:100%;max-width:540px;height:auto}
 .card>.group-fold>summary{padding:12px 0 12px 1.4em}
 .card>.group-fold>summary::before{left:0}
 .card>.group-fold>ul.link-list{padding:0 0 12px 1.4em}

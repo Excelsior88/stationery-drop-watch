@@ -79,15 +79,46 @@ class PageFilterMarkupTests(unittest.TestCase):
         vs = site.build_vs()[1]
         article = vs[vs.index("<h2>Side by side</h2>"):vs.index("<h2>Sources</h2>")]
         self.assertNotIn("group-fold", article)
+        self.assertNotIn("group-fold", vs)
         self.assertIn("<h2>Sources</h2>", vs)
         guides = site.build_guides_index()[1]
-        self.assertIn('id="design-pages"', guides)
-        self.assertLess(guides.index("<h2>Restock pages for single designs</h2>"), guides.index('<h3 class="fam-name">Hobonichi</h3>'))
+        self.assertNotIn("group-fold", guides)
+        self.assertIn("<h3>Hobonichi</h3>", guides)
         dot = site.build_dotgrid_guide()[1]
-        self.assertNotIn("group-fold", dot[dot.index("<h2>Side by side</h2>"):dot.index("<h2>Sources</h2>")])
+        self.assertNotIn("group-fold", dot)
         tn = site.build_tn_sizes()[1]
         self.assertIn("<h2>Sources</h2>", tn)
-        self.assertNotIn("group-fold", tn[tn.index("<table"):tn.index("<h2>Sources</h2>")])
+        self.assertNotIn("group-fold", tn)
+        cal = site.build_hobonichi()
+        self.assertNotIn("group-fold", cal)
+
+    def test_guide_drawings_match_the_page_copy(self):
+        vs = site.build_vs()[1]
+        self.assertLess(vs.index("The short version"), vs.index('class="guide-figure"'))
+        self.assertLess(vs.index('class="guide-figure"'), vs.index("<h2>Side by side</h2>"))
+        self.assertIn('width="1080"', vs)
+        self.assertIn('height="1350"', vs)
+        self.assertIn('loading="lazy"', vs)
+        self.assertIn("/assets/guides/techo-cousin-weeks-format-guide.png", vs)
+        self.assertIn("no weekly pages", vs)
+        self.assertIn("plus vertical weekly pages", vs)
+        self.assertIn("grid memo page on the right", vs)
+        tn = site.build_tn_sizes()[1]
+        self.assertLess(tn.index('id="quick"'), tn.index('class="guide-figure"'))
+        self.assertLess(tn.index('class="guide-figure"'), tn.index('id="compare"'))
+        for pair in ("220 × 120 mm", "210 × 110 mm", "134 × 98 mm", "124 × 89 mm", "110 × 75 mm", "100 × 65 mm"):
+            self.assertIn(pair, tn)
+            # The drawing states height × width. The article states the same pair as H × W.
+            h, w = pair.split(" × ")[0], pair.split(" × ")[1].replace(" mm", "")
+            self.assertIn(f"H{h} × W{w}", tn)
+        self.assertIn('loading="lazy"', tn)
+        self.assertIn("/assets/guides/travelers-notebook-sizes.png", tn)
+        import hashlib
+        guides = ROOT / "site" / "assets" / "guides"
+        self.assertEqual(hashlib.sha256((guides / "techo-cousin-weeks-format-guide.png").read_bytes()).hexdigest(),
+                         "51d7a3b8990a0d68bb57c94d4d0750ef058533ee221b168077e0da44a989e268")
+        self.assertEqual(hashlib.sha256((guides / "travelers-notebook-sizes.png").read_bytes()).hexdigest(),
+                         "ef6e7a9df4d71c62bd3dce67a2f978b3e5e56c9776d6c9f564023ebfd1ca7948")
 
     def test_angela_line_is_unchanged(self):
         thanks = "Thank you to our follower Angela for suggesting we track these restocks."

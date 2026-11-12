@@ -2048,24 +2048,12 @@ H_SRC = {  # official Hobonichi pages used for product facts
     "shop": ("https://www.1101.com/store/techo/en/2027/pc/shopping_guide/", "Hobonichi Techo 2027 shopping guide"),
 }
 
-def _long_list(heading, hx, items_html, n, meta):
-    """A long link list starts closed. Short lists stay in the article."""
-    if n < 8:
-        return f'<{hx}>{heading}</{hx}>{items_html}'
-    return f'''<details class="card group-fold">
-  <summary><{hx} class="fam-name">{heading}</{hx}><span class="fam-meta">{E(meta)}</span></summary>
-  {items_html}
-</details>'''
-
 def design_links_block(sec="hobonichi", hx="h2"):
     """Design pages of one section (or every section with sec=None), for guides and the guides index."""
     def sec_of(d):
         return next(g_sec(g) for g in GROUPS if g["slug"] == d["parent"])
-    ds = [d for d in DESIGNS if sec is None or sec_of(d) == sec]
-    if not ds:
-        return ""
-    items = f'<ul class="link-list">' + "".join(f'<li><a href="{design_fname(d)}">{E(d["full"])}</a></li>' for d in ds) + "</ul>"
-    return _long_list("Restock pages for single designs", hx, items, len(ds), f"{len(ds)} pages")
+    items = "".join(f'<li><a href="{design_fname(d)}">{E(d["full"])}</a></li>' for d in DESIGNS if sec is None or sec_of(d) == sec)
+    return f'<{hx}>Restock pages for single designs</{hx}><ul class="link-list">{items}</ul>' if items else ""
 
 def design_index_block():
     """Every design page, grouped by family: the design-pages index on /guides/."""
@@ -2073,18 +2061,27 @@ def design_index_block():
     out = []
     for k, t in fam:
         ds = [d for d in DESIGNS if next(g_sec(g) for g in GROUPS if g["slug"] == d["parent"]) == k]
-        if not ds:
-            continue
-        items = '<ul class="link-list">' + "".join(
-            f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)))}</span></li>' for d in ds) + "</ul>"
-        if len(ds) >= 8:
-            out.append(f'''<details class="group-fold">
-  <summary><h3 class="fam-name">{E(t)}</h3><span class="fam-meta">{len(ds)} pages</span></summary>
-  {items}
-</details>''')
-        else:
-            out.append(f'<h3>{E(t)}</h3>{items}')
+        if ds:
+            out.append(f'<h3>{E(t)}</h3><ul class="link-list">' + "".join(
+                f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)))}</span></li>' for d in ds) + "</ul>")
     return f'<section class="card" id="design-pages"><h2>Restock pages for single designs</h2><p class="muted small">{len(DESIGNS)} pages, one per planner or journal design we track. Counts come from the same checks as the trackers.</p>{"".join(out)}</section>'
+
+def guide_figure(stem, width, height, alt):
+    """A guide drawing. The PNG is the unaltered original; WebP copies are scaled, not cropped."""
+    srcset = ", ".join(f"/assets/guides/{stem}-{w}.webp {w}w" for w in (540, width) if w <= width)
+    # Deduplicate if the original is already 540 wide.
+    parts = []
+    seen = set()
+    for bit in srcset.split(", "):
+        if bit and bit not in seen:
+            seen.add(bit)
+            parts.append(bit)
+    return f'''<figure class="guide-figure">
+  <picture>
+    <source type="image/webp" srcset="{", ".join(parts)}" sizes="(max-width: 700px) 100vw, 540px">
+    <img src="/assets/guides/{stem}.png" width="{width}" height="{height}" alt="{E(alt)}" loading="lazy" decoding="async">
+  </picture>
+</figure>'''
 
 
 def guides_block():
@@ -2298,6 +2295,7 @@ def build_vs():
   <li><strong>Cousin (A5)</strong>: one page per day with twice the page size, plus vertical weekly pages. Hobonichi says many people use it as a desk planner. {s("g_cousin")}</li>
   <li><strong>Weeks</strong>: a slim, wallet-size weekly planner with a memo page beside every week and extra memo pages at the back. Lightest of the three. {s("g_weeks")}</li>
 </ul>
+{guide_figure("techo-cousin-weeks-format-guide", 1080, 1350, "Format guide comparing the three closed books at the same scale. Original A6: one page per day, no weekly pages. Cousin A5: one page per day, plus vertical weekly pages. Weeks: the week on the left page and a grid memo page on the right.")}
 
 <h2>Side by side</h2>
 <p class="muted small">2027 English, January-start books. Specs from Hobonichi's product pages {s("orig", "Original")} {s("cousin", "Cousin")} {s("weeks", "Weeks")} {s("mega", "Weeks Mega")}; Hobonichi says specifications may vary slightly.</p>
@@ -2649,6 +2647,7 @@ def build_tn_sizes():
   </ul>
   <p class="muted small">The maker's own line is that there is no required way to choose between Regular and Passport. It depends on what you want the notebook to do.{cite("journey")}</p>
 </section>
+{guide_figure("travelers-notebook-sizes", 1080, 1350, "Traveler's Notebook size guide, drawn to scale from the maker's package specs. Regular cover 220 × 120 mm and refill 210 × 110 mm. Passport cover 134 × 98 mm and refill 124 × 89 mm. Card Size, the limited 20th anniversary set: cover 110 × 75 mm and refill 100 × 65 mm.")}
 
 <h2 id="compare">Side by side</h2>
 <p class="muted small">Height × width × depth from the manufacturer's package specs. The leather cover and the paper refill are different sizes. Numbers in brackets point to the sources. On a small screen, scroll the table sideways. The row labels stay put.</p>
