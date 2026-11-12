@@ -56,7 +56,9 @@ class ShareImageAltTests(unittest.TestCase):
     def test_hobonichi_page_copy_still_uses_the_derived_hobonichi_shop_count(self):
         doc = plain(site.build_hobo_tracker())
         self.assertIn(f"at {site.N_HOBO} shops", doc)
-        faq = site.faq_block()[1]
+        self.assertNotIn("Which shops do you check?", doc)
+        self.assertIn("Which shops do you check?", site.build_index())
+        faq = site.faq_block(only=site.HUB_FAQ)[1]
         shops = next(q for q in faq["mainEntity"] if q["name"] == "Which shops do you check?")
         text = shops["acceptedAnswer"]["text"]
         self.assertIn(f"{site.N_STORES} shops across all trackers", text)
