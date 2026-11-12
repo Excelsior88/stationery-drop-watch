@@ -47,6 +47,75 @@ class PageFilterMarkupTests(unittest.TestCase):
             self.assertIn("Nothing on this page matches those filters.", doc, name)
             self.assertGreaterEqual(rows, 2, name)
 
+    def test_product_groups_start_collapsed(self):
+        for name, doc in self.docs:
+            if name == "hobonichi-restock-tracker/":
+                blocks = re.findall(r"<details class=\"fam-block\"[^>]*>", doc)
+                self.assertGreaterEqual(len(blocks), 2, name)
+                self.assertTrue(all(" open" not in tag for tag in blocks), blocks[:2])
+                self.assertIn('class="fam-name"', doc)
+                self.assertIn("listings in stock", doc)
+                continue
+            sections = re.findall(r'<section class="group-sec"', doc)
+            folds = re.findall(r'<details class="card group-fold">', doc)
+            if sections:
+                self.assertEqual(len(folds), len(sections), name)
+                self.assertNotIn('group-fold" open', doc, name)
+                self.assertNotIn('<section class="card group-sec"', doc, name)
+            else:
+                self.assertEqual(folds, [], name)
+
+    def test_long_guide_lists_start_collapsed(self):
+        _name, where = site.build_where_to_buy()
+        slugs = [g["slug"] for g in site.GROUPS if site.g_sec(g) == "hobonichi" and site.group_listings(g)]
+        folds = re.findall(r'<details class="card group-fold" id="([^"]+)">', where)
+        self.assertEqual(folds, slugs)
+        self.assertNotIn('group-fold" open', where)
+        self.assertLess(where.index('id="quick"'), where.index("group-fold"))
+        self.assertLess(where.index("<h1>"), where.index("group-fold"))
+        src = where.index("<h2>Sources</h2>")
+        self.assertNotIn("<details", where[src:where.index("</ol>", src)])
+        self.assertIn('id="tips"', where)
+        vs = site.build_vs()[1]
+        article = vs[vs.index("<h2>Side by side</h2>"):vs.index("<h2>Sources</h2>")]
+        self.assertNotIn("group-fold", article)
+        self.assertNotIn("group-fold", vs)
+        self.assertIn("<h2>Sources</h2>", vs)
+        guides = site.build_guides_index()[1]
+        self.assertNotIn("group-fold", guides)
+        self.assertIn("<h3>Hobonichi</h3>", guides)
+        dot = site.build_dotgrid_guide()[1]
+        self.assertNotIn("group-fold", dot)
+        tn = site.build_tn_sizes()[1]
+        self.assertIn("<h2>Sources</h2>", tn)
+        self.assertNotIn("group-fold", tn)
+        cal = site.build_hobonichi()
+        self.assertNotIn("group-fold", cal)
+
+    def test_guide_drawings_match_the_page_copy(self):
+        vs = site.build_vs()[1]
+        self.assertNotIn("guide-figure", vs)
+        self.assertNotIn("techo-cousin-weeks-format-guide", vs)
+        self.assertEqual(vs.count('class="fmt-icon"'), 3)
+        self.assertIn('aria-hidden="true"', vs)
+        # Same scale as the source drawing: A5 is the largest page, Weeks is taller than it is wide.
+        self.assertIn('viewBox="0 0 99 142"', vs)
+        self.assertIn('viewBox="0 0 142 204"', vs)
+        self.assertIn('viewBox="0 0 88 182"', vs)
+        tn = site.build_tn_sizes()[1]
+        self.assertNotIn("guide-figure", tn)
+        self.assertNotIn("travelers-notebook-sizes.png", tn)
+        self.assertEqual(tn.count('class="fmt-icon"'), 3)
+        self.assertIn('viewBox="0 0 120 220"', tn)
+        self.assertIn('viewBox="0 0 98 134"', tn)
+        self.assertIn('viewBox="0 0 75 110"', tn)
+        self.assertIn('fill="#b2522f"', tn)
+        self.assertIn('fill="#5e7f62"', tn)
+        self.assertIn('fill="#d1992e"', tn)
+        for pair in ("220 × 120", "210 × 110", "134 × 98", "124 × 89", "110 × 75", "100 × 65"):
+            h, w = pair.split(" × ")
+            self.assertIn(f"H{h} × W{w}", tn)
+
     def test_angela_line_is_unchanged(self):
         thanks = "Thank you to our follower Angela for suggesting we track these restocks."
         hits = [name for name, doc in self.docs if thanks in doc]
@@ -115,6 +184,17 @@ class PageFilterBrowserTests(unittest.TestCase):
 <input id="f-q" type="search"><button type="button" id="f-reset">Reset</button></form>
 <p id="count"></p><table><tbody id="rows"></tbody></table><button id="more" hidden></button>
 <script id="stock-data" type="application/json">[{"g":"sage","p":"Sage","gn":"Sage","c":"sage","t":"Cover","s":"Atlas","sid":"atlas","st":"in_stock","u":"https://example.test/sage","title":"Sage dotted","az":"","azl":""},{"g":"black","p":"Black","gn":"Black","c":"black","t":"Cover","s":"Yoseka","sid":"yoseka","st":"sold_out","u":"https://example.test/black","title":"Black","az":"","azl":""}]</script>
+<script src="/assets/local-time.js"></script><script src="/assets/app.js"></script>
+</body></html>""")
+        (out / "fam.html").write_text("""<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body>
+<form onsubmit="return false">
+<select id="f-product"><option value="">All products</option></select>
+<select id="f-type"><option value="">All types</option><option value="Book">Book</option></select>
+<select id="f-store"><option value="">All stores</option></select>
+<select id="f-status"><option value="">Any status</option><option value="in_stock">In stock</option></select>
+<input id="f-q" type="search"><button type="button" id="f-reset">Reset</button></form>
+<p id="count"></p><div id="rows"></div><button id="more" hidden></button>
+<script id="stock-data" type="application/json">[{"g":"a6-en","p":"English","gn":"English book","c":"original-a6-en","t":"Book","s":"Atlas","sid":"atlas","st":"in_stock","u":"https://example.test/a","title":"","az":"","azl":"","fam":"original-a6","famn":"Original A6","fo":0},{"g":"weeks","p":"Weeks","gn":"Weeks book","c":"weeks-en","t":"Book","s":"Yoseka","sid":"yoseka","st":"sold_out","u":"https://example.test/w","title":"","az":"","azl":"","fam":"weeks","famn":"Weeks","fo":1}]</script>
 <script src="/assets/local-time.js"></script><script src="/assets/app.js"></script>
 </body></html>""")
         env = os.environ.copy()

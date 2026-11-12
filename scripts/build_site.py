@@ -720,13 +720,14 @@ def compare_product(ls):
         items.append(
             f'<li><span class="compare-shop"><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region}{variant}{title}{row_az}</span>'
             f'<span class="badge {E(r["st"])}">{STATUS[r["st"]]}</span></li>')
-    return f'''<article class="compare">
+    anchor = f' id="{E(h["g"])}"' if re.fullmatch(r"[A-Za-z][\w-]*", h.get("g") or "") else ""
+    return f'''<article class="compare"{anchor}>
   <header class="compare-head"><h3>{name}</h3><p class="compare-tally">{E(shop_tally(ls))}</p><p class="sub">{" · ".join(b for b in bits if b)}</p>{az}</header>
   <ul class="compare-shops">{"".join(items)}</ul>
 </article>'''
 
 def tracker_static(rows):
-    """No-JS listing groups: the Hobonichi families the data already uses, each one collapsible."""
+    """No-JS listing groups. Families start closed; the summary is a real control, so they still open."""
     order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
     fam_order = [g["slug"] for g in GROUPS if g_sec(g) == "hobonichi"] + ["other"]
     by_fam = {}
@@ -744,7 +745,7 @@ def tracker_static(rows):
         name = groups[0][0].get("famn") or "Other"
         all_rows = [r for ls in groups for r in ls]
         body = "".join(compare_product(ls) for ls in groups)
-        parts.append(f'''<details class="fam-block" open>
+        parts.append(f'''<details class="fam-block" id="{E(fam)}">
   <summary><span class="fam-name">{E(name)}</span><span class="fam-meta">{E(in_stock_tally([r["st"] for r in all_rows]))}</span></summary>
   <div class="fam-products">{body}</div>
 </details>''')
@@ -1510,8 +1511,10 @@ def build_group(g, oe):
             feat = ' <span class="badge featured">Featured</span>' if not parts and g.get("featured") else ""
             parts.append(f"""<h2 class="shop-head" id="shop-{E(sid)}"><span><a href="{E(st['url'])}" rel="noopener" target="_blank">{E(st['name'])}</a>{region_tag(sid)}</span>{feat}
   <span class="muted small">{E(count_line(sls).capitalize())}</span></h2>""")
-        parts.append(f"""<section class="card group-sec" id="{E(cid or 'other')}">
-  <div class="section-head"><{hx}>{E(name)}</{hx}><p class="muted small">{E(count_line(sl, g.get('unit', 'listings')).capitalize())} · {checked_line(sl)}</p></div>
+        meta = f"{E(count_line(sl, g.get('unit', 'listings')).capitalize())} · {checked_line(sl)}"
+        parts.append(f"""<details class="card group-fold">
+  <summary><{hx} class="fam-name">{E(name)}</{hx}><span class="fam-meta">{meta}</span></summary>
+  <section class="group-sec" id="{E(cid or 'other')}">
   {amz_btn}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
@@ -1519,7 +1522,7 @@ def build_group(g, oe):
   </table></div>
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}{dp_link}</p>
   {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
-</section>""")
+</section></details>""")
     unk = [l for l in ls if l["status"] == "unknown"]
     if len(unk) == len(ls):
         right_now = ("we couldn't reach the shop for this listing at the last check, so its status is unknown." if len(ls) == 1 else f"we couldn't check any of these {len(ls)} listings at the last check, so their status is unknown.")
@@ -2063,6 +2066,40 @@ def design_index_block():
                 f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)))}</span></li>' for d in ds) + "</ul>")
     return f'<section class="card" id="design-pages"><h2>Restock pages for single designs</h2><p class="muted small">{len(DESIGNS)} pages, one per planner or journal design we track. Counts come from the same checks as the trackers.</p>{"".join(out)}</section>'
 
+def _fmt_head(icon, label):
+    """Drawing above the column name. The label already names it, so the drawing is hidden from assistive tech."""
+    return f'<span class="fmt-head"><span class="fmt-art">{icon}</span><span>{label}</span></span>'
+
+def book_icon(kind):
+    """Closed book at the same relative scale as the format guide: A6 smaller, A5 larger, Weeks tall and narrow."""
+    w, h = {"a6": (99, 142), "a5": (142, 204), "weeks": (88, 182)}[kind]
+    scale = 85 / 204
+    dw, dh = round(w * scale), round(h * scale)
+    spine = round(w * 0.12)
+    return (f'<svg class="fmt-icon" style="--iw:{dw}px;--ih:{dh}px" viewBox="0 0 {w} {h}" width="{dw}" height="{dh}" aria-hidden="true" focusable="false">'
+            f'<rect x="3" y="3" width="{w - 6}" height="{h - 6}" fill="#e9ddc5"/>'
+            f'<rect x="3" y="3" width="{spine}" height="{h - 6}" fill="#c5baa0"/>'
+            f'<rect x="3" y="3" width="{w - 6}" height="{h - 6}" fill="none" stroke="#699173" stroke-width="6"/>'
+            f'</svg>')
+
+def cover_icon(kind):
+    """Leather cover with a dashed refill inside, sized from the maker's cover measurements."""
+    height, width, fill = {
+        "regular": (220, 120, "#b2522f"),
+        "passport": (134, 98, "#5e7f62"),
+        "card": (110, 75, "#d1992e"),
+    }[kind]
+    scale = 92 / 220
+    dw, dh = round(width * scale), round(height * scale)
+    # The real refill sits only a few millimetres inside the cover. At icon size that
+    # line would fall on the edge, so the dash is inset enough to read as the refill.
+    x, y = width * 0.14, height * 0.1
+    rw, rh = width - 2 * x, height - 2 * y
+    return (f'<svg class="fmt-icon" style="--iw:{dw}px;--ih:{dh}px" viewBox="0 0 {width} {height}" width="{dw}" height="{dh}" aria-hidden="true" focusable="false">'
+            f'<rect x="1" y="1" width="{width - 2}" height="{height - 2}" rx="4" fill="{fill}"/>'
+            f'<rect x="{x:.1f}" y="{y:.1f}" width="{rw:.1f}" height="{rh:.1f}" rx="2" fill="none" stroke="#f4efe4" stroke-width="4" stroke-dasharray="7 5"/>'
+            f'</svg>')
+
 
 def guides_block():
     return ('<section class="card"><p class="eyebrow">Guides</p><ul class="link-list">'
@@ -2138,13 +2175,14 @@ def build_where_to_buy():
         az = _exact_amazon(ls)
         az_html = ("<p class=\"small\">Also on Amazon (exact listings, affiliate links): " + " · ".join(
             f'<a class="az" href="https://www.amazon.com/dp/{E(a)}" target="_blank">{E(n)}</a>' for a, n in az.items()) + "</p>") if az else ""
-        secs.append(f'''<section class="card" id="{E(g["slug"])}">
-  <div class="section-head"><h2>{E(g["product"])}</h2><p class="muted small">{E(count_line(ls).capitalize())}</p></div>
+        secs.append(f'''<details class="card group-fold" id="{E(g["slug"])}">
+  <summary><h2 class="fam-name">{E(g["product"])}</h2><span class="fam-meta">{E(count_line(ls).capitalize())}</span></summary>
+  <div class="group-body">
   {_shop_table(ls)}
-  {"" if secs else region_legend(l["store_id"] for l in hobo)}
   {az_html}
   <p class="small"><a href="{g["slug"]}/">Full {E(g["short"])} restock page</a> <span class="muted">· every listing, when it last changed, and recent restocks</span></p>
-</section>''')
+  </div>
+</details>''')
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a> <span class="muted">· {E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
     # Live, data-driven tip: products sold out at one shop we track while another shop has them.
     split = {}
@@ -2184,6 +2222,7 @@ def build_where_to_buy():
       <ul>{"".join(quick)}</ul>
       <p class="muted small">"Not yet on sale" means a preview page is up but the shop isn't taking orders. "Couldn't check" means our check failed, so we don't know. Always confirm on the shop's page before you buy. We don't show prices; check the shop.</p>
     </section>
+    {region_legend(l["store_id"] for l in hobo)}
     {"".join(secs)}
     <section class="card"><h2>Shops we list but can't check</h2>
       <p class="muted small">Their sites block automated checks, so we link to them without a status.</p>
@@ -2277,7 +2316,7 @@ def build_vs():
 <h2>Side by side</h2>
 <p class="muted small">2027 English, January-start books. Specs from Hobonichi's product pages {s("orig", "Original")} {s("cousin", "Cousin")} {s("weeks", "Weeks")} {s("mega", "Weeks Mega")}; Hobonichi says specifications may vary slightly.</p>
 <div class="table-wrap"><table class="stock compare">
-<thead><tr><th></th><th>Original (A6)</th><th>Cousin (A5)</th><th>Weeks</th></tr></thead>
+<thead><tr><th></th><th>{_fmt_head(book_icon("a6"), "Original (A6)")}</th><th>{_fmt_head(book_icon("a5"), "Cousin (A5)")}</th><th>{_fmt_head(book_icon("weeks"), "Weeks")}</th></tr></thead>
 <tbody>{rows_html}</tbody></table></div>
 <p class="muted small">Stock counts are what each shop's product data said at our last check, {time_tag(stock['run_finished'])}.</p>
 
@@ -2630,7 +2669,7 @@ def build_tn_sizes():
 <div class="table-wrap">
 <table class="stock compare">
 <caption class="sr">Regular, Passport, and Card Size: cover, refill, carry, refills, and what this site tracks</caption>
-<thead><tr><th></th><th>Regular</th><th>Passport</th><th>Card Size</th></tr></thead>
+<thead><tr><th></th><th>{_fmt_head(cover_icon("regular"), "Regular")}</th><th>{_fmt_head(cover_icon("passport"), "Passport")}</th><th>{_fmt_head(cover_icon("card"), "Card Size")}</th></tr></thead>
 <tbody>{"".join(rows)}</tbody>
 </table>
 </div>

@@ -157,7 +157,7 @@ class HeroAndScopeTests(unittest.TestCase):
         _gfname, guide = site.build_tn_sizes()
         after = json.loads((ROOT / "data/guide_dates.json").read_text())["build_tn_sizes"]["date"]
         self.assertEqual(before, after)
-        self.assertEqual(before, "2026-11-05")
+        self.assertEqual(before, "2026-11-11")
         self.assertTrue(all(a == site.OG_TRAVELERS_ALT for a in alts(guide)))
         self.assertNotIn("limited edition tracker", plain(guide))
 

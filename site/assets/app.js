@@ -84,12 +84,31 @@
     }
     function productCard(ls) {
       const h = ls[0];
+      const anchor = h.c && /^[A-Za-z][\w-]*$/.test(h.c) ? ` id="${esc(h.c)}"` : "";
       const sameAz = ls.every(r => r.az === h.az && !!r.azm === !!h.azm);
       const shops = new Set(ls.map(r => r.sid)).size;
       const bits = [esc(h.t), shops + " " + (shops === 1 ? "shop" : "shops")];
       if (h.dp) bits.push(`<a href="${esc(h.dp)}">Design page</a>`);
       const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span>` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}${r.az && !sameAz ? azLink(r) : ""}</span><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></li>`).join("");
-      return `<article class="compare"><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${h.az && sameAz ? azLink(h, "grp-az") : ""}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
+      return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${h.az && sameAz ? azLink(h, "grp-az") : ""}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
+    }
+    let honorHash = true;
+    const filtersActive = () => Object.values(f).some(el => (el.value || "").trim() !== "");
+    const hashId = () => {
+      try { return decodeURIComponent((location.hash || "").slice(1)); }
+      catch (e) { return ""; }
+    };
+    function openHashTarget(scroll) {
+      const id = hashId();
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      let node = el;
+      while (node) {
+        if (node.tagName === "DETAILS") node.open = true;
+        node = node.parentElement;
+      }
+      if (scroll) el.scrollIntoView({ block: "start" });
     }
     function render() {
       const q = f.q.value.trim().toLowerCase();
@@ -128,12 +147,18 @@
           bucket.items.push(g);
         }
         fams.sort((a, b) => a.fo - b.fo);
+        const active = filtersActive();
+        const linked = hashId();
         html = fams.map(fam => {
           const flat = fam.items.flat();
-          return `<details class="fam-block" open><summary><span class="fam-name">${esc(fam.name)}</span><span class="fam-meta">${esc(tally(flat))}</span></summary><div class="fam-products">${fam.items.map(productCard).join("")}</div></details>`;
+          const linkedHere = honorHash && linked && (linked === fam.key || fam.items.some(ls => ls.some(r => r.g === linked || r.c === linked)));
+          const open = active || linkedHere ? " open" : "";
+          const fid = /^[A-Za-z][\w-]*$/.test(fam.key) ? ` id="${esc(fam.key)}"` : "";
+          return `<details class="fam-block"${fid}${open}><summary><span class="fam-name">${esc(fam.name)}</span><span class="fam-meta">${esc(tally(flat))}</span></summary><div class="fam-products">${fam.items.map(productCard).join("")}</div></details>`;
         }).join("");
       }
       box.innerHTML = html;
+      if (honorHash) openHashTarget(false);
       $("count").textContent = `Showing ${n} of ${out.length} matching listings in ${groups.length} ${groups.length === 1 ? "product" : "products"} (${rows.length} tracked)`;
     }
     const reset = document.getElementById("f-reset");
@@ -144,7 +169,9 @@
     }));
     if (reset) reset.addEventListener("click", () => {
       for (const k in f) f[k].value = "";
+      honorHash = false;
       onFilter(true);
+      honorHash = true;
     });
     window.addEventListener("popstate", () => { readParams(); limit = PAGE; render(); });
     render();
@@ -184,6 +211,20 @@
         history[push ? "pushState" : "replaceState"](null, "", next);
     };
     let timer = 0;
+    let skipHash = false;
+    let hashScrolled = false;
+    const openGroupHash = (scroll) => {
+      const id = (() => { try { return decodeURIComponent((location.hash || "").slice(1)); } catch (e) { return ""; } })();
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      let node = el;
+      while (node) {
+        if (node.tagName === "DETAILS") node.open = true;
+        node = node.parentElement;
+      }
+      if (scroll) el.scrollIntoView({ block: "start" });
+    };
     const filter = () => {
       const q = (qEl.value || "").trim().toLowerCase();
       const store = storeEl ? storeEl.value : "";
@@ -194,20 +235,33 @@
       for (const c of cards) {
         let any = false;
         for (const tr of c.querySelectorAll("tbody tr")) {
-          const text = ((c.querySelector("h2,h3")?.textContent || "") + " " + tr.textContent).toLowerCase();
+          const head = c.closest("details.group-fold")?.querySelector("summary")?.textContent || c.querySelector("h2,h3")?.textContent || "";
+          const text = (head + " " + tr.textContent).toLowerCase();
           const hit = (!q || text.includes(q)) && (!store || tr.getAttribute("data-store") === store) && (!status || tr.getAttribute("data-status") === status) && (!size || tr.getAttribute("data-size") === size) && (!lang || tr.getAttribute("data-lang") === lang);
           tr.hidden = !hit; any = any || hit;
         }
         const keep = c.contains(form);
         c.hidden = !keep && (q || store || status) && !any;
+        const fold = c.closest("details.group-fold");
+        if (fold) {
+          fold.hidden = c.hidden;
+          if ((q || store || status || size || lang) && any) fold.open = true;
+          else if (!(q || store || status || size || lang)) fold.open = false;
+        }
         if (any) shown++;
       }
       for (const h of heads) {
         let el = h.nextElementSibling, vis = false;
-        while (el && !el.classList.contains("shop-head")) { if (el.classList.contains("group-sec") && !el.hidden) vis = true; el = el.nextElementSibling; }
+        while (el && !el.classList.contains("shop-head")) {
+          const sec = el.classList.contains("group-sec") ? el : el.querySelector && el.querySelector(".group-sec");
+          if (sec && !sec.hidden && !el.hidden) vis = true;
+          el = el.nextElementSibling;
+        }
         h.hidden = !vis;
       }
       if (empty) empty.hidden = shown > 0;
+      if (skipHash) skipHash = false;
+      else { openGroupHash(!hashScrolled); hashScrolled = true; }
     };
     const schedule = (push, wait) => {
       clearTimeout(timer);
@@ -225,12 +279,53 @@
       if (statusEl) statusEl.value = "";
       if (sizeEl) sizeEl.value = "";
       if (langEl) langEl.value = "";
+      document.querySelectorAll("details.group-fold").forEach(d => { d.open = false; });
+      skipHash = true;
       schedule(true, 0);
     });
+    window.addEventListener("hashchange", () => openGroupHash(true));
     window.addEventListener("popstate", () => { read(); filter(); });
     filter();
     const pid = new URLSearchParams(location.search).get("product");
     const target = pid && document.getElementById(pid);
     if (target) target.scrollIntoView();
   }
+  // A #anchor inside a closed group (a guide section, a family, a product) opens that group.
+  const openLinkedDetails = (scroll) => {
+    const raw = (location.hash || "").slice(1);
+    if (!raw) return;
+    let id = raw;
+    try { id = decodeURIComponent(raw); } catch (e) { return; }
+    const el = document.getElementById(id);
+    if (!el) return;
+    let node = el;
+    while (node) {
+      if (node.tagName === "DETAILS") node.open = true;
+      node = node.parentElement;
+    }
+    if (scroll) el.scrollIntoView({ block: "start" });
+  };
+  window.addEventListener("hashchange", () => openLinkedDetails(true));
+  openLinkedDetails(true);
+  // Stock tables sit in a horizontal scroller, so a CSS sticky header sticks to that
+  // box and slides under the site header. Keep the header row just below the site header.
+  const pinTableHeads = () => {
+    const mastEl = document.querySelector(".masthead");
+    if (!mastEl) return;
+    const mast = mastEl.getBoundingClientRect().bottom;
+    document.querySelectorAll("table.stock thead").forEach(thead => {
+      const cells = [...thead.querySelectorAll("th")];
+      cells.forEach(th => { th.style.transform = ""; });
+      const wrap = thead.closest(".table-wrap") || thead.parentElement;
+      const wr = wrap.getBoundingClientRect();
+      const hr = thead.getBoundingClientRect();
+      const room = wr.bottom - hr.height;
+      let shift = 0;
+      if (hr.top < mast && room > mast) shift = Math.min(mast - hr.top, Math.max(0, room - hr.top));
+      if (shift) cells.forEach(th => { th.style.transform = "translateY(" + shift + "px)"; });
+    });
+  };
+  window.addEventListener("scroll", pinTableHeads, { passive: true });
+  window.addEventListener("resize", pinTableHeads);
+  pinTableHeads();
 })();
