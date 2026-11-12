@@ -43,6 +43,7 @@ nav a[aria-current]{background:var(--ink);color:var(--paper)}
 .lede{font-size:1.15rem;color:var(--ink-2);margin:0 0 1.2em}
 .suggest{font-family:var(--serif);font-style:italic;font-size:1.12rem;line-height:1.45;color:var(--ink);margin:-.45em 0 1.15em}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 10px}
+.hero-compact .stats{margin:12px 0 8px}
 .stats div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;box-shadow:0 1px 0 var(--line)}
 .stats b{display:block;font:600 1.8rem/1 var(--serif)}
 .stats span{font-size:.82rem;color:var(--ink-2)}

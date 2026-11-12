@@ -824,6 +824,32 @@ def shop_sets(ls):
     buying = {l["store_id"] for l in ls if l["status"] in BUYABLE}
     return tracked, checked, buying
 
+def hero_facts(ls):
+    """Status tiles and the line under them, from this page's listings only.
+    A zero stays on the tile. Every page shows the same five tiles."""
+    s = {k: sum(p["status"] == k for p in ls) for k in ("in_stock", "preorder", "sold_out", "coming_soon", "unknown")}
+    tracked, checked_shops, _ = shop_sets(ls)
+    return f'''<div class="stats five">
+    <div><b>{s["in_stock"]}</b><span>in stock</span></div>
+    <div><b>{s["preorder"]}</b><span>preorder</span></div>
+    <div><b>{s["sold_out"]}</b><span>sold out</span></div>
+    <div><b>{s["coming_soon"]}</b><span>not yet on sale</span></div>
+    <div class="unk"><b>{s["unknown"]}</b><span>couldn't check this run</span></div>
+  </div>
+  <p class="muted small hero-check">Last check: {time_tag(stock["run_finished"])} · {len(ls) - s["unknown"]} of {len(ls)} listings checked successfully · {len(checked_shops)} of {nshops(len(tracked))} checked.</p>'''
+
+def also_tracked(here):
+    """The other trackers, in the same place on every tracker hero."""
+    here = here if here.endswith("/") else here + "/"
+    links = []
+    if here != HOBO_TRACKER:
+        links.append((HOBO_TRACKER, "Hobonichi tracker"))
+    for k in LIVE:
+        slug = SECTIONS[k]["slug"] + "/"
+        if slug != here:
+            links.append((slug, SECTIONS[k]["nav"]))
+    return '<p class="small section-switch">Also tracked: ' + " · ".join(f'<a href="{h}">{E(t)}</a>' for h, t in links) + "</p>"
+
 def right_now_sentence(ls):
     """Stock sentence for a hero. Shop counts come from shop_sets, the same sets as the eyebrow."""
     if not ls:
@@ -949,7 +975,6 @@ def build_hobo_tracker():
     """The full Hobonichi tracker (the old homepage), now at HOBO_TRACKER. Copy, FAQ and FAQ schema unchanged."""
     prods = hobo_products()  # Hobonichi section only; dot grid shops live on their own page
     s = {k: sum(p["status"] == k for p in prods) for k in STATUS}
-    checked = sum(v for k, v in s.items() if k != "unknown")
     urls = {p["url"] for p in prods}
     restocks = [c for c in changes if c["url"] in urls and c["to"] in ("in_stock", "preorder") and c["from"] in ("sold_out", "coming_soon")]
     restocks.sort(key=lambda c: c["at"], reverse=True)
@@ -1021,18 +1046,9 @@ def build_hobo_tracker():
   {eyebrow("Hobonichi Techo 2027", f"{len({p['store_id'] for p in prods})} Hobonichi shops", f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}")}
   <h1>Hobonichi 2027 restock tracker</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
-  <p class="shop-cta"><a class="btn-ghost" href="shop/">{SHOP_NAME} →</a> <span class="muted small">{shop_cta_line()}</span></p>
-  <p class="small section-switch">Also tracked: {" · ".join(f'<a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE)}</p>
-  <p class="small"><a class="chip" href="#filters">Filter the full list</a></p>
+  {hero_facts(prods)}
   {signup_for("Hobonichi Techo 2027 books and covers")}
-  <div class="stats{' five' if s['unknown'] else ''}">
-    <div><b>{s['in_stock']}</b><span>in stock</span></div>
-    <div><b>{s['preorder']}</b><span>preorder</span></div>
-    <div><b>{s['sold_out']}</b><span>sold out</span></div>
-    <div><b>{s['coming_soon']}</b><span>not yet on sale</span></div>
-    {f'<div class="unk"><b>{s["unknown"]}</b><span>couldn' + "'" + 't check this run</span></div>' if s['unknown'] else ''}
-  </div>
-  <p class="muted small">Last check: {time_tag(stock['run_finished'])} · {checked} of {len(prods)} listings checked successfully.</p>
+  {also_tracked(HOBO_TRACKER)}
 </section>
 
 <div class="layout{'' if side.strip() else ' solo'}">
@@ -1567,7 +1583,6 @@ def build_group(g, oe):
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}{dp_link}</p>
   {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
 </section></details>""")
-    right_now = right_now_sentence(ls)
     lead_n = 2 if per_shop else 1  # shop-by-shop pages: first shop heading + its first card
     urls = {l["url"] for l in ls}
     rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
@@ -1595,13 +1610,13 @@ def build_group(g, oe):
     body = f"""
 <div class="product-page">
 {crumbs((g["slug"] + "/", g["short"]))}
-<section class="hero">
+<section class="hero{' hero-compact' if not ext or g.get('parent') else ''}">
   {eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), nshops(shops), f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}") if ext and not g.get("parent") else eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), nshops(shops), f"checked {CHECK_FREQ}")}
   <h1>{E(g['h1'])}</h1>
   <p class="lede">{E(g['intro'])}</p>
-  <p><strong>Right now:</strong> {right_now}
-  <span class="muted small">Last check: {time_tag(stock['run_finished'])}.</span></p>
+  {hero_facts(ls)}
   {group_signup(g, buy)}
+  {also_tracked(g["slug"] + "/") if ext and not g.get("parent") else ""}
 </section>
 <div class="layout">
   <div class="main-col">
@@ -1811,10 +1826,6 @@ def build_design(d, oe):
     m = page_amz(ls, oe)
     amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
                f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
-    if not ls:
-        right_now = "none of the shops we check list this design right now. We'll show it here again if a shop adds it."
-    else:
-        right_now = right_now_sentence(ls)
     thanks = ('<p class="suggest">Thank you to our follower Angela for suggesting we track these restocks.</p>'
               if d["slug"] in {"nothing-to-hide-green", "nothing-to-hide-pink", "nothing-to-hide-yellow"} else "")
     table = (f"""<section class="card group-sec" id="stock">
@@ -1891,13 +1902,12 @@ def build_design(d, oe):
     body = f"""
 <div class="product-page">
 {crumbs((parent["slug"] + "/", parent["short"]), (fname, d["name"]))}
-<section class="hero">
+<section class="hero hero-compact">
   {eyebrow(ey, nshops(shops), f"checked {CHECK_FREQ}")}
   <h1>{E(h1)}</h1>
   <p class="lede">{intro}</p>
   {thanks}
-  <p><strong>Right now:</strong> {right_now}
-  <span class="muted small">Last check: {time_tag(run)}.</span></p>
+  {hero_facts(ls)}
   {signup_for(d["full"], back=not buy)}
 </section>
 <div class="layout">

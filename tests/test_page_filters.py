@@ -96,12 +96,9 @@ class PageFilterMarkupTests(unittest.TestCase):
             tracked, checked, _ = site.shop_sets(ls)
             name, doc = site.build_group(g, site.amazon_main(site.stock["products"]))
             self.assertIn(f"{site.nshops(len(tracked))} ·", doc.split("<h1>")[0], name)
-            sentence = re.search(r"<strong>Right now:</strong>\s*(.*?)\s*<", doc, re.S).group(1)
-            if checked:
-                self.assertIn(f"of {site.nshops(len(checked))} checked", sentence, name)
-            if len(tracked) != len(checked):
-                missed = len(tracked) - len(checked)
-                self.assertIn(f"{missed} of {site.nshops(len(tracked))} couldn't be checked", sentence, name)
+            self.assertIn(f"{len(checked)} of {site.nshops(len(tracked))} checked", doc, name)
+            unk = sum(1 for l in ls if l["status"] == "unknown")
+            self.assertIn(f'<div class="unk"><b>{unk}</b><span>couldn\'t check this run</span></div>', doc, name)
         for d in site.DESIGNS:
             ls = site.design_listings(d)
             if not ls:
@@ -109,12 +106,9 @@ class PageFilterMarkupTests(unittest.TestCase):
             tracked, checked, _ = site.shop_sets(ls)
             doc = next(doc for n, doc in self.docs if n == site.design_fname(d))
             self.assertIn(f"{site.nshops(len(tracked))} ·", doc.split("<h1>")[0], d["slug"])
-            sentence = re.search(r"<strong>Right now:</strong>\s*(.*?)\s*<", doc, re.S).group(1)
-            if checked:
-                self.assertIn(f"of {site.nshops(len(checked))} checked", sentence, d["slug"])
-            if len(tracked) != len(checked):
-                missed = len(tracked) - len(checked)
-                self.assertIn(f"{missed} of {site.nshops(len(tracked))} couldn't be checked", sentence, d["slug"])
+            self.assertIn(f"{len(checked)} of {site.nshops(len(tracked))} checked", doc, d["slug"])
+            unk = sum(1 for l in ls if l["status"] == "unknown")
+            self.assertIn(f'<div class="unk"><b>{unk}</b><span>couldn\'t check this run</span></div>', doc, d["slug"])
 
     def test_product_groups_start_collapsed(self):
         for name, doc in self.docs:
