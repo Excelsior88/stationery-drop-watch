@@ -94,31 +94,27 @@ class PageFilterMarkupTests(unittest.TestCase):
 
     def test_guide_drawings_match_the_page_copy(self):
         vs = site.build_vs()[1]
-        self.assertLess(vs.index("The short version"), vs.index('class="guide-figure"'))
-        self.assertLess(vs.index('class="guide-figure"'), vs.index("<h2>Side by side</h2>"))
-        self.assertIn('width="1080"', vs)
-        self.assertIn('height="1350"', vs)
-        self.assertIn('loading="lazy"', vs)
-        self.assertIn("/assets/guides/techo-cousin-weeks-format-guide.png", vs)
-        self.assertIn("no weekly pages", vs)
-        self.assertIn("plus vertical weekly pages", vs)
-        self.assertIn("grid memo page on the right", vs)
+        self.assertNotIn("guide-figure", vs)
+        self.assertNotIn("techo-cousin-weeks-format-guide", vs)
+        self.assertEqual(vs.count('class="fmt-icon"'), 3)
+        self.assertIn('aria-hidden="true"', vs)
+        # Same scale as the source drawing: A5 is the largest page, Weeks is taller than it is wide.
+        self.assertIn('viewBox="0 0 99 142"', vs)
+        self.assertIn('viewBox="0 0 142 204"', vs)
+        self.assertIn('viewBox="0 0 88 182"', vs)
         tn = site.build_tn_sizes()[1]
-        self.assertLess(tn.index('id="quick"'), tn.index('class="guide-figure"'))
-        self.assertLess(tn.index('class="guide-figure"'), tn.index('id="compare"'))
-        for pair in ("220 × 120 mm", "210 × 110 mm", "134 × 98 mm", "124 × 89 mm", "110 × 75 mm", "100 × 65 mm"):
-            self.assertIn(pair, tn)
-            # The drawing states height × width. The article states the same pair as H × W.
-            h, w = pair.split(" × ")[0], pair.split(" × ")[1].replace(" mm", "")
+        self.assertNotIn("guide-figure", tn)
+        self.assertNotIn("travelers-notebook-sizes.png", tn)
+        self.assertEqual(tn.count('class="fmt-icon"'), 3)
+        self.assertIn('viewBox="0 0 120 220"', tn)
+        self.assertIn('viewBox="0 0 98 134"', tn)
+        self.assertIn('viewBox="0 0 75 110"', tn)
+        self.assertIn('fill="#b2522f"', tn)
+        self.assertIn('fill="#5e7f62"', tn)
+        self.assertIn('fill="#d1992e"', tn)
+        for pair in ("220 × 120", "210 × 110", "134 × 98", "124 × 89", "110 × 75", "100 × 65"):
+            h, w = pair.split(" × ")
             self.assertIn(f"H{h} × W{w}", tn)
-        self.assertIn('loading="lazy"', tn)
-        self.assertIn("/assets/guides/travelers-notebook-sizes.png", tn)
-        import hashlib
-        guides = ROOT / "site" / "assets" / "guides"
-        self.assertEqual(hashlib.sha256((guides / "techo-cousin-weeks-format-guide.png").read_bytes()).hexdigest(),
-                         "51d7a3b8990a0d68bb57c94d4d0750ef058533ee221b168077e0da44a989e268")
-        self.assertEqual(hashlib.sha256((guides / "travelers-notebook-sizes.png").read_bytes()).hexdigest(),
-                         "ef6e7a9df4d71c62bd3dce67a2f978b3e5e56c9776d6c9f564023ebfd1ca7948")
 
     def test_angela_line_is_unchanged(self):
         thanks = "Thank you to our follower Angela for suggesting we track these restocks."

@@ -2066,22 +2066,39 @@ def design_index_block():
                 f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)))}</span></li>' for d in ds) + "</ul>")
     return f'<section class="card" id="design-pages"><h2>Restock pages for single designs</h2><p class="muted small">{len(DESIGNS)} pages, one per planner or journal design we track. Counts come from the same checks as the trackers.</p>{"".join(out)}</section>'
 
-def guide_figure(stem, width, height, alt):
-    """A guide drawing. The PNG is the unaltered original; WebP copies are scaled, not cropped."""
-    srcset = ", ".join(f"/assets/guides/{stem}-{w}.webp {w}w" for w in (540, width) if w <= width)
-    # Deduplicate if the original is already 540 wide.
-    parts = []
-    seen = set()
-    for bit in srcset.split(", "):
-        if bit and bit not in seen:
-            seen.add(bit)
-            parts.append(bit)
-    return f'''<figure class="guide-figure">
-  <picture>
-    <source type="image/webp" srcset="{", ".join(parts)}" sizes="(max-width: 700px) 100vw, 540px">
-    <img src="/assets/guides/{stem}.png" width="{width}" height="{height}" alt="{E(alt)}" loading="lazy" decoding="async">
-  </picture>
-</figure>'''
+def _fmt_head(icon, label):
+    """Small drawing beside the column name. The label already names it, so the drawing is hidden from assistive tech."""
+    return f'<span class="fmt-head">{icon}<span>{label}</span></span>'
+
+def book_icon(kind):
+    """Closed book at the same relative scale as the format guide: A6 smaller, A5 larger, Weeks tall and narrow."""
+    w, h = {"a6": (99, 142), "a5": (142, 204), "weeks": (88, 182)}[kind]
+    scale = 34 / 204
+    dw, dh = round(w * scale), round(h * scale)
+    spine = round(w * 0.12)
+    return (f'<svg class="fmt-icon" viewBox="0 0 {w} {h}" width="{dw}" height="{dh}" aria-hidden="true" focusable="false">'
+            f'<rect x="3" y="3" width="{w - 6}" height="{h - 6}" fill="#e9ddc5"/>'
+            f'<rect x="3" y="3" width="{spine}" height="{h - 6}" fill="#c5baa0"/>'
+            f'<rect x="3" y="3" width="{w - 6}" height="{h - 6}" fill="none" stroke="#699173" stroke-width="6"/>'
+            f'</svg>')
+
+def cover_icon(kind):
+    """Leather cover with a dashed refill inside, sized from the maker's cover measurements."""
+    height, width, fill = {
+        "regular": (220, 120, "#b2522f"),
+        "passport": (134, 98, "#5e7f62"),
+        "card": (110, 75, "#d1992e"),
+    }[kind]
+    scale = 48 / 220
+    dw, dh = round(width * scale), round(height * scale)
+    # The real refill sits only a few millimetres inside the cover. At icon size that
+    # line would fall on the edge, so the dash is inset enough to read as the refill.
+    x, y = width * 0.14, height * 0.1
+    rw, rh = width - 2 * x, height - 2 * y
+    return (f'<svg class="fmt-icon" viewBox="0 0 {width} {height}" width="{dw}" height="{dh}" aria-hidden="true" focusable="false">'
+            f'<rect x="1" y="1" width="{width - 2}" height="{height - 2}" rx="4" fill="{fill}"/>'
+            f'<rect x="{x:.1f}" y="{y:.1f}" width="{rw:.1f}" height="{rh:.1f}" rx="2" fill="none" stroke="#f4efe4" stroke-width="4" stroke-dasharray="7 5"/>'
+            f'</svg>')
 
 
 def guides_block():
@@ -2295,12 +2312,11 @@ def build_vs():
   <li><strong>Cousin (A5)</strong>: one page per day with twice the page size, plus vertical weekly pages. Hobonichi says many people use it as a desk planner. {s("g_cousin")}</li>
   <li><strong>Weeks</strong>: a slim, wallet-size weekly planner with a memo page beside every week and extra memo pages at the back. Lightest of the three. {s("g_weeks")}</li>
 </ul>
-{guide_figure("techo-cousin-weeks-format-guide", 1080, 1350, "Format guide comparing the three closed books at the same scale. Original A6: one page per day, no weekly pages. Cousin A5: one page per day, plus vertical weekly pages. Weeks: the week on the left page and a grid memo page on the right.")}
 
 <h2>Side by side</h2>
 <p class="muted small">2027 English, January-start books. Specs from Hobonichi's product pages {s("orig", "Original")} {s("cousin", "Cousin")} {s("weeks", "Weeks")} {s("mega", "Weeks Mega")}; Hobonichi says specifications may vary slightly.</p>
 <div class="table-wrap"><table class="stock compare">
-<thead><tr><th></th><th>Original (A6)</th><th>Cousin (A5)</th><th>Weeks</th></tr></thead>
+<thead><tr><th></th><th>{_fmt_head(book_icon("a6"), "Original (A6)")}</th><th>{_fmt_head(book_icon("a5"), "Cousin (A5)")}</th><th>{_fmt_head(book_icon("weeks"), "Weeks")}</th></tr></thead>
 <tbody>{rows_html}</tbody></table></div>
 <p class="muted small">Stock counts are what each shop's product data said at our last check, {time_tag(stock['run_finished'])}.</p>
 
@@ -2647,14 +2663,13 @@ def build_tn_sizes():
   </ul>
   <p class="muted small">The maker's own line is that there is no required way to choose between Regular and Passport. It depends on what you want the notebook to do.{cite("journey")}</p>
 </section>
-{guide_figure("travelers-notebook-sizes", 1080, 1350, "Traveler's Notebook size guide, drawn to scale from the maker's package specs. Regular cover 220 × 120 mm and refill 210 × 110 mm. Passport cover 134 × 98 mm and refill 124 × 89 mm. Card Size, the limited 20th anniversary set: cover 110 × 75 mm and refill 100 × 65 mm.")}
 
 <h2 id="compare">Side by side</h2>
 <p class="muted small">Height × width × depth from the manufacturer's package specs. The leather cover and the paper refill are different sizes. Numbers in brackets point to the sources. On a small screen, scroll the table sideways. The row labels stay put.</p>
 <div class="table-wrap">
 <table class="stock compare">
 <caption class="sr">Regular, Passport, and Card Size: cover, refill, carry, refills, and what this site tracks</caption>
-<thead><tr><th></th><th>Regular</th><th>Passport</th><th>Card Size</th></tr></thead>
+<thead><tr><th></th><th>{_fmt_head(cover_icon("regular"), "Regular")}</th><th>{_fmt_head(cover_icon("passport"), "Passport")}</th><th>{_fmt_head(cover_icon("card"), "Card Size")}</th></tr></thead>
 <tbody>{"".join(rows)}</tbody>
 </table>
 </div>
