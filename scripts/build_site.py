@@ -342,8 +342,10 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     url = url_for(fname)
     title = seo_title(title)  # brand suffix only when the title still fits in a search result
     desc = seo_desc(desc)
-    hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-"))  # Hobonichi product pages sit under the tracker
     guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "best-dot-grid-journals/", TN_GUIDE_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
+    # Hobonichi product pages sit under the tracker. The Techo vs Cousin vs Weeks guide
+    # starts with hobonichi-techo-, but it is a guide, so only Guides is current.
+    hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-")) and not guide_page
     def cur(h):  # this page, or the page it sits under (product pages under the tracker, design pages under their section)
         return (h == fname or (hobo_page and h == HOBO_TRACKER) or (guide_page and h == "guides/")
                 or (h in [x for x, _ in NAV_TRACKERS] and h.endswith("/") and fname.startswith(h)))
