@@ -239,12 +239,16 @@ TITLE_OVERRIDES = {
     "Hobonichi Techo vs Cousin vs Weeks (2027): sizes, layouts, who each suits": "Hobonichi Techo vs Cousin vs Weeks",
     "Best dot grid journals compared: Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy": "Best dot grid journals compared",
     "Traveler's Notebook Regular vs Passport vs Card Size: Which Size Fits You?": "Traveler's Regular vs Passport vs Card Size",
+    "Hobonichi Techo January-start vs April-start: which one should you buy?": "Hobonichi Techo January-start vs April-start",
 }
 DESC_OVERRIDES = {
     "Dot grid journals compared: paper weight (gsm), pages, size and features for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, from each maker's page, plus live stock.":
     "Dot grid journals compared: paper, pages, size and features for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, plus live stock.",
     "Regular, Passport, or the limited Card Size set: leather cover and refill dimensions from TRAVELER'S COMPANY, which refills fit which cover, and which sizes this site tracks.":
     "Regular, Passport, or the limited Card Size set: cover and refill sizes from TRAVELER'S COMPANY, which refills fit, and which sizes this site tracks.",
+    # Approved sentence is 170 characters. The meta tag keeps that opening through a finished sentence.
+    "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1. Here's how the two differ and how to choose.":
+    "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1. Here's how the two differ.",
 }
 
 def seo_title(base):
@@ -340,7 +344,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     url = url_for(fname)
     title = seo_title(title)  # brand suffix only when the title still fits in a search result
     desc = seo_desc(desc)
-    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "best-dot-grid-journals/", TN_GUIDE_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
+    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "hobonichi-january-start-vs-april-start/", "best-dot-grid-journals/", TN_GUIDE_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
     # Hobonichi product pages sit under the tracker. The Techo vs Cousin vs Weeks guide
     # starts with hobonichi-techo-, but it is a guide, so only Guides is current.
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-")) and not guide_page
@@ -2001,7 +2005,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
     tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
-    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), latest(tn_mod, CONTENT_LASTMOD)), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-12"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_PUBLISHED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), latest(tn_mod, CONTENT_LASTMOD)), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-12"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2056,14 +2060,17 @@ def build_404():
 # doesn't record them.
 WTB_SLUG = "where-to-buy-hobonichi-2027"
 VS_SLUG = "hobonichi-techo-vs-cousin-vs-weeks"
+JAN_APR_SLUG = "hobonichi-january-start-vs-april-start"
+JAN_APR_PUBLISHED = "2026-11-12"  # owner-approved publication date
 DG_GUIDE_SLUG = "best-dot-grid-journals"
-HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
+HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), (JAN_APR_SLUG + "/", "January-start vs April-start"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
 GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared"),
                         (TN_GUIDE_SLUG + "/", "Regular vs Passport vs Card Size")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
 GUIDES_LASTMOD = "2026-10-29"
 DG_GUIDE_LASTMOD = "2026-11-04"  # last copy change on the dot grid guide
 GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin A5, Weeks and Weeks Mega in stock right now, checked about every 30 minutes, plus tips for catching a restock.",
                 VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits.",
+                JAN_APR_SLUG + "/": "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1.",
                 "hobonichi-2027.html": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources.",
                 DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock.",
                 TN_GUIDE_SLUG + "/": "Leather cover and refill dimensions for Regular, Passport, and the limited Card Size 20th anniversary set, from TRAVELER'S COMPANY's own pages, plus which refills fit and which sizes we track."}  # last copy change on the guide pages (sitemap lastmod floor)
@@ -2381,6 +2388,103 @@ def build_vs():
     return fname, page(fname, "Hobonichi Techo vs Cousin vs Weeks (2027): sizes, layouts, who each suits · Stationery Drop Watch",
                        "Hobonichi Techo Original A6 vs Cousin A5 vs Weeks for 2027: size, weight, daily vs weekly layout, pages and paper from Hobonichi's specs, plus live stock.",
                        body, ld=(crumbs_ld(("guides/", "Guides"), (fname, "Hobonichi Techo vs Cousin vs Weeks")), art, faq_ld))
+
+
+def build_january_april():
+    """Owner-approved January-start vs April-start guide, published 2026-11-12. Body wording is the approved article."""
+    fname = JAN_APR_SLUG + "/"
+    title = "Hobonichi Techo January-start vs April-start: which one should you buy?"
+    desc = ("Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition "
+            "and goes on sale on February 1. Here's how the two differ and how to choose.")
+    faq = [
+        ("When does the April-start Hobonichi go on sale?",
+         "Hobonichi says February 1 every year at 11 AM Japan time. Check the official site for the 2027 date."),
+        ("Is there an English April-start Hobonichi?",
+         "No. April-start editions are Japanese only."),
+        ("Is there an April-start Weeks Mega or Day-Free?",
+         "No."),
+    ]
+    faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
+    sources = [
+        ("https://help.1101.com/hc/en-us/articles/4889929315230", "April-start editions"),
+        ("https://help.1101.com/hc/en-us/articles/4889951964190", "Spring lineup guidance"),
+        ("https://help.1101.com/hc/en-us/articles/4889935445534", "sale schedule"),
+        ("https://help.1101.com/hc/en-us/articles/4889951953566", "Sunday-start editions"),
+    ]
+    src_items = "".join(
+        f'<li><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, Hobonichi (official).</li>' for u, t in sources)
+    body = f"""
+<article class="prose guide">
+{crumbs(("guides/", "Guides"), (fname, "January-start vs April-start"))}
+{eyebrow("Guide", "Hobonichi Techo", guide_updated(build_january_april))}
+<h1>Hobonichi Techo January-start vs April-start</h1>
+<p class="lede">Hobonichi offers January-start planners and April-start editions called "Spring". Not every book comes in both versions. Which one suits you depends on when you want to begin planning and which book you want.</p>
+{signup()}
+
+<h2>The short answer</h2>
+<ul>
+  <li><strong>Choose January-start</strong> if you want an English edition, the Planner, Avec, HON, Day-Free, Weeks Mega or a 5-Year Techo. None of these comes in an April-start edition.</li>
+  <li><strong>Choose April-start</strong> if your year turns over in spring (school, a fiscal year, a new job) and you're happy with a Japanese-edition Original (A6), Cousin (A5) or Weeks.</li>
+</ul>
+
+<h2>Which books come in April-start</h2>
+<p>Hobonichi's help center says the <strong>Original (A6), Cousin (A5) and Weeks</strong> have April-start editions, <strong>all in Japanese</strong>.</p>
+<p>The help center says there are <strong>no April-start editions</strong> of:</p>
+<ul>
+  <li>English editions of the Original, Cousin and Weeks</li>
+  <li>the Planner</li>
+  <li>Avec (Original or Cousin)</li>
+  <li>Weeks Mega</li>
+  <li>HON</li>
+  <li>Day-Free</li>
+  <li>the 5-Year Techo and Large 5-Year Techo</li>
+  <li>some special editions (it names the One Piece Original and the Moomin Weeks)</li>
+</ul>
+
+<h2>"April-start" doesn't mean it goes on sale in April</h2>
+<p>Hobonichi's help center says the April-start Spring edition <strong>"goes on sale every year on February 1st"</strong>, starting at <strong>11:00 AM Japan time</strong> on the Hobonichi Store (9:00 PM Eastern on January 31). Other shops start selling when they open.</p>
+<p>Treat this as Hobonichi's usual sale schedule, not a separately confirmed Spring 2027 announcement. Check the official Spring announcements before planning a purchase.</p>
+
+<h2>Is the Spring lineup the same as January's?</h2>
+<p>Not exactly. Hobonichi says many January-start products are offered again in April-start, and <strong>"even if an item sells out in the January-start edition, it may be restocked for the April-start release."</strong> Some products are Spring-only, and the lineup can change depending on fabric availability.</p>
+<p>So if a cover you wanted sold out in the fall, the Spring release is worth watching. Hobonichi doesn't promise it will come back.</p>
+
+<h2>The Sunday-start option</h2>
+<p>According to Hobonichi, the Sunday-start option is available only for the <strong>Japanese Original (A6)</strong>, in both January-start and April-start editions.</p>
+
+<h2>How to decide</h2>
+<ol>
+  <li><strong>When does your year start?</strong> If it's January, choose January-start. If it's April (school, work, a fiscal year), choose Spring.</li>
+  <li><strong>Do you need English?</strong> Then it's January-start only.</li>
+  <li><strong>Which format?</strong> Pick the format first. Our <a href="{VS_SLUG}/">Original vs Cousin vs Weeks guide</a> explains the differences.</li>
+  <li><strong>Waiting for a sold-out cover?</strong> It may come back in the Spring release, but it isn't guaranteed.</li>
+</ol>
+
+<h2>Related</h2>
+<ul>
+  <li><a href="{HOBO_TRACKER}">Hobonichi Techo 2027 restock tracker</a></li>
+  <li><a href="{WTB_SLUG}/">Where to buy the Hobonichi Techo 2027</a></li>
+  <li><a href="{VS_SLUG}/">Original vs Cousin vs Weeks</a></li>
+  <li><a href="hobonichi-techo-2027-covers/">Hobonichi Techo 2027 covers</a></li>
+</ul>
+
+<section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
+
+<h2>Sources</h2>
+<p class="muted small">Read Nov 7, 2026.</p>
+<ol class="sources">{src_items}</ol>
+{design_links_block()}
+{related_block(fname)}
+</article>"""
+    headline = "Hobonichi Techo January-start vs April-start"
+    art = {"@context": "https://schema.org", "@type": "Article", "headline": headline,
+           "datePublished": JAN_APR_PUBLISHED, "dateModified": JAN_APR_PUBLISHED, "url": url_for(fname), "image": OG_IMAGE,
+           "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
+           "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
+    return fname, page(fname, title, desc, body,
+                       ld=(crumbs_ld(("guides/", "Guides"), (fname, "January-start vs April-start")), art, faq_ld))
 
 
 DG_SRC = {  # each maker's own product page, read Nov 4, 2026; every spec on the guide cites one of these
@@ -3327,7 +3431,7 @@ def main():
         check_amz_doc(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_dotgrid_guide, build_tn_sizes, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):
+    for build in (build_where_to_buy, build_vs, build_january_april, build_dotgrid_guide, build_tn_sizes, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
