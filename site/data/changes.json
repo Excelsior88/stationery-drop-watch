@@ -671,5 +671,14 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-12T15:48:30+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · Shirt Fabric: Graph Plaid",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-shirt-fabric-graph-plaid",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
