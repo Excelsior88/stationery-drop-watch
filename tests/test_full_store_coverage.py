@@ -33,7 +33,18 @@ class FullStoreCoverageTests(unittest.TestCase):
             self.assertEqual(row["first_seen"], row["status_since"])
             self.assertNotEqual(row["status"], "unknown")
             self.assertNotIn(row["url"], event_urls)
-        self.assertEqual(len(self.changes), 39)
+        # A first observation writes no event. A later restock moves status_since, so the
+        # event list may grow; a row still on its first status never appears in it.
+        for row in self.stock["products"]:
+            self.assertLessEqual(row["first_seen"], row["status_since"])
+            if row["first_seen"] == row["status_since"]:
+                self.assertNotIn(row["url"], event_urls)
+        for event in self.changes:
+            self.assertIn(event["url"], saved)
+            self.assertNotEqual(event["from"], event["to"])
+            self.assertNotIn(event["from"], ("unknown", None, ""))
+            self.assertNotIn(event["to"], ("unknown", None, ""))
+            self.assertGreater(event["at"], saved[event["url"]]["first_seen"])
         sea = saved[OLD_SEA]
         self.assertEqual(sea["first_seen"], "2026-10-25T21:40:57+00:00")
         self.assertEqual(sea["status_since"], "2026-10-25T21:40:57+00:00")

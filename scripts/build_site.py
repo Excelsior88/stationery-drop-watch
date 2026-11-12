@@ -342,8 +342,10 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     url = url_for(fname)
     title = seo_title(title)  # brand suffix only when the title still fits in a search result
     desc = seo_desc(desc)
-    hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-"))  # Hobonichi product pages sit under the tracker
     guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "best-dot-grid-journals/", TN_GUIDE_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
+    # Hobonichi product pages sit under the tracker. The Techo vs Cousin vs Weeks guide
+    # starts with hobonichi-techo-, but it is a guide, so only Guides is current.
+    hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-")) and not guide_page
     def cur(h):  # this page, or the page it sits under (product pages under the tracker, design pages under their section)
         return (h == fname or (hobo_page and h == HOBO_TRACKER) or (guide_page and h == "guides/")
                 or (h in [x for x, _ in NAV_TRACKERS] and h.endswith("/") and fname.startswith(h)))
@@ -1062,10 +1064,12 @@ def trust_strip(prods):
     checked = len(prods) - unknown
     missed = (f' <span class="trust-miss">{unknown} couldn\'t be checked this run.</span>'
               if unknown else "")
+    # One pattern on every card: the figure first, the short label after it in the text.
+    # "Every 30 min" is the same half-hour check; other pages still say CHECK_FREQ.
     facts = f'''<ul class="trust" aria-label="Inventory monitoring">
   <li><b>{N_STORES}</b> <span>shops checked</span></li>
-  <li><b>{E(CHECK_FREQ)}</b> <span class="trust-cap">check interval</span></li>
-  <li><span class="trust-k">Last check</span> <span class="trust-time">{time_tag(stock["run_finished"])}</span></li>
+  <li><b>Every 30 min</b> <span>check interval</span></li>
+  <li><b class="trust-when">{time_tag(stock["run_finished"])}</b> <span>last check</span></li>
   <li><b>{checked} of {len(prods)}</b> <span>listings checked successfully</span>{missed}</li>
 </ul>'''
     # Clip sits beside the cards, about their height on a wide screen. The file is a scaled copy of the approved art, with no caption.

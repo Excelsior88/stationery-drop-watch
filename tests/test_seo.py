@@ -73,6 +73,17 @@ class SeoHeadTests(unittest.TestCase):
             descs.append(desc)
         self.assertEqual(len(descs), len(set(descs)))
 
+    def test_header_marks_one_section_and_the_size_guide_marks_guides(self):
+        for path, doc in self.docs:
+            bar = re.search(r'<nav class="site-nav site-nav-bar" aria-label="Main">(.*?)</nav>', doc)
+            self.assertIsNotNone(bar, path)
+            current = re.findall(r'href="([^"]+)"[^>]*aria-current=page', bar.group(1))
+            self.assertLessEqual(len(current), 1, (path, current))
+            if path == "hobonichi-techo-vs-cousin-vs-weeks/":
+                self.assertEqual(current, ["/guides/"])
+            elif path.startswith(("hobonichi-techo-", "hobonichi-weeks-")):
+                self.assertEqual(current, ["/" + site.HOBO_TRACKER])
+
     def test_faq_answers_still_name_the_thirty_minute_check(self):
         doc = dict(self.docs)["hobonichi-weeks-2027/midnight-blue/"]
         self.assertIn("Every shop is checked about every 30 minutes.", doc)
