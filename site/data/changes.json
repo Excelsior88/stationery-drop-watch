@@ -841,5 +841,24 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_classicfgreen/",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-13T21:18:21+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "Weeks · Colors: Midnight Blue",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-midnight-blue",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-13T21:20:02+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "Traveler's notebook Regular size · Olive (No. 15342006)",
+  "url": "https://www.jennibick.com/products/travelers-notebook-regular-size-olive",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
