@@ -196,8 +196,68 @@
    "brand": "archerandolive"
   },
   {
-   "id": "ao-refills",
-   "label": "Archer and Olive · A5 dot grid refills",
+   "id": "ao-ice-castle",
+   "label": "Archer and Olive · Ice Castle dot grid notebook",
+   "type": "Dot grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-cozy-critters",
+   "label": "Archer and Olive · Cozy Critters dot grid notebook",
+   "type": "Dot grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-stag",
+   "label": "Archer and Olive · Stag dot grid notebook",
+   "type": "Dot grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-winter-train",
+   "label": "Archer and Olive · Winter Train dot grid notebook",
+   "type": "Dot grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-songbird-beige",
+   "label": "Archer and Olive · Songbird in Beige dot grid notebook",
+   "type": "Dot grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-storybook-plum",
+   "label": "Archer and Olive · Storybook in Plum dot grid notebook",
+   "type": "Dot grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-songbird-warm-gray",
+   "label": "Archer and Olive · Songbird in Warm Gray dot grid notebook",
+   "type": "Dot grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-storybook-olive",
+   "label": "Archer and Olive · Storybook in Olive dot grid notebook",
+   "type": "Dot grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-meteor-shower",
+   "label": "Archer and Olive · Meteor Shower dot grid notebook",
+   "type": "Dot grid notebook",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-refill-soft",
+   "label": "Archer and Olive · A5 Soft Cover Refill Notebook",
+   "type": "Dot grid refill",
+   "brand": "archerandolive"
+  },
+  {
+   "id": "ao-refill-notepad",
+   "label": "Archer and Olive · A5 Notepad Refill",
    "type": "Dot grid refill",
    "brand": "archerandolive"
   },
@@ -4862,7 +4922,7 @@
      "source_title": "Apothecary Shelf | Notebook · B5: 160 Page / White Dot Grid"
     },
     {
-     "canonical": "ao-refills",
+     "canonical": "ao-refill-soft",
      "label": "A5 Soft Cover Refill Notebook · white dot grid",
      "type": "Dot grid refill",
      "url": "https://www.archerandolive.com/products/a5-soft-cover-refill-notebook-copy?variant=48885168668827",
@@ -4870,12 +4930,788 @@
      "source_title": "A5 Soft Cover Refill Notebook · White Dot Grid"
     },
     {
-     "canonical": "ao-refills",
+     "canonical": "ao-refill-notepad",
      "label": "A5 Notepad Refill · white dot grid",
      "type": "Dot grid refill",
      "url": "https://www.archerandolive.com/products/dot-grid-notepad-refill?variant=47927601889435",
      "variant_id": 47927601889435,
      "source_title": "A5 Notepad Refill | Dot Grid · White: Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · letter white dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48885118468251",
+     "variant_id": 48885118468251,
+     "source_title": "Storybook in Navy | Books · White Dot Grid / LS: 160 Pages"
+    },
+    {
+     "canonical": "ao-apothecary-shelf",
+     "label": "Apothecary Shelf (Halloween 2026) · 8x8 white dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/apothecary-shelf-notebook?variant=49143523868827",
+     "variant_id": 49143523868827,
+     "source_title": "Apothecary Shelf | Notebook · 8x8: 160 Pages / White Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · 8x8 white dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48885118533787",
+     "variant_id": 48885118533787,
+     "source_title": "Storybook in Navy | Books · White Dot Grid / 8x8: 160 Pages"
+    },
+    {
+     "canonical": "ao-apothecary-shelf",
+     "label": "Apothecary Shelf (Halloween 2026) · A5 white dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/apothecary-shelf-notebook?variant=49143523934363",
+     "variant_id": 49143523934363,
+     "source_title": "Apothecary Shelf | Notebook · A5: 192 Pages / White Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · TN white dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48885118599323",
+     "variant_id": 48885118599323,
+     "source_title": "Storybook in Navy | Books · White Dot Grid / TN: 144 Pages"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · B6 white dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48885118632091",
+     "variant_id": 48885118632091,
+     "source_title": "Storybook in Navy | Books · White Dot Grid / B6: 112 Pages"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · pocket white dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48885118664859",
+     "variant_id": 48885118664859,
+     "source_title": "Storybook in Navy | Books · White Dot Grid / PS: 112 Pages"
+    },
+    {
+     "canonical": "ao-songbird-blue",
+     "label": "Songbird in Blue · letter dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128957059227",
+     "variant_id": 47128957059227,
+     "source_title": "Songbird in Blue Notebook · LS: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-majestic-skies",
+     "label": "Majestic Skies · B5 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/majestic-skies-dot-grid-notebook?variant=47314844057755",
+     "variant_id": 47314844057755,
+     "source_title": "Majestic Skies: Notebook · B5: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-majestic-skies",
+     "label": "Majestic Skies · square dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/majestic-skies-dot-grid-notebook?variant=47314844090523",
+     "variant_id": 47314844090523,
+     "source_title": "Majestic Skies: Notebook · SQ: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-blue",
+     "label": "Songbird in Blue · square dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128956895387",
+     "variant_id": 47128956895387,
+     "source_title": "Songbird in Blue Notebook · SQ: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-majestic-skies",
+     "label": "Majestic Skies · TN dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/majestic-skies-dot-grid-notebook?variant=47314844156059",
+     "variant_id": 47314844156059,
+     "source_title": "Majestic Skies: Notebook · TN: 144 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-blue",
+     "label": "Songbird in Blue · TN dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128956960923",
+     "variant_id": 47128956960923,
+     "source_title": "Songbird in Blue Notebook · TN: 144 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-blue",
+     "label": "Songbird in Blue · B6 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128956993691",
+     "variant_id": 47128956993691,
+     "source_title": "Songbird in Blue Notebook · B6: 112 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-blue",
+     "label": "Songbird in Blue · pocket dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128957026459",
+     "variant_id": 47128957026459,
+     "source_title": "Songbird in Blue Notebook · PS: 112 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · B5 kraft dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48399340568731",
+     "variant_id": 48399340568731,
+     "source_title": "Storybook in Navy | Books · Kraft Dot Grid / B5: 160 Pages"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · 8x8 kraft dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48399340601499",
+     "variant_id": 48399340601499,
+     "source_title": "Storybook in Navy | Books · Kraft Dot Grid / 8x8: 160 Pages"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · A5 kraft dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48399340634267",
+     "variant_id": 48399340634267,
+     "source_title": "Storybook in Navy | Books · Kraft Dot Grid / A5: 192 Pages"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · B5 ivory dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48399340667035",
+     "variant_id": 48399340667035,
+     "source_title": "Storybook in Navy | Books · Ivory Dot Grid / B5: 160 Pages"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · 8x8 ivory dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48399340699803",
+     "variant_id": 48399340699803,
+     "source_title": "Storybook in Navy | Books · Ivory Dot Grid / 8x8: 160 Pages"
+    },
+    {
+     "canonical": "ao-storybook-navy",
+     "label": "Storybook in Navy · A5 ivory dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48399340732571",
+     "variant_id": 48399340732571,
+     "source_title": "Storybook in Navy | Books · Ivory Dot Grid / A5: 192 Pages"
+    },
+    {
+     "canonical": "ao-apothecary-shelf",
+     "label": "Apothecary Shelf (Halloween 2026) · A5 black dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/apothecary-shelf-notebook?variant=49143523967131",
+     "variant_id": 49143523967131,
+     "source_title": "Apothecary Shelf | Notebook · A5: 192 Pages / Black Dot Grid"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · B5 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=49699328524443",
+     "variant_id": 49699328524443,
+     "source_title": "Ice Castle | Notebook · B5: 160 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · B5 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=50155171053723",
+     "variant_id": 50155171053723,
+     "source_title": "Ice Castle | Notebook · B5: 160 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · 8x8 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=49699328557211",
+     "variant_id": 49699328557211,
+     "source_title": "Ice Castle | Notebook · 8x8: 160 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · 8x8 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=50155171086491",
+     "variant_id": 50155171086491,
+     "source_title": "Ice Castle | Notebook · 8x8: 160 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · A5 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=49699328589979",
+     "variant_id": 49699328589979,
+     "source_title": "Ice Castle | Notebook · A5: 192 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · A5 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=50155171119259",
+     "variant_id": 50155171119259,
+     "source_title": "Ice Castle | Notebook · A5: 192 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · TN dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=49699328622747",
+     "variant_id": 49699328622747,
+     "source_title": "Ice Castle | Notebook · TN: 144 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · TN dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=50155171217563",
+     "variant_id": 50155171217563,
+     "source_title": "Ice Castle | Notebook · TN: 144 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · B6 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=49699328655515",
+     "variant_id": 49699328655515,
+     "source_title": "Ice Castle | Notebook · B6: 112 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · B6 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=50155171250331",
+     "variant_id": 50155171250331,
+     "source_title": "Ice Castle | Notebook · B6: 112 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · pocket dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=49699328688283",
+     "variant_id": 49699328688283,
+     "source_title": "Ice Castle | Notebook · PS: 112 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-ice-castle",
+     "label": "Ice Castle · pocket dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/ice-castle-notebook?variant=50155171283099",
+     "variant_id": 50155171283099,
+     "source_title": "Ice Castle | Notebook · PS: 112 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · B5 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=49699389833371",
+     "variant_id": 49699389833371,
+     "source_title": "Cozy Critters | Notebook · B5: 160 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · B5 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293638811",
+     "variant_id": 50155293638811,
+     "source_title": "Cozy Critters | Notebook · B5: 160 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · 8x8 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=49699389866139",
+     "variant_id": 49699389866139,
+     "source_title": "Cozy Critters | Notebook · 8x8: 160 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · 8x8 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293671579",
+     "variant_id": 50155293671579,
+     "source_title": "Cozy Critters | Notebook · 8x8: 160 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · A5 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=49699389898907",
+     "variant_id": 49699389898907,
+     "source_title": "Cozy Critters | Notebook · A5: 192 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · A5 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293704347",
+     "variant_id": 50155293704347,
+     "source_title": "Cozy Critters | Notebook · A5: 192 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · TN dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=49699389931675",
+     "variant_id": 49699389931675,
+     "source_title": "Cozy Critters | Notebook · TN: 144 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · TN dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293802651",
+     "variant_id": 50155293802651,
+     "source_title": "Cozy Critters | Notebook · TN: 144 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · B6 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=49699389964443",
+     "variant_id": 49699389964443,
+     "source_title": "Cozy Critters | Notebook · B6: 112 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · B6 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293835419",
+     "variant_id": 50155293835419,
+     "source_title": "Cozy Critters | Notebook · B6: 112 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · pocket dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=49699389997211",
+     "variant_id": 49699389997211,
+     "source_title": "Cozy Critters | Notebook · PS: 112 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-cozy-critters",
+     "label": "Cozy Critters · pocket dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293868187",
+     "variant_id": 50155293868187,
+     "source_title": "Cozy Critters | Notebook · PS: 112 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · B5 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=49699328131227",
+     "variant_id": 49699328131227,
+     "source_title": "Stag | Notebook · B5: 160 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · B5 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=50155013636251",
+     "variant_id": 50155013636251,
+     "source_title": "Stag | Notebook · B5: 160 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · 8x8 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=49699328163995",
+     "variant_id": 49699328163995,
+     "source_title": "Stag | Notebook · 8x8: 160 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · 8x8 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=50155013669019",
+     "variant_id": 50155013669019,
+     "source_title": "Stag | Notebook · 8x8: 160 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · A5 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=49699328196763",
+     "variant_id": 49699328196763,
+     "source_title": "Stag | Notebook · A5: 192 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · A5 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=50155013701787",
+     "variant_id": 50155013701787,
+     "source_title": "Stag | Notebook · A5: 192 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · TN dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=49699328229531",
+     "variant_id": 49699328229531,
+     "source_title": "Stag | Notebook · TN: 144 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · TN dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=50155013800091",
+     "variant_id": 50155013800091,
+     "source_title": "Stag | Notebook · TN: 144 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · B6 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=49699328262299",
+     "variant_id": 49699328262299,
+     "source_title": "Stag | Notebook · B6: 112 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · B6 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=50155013832859",
+     "variant_id": 50155013832859,
+     "source_title": "Stag | Notebook · B6: 112 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · pocket dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=49699328295067",
+     "variant_id": 49699328295067,
+     "source_title": "Stag | Notebook · PS: 112 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-stag",
+     "label": "Stag · pocket dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/stag-notebook?variant=50155013865627",
+     "variant_id": 50155013865627,
+     "source_title": "Stag | Notebook · PS: 112 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · B5 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=49699372368027",
+     "variant_id": 49699372368027,
+     "source_title": "Winter Train | Notebook · B5: 160 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · B5 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=50155223875739",
+     "variant_id": 50155223875739,
+     "source_title": "Winter Train | Notebook · B5: 160 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · 8x8 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=49699372400795",
+     "variant_id": 49699372400795,
+     "source_title": "Winter Train | Notebook · 8x8: 160 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · 8x8 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=50155223908507",
+     "variant_id": 50155223908507,
+     "source_title": "Winter Train | Notebook · 8x8: 160 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · A5 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=49699372433563",
+     "variant_id": 49699372433563,
+     "source_title": "Winter Train | Notebook · A5: 192 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · A5 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=50155223941275",
+     "variant_id": 50155223941275,
+     "source_title": "Winter Train | Notebook · A5: 192 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · TN dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=49699372466331",
+     "variant_id": 49699372466331,
+     "source_title": "Winter Train | Notebook · TN: 144 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · TN dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=50155224039579",
+     "variant_id": 50155224039579,
+     "source_title": "Winter Train | Notebook · TN: 144 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · B6 dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=49699372499099",
+     "variant_id": 49699372499099,
+     "source_title": "Winter Train | Notebook · B6: 112 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · B6 dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=50155224072347",
+     "variant_id": 50155224072347,
+     "source_title": "Winter Train | Notebook · B6: 112 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · pocket dot grid · ships now",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=49699372531867",
+     "variant_id": 49699372531867,
+     "source_title": "Winter Train | Notebook · PS: 112 Pages / Dot Grid / In Stock - Ships Now"
+    },
+    {
+     "canonical": "ao-winter-train",
+     "label": "Winter Train · pocket dot grid · preorder",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=50155224105115",
+     "variant_id": 50155224105115,
+     "source_title": "Winter Train | Notebook · PS: 112 Pages / Dot Grid / Preorder Only - Ships Mid February"
+    },
+    {
+     "canonical": "ao-songbird-beige",
+     "label": "Songbird in Beige · B5 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-beige-notebook?variant=47683030155419",
+     "variant_id": 47683030155419,
+     "source_title": "Songbird in Beige: Notebook · B5: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-beige",
+     "label": "Songbird in Beige · square dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-beige-notebook?variant=47683030188187",
+     "variant_id": 47683030188187,
+     "source_title": "Songbird in Beige: Notebook · SQ: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-beige",
+     "label": "Songbird in Beige · A5 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-beige-notebook?variant=47683030220955",
+     "variant_id": 47683030220955,
+     "source_title": "Songbird in Beige: Notebook · A5: 192 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-beige",
+     "label": "Songbird in Beige · TN dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-beige-notebook?variant=47683030253723",
+     "variant_id": 47683030253723,
+     "source_title": "Songbird in Beige: Notebook · TN: 144 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-beige",
+     "label": "Songbird in Beige · B6 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-beige-notebook?variant=47683030286491",
+     "variant_id": 47683030286491,
+     "source_title": "Songbird in Beige: Notebook · B6: 112 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-plum",
+     "label": "Storybook in Plum · letter dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146749595",
+     "variant_id": 47636146749595,
+     "source_title": "Storybook in Plum: Notebook · LS: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-plum",
+     "label": "Storybook in Plum · B5 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146782363",
+     "variant_id": 47636146782363,
+     "source_title": "Storybook in Plum: Notebook · B5: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-plum",
+     "label": "Storybook in Plum · 8x8 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146815131",
+     "variant_id": 47636146815131,
+     "source_title": "Storybook in Plum: Notebook · 8X8: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-plum",
+     "label": "Storybook in Plum · A5 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146880667",
+     "variant_id": 47636146880667,
+     "source_title": "Storybook in Plum: Notebook · A5: 192 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-plum",
+     "label": "Storybook in Plum · TN dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146978971",
+     "variant_id": 47636146978971,
+     "source_title": "Storybook in Plum: Notebook · TN: 144 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-plum",
+     "label": "Storybook in Plum · B6 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636147011739",
+     "variant_id": 47636147011739,
+     "source_title": "Storybook in Plum: Notebook · B6: 112 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-plum",
+     "label": "Storybook in Plum · pocket dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636147044507",
+     "variant_id": 47636147044507,
+     "source_title": "Storybook in Plum: Notebook · PS: 112 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-songbird-warm-gray",
+     "label": "Songbird in Warm Gray · letter dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/songbird-in-warm-gray-dot-grid?variant=47271031406747",
+     "variant_id": 47271031406747,
+     "source_title": "Songbird in Warm Gray Dot Grid Notebook · Default Title"
+    },
+    {
+     "canonical": "ao-storybook-olive",
+     "label": "Storybook in Olive · letter dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-olive-copy?variant=47128962826395",
+     "variant_id": 47128962826395,
+     "source_title": "Storybook in Olive Notebook · LS: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-olive",
+     "label": "Storybook in Olive · square dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-olive-copy?variant=47128962531483",
+     "variant_id": 47128962531483,
+     "source_title": "Storybook in Olive Notebook · SQ: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-olive",
+     "label": "Storybook in Olive · A5 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-olive-copy?variant=47128962629787",
+     "variant_id": 47128962629787,
+     "source_title": "Storybook in Olive Notebook · A5: 192 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-olive",
+     "label": "Storybook in Olive · TN dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-olive-copy?variant=47128962728091",
+     "variant_id": 47128962728091,
+     "source_title": "Storybook in Olive Notebook · TN: 144 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-storybook-olive",
+     "label": "Storybook in Olive · pocket dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/storybook-in-olive-copy?variant=47128962793627",
+     "variant_id": 47128962793627,
+     "source_title": "Storybook in Olive Notebook · PS: 112 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-meteor-shower",
+     "label": "Meteor Shower · 8x8 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/meteor-shower-notebook?variant=44579048489115",
+     "variant_id": 44579048489115,
+     "source_title": "Meteor Shower: Notebook · 8X8: 160 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-meteor-shower",
+     "label": "Meteor Shower · A5 dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/meteor-shower-notebook?variant=44579048521883",
+     "variant_id": 44579048521883,
+     "source_title": "Meteor Shower: Notebook · A5: 192 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-meteor-shower",
+     "label": "Meteor Shower · Travelers dot grid",
+     "type": "Dot grid notebook",
+     "url": "https://www.archerandolive.com/products/meteor-shower-notebook?variant=44579048554651",
+     "variant_id": 44579048554651,
+     "source_title": "Meteor Shower: Notebook · Travelers: 144 Pages / Dot Grid"
+    },
+    {
+     "canonical": "ao-refill-soft",
+     "label": "A5 Soft Cover Refill Notebook · kraft dot grid",
+     "type": "Dot grid refill",
+     "url": "https://www.archerandolive.com/products/a5-soft-cover-refill-notebook-copy?variant=48885176238235",
+     "variant_id": 48885176238235,
+     "source_title": "A5 Soft Cover Refill Notebook · Kraft Dot Grid"
+    },
+    {
+     "canonical": "ao-refill-soft",
+     "label": "A5 Soft Cover Refill Notebook · ivory dot grid",
+     "type": "Dot grid refill",
+     "url": "https://www.archerandolive.com/products/a5-soft-cover-refill-notebook-copy?variant=48885176271003",
+     "variant_id": 48885176271003,
+     "source_title": "A5 Soft Cover Refill Notebook · Ivory Dot Grid"
+    },
+    {
+     "canonical": "ao-refill-notepad",
+     "label": "A5 Notepad Refill · kraft dot grid",
+     "type": "Dot grid refill",
+     "url": "https://www.archerandolive.com/products/dot-grid-notepad-refill?variant=47927601954971",
+     "variant_id": 47927601954971,
+     "source_title": "A5 Notepad Refill | Dot Grid · Kraft: Dot Grid"
+    },
+    {
+     "canonical": "ao-refill-notepad",
+     "label": "A5 Notepad Refill · black dot grid",
+     "type": "Dot grid refill",
+     "url": "https://www.archerandolive.com/products/dot-grid-notepad-refill?variant=47927601922203",
+     "variant_id": 47927601922203,
+     "source_title": "A5 Notepad Refill | Dot Grid · Black: Dot Grid"
+    },
+    {
+     "canonical": "ao-refill-notepad",
+     "label": "A5 Notepad Refill · neapolitan dot grid",
+     "type": "Dot grid refill",
+     "url": "https://www.archerandolive.com/products/dot-grid-notepad-refill?variant=47927601987739",
+     "variant_id": 47927601987739,
+     "source_title": "A5 Notepad Refill | Dot Grid · Neapolitan: Dot Grid"
+    },
+    {
+     "canonical": "ao-refill-notepad",
+     "label": "A5 Notepad Refill · pastel dot grid",
+     "type": "Dot grid refill",
+     "url": "https://www.archerandolive.com/products/dot-grid-notepad-refill?variant=48140508299419",
+     "variant_id": 48140508299419,
+     "source_title": "A5 Notepad Refill | Dot Grid · Pastel: Dot Grid"
     }
    ]
   },
