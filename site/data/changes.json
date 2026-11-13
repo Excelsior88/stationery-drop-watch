@@ -783,5 +783,15 @@
   "url": "https://kinokuniya.com.sg/products/4580812710381",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-13T13:19:40+00:00",
+  "store_id": "lovenotebooks",
+  "store": "Lovenotebooks",
+  "label": "Traveler's notebook Regular size · Brown",
+  "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=51593658401082",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
