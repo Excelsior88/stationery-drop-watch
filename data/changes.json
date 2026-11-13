@@ -832,5 +832,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_classicfgreen/",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-13T19:17:57+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks · Leather: Forest Green",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_classicfgreen/",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
