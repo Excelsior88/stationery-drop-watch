@@ -154,7 +154,7 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertIn("Paperback", card(self.shop, "Level Up! My 2027 Planner"))
         self.assertIn("Front cover of the Level Up! 2027 printable planner", self.shop)
         self.assertIn("20% off launch sale Oct 31 to Nov 30", card(self.shop, "Level Up! My 2027 Kids Planner"))
-        self.assertEqual(site.shop_lastmod(), "2026-11-12")
+        self.assertEqual(site.shop_lastmod(), "2026-11-13")
         grid = card(self.shop, "Lines for the Grid Page")
         self.assertIn("https://www.etsy.com/listing/4614089507/lines-for-the-grid-page-printable-tip-in", grid)
         self.assertIn("$6.99", grid)
@@ -167,6 +167,53 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertNotIn("launch20", grid.lower())
         self.assertIn("Lines for the Grid Page", self.shop)
         self.assertNotIn("Lines for the Grid Page", self.home)
+
+    def test_holiday_planner_pages_follows_the_insert_card(self):
+        from PIL import Image
+        hero = ROOT / "site/assets/shop/holiday-planner-pages.webp"
+        layouts = ROOT / "site/assets/shop/inside/holiday-planner-layouts.webp"
+        with Image.open(hero) as im:
+            self.assertEqual(im.size, (2000, 2000))
+        with Image.open(layouts) as im:
+            self.assertEqual(im.size, (2700, 2025))
+        self.assertLess(hero.stat().st_size, 200_000)
+        self.assertLess(layouts.stat().st_size, 200_000)
+        self.assertFalse((ROOT / "site/assets/shop/holiday-planner-pages.png").exists())
+        holiday = card(self.shop, "The Holiday Planner Pages")
+        url = "https://www.etsy.com/listing/4616108634/holiday-planner-printable-tip-ins-gift"
+        self.assertEqual(holiday.count(url), 2)
+        self.assertIn('class="shop-img sheet"', holiday)
+        self.assertIn('width="2000" height="2000"', holiday)
+        self.assertIn("holiday-planner-pages.webp", holiday.split("<details", 1)[0])
+        self.assertNotIn("holiday-planner-layouts.webp", holiday.split("<details", 1)[0])
+        self.assertIn("$6.99", holiday)
+        self.assertIn("20% off launch sale Oct 31 to Nov 30", holiday)
+        self.assertNotIn("launch20", holiday.lower())
+        self.assertNotIn("$5.59", holiday)
+        self.assertIn("View on Etsy", holiday)
+        self.assertIn('class="inside-grid samples inserts"', holiday)
+        self.assertIn("not a photograph of a printed copy", holiday.lower())
+        self.assertIn("holiday-planner-layouts.webp", holiday)
+        self.assertIn('width="2700" height="2025"', holiday)
+        self.assertIn(">Larger view</a>", holiday)
+        self.assertIn("<summary>See inside</summary>", holiday)
+        self.assertIn("<summary>7 trackers &amp; planners</summary>", holiday)
+        for name in ("Gift Tracker", "Holiday Budget", "Order &amp; Package Tracker",
+                     "Card Mailing List", "Party &amp; Menu Planner",
+                     "Baking &amp; Meal Prep Timeline", "December Countdown &amp; Bucket List"):
+            self.assertIn(name, holiday)
+        for size in ("85 × 175 mm", "95 × 138 mm", "138 × 198 mm"):
+            self.assertIn(size, holiday)
+        self.assertIn("actual size (100%)", holiday)
+        self.assertIn("US Letter", holiday)
+        self.assertIn("A4", holiday)
+        self.assertIn("personal use", holiday.lower())
+        self.assertIn("not affiliated with any planner brand", holiday.lower())
+        self.assertNotIn("<details class=\"shop-inside\" open", holiday)
+        self.assertNotIn("The Holiday Planner Pages", self.home)
+        self.assertIn(
+            "https://stationerydropwatch.com/shop/</loc><lastmod>2026-11-13T00:00:00+00:00</lastmod>",
+            site.build_sitemap())
 
 
 if __name__ == "__main__":

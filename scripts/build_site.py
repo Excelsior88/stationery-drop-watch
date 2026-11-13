@@ -3011,6 +3011,29 @@ SHOP_ETSY = [
                     "Weekly overlay", "Half lined", "Dot grid (5 mm)"],
          templates_label="13 layouts",
          inside="lines-grid"),
+    # Listed 2026-11-13. Same card as the other Etsy tip-ins: regular $6.99 and the shared
+    # launch-sale note. Do not print the sale price or the sale code.
+    dict(id="holiday-planner", kind="insert", sale_confirmed=True, price="$6.99",
+         title="The Holiday Planner Pages",
+         img="assets/shop/holiday-planner-pages.webp", img_class="sheet", img_w=2000, img_h=2000,
+         url="https://www.etsy.com/listing/4616108634/holiday-planner-printable-tip-ins-gift",
+         alt=("The Holiday Planner Pages: three cream covers labeled Narrow Weekly 85 × 175 mm, "
+              "Pocket A6 95 × 138 mm, and Standard A5 138 × 198 mm, each with a green wreath and a snowflake."),
+         sub="Printable holiday tip-ins · personal use · instant download from Etsy",
+         hub_sub="Printable tip-ins",
+         blurb=("Ten undated pages in three sizes: Narrow Weekly 85 × 175 mm, Pocket A6 95 × 138 mm, and Standard A5 138 × 198 mm. "
+                "Seven trackers and planners, plus a cover, a branding page, and a printing and tip-in guide. "
+                "A digital download for personal use."),
+         details=["Three sizes, 10 pages each: Narrow Weekly 85 × 175 mm, Pocket A6 95 × 138 mm, and Standard A5 138 × 198 mm",
+                  "For each size: a US Letter file and an A4 file, with crop marks, dashed cut lines, and 25 mm / 1 inch scale bars, plus a single-page PDF at the exact trim size",
+                  "Narrow Weekly and Pocket A6 print 2 pages per sheet. Standard A5 prints 1 page per sheet",
+                  "Undated. Print at actual size (100%), then tip in with washi tape or a thin line of glue",
+                  "Personal use only: don't share, resell, or redistribute the PDFs",
+                  "Digital download only. Not a physical planner, and not affiliated with any planner brand."],
+         templates=["Gift Tracker", "Holiday Budget", "Order & Package Tracker", "Card Mailing List",
+                    "Party & Menu Planner", "Baking & Meal Prep Timeline", "December Countdown & Bucket List"],
+         templates_label="7 trackers & planners",
+         inside="holiday-planner"),
 ]
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
@@ -3095,6 +3118,11 @@ SHOP_SAMPLES = {
                 "Lines for the Grid Page print file: the liner layouts, including ruled pages, task lines, Cornell notes, a habit tracker, a weekly overlay, and a dot grid, in Warm and Soft Gray.",
                 "The 13 layouts, from the print file.", 2700, 2025),
     ]},
+    "holiday-planner": {"class": " samples inserts", "note": "Layouts from the print file, not a photograph of a printed copy.", "items": [
+        _sample("/assets/shop/inside/holiday-planner-layouts.webp",
+                "The Holiday Planner Pages print file: Gift Tracker, Holiday Budget, Order and Package Tracker, Card Mailing List, Party and Menu Planner, Baking and Meal Prep Timeline, and December Countdown, shown in Standard A5.",
+                "The 7 trackers and planners, shown in Standard A5. The same layouts come in Narrow Weekly and Pocket A6.", 2700, 2025),
+    ]},
 }
 
 import hashlib as _hl
@@ -3137,6 +3165,9 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
+    # Shop facts changed 2026-11-13 (The Holiday Planner Pages listing).
+    if any(e.get("id") == "holiday-planner" and etsy_listing_url(e) for e in SHOP_ETSY):
+        return "2026-11-13"
     # Shop facts changed 2026-11-10 (Lines for the Grid Page listing). The Nov 12
     # refresh changed the page HTML, so the sitemap floor is that later date.
     if any(e.get("id") == "lines-grid" and etsy_listing_url(e) for e in SHOP_ETSY):
