@@ -1065,8 +1065,14 @@ def hub_art(kind):
     if kind == "hobonichi":
         body = f'<rect x="52" y="6" width="56" height="52" rx="3" fill="{paper}" stroke="{ink}" stroke-width="2"/><path d="M52 16 h56" stroke="{accent}" stroke-width="8"/><path d="M96 6 v16 l5-3 5 3 V6" fill="{accent}"/><path d="M64 30 h32 M64 38 h32 M64 46 h18" stroke="{sage}" stroke-width="2" stroke-linecap="round"/>'
     elif kind == "dotgrid":
-        dots = "".join(f'<circle cx="{x}" cy="{y}" r="1.3" fill="{ink}"/>' for x in range(58, 110, 8) for y in range(18, 54, 8))
-        body = f'<rect x="48" y="6" width="64" height="52" rx="3" fill="{paper}" stroke="{ink}" stroke-width="2"/>{dots}'
+        # Portrait journal on the same center as the other icons (80, 32).
+        # The terracotta band clears the corner radius; the sage bookmark sits in that band.
+        # The square 7×5 grid is centered in the page below the band.
+        dots = "".join(f'<circle cx="{x}" cy="{y}" r="1.5" fill="{ink}"/>'
+                       for x in range(59, 102, 7) for y in range(23, 52, 7))
+        body = (f'<rect x="51" y="6" width="58" height="52" rx="3" fill="#f4ecdc" stroke="{ink}" stroke-width="2"/>'
+                f'<path d="M51 14 h58" stroke="{accent}" stroke-width="6"/>'
+                f'<path d="M75 6 v11 l5-3 5 3 V6" fill="{sage}"/>{dots}')
     elif kind == "travelers":
         body = f'<rect x="46" y="8" width="68" height="48" rx="2" fill="#f4ecdc" stroke="{ink}" stroke-width="2"/><path d="M46 14 h68 M58 8 v48" stroke="{accent}" stroke-width="2"/><path d="M100 18c8 6 8 22 0 28" fill="none" stroke="{sage}" stroke-width="2"/>'
     else:
