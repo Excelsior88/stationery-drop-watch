@@ -765,5 +765,14 @@
   "url": "https://www.jennibick.com/products/hobonichi-techo-2027-english-original-book-a6-size-daily-jan-start-mon-start",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-13T00:18:36+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "HON A5 · Slash (Navy)",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a5-slash-navy-english",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
