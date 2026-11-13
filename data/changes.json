@@ -774,5 +774,14 @@
   "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a5-slash-navy-english",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-13T05:18:52+00:00",
+  "store_id": "kinosg",
+  "store": "Kinokuniya Singapore",
+  "label": "Original A6 book (English)",
+  "url": "https://kinokuniya.com.sg/products/4580812710381",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
