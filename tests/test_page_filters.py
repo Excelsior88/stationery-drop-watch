@@ -74,8 +74,28 @@ class PageFilterMarkupTests(unittest.TestCase):
                 self.assertIn("Leuchtturm1917 · Hardcover Medium (A5) dotted notebook", doc)
                 self.assertIn("Leuchtturm1917 · Bullet Journal Edition 2", doc)
                 self.assertIn("Leuchtturm1917 · Medium (A5) 120G dotted notebook", doc)
-                self.assertIn(">A5 Notepad Refill · white dot grid<", doc)
-                self.assertIn(">A5 Soft Cover Refill Notebook · white dot grid<", doc)
+                names = re.findall(r'<h2 class="fam-name">(.*?)</h2>', doc)
+                brands = []
+                for n in names:
+                    if n.startswith("Archer and Olive"):
+                        brands.append("ao")
+                    elif n.startswith("Leuchtturm1917"):
+                        brands.append("lt")
+                    elif n.startswith("Scribbles That Matter"):
+                        brands.append("stm")
+                    elif n.startswith("Notebook Therapy"):
+                        brands.append("nt")
+                    else:
+                        self.fail("unexpected product group: " + n)
+                self.assertEqual(brands, sorted(brands, key=lambda b: ("ao", "lt", "stm", "nt").index(b)))
+                ao_ids = [c["id"] for c in site.stores["canonical"] if c.get("brand") == "archerandolive"]
+                self.assertEqual(brands.count("ao"), len(ao_ids))
+                self.assertIn("Archer and Olive · Ice Castle dot grid notebook", names)
+                self.assertIn("Archer and Olive · A5 Soft Cover Refill Notebook", names)
+                self.assertIn("Archer and Olive · A5 Notepad Refill", names)
+                self.assertLess(names.index("Archer and Olive · A5 Notepad Refill"), names.index("Leuchtturm1917 · Hardcover Medium (A5) dotted notebook"))
+                self.assertIn("A5 Soft Cover Refill Notebook · White Dot Grid", doc)
+                self.assertIn("A5 Notepad Refill | Dot Grid · White: Dot Grid", doc)
 
     def test_signup_is_one_list_and_shop_counts_agree(self):
         hobo = site.build_hobo_tracker()
