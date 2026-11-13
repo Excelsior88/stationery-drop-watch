@@ -793,5 +793,35 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-13T16:49:33+00:00",
+  "store_id": "simplepaper",
+  "store": "Simple Paper",
+  "label": "Traveler's notebook Regular size · Brown",
+  "url": "https://simplepaper.co/products/travelers-notebook-regular-brown",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-13T16:49:36+00:00",
+  "store_id": "simplepaper",
+  "store": "Simple Paper",
+  "label": "Traveler's notebook Regular size · Blue",
+  "url": "https://simplepaper.co/products/travelers-notebook-regular-blue",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-13T16:49:39+00:00",
+  "store_id": "simplepaper",
+  "store": "Simple Paper",
+  "label": "Traveler's notebook Regular size · Camel",
+  "url": "https://simplepaper.co/products/travelers-notebook-regular-camel",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
