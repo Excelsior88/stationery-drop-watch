@@ -968,5 +968,14 @@
   "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-shirt-fabric-graph-plaid",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-14T23:48:17+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "Original A6 book (Japanese)",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-2027-japanese-original-book-a6-size-daily-jan-start-sun-start",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
