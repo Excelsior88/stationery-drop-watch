@@ -416,43 +416,57 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatch)
 
 # Page types: trackers (home + GROUPS) use hero + .layout with a sidebar; guides and info pages use article.prose.
-# Every page has at most one signup box, signup(), placed right after the page intro.
+# Guides, the homepage, about, follow and the shop keep one signup box under the intro.
+# Tracker, product and design pages add a compact repeat at the bottom (id="alerts-bottom").
 SIGNUP_ACTION = f"https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}"
 
 SIGNUP_COPY = {
     "alerts": ("Get restock alerts by email",
-               "The list covers every restock we track, so it could be multiple emails a day. Free, and you can unsubscribe anytime."),
+               "Free restock emails from every shop we track. Unsubscribe anytime."),
     "shop": ("Hear about new planners and journals",
              "An occasional email when we release a new planner or journal, plus our restock alerts. No spam, unsubscribe anytime."),
 }
 
-# One Buttondown list: every subscriber gets every restock email. The label never names a single item.
-# The note may say a subscriber can get multiple emails a day. It must not give a daily number.
+# One Buttondown list: every subscriber gets every restock email, not alerts for one product.
+# Tracker, product and design labels name the brand or category on that page, never a single design or SKU.
+# The signup note is a short, honest line. It must not give a daily number.
 # SPEED_LINE is backed by data/changes.json (Oct 26-Nov 11, 2026): of 19 restocks where we also saw the sell-out,
 # 7 sold out within an hour and 14 within 6 hours. Re-check it before changing the wording.
 SPEED_LINE = "Restocks often sell out within hours."
-LIST_LINE = "The list covers every restock we track, so it could be multiple emails a day. Free, and you can unsubscribe anytime."
+LIST_LINE = "Free restock emails from every shop we track. Unsubscribe anytime."
+TAGLINE = "Never miss a stationery restock"
 ONE_LIST_LABEL = "Get every restock alert by email"
+SIGNUP_LABELS = {
+    "hobonichi": "Get an email when Hobonichi items restock",
+    "dotgrid": "Get restock emails for dot grid journals and more",
+    "travelers": "Get restock emails for Traveler's notebook and more",
+    "midori": "Get restock emails for MIDORI MD and more",
+}
 
-def signup_for(subject=None, back=None):
-    """Signup box for a product, design, or tracker page. subject and back stay so callers can name the page,
-    but the label is always the one list. New pages inherit this wording."""
-    return signup(label=ONE_LIST_LABEL, note=f"{SPEED_LINE} {LIST_LINE}")
+def signup_for(subject=None, back=None, section=None, placement="top"):
+    """Signup box for a product, design, or tracker page. Label is brand-level, never a single item.
+    subject and back stay on the signature so older callers still work; section picks the label."""
+    label = SIGNUP_LABELS.get(section, ONE_LIST_LABEL)
+    return signup(label=label, note=LIST_LINE, placement=placement, kicker=TAGLINE)
 
-def signup(kind="alerts", label=None, note=None):
-    """The site's one signup box (one per page, right under the page intro). Buttondown's standard HTML embed form
-    (docs.buttondown.com/building-your-subscriber-base): a plain POST to embed-subscribe; don't submit via fetch,
-    Buttondown may need to show a CAPTCHA. Always id="alerts", so "#alerts" links work on every page.
-    label/note override the default copy (see signup_for); the form itself never changes."""
+def signup(kind="alerts", label=None, note=None, placement="top", kicker=None):
+    """Buttondown's standard HTML embed form (docs.buttondown.com/building-your-subscriber-base): a plain POST
+    to embed-subscribe; don't submit via fetch, Buttondown may need to show a CAPTCHA. The top box is always
+    id="alerts", so "#alerts" links work on every page. A bottom repeat uses id="alerts-bottom" and a second
+    email field id so the markup stays valid. The form action and fields never change."""
     d_label, d_note = SIGNUP_COPY[kind]
     if kind == "shop" and shop_inserts_public():
         d_label = "Hear about new planners, journals, and inserts"
         d_note = "An occasional email when we release a new planner, journal, or printable insert, plus our restock alerts. No spam, unsubscribe anytime."
     label, note = label or d_label, note or d_note
-    return f"""<section class="signup-strip" id="alerts" aria-label="{E(label)}">
-  <form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
-    <label class="strip-label" for="email-top">{E(label)}</label>
-    <input id="email-top" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+    sid = "alerts" if placement == "top" else "alerts-bottom"
+    eid = "email-top" if placement == "top" else "email-bottom"
+    extra = " signup-strip-bottom" if placement == "bottom" else ""
+    kicker_html = f'<p class="strip-kicker">{E(kicker)}</p>\n  ' if kicker else ""
+    return f"""<section class="signup-strip{extra}" id="{sid}" aria-label="{E(label)}">
+  {kicker_html}<form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
+    <label class="strip-label" for="{eid}">{E(label)}</label>
+    <input id="{eid}" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
     <input type="hidden" value="1" name="embed">
     <button type="submit">Notify me</button>
   </form>
@@ -1022,7 +1036,7 @@ def build_hobo_tracker():
   <h1>Hobonichi 2027 restock tracker</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
   {hero_facts(prods)}
-  {signup_for("Hobonichi Techo 2027 books and covers")}
+  {signup_for(section="hobonichi")}
   {also_tracked(HOBO_TRACKER)}
 </section>
 
@@ -1039,6 +1053,7 @@ def build_hobo_tracker():
     {soon_block()}
   </div>
 </div>
+{signup_for(section="hobonichi", placement="bottom")}
 {stock_data(rows)}
 """
     n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
@@ -1211,7 +1226,7 @@ def build_hobonichi():
   <li>Live stock by product: """ + " · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS) + """.</li>
   <li>Buying direct from Hobonichi is the only way to get store-exclusive extras, but it ships from Japan and tariffs may apply in the US <a href="#s-papermouse">[Paper Mouse]</a>.</li>
   <li>Which shops have it right now: <a href="where-to-buy-hobonichi-2027/">where to buy the Hobonichi Techo 2027</a>. Choosing a size: <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a>.</li>
-  <li><a href="#alerts">Sign up for alerts</a> (above) and we'll email you about every restock we track, so it could be multiple emails a day.</li>
+  <li><a href="#alerts">Sign up for alerts</a> (above) for free restock emails from every shop we track. You can unsubscribe anytime.</li>
 </ul>
 
 <h2>Sources</h2>
@@ -1511,11 +1526,9 @@ def design_seo_desc(d, shops):
             return core + extra
     return core
 
-def group_signup(g, buy):
-    """Section pages (dot grid, Traveler's, MIDORI) name the brand; product pages name the product."""
-    if g_sec(g) != "hobonichi" and not g.get("parent"):
-        return signup_for(SECTIONS[g_sec(g)]["name"])
-    return signup_for(g["product"], back=not buy)
+def group_signup(g, buy, placement="top"):
+    """Section, product and design trackers use a brand-level label, never a single item."""
+    return signup_for(section=g_sec(g), placement=placement)
 
 def build_group(g, oe):
     ls = group_listings(g)
@@ -1632,6 +1645,7 @@ def build_group(g, oe):
     {"" if ext else guides_block()}
   </div>
 </div>
+{group_signup(g, buy, placement="bottom")}
 </div>"""
     fname = g["slug"] + "/"
     items = {"@context": "https://schema.org", "@type": "ItemList", "name": g["h1"] + ": listings we track",
@@ -1885,7 +1899,7 @@ def build_design(d, oe):
           ("How often do you check?",
            f"Every shop is checked {CHECK_FREQ}. Each status is exactly what the shop's public product data said at that time. \"Not yet on sale\" means the shop has a preview page up but isn't taking orders yet, and \"Couldn't check\" means our check failed, so we don't guess."),
           ("Can I get restock alerts?",
-           f"Yes, sign up above. It's one free list for every restock we track, not just {d['full']}, so it could be multiple emails a day. You can unsubscribe anytime.")]
+           f"Yes, sign up above. It's one free list of restock emails from every shop we track, not just {d['full']}. You can unsubscribe anytime.")]
     when_html = time_tag(run)
     faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(
         f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a).replace(E(when), when_html, 1)}</p></details>' for q, a in qa) + "</section>"
@@ -1916,7 +1930,7 @@ def build_design(d, oe):
   <p class="lede">{intro}</p>
   {thanks}
   {hero_facts(ls)}
-  {signup_for(d["full"], back=not buy)}
+  {signup_for(section=sec)}
 </section>
 <div class="layout">
   <div class="main-col">
@@ -1931,6 +1945,7 @@ def build_design(d, oe):
     {section_guides(sec)}
   </aside>
 </div>
+{signup_for(section=sec, placement="bottom")}
 </div>"""
     items = {"@context": "https://schema.org", "@type": "ItemList", "name": h1.replace(" restock tracker", "") + ": listings we track",
              "numberOfItems": len(ls), "itemListElement": [
@@ -1963,8 +1978,8 @@ FAQ = [
      "The stationery we track is sold by the shops themselves; we just link you to them. "
      "Amazon links on the site are affiliate links, and we say so on every page; links to the shops we track are plain links."),
     ("How do restock alerts work?",
-     "Sign up with your email and you'll get an email about every restock we track, so it could be multiple emails a day. "
-     "It's one free list, and you can unsubscribe anytime."),
+     "Sign up with your email and you'll get free restock emails from every shop we track. "
+     "It's one list, and you can unsubscribe anytime."),
 ]
 
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
@@ -2280,7 +2295,7 @@ def build_where_to_buy():
         ("Will sold-out 2027 books come back?",
          "Often, but not always. The Paper Mouse says almost all items have been restocked at least once after launch in past years, but it can't guarantee restocks."),
         ("How do I get told when something restocks?",
-         "Sign up for Stationery Drop Watch alerts. We check the shops about every 30 minutes and email you about every restock we track, so it could be multiple emails a day. It's free and you can unsubscribe anytime."),
+         "Sign up for Stationery Drop Watch alerts. We check the shops about every 30 minutes and send free restock emails from every shop we track. You can unsubscribe anytime."),
     ]
     checked_at = fmt_et(stock["run_finished"])
     faq_html = "".join(
@@ -2309,7 +2324,7 @@ def build_where_to_buy():
         <li><strong>Watch for preorders.</strong> Restocks don't always show up as "in stock". At the October 1 wave, some shops took preorders for earlier sell-outs. We count preorders as available. <a href="hobonichi-2027.html">See the 2027 calendar</a>.</li>
         <li><strong>Don't mistake "not yet on sale" for sold out.</strong> Shops put up preview pages before items go on sale.</li>
         <li><strong>Sign up at the official store too.</strong> Hobonichi's restock notification emails cover the Techo books and the Drawer Pouch, not accessories, and don't guarantee you'll get one <a href="#src-shop">[Hobonichi]</a>. Many independent shops offer their own restock sign-ups on product pages <a href="#src-pm">[Paper Mouse]</a>.</li>
-        <li><strong>Get our alerts.</strong> We check about every 30 minutes and email you about every restock we track, so it could be multiple emails a day. <a href="#alerts">Sign up above</a>.</li>
+        <li><strong>Get our alerts.</strong> We check about every 30 minutes and send free restock emails from every shop we track. <a href="#alerts">Sign up above</a>.</li>
       </ul>
     </section>
 <h2>Which one should you get?</h2>
@@ -2408,7 +2423,7 @@ def build_vs():
 <p><a href="hobonichi-weeks-2027/">Live Weeks stock</a> · <a href="hobonichi-weeks-mega-2027/">Weeks Mega</a></p>
 
 <h2>Where to buy</h2>
-<p>Stock changes fast, and one shop is often sold out while another has it. See <a href="{WTB_SLUG}/">where to buy the Hobonichi Techo 2027</a> for every shop we track, edition by edition, or <a href="#alerts">sign up above</a> for email alerts on every restock we track. It could be multiple emails a day, and you can unsubscribe anytime.</p>
+<p>Stock changes fast, and one shop is often sold out while another has it. See <a href="{WTB_SLUG}/">where to buy the Hobonichi Techo 2027</a> for every shop we track, edition by edition, or <a href="#alerts">sign up above</a> for free restock emails from every shop we track. You can unsubscribe anytime.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
@@ -2611,7 +2626,7 @@ def build_dotgrid_guide():
          "Leuchtturm1917 (numbered pages and a blank table of contents) and Scribbles That Matter (numbered pages, an index, a key page and a pen test page). "
          "Archer and Olive's and Notebook Therapy's product pages don't mention numbered pages or an index."),
         ("How do the email alerts work?",
-         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up for the free email alerts. The list covers every restock we track, including sold-out sizes and colors coming back, so it could be multiple emails a day, and you can unsubscribe anytime."),
+         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up for free restock emails from every shop we track, including sold-out sizes and colors coming back. You can unsubscribe anytime."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, {E(b)} (official product page).</li>'
@@ -2656,7 +2671,7 @@ def build_dotgrid_guide():
 <p><a href="{DOTGRID_SLUG}/#shop-notebooktherapy">Live Notebook Therapy stock</a></p>
 
 <h2>Where to buy</h2>
-<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for email alerts on every restock we track. It could be multiple emails a day, and you can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
+<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for free restock emails from every shop we track. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
