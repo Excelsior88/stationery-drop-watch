@@ -126,8 +126,11 @@ class PageFilterMarkupTests(unittest.TestCase):
             notes = re.findall(r'class="strip-note">(.*?)</p>', doc)
             self.assertEqual(len(notes), 2, name)
             for note in notes:
-                self.assertIn("multiple emails a day", note, name)
-                self.assertIn("every restock we track", note, name)
+                self.assertIn("Free restock emails from every shop we track. Unsubscribe anytime.", html.unescape(note), name)
+                self.assertIn("Sent via", note, name)
+                self.assertIn("Buttondown", note, name)
+                self.assertIn("Privacy", note, name)
+                self.assertNotIn("multiple emails a day", note, name)
                 self.assertNotRegex(note, r"\d+ emails a day")
             forms = re.findall(
                 r'<form class="signup-form embeddable-buttondown-form" action="([^"]+)" method="post">(.*?)</form>',
