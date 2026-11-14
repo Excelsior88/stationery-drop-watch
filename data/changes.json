@@ -923,5 +923,14 @@
   "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-colors-pink-sapphire-1",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-14T18:17:42+00:00",
+  "store_id": "bobo",
+  "store": "Bobo Design Studio",
+  "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+  "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-yumi-kitagishi-white-cat-wallpaper",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
