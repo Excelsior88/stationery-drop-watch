@@ -878,5 +878,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_classicfgreen/",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-14T10:48:26+00:00",
+  "store_id": "kinousa",
+  "store": "Kinokuniya USA",
+  "label": "Weeks · Colors: Pink Sapphire",
+  "url": "https://usa.kinokuniya.com/products/4580812709712",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
