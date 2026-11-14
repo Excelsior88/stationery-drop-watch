@@ -416,7 +416,8 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatch)
 
 # Page types: trackers (home + GROUPS) use hero + .layout with a sidebar; guides and info pages use article.prose.
-# Every page has at most one signup box, signup(), placed right after the page intro.
+# Guides, the homepage, about, follow and the shop keep one signup box under the intro.
+# Tracker, product and design pages add a compact repeat at the bottom (id="alerts-bottom").
 SIGNUP_ACTION = f"https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}"
 
 SIGNUP_COPY = {
@@ -426,33 +427,46 @@ SIGNUP_COPY = {
              "An occasional email when we release a new planner or journal, plus our restock alerts. No spam, unsubscribe anytime."),
 }
 
-# One Buttondown list: every subscriber gets every restock email. The label never names a single item.
+# One Buttondown list: every subscriber gets every restock email, not alerts for one product.
+# Tracker, product and design labels name the brand or category on that page, never a single design or SKU.
 # The note may say a subscriber can get multiple emails a day. It must not give a daily number.
 # SPEED_LINE is backed by data/changes.json (Oct 26-Nov 11, 2026): of 19 restocks where we also saw the sell-out,
 # 7 sold out within an hour and 14 within 6 hours. Re-check it before changing the wording.
 SPEED_LINE = "Restocks often sell out within hours."
 LIST_LINE = "The list covers every restock we track, so it could be multiple emails a day. Free, and you can unsubscribe anytime."
+TAGLINE = "Never miss a stationery restock"
 ONE_LIST_LABEL = "Get every restock alert by email"
+SIGNUP_LABELS = {
+    "hobonichi": "Get an email when Hobonichi items restock",
+    "dotgrid": "Get restock emails for dot grid journals and more",
+    "travelers": "Get restock emails for Traveler's notebook and more",
+    "midori": "Get restock emails for MIDORI MD and more",
+}
 
-def signup_for(subject=None, back=None):
-    """Signup box for a product, design, or tracker page. subject and back stay so callers can name the page,
-    but the label is always the one list. New pages inherit this wording."""
-    return signup(label=ONE_LIST_LABEL, note=f"{SPEED_LINE} {LIST_LINE}")
+def signup_for(subject=None, back=None, section=None, placement="top"):
+    """Signup box for a product, design, or tracker page. Label is brand-level, never a single item.
+    subject and back stay on the signature so older callers still work; section picks the label."""
+    label = SIGNUP_LABELS.get(section, ONE_LIST_LABEL)
+    return signup(label=label, note=f"{SPEED_LINE} {LIST_LINE}", placement=placement, kicker=TAGLINE)
 
-def signup(kind="alerts", label=None, note=None):
-    """The site's one signup box (one per page, right under the page intro). Buttondown's standard HTML embed form
-    (docs.buttondown.com/building-your-subscriber-base): a plain POST to embed-subscribe; don't submit via fetch,
-    Buttondown may need to show a CAPTCHA. Always id="alerts", so "#alerts" links work on every page.
-    label/note override the default copy (see signup_for); the form itself never changes."""
+def signup(kind="alerts", label=None, note=None, placement="top", kicker=None):
+    """Buttondown's standard HTML embed form (docs.buttondown.com/building-your-subscriber-base): a plain POST
+    to embed-subscribe; don't submit via fetch, Buttondown may need to show a CAPTCHA. The top box is always
+    id="alerts", so "#alerts" links work on every page. A bottom repeat uses id="alerts-bottom" and a second
+    email field id so the markup stays valid. The form action and fields never change."""
     d_label, d_note = SIGNUP_COPY[kind]
     if kind == "shop" and shop_inserts_public():
         d_label = "Hear about new planners, journals, and inserts"
         d_note = "An occasional email when we release a new planner, journal, or printable insert, plus our restock alerts. No spam, unsubscribe anytime."
     label, note = label or d_label, note or d_note
-    return f"""<section class="signup-strip" id="alerts" aria-label="{E(label)}">
-  <form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
-    <label class="strip-label" for="email-top">{E(label)}</label>
-    <input id="email-top" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+    sid = "alerts" if placement == "top" else "alerts-bottom"
+    eid = "email-top" if placement == "top" else "email-bottom"
+    extra = " signup-strip-bottom" if placement == "bottom" else ""
+    kicker_html = f'<p class="strip-kicker">{E(kicker)}</p>\n  ' if kicker else ""
+    return f"""<section class="signup-strip{extra}" id="{sid}" aria-label="{E(label)}">
+  {kicker_html}<form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
+    <label class="strip-label" for="{eid}">{E(label)}</label>
+    <input id="{eid}" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
     <input type="hidden" value="1" name="embed">
     <button type="submit">Notify me</button>
   </form>
@@ -1022,7 +1036,7 @@ def build_hobo_tracker():
   <h1>Hobonichi 2027 restock tracker</h1>
   <p class="lede">We check the official Hobonichi store and independent shops for sold-out Hobonichi planners and covers, and tell you when they come back.</p>
   {hero_facts(prods)}
-  {signup_for("Hobonichi Techo 2027 books and covers")}
+  {signup_for(section="hobonichi")}
   {also_tracked(HOBO_TRACKER)}
 </section>
 
@@ -1039,6 +1053,7 @@ def build_hobo_tracker():
     {soon_block()}
   </div>
 </div>
+{signup_for(section="hobonichi", placement="bottom")}
 {stock_data(rows)}
 """
     n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
@@ -1511,11 +1526,9 @@ def design_seo_desc(d, shops):
             return core + extra
     return core
 
-def group_signup(g, buy):
-    """Section pages (dot grid, Traveler's, MIDORI) name the brand; product pages name the product."""
-    if g_sec(g) != "hobonichi" and not g.get("parent"):
-        return signup_for(SECTIONS[g_sec(g)]["name"])
-    return signup_for(g["product"], back=not buy)
+def group_signup(g, buy, placement="top"):
+    """Section, product and design trackers use a brand-level label, never a single item."""
+    return signup_for(section=g_sec(g), placement=placement)
 
 def build_group(g, oe):
     ls = group_listings(g)
@@ -1632,6 +1645,7 @@ def build_group(g, oe):
     {"" if ext else guides_block()}
   </div>
 </div>
+{group_signup(g, buy, placement="bottom")}
 </div>"""
     fname = g["slug"] + "/"
     items = {"@context": "https://schema.org", "@type": "ItemList", "name": g["h1"] + ": listings we track",
@@ -1916,7 +1930,7 @@ def build_design(d, oe):
   <p class="lede">{intro}</p>
   {thanks}
   {hero_facts(ls)}
-  {signup_for(d["full"], back=not buy)}
+  {signup_for(section=sec)}
 </section>
 <div class="layout">
   <div class="main-col">
@@ -1931,6 +1945,7 @@ def build_design(d, oe):
     {section_guides(sec)}
   </aside>
 </div>
+{signup_for(section=sec, placement="bottom")}
 </div>"""
     items = {"@context": "https://schema.org", "@type": "ItemList", "name": h1.replace(" restock tracker", "") + ": listings we track",
              "numberOfItems": len(ls), "itemListElement": [

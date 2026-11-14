@@ -118,13 +118,15 @@ button,.btn{font:600 .95rem var(--sans);background:var(--accent);color:#fff;bord
 button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .btn-ghost{display:inline-block;font-weight:600;font-size:.9rem;padding:8px 14px;border:1.5px solid var(--ink);border-radius:10px;color:var(--ink);text-decoration:none}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
-/* The one signup box: signup() in build_site.py, once per page, right after the page intro */
+/* Signup box: signup() in build_site.py, under the page intro; tracker/product/design pages also repeat it at the bottom */
 .signup-strip{margin:16px 0 18px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#fff7ea,#fffdf8);max-width:640px}
 .signup-strip .signup-form{margin-top:0;align-items:center}
+.signup-strip .strip-kicker{margin:0 0 4px;font:500 .9rem/1.3 var(--serif);color:var(--ink-2)}
 .signup-strip .strip-label{flex:1 1 100%;font:600 1rem var(--serif);color:var(--ink)}
 .signup-strip input[type=email]{flex:1 1 200px}
 .signup-strip button{flex:0 0 auto}
 .signup-strip .strip-note{margin:6px 0 0;font-size:.8rem;color:var(--ink-2)}
+.signup-strip-bottom{margin:28px 0 8px}
 @media (max-width:420px){.signup-strip button{flex:1 1 100%}}
 
 .sponsor-title{font:600 1.15rem var(--serif);margin:.1em 0 .3em}

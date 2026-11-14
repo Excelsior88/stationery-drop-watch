@@ -97,22 +97,52 @@ class PageFilterMarkupTests(unittest.TestCase):
                 self.assertIn("A5 Soft Cover Refill Notebook · White Dot Grid", doc)
                 self.assertIn("A5 Notepad Refill | Dot Grid · White: Dot Grid", doc)
 
+    def expected_signup_label(self, name):
+        if name == "hobonichi-restock-tracker/" or name.startswith("hobonichi-"):
+            return site.SIGNUP_LABELS["hobonichi"]
+        for sec, meta in site.SECTIONS.items():
+            slug = meta["slug"]
+            if name == slug + "/" or name.startswith(slug + "/"):
+                return site.SIGNUP_LABELS[sec]
+        self.fail("no brand signup label for " + name)
+
     def test_signup_is_one_list_and_shop_counts_agree(self):
         hobo = site.build_hobo_tracker()
         self.assertIn("<h1>Hobonichi 2027 restock tracker</h1>", hobo)
         self.assertNotIn("Know the moment your planner is back", hobo)
         self.assertIn("Hobonichi 2027 restock tracker", hobo)
+        action = site.SIGNUP_ACTION
         for name, doc in self.docs:
             if "signup-strip" not in doc:
                 continue
-            label = re.search(r'class="strip-label"[^>]*>(.*?)</label>', doc)
-            self.assertIsNotNone(label, name)
-            self.assertEqual(label.group(1), "Get every restock alert by email", name)
-            self.assertNotIn("next time", label.group(1))
-            self.assertNotRegex(label.group(1), r"\bis back\b")
-            note = re.search(r'class="strip-note">(.*?)</p>', doc).group(1)
-            self.assertIn("multiple emails a day", note, name)
-            self.assertNotRegex(note, r"\d+ emails a day")
+            expected = self.expected_signup_label(name)
+            labels = [html.unescape(x) for x in re.findall(r'class="strip-label"[^>]*>(.*?)</label>', doc)]
+            self.assertEqual(labels, [expected, expected], name)
+            for label in labels:
+                self.assertNotIn("next time", label)
+                self.assertNotRegex(label, r"\bis back\b")
+            kickers = re.findall(r'class="strip-kicker">(.*?)</p>', doc)
+            self.assertEqual(kickers, [site.TAGLINE, site.TAGLINE], name)
+            notes = re.findall(r'class="strip-note">(.*?)</p>', doc)
+            self.assertEqual(len(notes), 2, name)
+            for note in notes:
+                self.assertIn("multiple emails a day", note, name)
+                self.assertIn("every restock we track", note, name)
+                self.assertNotRegex(note, r"\d+ emails a day")
+            forms = re.findall(
+                r'<form class="signup-form embeddable-buttondown-form" action="([^"]+)" method="post">(.*?)</form>',
+                doc, flags=re.S)
+            self.assertEqual(len(forms), 2, name)
+            for href, body in forms:
+                self.assertEqual(href, action, name)
+                self.assertIn('type="email" name="email"', body, name)
+                self.assertIn('type="hidden" value="1" name="embed"', body, name)
+                self.assertNotIn('name="tag"', body, name)
+                self.assertNotIn("name=\"tags", body, name)
+            self.assertIn('id="alerts"', doc, name)
+            self.assertIn('id="alerts-bottom"', doc, name)
+            self.assertIn('id="email-top"', doc, name)
+            self.assertIn('id="email-bottom"', doc, name)
         for g in site.GROUPS:
             ls = site.group_listings(g)
             tracked, checked, _ = site.shop_sets(ls)
