@@ -499,7 +499,7 @@ table.stock.compare thead th{vertical-align:top}
 .foot-follow a{min-height:44px;display:inline-flex;align-items:center}
 .foot-badge{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 .foot-badge a{display:inline-block;line-height:0;max-width:100%}
-.foot-badge img{width:170px;height:72px;object-fit:contain;object-position:center;display:block;max-width:100%}
+.foot-badge img{width:150px;height:63px;object-fit:contain;object-position:center;display:block;max-width:100%}
 
 .restocks:has(.feed-fold){display:flex;flex-direction:column}
 .restocks:has(.feed-fold) .feed-controls{order:0}
