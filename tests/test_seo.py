@@ -194,6 +194,28 @@ class SeoHeadTests(unittest.TestCase):
         self.assertIn('href="/hobonichi-january-start-vs-april-start/"', site.build_hobo_tracker())
 
 
+    def test_hamtramck_is_visible_on_about_and_in_organization_jsonld(self):
+        about = dict(self.docs)["about.html"]
+        home = dict(self.docs)["index.html"]
+        line = "Stationery Drop Watch is built in Hamtramck, Michigan."
+        self.assertIn(line, about)
+        self.assertIn("He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together.", about)
+        self.assertNotIn("display:none", about.lower())
+        about_blocks = [json.loads(html.unescape(b.replace("<\\/", "</")))
+                        for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', about)]
+        home_blocks = [json.loads(html.unescape(b.replace("<\\/", "</")))
+                       for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', home)]
+        about_org = next(b for b in about_blocks if b.get("@type") == "Organization")
+        home_org = next(b["publisher"] for b in home_blocks if b.get("@type") == "WebSite")
+        expected = {"@type": "PostalAddress", "addressLocality": "Hamtramck",
+                    "addressRegion": "MI", "addressCountry": "US"}
+        self.assertEqual(about_org["address"], expected)
+        self.assertEqual(home_org["address"], expected)
+        self.assertNotIn("streetAddress", about_org["address"])
+        self.assertNotIn("streetAddress", home_org)
+        self.assertEqual(about_org["name"], "Stationery Drop Watch")
+        self.assertEqual(about_org["url"], home_org["url"])
+
 class NotFoundStatusTests(unittest.TestCase):
     """Pages serves 404.html with status 404 for unknown paths. /404 matches that file, so it
     would be HTTP 200. Pages _redirects cannot use a 404 status, so site/functions/_middleware.js
