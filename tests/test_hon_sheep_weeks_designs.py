@@ -178,17 +178,17 @@ class HonSheepWeeksDesignsTests(unittest.TestCase):
             self.assertNotIn(url, event_urls)
 
     def test_footer_hosts_the_saashub_badge(self):
-        badge = ROOT / "site" / "assets" / "badges" / "saashub-approved.png"
+        badge = ROOT / "site" / "assets" / "badges" / "saashub_v2_300x100.png"
         self.assertTrue(badge.is_file())
         self.assertGreater(badge.stat().st_size, 1000)
         src = (ROOT / "scripts" / "build_site.py").read_text()
         self.assertIn('class="foot-badge"', src)
         self.assertIn('href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved"', src)
-        self.assertIn('src="/assets/badges/saashub-approved.png"', src)
+        self.assertIn('src="/assets/badges/saashub_v2_150x50.png"', src)
+        self.assertIn('srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x"', src)
         self.assertIn('alt="Stationery Drop Watch on SaaSHub"', src)
-        self.assertIn("width=\"120\"", src)
+        self.assertIn('class="badge-saashub"', src)
         css = (ROOT / "site" / "assets" / "style.css").read_text()
         self.assertIn(".foot-badge{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}", css)
-        self.assertIn(".foot-badge img{height:auto;display:block;max-width:100%}", css)
-        self.assertIn(".foot-badge .badge-saashub{width:120px}", css)
-        self.assertIn('class="badge-saashub"', src)
+        self.assertIn(".foot-badge a{display:inline-block;line-height:0;max-width:100%}", css)
+        self.assertIn(".foot-badge img{width:130px;height:55px;object-fit:contain;object-position:center;display:block;max-width:100%}", css)
