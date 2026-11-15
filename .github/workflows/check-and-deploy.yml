@@ -18,6 +18,10 @@ permissions:
   pages: write       # deploy to GitHub Pages
   id-token: write
 
+# One checker at a time on main. Do not cancel in-progress runs: they may
+# already be committing a stock update. Waiting is not enough on its own,
+# because checkout uses the SHA from when the run was triggered, so a later
+# push can still be a non-fast-forward. The commit step rebases and retries.
 concurrency:
   group: drop-watch
   cancel-in-progress: false
@@ -53,7 +57,25 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add data/ site/
             git commit -m "data: stock update $(date -u +%Y-%m-%dT%H:%MZ)"
-            git push
+            for i in 1 2 3 4 5; do
+              if git_push_out=$(git push 2>&1); then
+                printf '%s
+' "$git_push_out"
+                break
+              fi
+              printf '%s
+' "$git_push_out"
+              if ! printf '%s
+' "$git_push_out" | grep -Eq 'fetch first|non-fast-forward|\[rejected\]'; then
+                exit 1
+              fi
+              if [ "$i" -eq 5 ]; then
+                echo "git push failed after 5 attempts"
+                exit 1
+              fi
+              echo "Push rejected (attempt $i); git pull --rebase and retry"
+              git pull --rebase origin main
+            done
           else
             echo "No status changes; not committing."
           fi
