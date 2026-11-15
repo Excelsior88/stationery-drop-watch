@@ -1,4 +1,4 @@
-"""Footer badges share the live Zero Cookies 130x55 box: SaaSHub, cookies, Hamtramck."""
+"""Footer badges share a 170x72 box: SaaSHub, cookies, Hamtramck."""
 import hashlib
 import re
 import struct
@@ -41,7 +41,7 @@ class FooterMatchedBadgeTests(unittest.TestCase):
             self.assertTrue(path.is_file(), name)
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), sha, name)
             self.assertEqual(_png_size(path), SIZE[name], name)
-        # SaaSHub 2x is the authentic 300x100 original, never redrawn.
+        # SaaSHub source is the authentic 300x100 original, never redrawn.
         self.assertEqual(
             hashlib.sha256((BADGES / "saashub_v2_300x100.png").read_bytes()).hexdigest(),
             hashlib.sha256((BADGES / "saashub-approved.png").read_bytes()).hexdigest(),
@@ -53,9 +53,9 @@ class FooterMatchedBadgeTests(unittest.TestCase):
         start = src.find('<p class="foot-badge">')
         self.assertGreater(start, 0)
         footer = src[start:src.find("</p>", start)]
-        saas = footer.find("saashub_v2_150x50.png")
+        saas = footer.find("saashub_v2_300x100.png")
         zero = footer.find("zero-cookies-badge_v1_300x126.png")
-        ham = footer.find("made-in-hamtramck_v2_150x50.png")
+        ham = footer.find("made-in-hamtramck_v2_300x100.png")
         self.assertTrue(0 <= saas < zero < ham)
 
         self.assertIn(
@@ -67,9 +67,11 @@ class FooterMatchedBadgeTests(unittest.TestCase):
         self.assertIn('rel="noopener"', first_a)
         self.assertIn('alt="Stationery Drop Watch on SaaSHub"', footer)
         self.assertIn(
-            'srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x"',
+            'srcset="/assets/badges/saashub_v2_300x100.png 300w"',
             footer,
         )
+        # Authentic 300x100 is below a true 2x of 170 CSS px (340); do not invent a larger file.
+        self.assertNotIn("saashub_v2_150x50.png", footer)
         # Never invent a SaaSHub file larger than the authentic 300x100.
         self.assertNotIn("saashub_v2_600", footer)
         self.assertNotIn("saashub_v2_900", footer)
@@ -86,16 +88,16 @@ class FooterMatchedBadgeTests(unittest.TestCase):
 
         self.assertIn('alt="Made in Hamtramck, MI"', footer)
         self.assertIn(
-            'srcset="/assets/badges/made-in-hamtramck_v2_150x50.png 150w, /assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w"',
+            'srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w"',
             footer,
         )
-        self.assertIn('sizes="130px"', footer)
+        self.assertIn('sizes="170px"', footer)
         ham_img = footer.find("<img", footer.find("badge-hamtramck"))
         self.assertNotIn("<a ", footer[footer.find("</a>", zero_img):ham_img])
 
         for tag in re.findall(r"<img[^>]+>", footer):
-            self.assertIn('width="130"', tag)
-            self.assertIn('height="55"', tag)
+            self.assertIn('width="170"', tag)
+            self.assertIn('height="72"', tag)
             self.assertIn('loading="lazy"', tag)
 
         self.assertIn(
@@ -104,6 +106,6 @@ class FooterMatchedBadgeTests(unittest.TestCase):
         )
         self.assertIn(".foot-badge a{display:inline-block;line-height:0;max-width:100%}", css)
         self.assertIn(
-            ".foot-badge img{width:130px;height:55px;object-fit:contain;object-position:center;display:block;max-width:100%}",
+            ".foot-badge img{width:170px;height:72px;object-fit:contain;object-position:center;display:block;max-width:100%}",
             css,
         )
