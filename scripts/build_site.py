@@ -154,6 +154,15 @@ def sections_phrase():
     """'dot grid journals, Traveler's Company notebooks and limited editions and MIDORI MD seasonal releases' (live ones only)."""
     return names_and([SECTIONS[k]["name"] for k in LIVE])
 
+def organization():
+    """Shared Organization JSON-LD. Locality only: no street address."""
+    return {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
+            "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {sections_phrase()}. Statuses come straight from each shop's public product data.",
+            "logo": BASE + "assets/brand/icon-512.png", "email": PUBLIC_EMAIL,
+            "sameAs": [s[2] for s in SOCIALS],
+            "address": {"@type": "PostalAddress", "addressLocality": "Hamtramck",
+                        "addressRegion": "MI", "addressCountry": "US"}}
+
 def amazon_for(canonical, listing_url=""):
     """(tagged url, label) for a tracked listing: exact verified ASIN, else the brand link of its section
     (Hobonichi, Traveler's Company or MIDORI). ("", "") for dot grid products without an exact listing."""
@@ -1193,10 +1202,7 @@ def build_index():
 """
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
                "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
-               "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
-                             "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {sections_phrase()}. Statuses come straight from each shop's public product data.",
-                             "logo": BASE + "assets/brand/icon-512.png", "email": PUBLIC_EMAIL,
-                             "sameAs": [s[2] for s in SOCIALS]}}
+               "publisher": organization()}
     return page("index.html", "Hobonichi, dot grid, Traveler's Company, MIDORI",
                 f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, dot grid journals, Traveler's notebooks and MIDORI MD, plus free email alerts for every restock we track.",
                 body, ld=(site_ld, faq_ld))
@@ -1283,7 +1289,7 @@ def build_about():
 {signup()}
 <section class="couple" aria-labelledby="couple-h">
 <h2 id="couple-h">The couple behind Drop Watch <span class="tag-soon">Coming soon</span></h2>
-<p>Drop Watch is run by a couple. He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together. Our story and a look at the planners we use are coming soon.</p>
+<p>Drop Watch is run by a couple. He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together. Stationery Drop Watch is built in Hamtramck, Michigan. Our story and a look at the planners we use are coming soon.</p>
 </section>
 <h2>How it works</h2>
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
@@ -1295,7 +1301,8 @@ def build_about():
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email {plain_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
-    return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi, dot grid, Traveler's and MIDORI restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about.html", "About")),))
+    org_ld = {"@context": "https://schema.org", **organization()}
+    return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi, dot grid, Traveler's and MIDORI restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about.html", "About")), org_ld))
 
 def build_contact():
     """Visible contact page. The address is plain text, wrapped so Cloudflare Email Obfuscation leaves it alone."""
@@ -2062,7 +2069,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-12", "privacy.html": "2026-11-12"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-15", "privacy.html": "2026-11-12"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
