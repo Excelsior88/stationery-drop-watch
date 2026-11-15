@@ -404,7 +404,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p class="foot-follow"><a href="follow/">Follow us</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
-  <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img src="/assets/badges/saashub-approved.png" alt="Stationery Drop Watch on SaaSHub" width="120" height="40" loading="lazy"></a></p>
+  <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub-approved.png" alt="Stationery Drop Watch on SaaSHub" width="120" height="40" loading="lazy"></a> <a href="/privacy"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="130" height="55" loading="lazy"></a></p>
 </div></footer>
 <script src="assets/local-time.js?v={ASSET_V['local-time.js']}" defer></script>
 <script src="assets/app.js?v={ASSET_V['app.js']}" defer></script>
