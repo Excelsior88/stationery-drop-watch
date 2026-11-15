@@ -995,5 +995,25 @@
   "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-colors-midnight-blue-english",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-15T02:19:46+00:00",
+  "store_id": "simplepaper",
+  "store": "Simple Paper",
+  "label": "Traveler's notebook Regular size · Camel",
+  "url": "https://simplepaper.co/products/travelers-notebook-regular-camel",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-15T02:19:49+00:00",
+  "store_id": "lovenotebooks",
+  "store": "Lovenotebooks",
+  "label": "Traveler's notebook Regular size · Olive",
+  "url": "https://lovenotebooks.com/products/travelers-company-travelers-notebook-black?variant=52467629588794",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
