@@ -1,15 +1,31 @@
-"""Zero Cookies badge sits in the shared footer next to the SaaSHub badge."""
+"""Footer badges share a 150x63 box: SaaSHub, cookies, Hamtramck."""
 import hashlib
+import re
 import struct
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BADGES = ROOT / "site" / "assets" / "badges"
-SRC_1X = BADGES / "zero-cookies-badge_v1_300x126.png"
-SRC_2X = BADGES / "zero-cookies-badge_v1_600x252.png"
-SHA_1X = "ce991564143c2e78cc75588762b01c282c96f041fcbc701ca91563b273eec132"
-SHA_2X = "9f54d9a76b4ac3b54e5e787a30645fdff13d023a1427e88110f6efbef0660854"
+
+SHA = {
+    "saashub_v2_150x50.png": "a85efba2366e8cb6992eb934044c929f712f6bc7cff4eb2d919783aeb00a2d8f",
+    "saashub_v2_300x100.png": "e5b17df4053540a62d614d185a794bc89b761895afc204545b72458e513c233b",
+    "zero-cookies-badge_v1_300x126.png": "ce991564143c2e78cc75588762b01c282c96f041fcbc701ca91563b273eec132",
+    "zero-cookies-badge_v1_600x252.png": "9f54d9a76b4ac3b54e5e787a30645fdff13d023a1427e88110f6efbef0660854",
+    "made-in-hamtramck_v2_150x50.png": "1d1885ca474992dd9bb2e8f2a9278382e5b492c37c403419b613ad191d1d3031",
+    "made-in-hamtramck_v2_300x100.png": "d318be99adeb3ed971a8656a766510e95b790fe2ab30d753f50ceb03a59e21c9",
+    "made-in-hamtramck_v2_900x300.png": "8af5e36f5e7a2df2453581a44ba8f710e1a5cc70ab958593d8c93c9910659f50",
+}
+SIZE = {
+    "saashub_v2_150x50.png": (150, 50),
+    "saashub_v2_300x100.png": (300, 100),
+    "zero-cookies-badge_v1_300x126.png": (300, 126),
+    "zero-cookies-badge_v1_600x252.png": (600, 252),
+    "made-in-hamtramck_v2_150x50.png": (150, 50),
+    "made-in-hamtramck_v2_300x100.png": (300, 100),
+    "made-in-hamtramck_v2_900x300.png": (900, 300),
+}
 
 
 def _png_size(path: Path):
@@ -18,39 +34,76 @@ def _png_size(path: Path):
     return struct.unpack(">II", data[16:24])
 
 
-class FooterZeroCookiesBadgeTests(unittest.TestCase):
-    def test_self_hosted_images_are_unchanged_exports(self):
-        self.assertTrue(SRC_1X.is_file())
-        self.assertTrue(SRC_2X.is_file())
-        self.assertEqual(hashlib.sha256(SRC_1X.read_bytes()).hexdigest(), SHA_1X)
-        self.assertEqual(hashlib.sha256(SRC_2X.read_bytes()).hexdigest(), SHA_2X)
-        self.assertEqual(_png_size(SRC_1X), (300, 126))
-        self.assertEqual(_png_size(SRC_2X), (600, 252))
+class FooterMatchedBadgeTests(unittest.TestCase):
+    def test_self_hosted_images_match_source_exports(self):
+        for name, sha in SHA.items():
+            path = BADGES / name
+            self.assertTrue(path.is_file(), name)
+            self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), sha, name)
+            self.assertEqual(_png_size(path), SIZE[name], name)
+        # SaaSHub source is the authentic 300x100 original, never redrawn.
+        self.assertEqual(
+            hashlib.sha256((BADGES / "saashub_v2_300x100.png").read_bytes()).hexdigest(),
+            hashlib.sha256((BADGES / "saashub-approved.png").read_bytes()).hexdigest(),
+        )
 
-    def test_footer_places_the_badge_beside_saashub(self):
+    def test_footer_order_equal_boxes_links_and_srcset(self):
         src = (ROOT / "scripts" / "build_site.py").read_text()
         css = (ROOT / "site" / "assets" / "style.css").read_text()
-        self.assertIn('class="foot-badge"', src)
-        saashub = src.find('src="/assets/badges/saashub-approved.png"')
-        zero = src.find('src="/assets/badges/zero-cookies-badge_v1_300x126.png"')
-        self.assertGreater(saashub, 0)
-        self.assertGreater(zero, saashub)
-        # One foot-badge paragraph contains both images, Zero Cookies after SaaSHub.
-        close = src.find("</p>", zero)
-        self.assertLess(zero, close)
-        self.assertIn('srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x"', src)
-        self.assertIn('alt="Zero cookies: this site sets no cookies"', src)
-        self.assertIn('class="badge-zero-cookies"', src)
-        self.assertIn('width="130"', src)
-        self.assertIn('height="55"', src)
-        self.assertIn('loading="lazy"', src[zero:close])
-        self.assertIn('href="/privacy"', src[saashub:close])
-        # The Zero Cookies image itself is not a raw unlinked sibling outside an anchor,
-        # and it does not point off-site.
-        img_open = src.rfind("<img", 0, zero + 1)
-        before = src[src.rfind("<a ", 0, img_open):img_open]
-        self.assertIn('href="/privacy"', before)
-        self.assertNotIn("target=\"_blank\"", before)
-        self.assertIn(".foot-badge{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}", css)
-        self.assertIn(".foot-badge .badge-zero-cookies{width:130px}", css)
-        self.assertIn(".foot-badge .badge-saashub{width:120px}", css)
+        start = src.find('<p class="foot-badge">')
+        self.assertGreater(start, 0)
+        footer = src[start:src.find("</p>", start)]
+        saas = footer.find("saashub_v2_150x50.png")
+        zero = footer.find("zero-cookies-badge_v1_300x126.png")
+        ham = footer.find("made-in-hamtramck_v2_300x100.png")
+        self.assertTrue(0 <= saas < zero < ham)
+
+        self.assertIn(
+            'href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved"',
+            footer,
+        )
+        first_a = footer[footer.find("<a "):footer.find("<img")]
+        self.assertIn('target="_blank"', first_a)
+        self.assertIn('rel="noopener"', first_a)
+        self.assertIn('alt="Stationery Drop Watch on SaaSHub"', footer)
+        self.assertIn(
+            'srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x"',
+            footer,
+        )
+        # Never invent a SaaSHub file larger than the authentic 300x100.
+        self.assertNotIn("saashub_v2_600", footer)
+        self.assertNotIn("saashub_v2_900", footer)
+
+        zero_img = footer.find("<img", footer.find("badge-zero-cookies"))
+        zero_a = footer.rfind("<a ", 0, zero_img)
+        self.assertIn('href="/privacy"', footer[zero_a:zero_img])
+        self.assertNotIn('target="_blank"', footer[zero_a:zero_img])
+        self.assertIn('alt="Zero cookies: this site sets no cookies"', footer)
+        self.assertIn(
+            'srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x"',
+            footer,
+        )
+
+        self.assertIn('alt="Made in Hamtramck, MI"', footer)
+        self.assertIn(
+            'srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w"',
+            footer,
+        )
+        self.assertIn('sizes="150px"', footer)
+        ham_img = footer.find("<img", footer.find("badge-hamtramck"))
+        self.assertNotIn("<a ", footer[footer.find("</a>", zero_img):ham_img])
+
+        for tag in re.findall(r"<img[^>]+>", footer):
+            self.assertIn('width="150"', tag)
+            self.assertIn('height="63"', tag)
+            self.assertIn('loading="lazy"', tag)
+
+        self.assertIn(
+            ".foot-badge{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}",
+            css,
+        )
+        self.assertIn(".foot-badge a{display:inline-block;line-height:0;max-width:100%}", css)
+        self.assertIn(
+            ".foot-badge img{width:150px;height:63px;object-fit:contain;object-position:center;display:block;max-width:100%}",
+            css,
+        )
