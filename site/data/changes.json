@@ -1034,5 +1034,14 @@
   "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-midnight-blue",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-15T20:49:12+00:00",
+  "store_id": "wonder",
+  "store": "Wonder Pens",
+  "label": "Weeks Mega · Colors: Pink Sapphire",
+  "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-mega-weeks-colors-pink-sapphire",
+  "from": "in_stock",
+  "to": "coming_soon"
  }
 ]
