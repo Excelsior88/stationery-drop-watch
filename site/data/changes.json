@@ -1015,5 +1015,15 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-15T12:49:25+00:00",
+  "store_id": "tokyopenshop",
+  "store": "Tokyo Pen Shop",
+  "label": "Traveler's notebook Regular size · Blue",
+  "url": "https://www.tokyopenshop.com/products/travelers-notebook?variant=42876827369684",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
