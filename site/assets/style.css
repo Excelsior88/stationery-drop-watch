@@ -497,6 +497,10 @@ table.stock.compare thead th{vertical-align:top}
 .foot-nav a:hover{background:none;color:var(--accent)}
 .foot-follow{margin:0 0 8px}
 .foot-follow a{min-height:44px;display:inline-flex;align-items:center}
+.foot-badge{margin:12px 0 0}
+.foot-badge a{display:inline-block;line-height:0}
+.foot-badge img{width:120px;height:auto;display:block;max-width:100%}
+
 .restocks:has(.feed-fold){display:flex;flex-direction:column}
 .restocks:has(.feed-fold) .feed-controls{order:0}
 .restocks:has(.feed-fold) .feed{display:contents}

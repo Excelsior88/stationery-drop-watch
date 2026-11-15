@@ -77,6 +77,16 @@
    "type": "Weeks"
   },
   {
+   "id": "weeks-once-in-spring",
+   "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-meteor-shower",
+   "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+   "type": "Weeks"
+  },
+  {
    "id": "weeks-beautiful-people-yellow",
    "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
    "type": "Weeks"
@@ -89,6 +99,16 @@
   {
    "id": "hon-a6-slash-navy",
    "label": "HON A6 · Slash (Navy)",
+   "type": "HON"
+  },
+  {
+   "id": "hon-a5-sheep",
+   "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+   "type": "HON"
+  },
+  {
+   "id": "hon-a6-sheep",
+   "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
    "type": "HON"
   },
   {
@@ -573,6 +593,22 @@
      "source_key": "wb27_libertyfloral"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_miyakoshi/",
+     "source_title": "Akiko Miyakoshi: Once, in Spring",
+     "source_key": "wb27_miyakoshi"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_kubota/",
+     "source_title": "Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "source_key": "wb27_kubota"
+    },
+    {
      "canonical": "hon-a5-slash-navy",
      "label": "HON A5 · Slash (Navy)",
      "type": "HON",
@@ -587,6 +623,22 @@
      "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_hon_slashnv/",
      "source_title": "Slash (Navy)",
      "source_key": "ob27_hon_slashnv"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_hon_tiesheep/",
+     "source_title": "Bow & Tie: Sheep Sheep Sheep",
+     "source_key": "cb27_hon_tiesheep"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_hon_tiesheep/",
+     "source_title": "Bow & Tie: Sheep Sheep Sheep",
+     "source_key": "ob27_hon_tiesheep"
     },
     {
      "canonical": "weeks-canaria-yellow",
@@ -862,6 +914,20 @@
      "source_title": "Hobonichi Techo 2027 Weeks Planner | Liberty Fabrics: Floral Remedy | English"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-akiko-miyakoshi-once-in-spring-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Akiko Miyakoshi: Once, in Spring | English"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-hiroko-kubota-meteor-shower-in-the-light-blue-forest-english",
+     "source_title": "Hobonichi Techo 2027 Weeks Planner | Hiroko Kubota: Meteor Shower in the Light Blue Forest | English"
+    },
+    {
      "canonical": "hon-a5-slash-navy",
      "label": "HON A5 · Slash (Navy)",
      "type": "HON",
@@ -874,6 +940,20 @@
      "type": "HON",
      "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a6-hon-planner-slash-navy-english",
      "source_title": "Hobonichi Techo 2027 A6 HON Planner | Slash Navy | English"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a5-hon-planner-bow-tie-sheep-sheep-sheep-english",
+     "source_title": "Hobonichi Techo 2027 A5 HON Planner | Bow & Tie: Sheep Sheep Sheep | English"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a6-hon-planner-bow-tie-sheep-sheep-sheep-english",
+     "source_title": "Hobonichi Techo 2027 A6 HON Planner | Bow & Tie: Sheep Sheep Sheep | English"
     },
     {
      "canonical": "cover-a6-beautiful-people-green",
@@ -1184,6 +1264,20 @@
      "source_title": "Hobonichi Techo Weeks - Liberty Fabrics: Floral Remedy"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-akiko-miyakoshi-once-in-spring",
+     "source_title": "Hobonichi Techo Weeks - Akiko Miyakoshi: Once, in Spring"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
+     "source_title": "Hobonichi Techo Weeks - Hiroko Kubota: Meteor Shower in the Light Blue Forest"
+    },
+    {
      "canonical": "hon-a5-slash-navy",
      "label": "HON A5 · Slash (Navy)",
      "type": "HON",
@@ -1196,6 +1290,20 @@
      "type": "HON",
      "url": "https://www.atlasstationers.com/products/hobonichi-a6-hon-slash-navy-1",
      "source_title": "Hobonichi A6 Hon - Slash (Navy)"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.atlasstationers.com/products/hobonichi-a5-hon-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi A5 Hon - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.atlasstationers.com/products/hobonichi-a6-hon-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi A6 Hon - Bow & Tie: Sheep Sheep Sheep"
     },
     {
      "canonical": "cover-a6-beautiful-people-green",
@@ -1896,6 +2004,20 @@
      "source_title": "Hobonichi 2027 English Weeks - Liberty Fabrics: Floral Remedy"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-akiko-miyakoshi-once-in-spring",
+     "source_title": "PREVIEW - Hobonichi 2027 - English Weeks - Akiko Miyakoshi: Once, in Spring"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
+     "source_title": "PREVIEW - Hobonichi 2027 - English Weeks - Hiroko Kubota: Meteor Shower in the Light Blue Forest"
+    },
+    {
      "canonical": "hon-a5-slash-navy",
      "label": "HON A5 · Slash (Navy)",
      "type": "HON",
@@ -1908,6 +2030,20 @@
      "type": "HON",
      "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-hon-english-slash-navy",
      "source_title": "Hobonichi 2027 A6 HON English - Slash (Navy)"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-hon-english-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi 2027 - A5 HON ENGLISH - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-hon-english-vbow-tie-sheep-sheep-sheep",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 HON ENGLISH - VBow & Tie: Sheep Sheep Sheep"
     },
     {
      "canonical": "cover-a6-beautiful-people-green",
@@ -2264,6 +2400,20 @@
      "source_title": "Hobonichi 2027 Light Hard Cover English Book - Liberty Fabrics: Floral Remedy - Tall & Slim (Weeks - January Start)"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-akiko-miyakoshi-once-in-spring",
+     "source_title": "Hobonichi 2027 Light Hardcover English Book - Akiko Miyakoshi: Once, in Spring - Tall & Slim (Weeks - January Start)"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-2027-weeks-hiroko-kubota-meteor-shower-light-blue-forest",
+     "source_title": "Hobonichi 2027 Light Hardcover Book - Hiroko Kubota: Meteor Shower in the Light Blue Forest - Tall & Slim (Weeks - January Start)"
+    },
+    {
      "canonical": "hon-a5-slash-navy",
      "label": "HON A5 · Slash (Navy)",
      "type": "HON",
@@ -2283,6 +2433,27 @@
      "type": "HON",
      "url": "https://www.penboutique.com/products/hobonichi-hon-light-hardcover-japanese-book-slash-navy-a6-january-start",
      "source_title": "Hobonichi HON Light Hardcover Japanese Book - Slash Navy - A6 (January Start)"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.penboutique.com/products/hobonichi-techo-2027-hon-a5-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi HON 2027 Light Hard Cover English Book - Bow & Tie: Sheep Sheep Sheep - A5 (Jan Start)"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.penboutique.com/products/hobonichi-hon-light-hardcover-japanese-book-bow-tie-sheep-sheep-sheep-a6-january-start",
+     "source_title": "Hobonichi HON Light Hardcover Japanese Book - Bow & Tie: Sheep Sheep Sheep - A6 (January Start)"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.penboutique.com/products/hobonichi-hon-a6-2027-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi 2027 HON Light Hard Cover English Book - Bow & Tie: Sheep Sheep Sheep - A6 (January Start)"
     },
     {
      "canonical": "cover-a6-beautiful-people-green",
@@ -2517,6 +2688,20 @@
      "source_title": "Hobonichi Techo Weeks 2027 - Liberty Fabrics: Floral Remedy"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-akiko-miyakoshi-once-in-spring",
+     "source_title": "Hobonichi Techo Weeks 2027 - Akiko Miyakoshi: Once, in Spring"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
+     "source_title": "Hobonichi Techo Weeks 2027 - Hiroko Kubota: Meteor Shower in the Light Blue Forest"
+    },
+    {
      "canonical": "hon-a5-slash-navy",
      "label": "HON A5 · Slash (Navy)",
      "type": "HON",
@@ -2529,6 +2714,20 @@
      "type": "HON",
      "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a6-slash-navy-english",
      "source_title": "Hobonichi Techo HON 2027 - A6 - Slash Navy - English"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a5-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi Techo HON 2027 - A5 - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a6-bow-tie-sheep-sheep-sheep-english",
+     "source_title": "Hobonichi Techo HON 2027 - A6 - Bow & Tie: Sheep Sheep Sheep -  English"
     },
     {
      "canonical": "cover-a6-beautiful-people-green",
@@ -2891,11 +3090,32 @@
      "source_title": "Hobonichi Techo Weeks 2027 - Liberty Fabrics: Floral Remedy"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-akiko-miyakoshi-once-in-spring",
+     "source_title": "Hobonichi Techo Weeks 2027 - Akiko Miyakoshi: Once, in Spring"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
+     "source_title": "Hobonichi Techo Weeks 2027 - Hiroko Kubota: Meteor Shower in the Light Blue Forest"
+    },
+    {
      "canonical": "hon-a5-slash-navy",
      "label": "HON A5 · Slash (Navy)",
      "type": "HON",
      "url": "https://www.jennibick.com/products/hobonichi-techo-a5-hon-2027-slash-navy",
      "source_title": "Hobonichi Techo A5 Hon 2027 - Slash (Navy)"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-hon-2027-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi Techo A5 Hon 2027 - Bow & Tie: Sheep Sheep Sheep"
     },
     {
      "canonical": "cover-a6-beautiful-people-green",
@@ -3137,6 +3357,13 @@
      "type": "Weeks",
      "url": "https://usa.kinokuniya.com/products/4580812709934",
      "source_title": "Liberty Fabrics: Floral Remedy - Weeks ENG - Hobonichi 2027"
+    },
+    {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://usa.kinokuniya.com/products/4580812709774",
+     "source_title": "Akiko Miyakoshi: Once, in Spring - Weeks ENG - Hobonichi 2027"
     },
     {
      "canonical": "hon-a5-slash-navy",
@@ -3972,6 +4199,20 @@
      "source_title": "Hobonichi Techo 2027 Weeks Liberty Fabrics: Floral Remedy [ENG/Tall & Slim/Jan Start]"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-weeks-akiko-miyakoshi-once-in-spring-eng-tall-slim-jan-start",
+     "source_title": "Hobonichi Techo 2027 Weeks Akiko Miyakoshi: Once, in Spring [ENG/Tall & Slim/Jan Start]"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest-eng-tall-slim-jan-start",
+     "source_title": "Hobonichi Techo 2027 Weeks Hiroko Kubota: Meteor Shower in the Light Blue Forest [ENG/Tall & Slim/Jan Start]"
+    },
+    {
      "canonical": "weeks-moomin-snufkin",
      "label": "Weeks · Moomin: A Day in the Life of Snufkin",
      "type": "Weeks",
@@ -4054,6 +4295,20 @@
      "type": "HON",
      "url": "https://blesket.com/products/hobonichi-techo-2027-hon-slash-navy-eng-hon-a6-jan-start-planner",
      "source_title": "Hobonichi Techo 2027 HON Slash (Navy) [ENG/HON A6/Jan Start] Planner"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-hon-bow-tie-sheep-sheep-sheep-eng-a5-hon-jan-start",
+     "source_title": "Hobonichi Techo 2027 HON Bow & Tie: Sheep Sheep Sheep [ENG/A5 HON/Jan Start]"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-hon-bow-tie-sheep-sheep-sheep-eng-a6-hon-jan-start",
+     "source_title": "Hobonichi Techo 2027 HON Bow & Tie: Sheep Sheep Sheep [ENG/A6 HON/Jan Start]"
     },
     {
      "canonical": "lt-120g-a5",
@@ -4260,6 +4515,20 @@
      "source_title": "Hobonichi 2027 Weeks: Liberty Fabrics - Floral Remedy [ENG]"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-akiko-miyakoshi-once-in-spring",
+     "source_title": "Hobonichi 2027 Weeks: Akiko Miyakoshi - Once, in Spring [ENG]"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
+     "source_title": "Hobonichi 2027 Weeks: Hiroko Kubota - Meteor Shower in the Light Blue Forest [ENG]"
+    },
+    {
      "canonical": "weeks-moomin-snufkin",
      "label": "Weeks · Moomin: A Day in the Life of Snufkin",
      "type": "Weeks",
@@ -4342,6 +4611,20 @@
      "type": "HON",
      "url": "https://www.thejournalshop.com/products/hobonichi-2027-hon-a6-slash-navy",
      "source_title": "Hobonichi 2027 HON A6: Slash (Navy)"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-hon-a5-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi 2027 HON A5: Bow & Tie - Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-hon-a6-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi 2027 HON A6: Bow & Tie - Sheep Sheep Sheep"
     },
     {
      "canonical": "original-a6-en",
@@ -4555,6 +4838,20 @@
      "source_title": "Hobonichi Techo 2027 - Weeks/Wallet Planner Book - Floral Remedy [English/Tall & Slim/Jan Start]"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-once-in-spring-english-tall-slim-jan-start",
+     "source_title": "Hobonichi Techo 2027 - Weeks/Wallet Planner Book - Once, in Spring [English/Tall & Slim/Jan Start]"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-meteor-shower-in-the-light-blue-forest-english-tall-slim-jan-start",
+     "source_title": "Hobonichi Techo 2027 - Weeks/Wallet Planner Book - Meteor Shower in the Light Blue Forest [English/Tall & Slim/Jan Start]"
+    },
+    {
      "canonical": "weeks-moomin-snufkin",
      "label": "Weeks · Moomin: A Day in the Life of Snufkin",
      "type": "Weeks",
@@ -4616,6 +4913,20 @@
      "type": "HON",
      "url": "https://www.buchanst.com/products/hobonichi-techo-2027-original-a6-hon-planner-book-slash-navy-english-january-start-monday-start",
      "source_title": "Hobonichi Techo 2027 - A6 HON Planner Book - Slash (Navy) - English/Jan Start/Mon Start"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-original-a5-hon-planner-book-bow-tie-sheep-english-january-start-monday-start",
+     "source_title": "Hobonichi Techo 2027 - A5 HON Planner Book - Bow & Tie: Sheep - English/Jan Start/Mon Start"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-original-a6-hon-planner-book-bow-tie-sheep-english-january-start-monday-start",
+     "source_title": "Hobonichi Techo 2027 - A6 HON Planner Book - Bow & Tie: Sheep - English/Jan Start/Mon Start"
     },
     {
      "canonical": "original-a6-en",
@@ -4746,6 +5057,20 @@
      "source_title": "Hobonichi Techo Weeks Cover - beautiful people: Nothing to Hide (Yellow)"
     },
     {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-english-weeks-akiko-miyakoshi-once-in-spring",
+     "source_title": "2027 Hobonichi Techo English Weeks - Akiko Miyakoshi: Once, in Spring"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-english-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
+     "source_title": "2027 Hobonichi Techo English Weeks - Hiroko Kubota: Meteor Shower in the Light Blue Forest"
+    },
+    {
      "canonical": "tn-regular-black",
      "label": "Traveler's notebook Regular size · Black (No. 13714006)",
      "type": "Notebook",
@@ -4840,6 +5165,20 @@
      "url": "https://www.mlovewell.com/products/travelers-notebook-card-size-20th-anniversary-black-set",
      "source_title": "TRAVELER'S Notebook — Card Size 20th Anniversary - Black Set",
      "section": "travelers"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-hon-a5-english-hardcover-planner-book-bow-tie-sheep-sheep-sheep",
+     "source_title": "2027 Hobonichi Techo HON A5 English Hardcover Planner Book - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-hon-a6-english-hardcover-planner-book-bow-tie-sheep-sheep-sheep",
+     "source_title": "2027 Hobonichi Techo HON A6 English Hardcover Planner Book - Bow & Tie: Sheep Sheep Sheep"
     }
    ]
   },

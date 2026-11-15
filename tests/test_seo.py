@@ -56,7 +56,7 @@ class SeoHeadTests(unittest.TestCase):
             self.assertNotIn("hourly", title.lower(), path)
             titles.append(title)
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 77)  # 68, plus 9 Archer and Olive design pages
+        self.assertEqual(len(titles), 81)  # 77, plus 4 HON Sheep and Weeks design pages
 
     def test_descriptions_match_social_tags_and_stay_under_160(self):
         descs = []
@@ -132,7 +132,7 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 77)  # 68, plus 9 Archer and Olive design pages
+        self.assertEqual(len(mods), 81)  # 77, plus 4 HON Sheep and Weeks design pages
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):
