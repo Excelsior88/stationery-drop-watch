@@ -1053,5 +1053,14 @@
   "section": "travelers",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-15T23:32:08+00:00",
+  "store_id": "baum",
+  "store": "Baum-kuchen",
+  "label": "Weeks Mega · Colors: Sea Glass",
+  "url": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english?variant=43546097352771",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
