@@ -59,14 +59,11 @@ jobs:
             git commit -m "data: stock update $(date -u +%Y-%m-%dT%H:%MZ)"
             for i in 1 2 3 4 5; do
               if git_push_out=$(git push 2>&1); then
-                printf '%s
-' "$git_push_out"
+                echo "$git_push_out"
                 break
               fi
-              printf '%s
-' "$git_push_out"
-              if ! printf '%s
-' "$git_push_out" | grep -Eq 'fetch first|non-fast-forward|\[rejected\]'; then
+              echo "$git_push_out"
+              if ! echo "$git_push_out" | grep -Eq 'fetch first|non-fast-forward|\[rejected\]'; then
                 exit 1
               fi
               if [ "$i" -eq 5 ]; then
