@@ -1,6 +1,7 @@
-"""Replacements for the five dead Omoi listings, plus Floral Remedy.
+"""The five dead Omoi Hobonichi listings are dropped, plus Floral Remedy.
 
-Omoi's own URLs stay. New shop URLs were read from each store's product data.
+Omoi has no exact replacement URL for those five products. History for a
+removed URL is left in changes.json; stock.json only keeps current catalog rows.
 Checker tests call check_hobonichi, classify_shopify, and main.
 """
 import json
@@ -55,7 +56,7 @@ class OmoiGapsAndFloralTests(unittest.TestCase):
                 found[store["id"]] = hits
         return found
 
-    def test_catalog_keeps_the_dead_omoi_urls_and_adds_exact_listings(self):
+    def test_catalog_drops_the_dead_omoi_hobonichi_urls_and_keeps_live_omoi_listings(self):
         urls = [p["url"] for s in self.cfg["stores"] for p in s["products"]]
         self.assertEqual(len(urls), len(set(urls)))
         self.assertNotIn(JENNI_CONFLICT, urls)
@@ -64,15 +65,10 @@ class OmoiGapsAndFloralTests(unittest.TestCase):
         self.assertEqual(jet["products"], [])
         self.assertEqual(jet["platform"], "blocked")
         for url in OMOI.values():
-            self.assertIn(url, urls)
+            self.assertNotIn(url, urls)
         omoi = next(s for s in self.cfg["stores"] if s["id"] == "omoi")
-        by_url = {p["url"]: p for p in omoi["products"]}
-        self.assertEqual(by_url[OMOI["mega"]]["canonical"], "weeks-mega-midnight-blue")
-        self.assertEqual(by_url[OMOI["a5"]]["canonical"], "hon-a5-slash-navy")
-        self.assertEqual(by_url[OMOI["a6"]]["canonical"], "hon-a6-slash-navy")
-        self.assertEqual(by_url[OMOI["plaid"]]["canonical"], "weeks-shirt-graph-plaid")
-        self.assertEqual(by_url[OMOI["jade"]]["canonical"], "weeks-paper-frosty-jade")
-        self.assertEqual(by_url[OMOI["plaid"]]["url"], OMOI["plaid"])
+        self.assertEqual({p["canonical"] for p in omoi["products"]},
+                         {"md-diary-2027-a5", "md-diary-1day-2027-a5", "tn-20th-card-black"})
         mega = self._rows("weeks-mega-midnight-blue")
         self.assertIn("1101", mega)
         self.assertEqual(mega["1101"][0]["source_key"], "wb27_m_colorsmblue")

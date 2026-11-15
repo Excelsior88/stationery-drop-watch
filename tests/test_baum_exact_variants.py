@@ -17,7 +17,7 @@ AGG = "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english"
 MEGA = "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-mega-english"
 LEICESTER = AGG + "?variant=43546076676163"
 MIDNIGHT = AGG + "?variant=43546058817603"
-OMOI = "https://omoionline.com/products/hobonichi-techo-2027-weeks-paper-series-planner-jade"
+OMOI = "https://omoionline.com/products/md-notebook-2027-monthly-planners?variant=67760093626672"
 OLD = "2026-10-25T21:40:55+00:00"
 
 
