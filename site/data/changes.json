@@ -986,5 +986,14 @@
   "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a6-slash-navy-english",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-15T01:47:47+00:00",
+  "store_id": "papermouse",
+  "store": "The Paper Mouse",
+  "label": "Weeks · Colors: Midnight Blue",
+  "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-colors-midnight-blue-english",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
