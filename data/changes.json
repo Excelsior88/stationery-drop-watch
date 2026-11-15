@@ -1043,5 +1043,15 @@
   "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-mega-weeks-colors-pink-sapphire",
   "from": "in_stock",
   "to": "coming_soon"
+ },
+ {
+  "at": "2026-11-15T21:20:10+00:00",
+  "store_id": "mlovewell",
+  "store": "M.Lovewell",
+  "label": "Traveler's notebook Regular size · Black (No. 13714006)",
+  "url": "https://www.mlovewell.com/products/midori-travelers-notebook-regular-black",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
