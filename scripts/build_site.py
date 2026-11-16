@@ -2877,12 +2877,15 @@ def build_tn_sizes():
 
 <h2 id="compare">Side by side</h2>
 <p class="muted small">Height × width × depth from the manufacturer's package specs. The leather cover and the paper refill are different sizes. Numbers in brackets point to the sources. On a small screen, scroll the table sideways. The row labels stay put.</p>
+<div class="table-scroll">
+<p class="table-scroll-hint" aria-hidden="true">Swipe to see all three sizes <span aria-hidden="true">→</span></p>
 <div class="table-wrap">
 <table class="stock compare">
 <caption class="sr">Regular, Passport, and Card Size: cover, refill, carry, refills, and what this site tracks</caption>
 <thead><tr><th></th><th>{_fmt_head(cover_icon("regular"), "Regular")}</th><th>{_fmt_head(cover_icon("passport"), "Passport")}</th><th>{_fmt_head(cover_icon("card"), "Card Size")}</th></tr></thead>
 <tbody>{"".join(rows)}</tbody>
 </table>
+</div>
 </div>
 <p class="muted small"><strong>Inches converted from those millimeters</strong> (25.4 mm = 1 in). This is arithmetic, not a published spec. Regular cover 8.66 × 4.72 × 0.39 in, refill 8.27 × 4.33 × 0.16 in. Passport cover 5.28 × 3.86 × 0.39 in, refill 4.88 × 3.50 × 0.16 in. Card Size cover 4.33 × 2.95 × 0.39 in, refill 3.94 × 2.56 × 0.08 in.</p>
 <p><strong>Shop dimensions.</strong> The US shop prints different dimensions for these same starter kits.{cite("usreg", "uspass")} This guide uses the manufacturer's package specs. Check those for fit.</p>

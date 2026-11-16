@@ -46,7 +46,7 @@ jobs:
           fi
 
       # Workflow files and the Cloudflare headers only. The site itself is the checker artifact.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: steps.gate.outputs.enabled == 'true'
 
       - name: Require a successful main checker run
@@ -64,7 +64,7 @@ jobs:
 
       - name: Download site artifact from the checker run
         if: success() && steps.gate.outputs.enabled == 'true' && github.event_name == 'workflow_run'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: github-pages
           path: artifact
@@ -91,7 +91,7 @@ jobs:
           test -f out/index.html && test -f out/404.html && test -f out/data/stock.json
           ls -la out
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: success() && steps.gate.outputs.enabled == 'true'
         with:
           node-version: "22"
