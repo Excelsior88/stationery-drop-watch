@@ -112,10 +112,55 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertIn("https://www.etsy.com/listing/4611293526/soft-days-narrow-planner-inserts",
                       card(self.shop, "Soft Days Narrow Planner Inserts"))
 
+    def test_a5_blush_planner_replaces_the_featured_hardcover_card(self):
+        blush = card(self.shop, "2027 Planner, Blush")
+        self.assertIn('href="https://www.amazon.com/dp/B0HRTLMZ1M"', blush)
+        self.assertEqual(blush.count("https://www.amazon.com/dp/B0HRTLMZ1M"), 2)
+        self.assertIn("data-own-product", blush)
+        self.assertNotIn("tag=", blush)
+        self.assertIn("Paperback", blush)
+        self.assertNotIn("Hardcover · on Amazon", blush)
+        self.assertIn("See price on Amazon", blush)
+        self.assertNotIn("$19.99", blush)
+        self.assertNotIn("Currently unavailable", blush)
+        self.assertNotIn("In Stock", blush)
+        self.assertIn("Monday start", blush)
+        self.assertIn("5.83 x 8.27 in (A5) paperback, 174 pages, color interior", blush)
+        self.assertIn("Soft blush, sage and cream design", blush)
+        self.assertIn("Dated Jan 1 to Dec 31, 2027", blush)
+        self.assertIn("/assets/books/B0HRTLMZ1M.jpg", blush.split("<details", 1)[0])
+        self.assertNotIn("B0HRTLMZ1M.jpg", blush.split("See inside", 1)[-1])
+        self.assertIn("/assets/shop/inside/B0HRTLMZ1M-january-month-pages.jpg", blush)
+        self.assertIn("/assets/shop/inside/B0HRTLMZ1M-weekly-spread-dec28-2026-jan3-2027.jpg", blush)
+        self.assertIn("January calendar and Goals &amp; Priorities pages", blush)
+        self.assertIn("Weekly spread, Dec 28, 2026 to Jan 3, 2027", blush)
+        # Kiln did not confirm the January pages face each other in print.
+        january = blush[blush.find("january-month-pages"):blush.find("weekly-spread-dec28")]
+        self.assertNotIn("spread", january.lower())
+        self.assertIn("Also comes in ", blush)
+        self.assertIn(">8.5x11 hardcover, sunday start</a>", blush)
+        self.assertIn('href="https://www.amazon.com/dp/B0HPBDNS7F"', blush)
+        self.assertIn("data-own-product", blush[blush.find("Also comes in"):])
+        # The 8.5x11 hardcover is no longer a featured Amazon card, only the note link.
+        amazon = self.shop.split("<h2>Printable PDFs on Etsy</h2>", 1)[0]
+        self.assertNotIn("/assets/books/B0HPBDNS7F.jpg", amazon)
+        self.assertNotIn("/assets/shop/inside/B0HPBDNS7F-", amazon)
+        self.assertEqual(amazon.count("https://www.amazon.com/dp/B0HPBDNS7F"), 1)
+        self.assertIn('class="inside-grid spreads"', blush)
+
+    def test_hardcover_gift_pick_on_dotgrid_is_unchanged(self):
+        # /shop no longer features the 8.5x11 hardcover; the existing dot-grid gift pick stays.
+        self.assertNotIn("B0HRTLMZ1M", self.home)
+        pick = next(b for b in site.picks["books"] if b["id"] == "B0HPBDNS7F")
+        self.assertEqual(pick.get("pages"), ["dotgrid"])
+        self.assertEqual(pick["format"], "Hardcover")
+        self.assertIn("8.5 x 11 in hardcover, 172 pages", pick["details"])
+        self.assertFalse(pick.get("hidden"))
+
     def test_existing_previews_are_unchanged(self):
         expected = [
-            "/assets/shop/inside/B0HPBDNS7F-monthly-calendar-goals-spread-p6-7.jpg",
-            "/assets/shop/inside/B0HPBDNS7F-weekly-spread-p12-13.jpg",
+            "/assets/shop/inside/B0HRTLMZ1M-january-month-pages.jpg",
+            "/assets/shop/inside/B0HRTLMZ1M-weekly-spread-dec28-2026-jan3-2027.jpg",
             "/assets/shop/inside/B0HQ5TLDK3-habit-and-mood-tracker-spread-p6-7.jpg",
             "/assets/shop/inside/B0HQ5TLDK3-weekly-checkin-spread-p8-9.jpg",
             "/assets/shop/inside/B0HQ5X3C7D-genre-tracker-books-read-log-spread-p12-13.jpg",
