@@ -3142,7 +3142,7 @@ SHOP_ORDER = ("B0HRTLMZ1M", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HQW8273
 SHOP_ALSO = {
     "B0HRTLMZ1M": {
         "before": "Also comes in ",
-        "link_text": "8.5x11 hardcover, sunday start",
+        "link_text": "8.5x11 hardcover, Sunday start",
         "url": "https://www.amazon.com/dp/B0HPBDNS7F",
     },
 }

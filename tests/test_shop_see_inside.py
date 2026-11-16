@@ -138,7 +138,7 @@ class ShopSeeInsideTests(unittest.TestCase):
         january = blush[blush.find("january-month-pages"):blush.find("weekly-spread-dec28")]
         self.assertNotIn("spread", january.lower())
         self.assertIn("Also comes in ", blush)
-        self.assertIn(">8.5x11 hardcover, sunday start</a>", blush)
+        self.assertIn(">8.5x11 hardcover, Sunday start</a>", blush)
         self.assertIn('href="https://www.amazon.com/dp/B0HPBDNS7F"', blush)
         self.assertIn("data-own-product", blush[blush.find("Also comes in"):])
         # The 8.5x11 hardcover is no longer a featured Amazon card, only the note link.
