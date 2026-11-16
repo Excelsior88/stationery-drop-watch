@@ -260,6 +260,13 @@ class ShopSeeInsideTests(unittest.TestCase):
             self.assertIn("Classroom license", block)
             self.assertIn("grades 2 to 5", block)
             self.assertIn("one teacher", block)
+            if title == "Level Up! 2027 Student Planner":
+                self.assertIn("own students or classroom, or for one household", block)
+            elif title == "Level Up! Classroom Quest Kit":
+                self.assertNotIn("household", block)
+                self.assertIn("one teacher", block)
+            else:
+                self.assertIn("classroom or one household", block)
             self.assertIn(pages, block)
             self.assertIn(f"/assets/shop/{image}", block.split("<details", 1)[0])
             self.assertIn(f"/assets/shop/inside/{image}", block.split("<details", 1)[1])

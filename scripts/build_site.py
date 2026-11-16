@@ -3088,7 +3088,7 @@ SHOP_TPT = [
          details=["Grades 2 to 5. 170 pages, dated 2027, Monday start",
                   "53 weeks, from Monday Dec 28, 2026 to Sunday Jan 2, 2028",
                   "US Letter. Print at actual size (100%)",
-                  "Classroom license: one teacher, for their own students or one household"]),
+                  "Classroom license: one teacher, for their own students or classroom, or for one household"]),
     dict(id="levelup-tpt-goal-quest", inside="levelup-tpt-goal-quest",
          title="Level Up! Goal Setting Quest Pack",
          img="assets/shop/levelup-tpt-goal-quest.webp", img_class="sheet", img_w=1500, img_h=1500,
@@ -3100,7 +3100,7 @@ SHOP_TPT = [
          details=["Grades 2 to 5. Undated, so it can be used any time of year",
                   "18 pages: a Boss Challenge sheet, a 12-level quest map, XP trackers, habit trackers, and badges to color",
                   "A low-ink version is included for black-and-white copiers",
-                  "Classroom license: one teacher, for their classroom or one household"]),
+                  "Classroom license: one teacher's classroom or one household"]),
     dict(id="levelup-tpt-end-of-year", inside="levelup-tpt-end-of-year",
          title="Level Up! End of Year Review Packet",
          img="assets/shop/levelup-tpt-end-of-year.webp", img_class="sheet", img_w=1500, img_h=1500,
@@ -3112,7 +3112,7 @@ SHOP_TPT = [
          details=["Grades 2 to 5. 31 pages, including a 4-page answer key",
                   "5 worlds, 20 challenges, 500 XP, from Rookie to Legend",
                   "Word searches, math power-ups, mazes, and logic grids",
-                  "Classroom license: one teacher, for their classroom or one household"]),
+                  "Classroom license: one teacher's classroom or one household"]),
     dict(id="levelup-tpt-classroom-kit", inside="levelup-tpt-classroom-kit",
          title="Level Up! Classroom Quest Kit",
          img="assets/shop/levelup-tpt-classroom-kit.webp", img_class="sheet", img_w=1500, img_h=1500,
@@ -3124,7 +3124,8 @@ SHOP_TPT = [
          details=["Grades 2 to 5. 21 pages, undated, with a low-ink version for black-and-white copiers",
                   "Reading log, homework trackers, a class XP chart for 26 players, and a team scoreboard",
                   "18 brag tags plus 9 design-your-own tags, four posters, and a pennant banner",
-                  "Classroom license: one teacher, for their own classroom. XP is for effort and kindness, and it is never taken away"]),
+                  "Classroom license: one teacher's classroom",
+                  "XP is for effort and kindness, and it is never taken away"]),
 ]
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
