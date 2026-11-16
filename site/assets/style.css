@@ -347,7 +347,6 @@ a.az:hover{color:var(--ink)}
 h1{text-wrap:wrap}h2{text-wrap:balance}
 .follow-card h2.h3{font-size:1.17em;margin:0}
 nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-visible,a.btn-amz:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.tag-soon{display:inline-block;vertical-align:middle;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:var(--paper-2);font:600 .7rem/1.4 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
 @media (min-width:1200px){.prose p,.prose li,.faq p,.faq-item p,.faq dd{font-size:1.125rem}}
 @media (min-width:901px){.nav-menu{display:none}}
 @media (max-width:900px){
@@ -501,16 +500,6 @@ table.stock.compare thead th{vertical-align:top}
 .foot-badge a{display:inline-block;line-height:0;max-width:100%}
 .foot-badge img{width:150px;height:63px;object-fit:contain;object-position:center;display:block;max-width:100%}
 
-.restocks:has(.feed-fold){display:flex;flex-direction:column}
-.restocks:has(.feed-fold) .feed-controls{order:0}
-.restocks:has(.feed-fold) .feed{display:contents}
-.restocks:has(.feed-fold) .feed-item{order:2}
-.restocks:has(.feed-fold) .feed-item[data-now="in_stock"]{order:1}
-.restocks:has(.feed-fold) .feed-fold{display:block;order:3;margin:4px 0}
-.restocks:has(.feed-fold) .feed-item[data-now="sold_out"]{order:4}
-.restocks:has(.feed-fold):not(:has(.feed-fold[open])) .feed-item[data-now="sold_out"]{display:none}
-.restocks:has(.feed-fold) .feed-empty{order:5}
-.feed-fold>summary{display:inline-flex;align-items:center;min-height:44px;cursor:pointer;font-weight:650;color:var(--ink)}
 @media (max-width:700px){
   .clip{width:84px;height:auto}
 }

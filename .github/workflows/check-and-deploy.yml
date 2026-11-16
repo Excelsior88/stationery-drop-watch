@@ -20,8 +20,10 @@ permissions:
 
 # One checker at a time on main. Do not cancel in-progress runs: they may
 # already be committing a stock update. Waiting is not enough on its own,
-# because checkout uses the SHA from when the run was triggered, so a later
-# push can still be a non-fast-forward. The commit step rebases and retries.
+# because checkout uses the SHA from when the run was triggered. A queued run
+# therefore resets to the latest origin/main before it reads the old data, and
+# if a push is still rejected it rebuilds on the new main instead of merging
+# data/stock.json (a JSON rebase conflict used to fail the run about once a day).
 concurrency:
   group: drop-watch
   cancel-in-progress: false
@@ -32,6 +34,15 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+
+      # The checked-out SHA is the one from when this run was queued. Start from
+      # the newest main so the checker compares against the latest stock data.
+      - name: Start from the latest main
+        run: |
+          git fetch --no-tags --depth=1 origin main
+          git reset --hard origin/main
+          echo "Starting from $(git rev-parse --short HEAD)"
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -57,8 +68,12 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add data/ site/
             git commit -m "data: stock update $(date -u +%Y-%m-%dT%H:%MZ)"
+            # This run's results. On a rejected push they are written onto the new
+            # main and the site is rebuilt there, so JSON is never merged or rebased.
+            results=$(mktemp -d)
+            cp data/stock.json data/changes.json "$results/"
             for i in 1 2 3 4 5; do
-              if git_push_out=$(git push 2>&1); then
+              if git_push_out=$(git push origin HEAD:main 2>&1); then
                 echo "$git_push_out"
                 break
               fi
@@ -70,8 +85,17 @@ jobs:
                 echo "git push failed after 5 attempts"
                 exit 1
               fi
-              echo "Push rejected (attempt $i); git pull --rebase and retry"
-              git pull --rebase origin main
+              echo "Push rejected (attempt $i); rewriting this run's data on the latest main"
+              git fetch --no-tags --depth=1 origin main
+              git reset --hard origin/main
+              cp "$results/stock.json" "$results/changes.json" data/
+              python scripts/build_site.py
+              if ! python scripts/status_changed.py; then
+                echo "Latest main already has these statuses; nothing to push."
+                break
+              fi
+              git add data/ site/
+              git commit -m "data: stock update $(date -u +%Y-%m-%dT%H:%MZ)"
             done
           else
             echo "No status changes; not committing."
