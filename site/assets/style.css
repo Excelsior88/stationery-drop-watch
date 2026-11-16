@@ -381,6 +381,13 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
   .tn-size table.compare td{min-width:13rem}
 }
 .tn-size caption.sr{caption-side:top}
+/* Narrow-screen only: hint that the size table scrolls sideways. Hidden on desktop. */
+.table-scroll-hint{display:none}
+@media (max-width:760px){
+  .tn-size .table-scroll{min-width:0;max-width:100%}
+  .tn-size .table-scroll-hint{display:block;margin:0 0 8px;font-size:.8rem;font-weight:500;color:var(--ink-2)}
+}
+
 
 /* Homepage hero, tracker cards, and the monitoring strip. Existing palette and Newsreader only. */
 :root{--mast:7.5rem}
