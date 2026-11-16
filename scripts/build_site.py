@@ -3130,11 +3130,22 @@ SHOP_TPT = [
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
 # 2026-11-04 (buy box and format swatch; no strikethrough or deal shown). A None here shows "See price on Amazon".
+# A missing ASIN, or a None value, shows "See price on Amazon". B0HRTLMZ1M had no list
+# price on its Amazon page on 2026-11-16 (the page also said Currently unavailable).
 AMAZON_LIST_PRICES = {"B0HPBDNS7F": "$19.99", "B0HQ5TLDK3": "$14.99", "B0HQ5X3C7D": "$16.99",
                       "B0HP9PXSR1": "$14.99"}
-SHOP_LABELS = {"B0HPBDNS7F": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
+SHOP_LABELS = {"B0HRTLMZ1M": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
                "B0HP9PXSR1": "2027 Planner for Men", "B0HQW8273V": "Level Up! My 2027 Planner"}
-SHOP_ORDER = ("B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HQW8273V")
+SHOP_ORDER = ("B0HRTLMZ1M", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HQW8273V")
+# Optional note under the detail bullets. The hardcover remains a linked note on the A5 card,
+# not a featured card of its own. Link text matches the owner-approved phrasing.
+SHOP_ALSO = {
+    "B0HRTLMZ1M": {
+        "before": "Also comes in ",
+        "link_text": "8.5x11 hardcover, Sunday start",
+        "url": "https://www.amazon.com/dp/B0HPBDNS7F",
+    },
+}
 ETSY_PRICE = ("$6.99", "20% off launch sale Oct 31 to Nov 30")
 # Interior previews, web-sized into assets/shop/inside/: our own Etsy listing images (etsy/printables/*/listing-images)
 # and, for the Amazon books, interior spreads Kiln exported from the print files (keyed by ASIN). (file stem, caption)
@@ -3149,6 +3160,8 @@ def _inside_dim(inside, stem):
         return (800, 600)
 
 SHOP_INSIDE = {
+    "B0HRTLMZ1M": [("january-month-pages", "January calendar and Goals & Priorities pages"),
+                   ("weekly-spread-dec28-2026-jan3-2027", "Weekly spread, Dec 28, 2026 to Jan 3, 2027")],
     "B0HPBDNS7F": [("monthly-calendar-goals-spread-p6-7", "January calendar and Goals & Priorities, pages 6-7"),
                    ("weekly-spread-p12-13", "Weekly spread, Jan 3 to 9, pages 12-13")],
     "B0HQ5TLDK3": [("habit-and-mood-tracker-spread-p6-7", "Habit tracker and mood tracker, pages 6-7"),
@@ -3288,7 +3301,7 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
-    # Shop facts changed 2026-11-16 (Level Up! classroom editions on Teachers Pay Teachers, live 2026-11-15).
+    # Shop facts changed 2026-11-16 (A5 blush planner featured on /shop; Level Up! classroom editions on Teachers Pay Teachers, live 2026-11-15).
     if SHOP_TPT and all(tpt_listing_url(e) for e in SHOP_TPT):
         return "2026-11-16"
     # Shop facts changed 2026-11-13 (The Holiday Planner Pages listing).
@@ -3370,7 +3383,8 @@ def build_shop():
                     '/assets/shop/soft-days-narrow-inserts-1800.webp 1800w"')
         return ""
     def card(img, alt, title, sub, blurb, details, href, btn, own, price, inside=None, *,
-             img_class="", dims=None, note="", templates=None, templates_label="Templates", card_id=""):
+             img_class="", dims=None, note="", templates=None, templates_label="Templates", card_id="",
+             also=None):
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
         attr = ' data-own-product' if own else ''
         ins = ""
@@ -3387,7 +3401,9 @@ def build_shop():
             else:
                 figs = "".join(f'<figure><img src="/assets/shop/inside/{inside}-{f}.jpg" alt="{E(title)}: {E(cap)}" width="{_inside_dim(inside, f)[0]}" height="{_inside_dim(inside, f)[1]}" loading="lazy" decoding="async"><figcaption>{E(cap)}</figcaption></figure>'
                                for f, cap in SHOP_INSIDE[inside])
-                grid = "inside-grid" + (" spreads" if inside in AMAZON_LIST_PRICES else "")
+                # Amazon ASIN interiors are two landscape page images and stack in one column,
+                # whether or not a list price is on the card. Etsy womens/mens keys stay 2-up.
+                grid = "inside-grid" + (" spreads" if inside.startswith("B0") else "")
                 lead = ""
             ins = f'<details class="shop-inside"><summary>See inside</summary>{lead}<div class="{grid}">{figs}</div></details>'
         if templates:
@@ -3408,11 +3424,18 @@ def build_shop():
             media = f'<div class="{cls}">{image}</div>'
             action = f'<p class="btn is-disabled" role="note">{E(btn)}</p>'
         note_html = f'<p class="release-gate">{E(note)}</p>' if note else ""
+        also_html = ""
+        if also:
+            also_html = (
+                f'<p class="muted small">{E(also["before"])}'
+                f'<a href="{E(own_amazon_link(also["url"]))}" data-own-product rel="noopener" target="_blank">'
+                f'{E(also["link_text"])}</a></p>'
+            )
         idattr = f' id="{E(card_id)}"' if card_id else ""
         return f"""<li class="shop-card"{idattr}>
   {media}
   <div class="shop-body">{note_html}<h3>{E(title)}</h3><p class="muted small">{E(sub)}</p>{price}<p>{E(blurb)}</p><ul class="small">{dl}</ul>
-  {ins}{action}</div></li>"""
+  {also_html}{ins}{action}</div></li>"""
     def amz_price(a):
         lp = AMAZON_LIST_PRICES.get(a)
         if not lp:
@@ -3421,7 +3444,8 @@ def build_shop():
     amz = "".join(card(books[a]["cover"], books[a]["cover_alt"], labels[a], books[a]["format"] + " · on Amazon",
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True,
                        amz_price(a), a if a in SHOP_INSIDE or a in SHOP_SAMPLES else None,
-                       dims=(books[a]["cover_w"], books[a]["cover_h"]) if books[a].get("cover_w") and books[a].get("cover_h") else None)
+                       dims=(books[a]["cover_w"], books[a]["cover_h"]) if books[a].get("cover_w") and books[a].get("cover_h") else None,
+                       also=SHOP_ALSO.get(a))
                   for a in SHOP_ORDER)
     def etsy_price_html(item):
         price = item.get("price", ETSY_PRICE[0])
