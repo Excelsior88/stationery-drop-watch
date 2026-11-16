@@ -3132,18 +3132,25 @@ SHOP_TPT = [
 # 2026-11-04 (buy box and format swatch; no strikethrough or deal shown). A None here shows "See price on Amazon".
 # A missing ASIN, or a None value, shows "See price on Amazon". B0HRTLMZ1M had no list
 # price on its Amazon page on 2026-11-16 (the page also said Currently unavailable).
+# B0HRTTCH4D is left off this map so the card says "See price on Amazon" (the Amazon
+# page showed $14.99 and In Stock on 2026-11-16; the owner asked not to record a price).
 AMAZON_LIST_PRICES = {"B0HPBDNS7F": "$19.99", "B0HQ5TLDK3": "$14.99", "B0HQ5X3C7D": "$16.99",
                       "B0HP9PXSR1": "$14.99"}
 SHOP_LABELS = {"B0HRTLMZ1M": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
-               "B0HP9PXSR1": "2027 Planner for Men", "B0HQW8273V": "Level Up! My 2027 Planner"}
-SHOP_ORDER = ("B0HRTLMZ1M", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HP9PXSR1", "B0HQW8273V")
-# Optional note under the detail bullets. The hardcover remains a linked note on the A5 card,
-# not a featured card of its own. Link text matches the owner-approved phrasing.
+               "B0HRTTCH4D": "2027 Planner for Men", "B0HQW8273V": "Level Up! My 2027 Planner"}
+SHOP_ORDER = ("B0HRTLMZ1M", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HRTTCH4D", "B0HQW8273V")
+# Optional note under the detail bullets. The 8.5x11 editions remain linked notes on
+# the A5 cards, not featured cards of their own. Link text matches the owner-approved phrasing.
 SHOP_ALSO = {
     "B0HRTLMZ1M": {
         "before": "Also comes in ",
         "link_text": "8.5x11 hardcover, Sunday start",
         "url": "https://www.amazon.com/dp/B0HPBDNS7F",
+    },
+    "B0HRTTCH4D": {
+        "before": "Also comes in ",
+        "link_text": "8.5x11 paperback, Sunday start",
+        "url": "https://www.amazon.com/dp/B0HP9PXSR1",
     },
 }
 ETSY_PRICE = ("$6.99", "20% off launch sale Oct 31 to Nov 30")
@@ -3161,6 +3168,8 @@ def _inside_dim(inside, stem):
 
 SHOP_INSIDE = {
     "B0HRTLMZ1M": [("january-month-pages", "January calendar and Goals & Priorities pages"),
+                   ("weekly-spread-dec28-2026-jan3-2027", "Weekly spread, Dec 28, 2026 to Jan 3, 2027")],
+    "B0HRTTCH4D": [("january-month-pages", "January calendar and Goals & Priorities pages"),
                    ("weekly-spread-dec28-2026-jan3-2027", "Weekly spread, Dec 28, 2026 to Jan 3, 2027")],
     "B0HPBDNS7F": [("monthly-calendar-goals-spread-p6-7", "January calendar and Goals & Priorities, pages 6-7"),
                    ("weekly-spread-p12-13", "Weekly spread, Jan 3 to 9, pages 12-13")],
@@ -3301,7 +3310,7 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
-    # Shop facts changed 2026-11-16 (A5 blush planner featured on /shop; Level Up! classroom editions on Teachers Pay Teachers, live 2026-11-15).
+    # Shop facts changed 2026-11-16 (A5 blush and men's A5 planners featured on /shop; Level Up! classroom editions on Teachers Pay Teachers, live 2026-11-15).
     if SHOP_TPT and all(tpt_listing_url(e) for e in SHOP_TPT):
         return "2026-11-16"
     # Shop facts changed 2026-11-13 (The Holiday Planner Pages listing).
