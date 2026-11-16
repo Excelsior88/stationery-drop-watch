@@ -3130,12 +3130,11 @@ SHOP_TPT = [
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
 # 2026-11-04 (buy box and format swatch; no strikethrough or deal shown). A None here shows "See price on Amazon".
-# A missing ASIN, or a None value, shows "See price on Amazon". B0HRTLMZ1M had no list
-# price on its Amazon page on 2026-11-16 (the page also said Currently unavailable).
-# B0HRTTCH4D is left off this map so the card says "See price on Amazon" (the Amazon
-# page showed $14.99 and In Stock on 2026-11-16; the owner asked not to record a price).
+# A missing ASIN, or a None value, shows "See price on Amazon".
+# B0HRTLMZ1M and B0HRTTCH4D list prices were $14.99 on their Amazon pages on 2026-11-16
+# (07:57 AM ET / America/Detroit; both In Stock). Owner asked to show $14.99 on both cards.
 AMAZON_LIST_PRICES = {"B0HPBDNS7F": "$19.99", "B0HQ5TLDK3": "$14.99", "B0HQ5X3C7D": "$16.99",
-                      "B0HP9PXSR1": "$14.99"}
+                      "B0HP9PXSR1": "$14.99", "B0HRTLMZ1M": "$14.99", "B0HRTTCH4D": "$14.99"}
 SHOP_LABELS = {"B0HRTLMZ1M": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
                "B0HRTTCH4D": "2027 Planner for Men", "B0HQW8273V": "Level Up! My 2027 Planner"}
 SHOP_ORDER = ("B0HRTLMZ1M", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HRTTCH4D", "B0HQW8273V")
