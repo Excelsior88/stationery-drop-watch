@@ -120,7 +120,9 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertNotIn("tag=", blush)
         self.assertIn("Paperback", blush)
         self.assertNotIn("Hardcover · on Amazon", blush)
-        self.assertIn("See price on Amazon", blush)
+        self.assertIn("<strong>$14.99</strong>", blush)
+        self.assertIn("List price, check current price on Amazon", blush)
+        self.assertNotIn("See price on Amazon", blush)
         self.assertNotIn("$19.99", blush)
         self.assertNotIn("Currently unavailable", blush)
         self.assertNotIn("In Stock", blush)
@@ -148,6 +150,42 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertEqual(amazon.count("https://www.amazon.com/dp/B0HPBDNS7F"), 1)
         self.assertIn('class="inside-grid spreads"', blush)
 
+    def test_a5_mens_planner_replaces_the_featured_paperback_card(self):
+        mens = card(self.shop, "2027 Planner for Men")
+        self.assertIn('href="https://www.amazon.com/dp/B0HRTTCH4D"', mens)
+        self.assertEqual(mens.count("https://www.amazon.com/dp/B0HRTTCH4D"), 2)
+        self.assertIn("data-own-product", mens)
+        self.assertNotIn("tag=", mens)
+        self.assertIn("Paperback", mens)
+        self.assertIn("<strong>$14.99</strong>", mens)
+        self.assertIn("List price, check current price on Amazon", mens)
+        self.assertNotIn("See price on Amazon", mens)
+        self.assertNotIn("Currently unavailable", mens)
+        self.assertNotIn("In Stock", mens)
+        self.assertIn("Monday start", mens)
+        self.assertIn("5.83 x 8.27 in (A5) paperback, 174 pages, color interior", mens)
+        self.assertIn("Charcoal, navy, forest green and rust design", mens)
+        self.assertIn("Dated Jan 1 to Dec 31, 2027", mens)
+        self.assertIn("/assets/books/B0HRTTCH4D.jpg", mens.split("<details", 1)[0])
+        self.assertNotIn("B0HRTTCH4D.jpg", mens.split("See inside", 1)[-1])
+        self.assertIn("/assets/shop/inside/B0HRTTCH4D-january-month-pages.jpg", mens)
+        self.assertIn("/assets/shop/inside/B0HRTTCH4D-weekly-spread-dec28-2026-jan3-2027.jpg", mens)
+        self.assertIn("January calendar and Goals &amp; Priorities pages", mens)
+        self.assertIn("Weekly spread, Dec 28, 2026 to Jan 3, 2027", mens)
+        # Caption does not call the January pages a spread.
+        january = mens[mens.find("january-month-pages"):mens.find("weekly-spread-dec28")]
+        self.assertNotIn("spread", january.lower())
+        self.assertIn("Also comes in ", mens)
+        self.assertIn(">8.5x11 paperback, Sunday start</a>", mens)
+        self.assertIn('href="https://www.amazon.com/dp/B0HP9PXSR1"', mens)
+        self.assertIn("data-own-product", mens[mens.find("Also comes in"):])
+        # The 8.5x11 paperback is no longer a featured Amazon card, only the note link.
+        amazon = self.shop.split("<h2>Printable PDFs on Etsy</h2>", 1)[0]
+        self.assertNotIn("/assets/books/B0HP9PXSR1.jpg", amazon)
+        self.assertNotIn("/assets/shop/inside/B0HP9PXSR1-", amazon)
+        self.assertEqual(amazon.count("https://www.amazon.com/dp/B0HP9PXSR1"), 1)
+        self.assertIn('class="inside-grid spreads"', mens)
+
     def test_hardcover_gift_pick_on_dotgrid_is_unchanged(self):
         # /shop no longer features the 8.5x11 hardcover; the existing dot-grid gift pick stays.
         self.assertNotIn("B0HRTLMZ1M", self.home)
@@ -155,6 +193,15 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertEqual(pick.get("pages"), ["dotgrid"])
         self.assertEqual(pick["format"], "Hardcover")
         self.assertIn("8.5 x 11 in hardcover, 172 pages", pick["details"])
+        self.assertFalse(pick.get("hidden"))
+
+    def test_mens_paperback_gift_pick_on_home_is_unchanged(self):
+        # /shop no longer features the 8.5x11 men's paperback; the existing homepage gift pick stays.
+        self.assertNotIn("B0HRTTCH4D", self.home)
+        pick = next(b for b in site.picks["books"] if b["id"] == "B0HP9PXSR1")
+        self.assertIsNone(pick.get("pages"))
+        self.assertEqual(pick["format"], "Paperback")
+        self.assertIn("8.5 x 11 in paperback", pick["details"])
         self.assertFalse(pick.get("hidden"))
 
     def test_existing_previews_are_unchanged(self):
@@ -165,8 +212,8 @@ class ShopSeeInsideTests(unittest.TestCase):
             "/assets/shop/inside/B0HQ5TLDK3-weekly-checkin-spread-p8-9.jpg",
             "/assets/shop/inside/B0HQ5X3C7D-genre-tracker-books-read-log-spread-p12-13.jpg",
             "/assets/shop/inside/B0HQ5X3C7D-book-review-spread-p24-25.jpg",
-            "/assets/shop/inside/B0HP9PXSR1-monthly-calendar-goals-spread-p6-7.jpg",
-            "/assets/shop/inside/B0HP9PXSR1-weekly-spread-p12-13.jpg",
+            "/assets/shop/inside/B0HRTTCH4D-january-month-pages.jpg",
+            "/assets/shop/inside/B0HRTTCH4D-weekly-spread-dec28-2026-jan3-2027.jpg",
             "/assets/shop/inside/womens-04-weekly-spread-dec27-jan2.jpg",
             "/assets/shop/inside/womens-05-monthly-calendar-january.jpg",
             "/assets/shop/inside/womens-06-habit-tracker-january.jpg",

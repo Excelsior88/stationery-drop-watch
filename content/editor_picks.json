@@ -21,6 +21,26 @@
       "source": "Amazon listing B0HP9PXSR1, fetched 2026-10-26"
     },
     {
+      "id": "B0HRTTCH4D",
+      "hidden": true,
+      "kicker": "Shop",
+      "pitch": "A compact A5 planner for 2027",
+      "title": "2027 Weekly Planner: Monday Start Week on Two Pages with Monthly Calendars, January to December, A5 Size",
+      "author": "Stationery Drop Watch",
+      "format": "Paperback",
+      "cover": "assets/books/B0HRTTCH4D.jpg",
+      "cover_alt": "2027 Weekly Planner cover: cream \"2027\" and \"WEEKLY PLANNER\" on charcoal inside a thin frame, with a rust rule and a plain slate-blue band at the bottom",
+      "blurb": "A clean, no-nonsense planner for 2027 in a compact A5 size (5.83 x 8.27 in), with a charcoal and navy cover and strong condensed type inside. Every week runs Monday to Sunday across two facing pages, with dot grid space for each day.",
+      "details": [
+        "Dated Jan 1 to Dec 31, 2027",
+        "Monday start",
+        "5.83 x 8.27 in (A5) paperback, 174 pages, color interior",
+        "Charcoal, navy, forest green and rust design"
+      ],
+      "url": "https://www.amazon.com/dp/B0HRTTCH4D",
+      "source": "Public Amazon listing B0HRTTCH4D (from a.co/d/07xJVIG7), read 2026-11-16, and Kiln finals in /workspace/mens-a5-kdp/final (no shop-handoff/mens-a5 folder existed; cover is mens-2027-weekly-planner-A5-front-cover-300dpi.png, resized to 1200px tall JPG; interiors are Kiln's 08-month-calendar-jan.png and 09-month-goals-jan.png composited the same way as the blush January pages, plus 12-weekly-spread-Dec28-2026-Jan3-2027.png). Price and availability are left off this card; the Amazon page showed In Stock at $14.99 at that check."
+    },
+    {
       "id": "B0HPBDNS7F",
       "pages": [
         "dotgrid"
