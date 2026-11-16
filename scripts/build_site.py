@@ -83,6 +83,11 @@ SECTIONS = {  # non-Hobonichi sections in nav/footer order; each has one page (t
 def g_sec(g):
     return g.get("section", "hobonichi")
 
+def hub_trail(g):
+    """Breadcrumb steps above a tracker group. Hobonichi groups sit under the Hobonichi tracker hub;
+    the other sections' trackers are top level, like Dot grid journals."""
+    return ((HOBO_TRACKER, "Hobonichi tracker"),) if g_sec(g) == "hobonichi" else ()
+
 def section_of(p):
     s = p.get("section") or CANON_SECTION.get(p.get("canonical"))
     if s:
@@ -231,7 +236,7 @@ def tracker_count_label():
     """Eyebrow count of restock trackers only (Hobonichi plus each section that has listings)."""
     n = len(NAV_TRACKERS)
     return f"{n} restock tracker" if n == 1 else f"{n} restock trackers"
-SHOP_NAME = "Our planners and journals"  # h1 of /shop; breadcrumb says "Planners and journals". The header link says Shop.
+SHOP_NAME = "Our planners and journals"  # h1 of /shop; the breadcrumb and header link both say Shop.
 # The workflow cron is "17,47 * * * *": two runs an hour. Every page says it the same way.
 CHECK_FREQ = "about every 30 minutes"
 N_HOBO = N_SEC["hobonichi"]   # Hobonichi shops we check
@@ -991,23 +996,21 @@ def restock_feed_item(c, extra=""):
   <span class="feed-body"><a href="{E(newest['url'])}" rel="noopener" target="_blank">{E(newest['label'])}</a> <span class="muted">at {E(newest['store'])}</span>
   {ex}<span class="feed-when">restocked {time_tag(newest['at'])}</span></span>{history}</li>"""
 
-def restock_feed(events, extra="", feed_id="restocks", limit=None, fold=False):
-    """Grouped restocks. `limit` is how many listings to show, not how many flips. In stock now is CSS-only.
-    `fold` adds a disclosure for sold-out rows. It stays open without JavaScript. Narrow screens
-    start it closed from app.js and show in-stock rows first. Desktop leaves the time order alone."""
+def restock_feed(events, extra="", feed_id="restocks", limit=None):
+    """Grouped restocks, newest first. `limit` is how many listings to show, not how many flips.
+    All shows every listing with its latest status; In stock now is CSS-only and hides the rest.
+    Without :has support (or without CSS) the controls stay hidden and every row shows."""
     groups = restock_groups(events)
     if limit is not None:
         groups = groups[:limit]
     fid = E(feed_id)
     items = "".join(restock_feed_item(g, extra) for g in groups)
-    fold_html = '<details class="feed-fold" open><summary>Show earlier restocks</summary></details>' if fold else ""
     return f"""<div class="restocks" id="{fid}">
   <div class="feed-controls" role="radiogroup" aria-label="Which restocks to show">
     <label><input type="radio" name="{fid}-view" class="restock-all" checked> All</label>
     <label><input type="radio" name="{fid}-view" class="restock-in"> In stock now</label>
   </div>
   <ol class="feed">{items}</ol>
-  {fold_html}
   <p class="feed-empty muted small">None of these are in stock now.</p>
 </div>"""
 
@@ -1159,7 +1162,7 @@ def build_index():
         sec = sec_of_url[c["url"]]
         return f'<a class="hub-tag" href="{href[sec]}">{E(short[sec])}</a>\n  '
     if recent:
-        feed_html = restock_feed(recent, hub_tag, feed_id="hub-restocks", limit=12, fold=True)
+        feed_html = restock_feed(recent, hub_tag, feed_id="hub-restocks", limit=12)
     else:
         start = tracking_start(prods)
         lead = "No restocks spotted yet." if not restocks else "No restocks in the last 14 days."
@@ -1288,8 +1291,8 @@ def build_about():
 <p class="lede">Limited planners sell out fast, and every shop only posts its own restocks. This site checks them all in one place.</p>
 {signup()}
 <section class="couple" aria-labelledby="couple-h">
-<h2 id="couple-h">The couple behind Drop Watch <span class="tag-soon">Coming soon</span></h2>
-<p>Drop Watch is run by a couple. He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together. Stationery Drop Watch is built in Hamtramck, Michigan. Our story and a look at the planners we use are coming soon.</p>
+<h2 id="couple-h">The couple behind Drop Watch</h2>
+<p>Drop Watch is run by a couple. He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together. Stationery Drop Watch is built in Hamtramck, Michigan.</p>
 </section>
 <h2>How it works</h2>
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
@@ -1631,7 +1634,7 @@ def build_group(g, oe):
     faq_html, faq_ld = tracker_good_to_know(g.get("guide_q", HOBO_NOTE_Q), g.get("guide", HOBO_NOTE))
     body = f"""
 <div class="product-page">
-{crumbs((g["slug"] + "/", g["short"]))}
+{crumbs(*hub_trail(g), (g["slug"] + "/", g["short"]))}
 <section class="hero{' hero-compact' if not ext or g.get('parent') else ''}">
   {eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), nshops(shops), f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}") if ext and not g.get("parent") else eyebrow(g.get('eyebrow', 'Hobonichi Techo 2027'), nshops(shops), f"checked {CHECK_FREQ}")}
   <h1>{E(g['h1'])}</h1>
@@ -1661,7 +1664,7 @@ def build_group(g, oe):
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: (l.get("canonical") or "~", l["store"])))]}
     title = group_seo_title(g)
-    return fname, page(fname, title, g["desc"].format(shops=shops), body, ld=(crumbs_ld((fname, g["short"])), items, faq_ld),
+    return fname, page(fname, title, g["desc"].format(shops=shops), body, ld=(crumbs_ld(*hub_trail(g), (fname, g["short"])), items, faq_ld),
                        og_image=g.get("og_image", OG_IMAGE), og_alt=g.get("og_alt", OG_ALT))
 
 def group_lastmod(g):
@@ -1943,7 +1946,7 @@ def build_design(d, oe):
              f'For every design, see the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a>.')
     body = f"""
 <div class="product-page">
-{crumbs((parent["slug"] + "/", parent["short"]), (fname, d["name"]))}
+{crumbs(*hub_trail(parent), (parent["slug"] + "/", parent["short"]), (fname, d["name"]))}
 <section class="hero hero-compact">
   {eyebrow(ey, nshops(shops), f"checked {CHECK_FREQ}")}
   <h1>{E(h1)}</h1>
@@ -1973,7 +1976,7 @@ def build_design(d, oe):
                  for i, l in enumerate(sorted(ls, key=lambda l: l["store"]))]}
     title = design_seo_title(d)
     desc = design_seo_desc(d, shops)
-    return fname, page(fname, title, desc, body, ld=(crumbs_ld((parent["slug"] + "/", parent["short"]), (fname, d["name"])), items, faq_ld),
+    return fname, page(fname, title, desc, body, ld=(crumbs_ld(*hub_trail(parent), (parent["slug"] + "/", parent["short"]), (fname, d["name"])), items, faq_ld),
                        og_image=parent.get("og_image", OG_IMAGE), og_alt=parent.get("og_alt", OG_ALT))
 
 def design_lastmod(d):
@@ -2069,7 +2072,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-15", "privacy.html": "2026-11-12"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-16", "privacy.html": "2026-11-12"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -3133,8 +3136,11 @@ SHOP_TPT = [
 # A missing ASIN, or a None value, shows "See price on Amazon".
 # B0HRTLMZ1M and B0HRTTCH4D list prices were $14.99 on their Amazon pages on 2026-11-16
 # (07:57 AM ET / America/Detroit; both In Stock). Owner asked to show $14.99 on both cards.
+# B0HQW8273V (Level Up! paperback) was $19.99 in the buy box and Paperback swatch on its Amazon page
+# on 2026-11-16 (11:48 AM ET). Owner approved showing it in the same format as the other cards.
 AMAZON_LIST_PRICES = {"B0HPBDNS7F": "$19.99", "B0HQ5TLDK3": "$14.99", "B0HQ5X3C7D": "$16.99",
-                      "B0HP9PXSR1": "$14.99", "B0HRTLMZ1M": "$14.99", "B0HRTTCH4D": "$14.99"}
+                      "B0HP9PXSR1": "$14.99", "B0HRTLMZ1M": "$14.99", "B0HRTTCH4D": "$14.99",
+                      "B0HQW8273V": "$19.99"}
 SHOP_LABELS = {"B0HRTLMZ1M": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
                "B0HRTTCH4D": "2027 Planner for Men", "B0HQW8273V": "Level Up! My 2027 Planner"}
 SHOP_ORDER = ("B0HRTLMZ1M", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HRTTCH4D", "B0HQW8273V")
@@ -3505,7 +3511,7 @@ def build_shop():
                  "for one teacher and their own students.")
     body = f"""
 <article class="prose shop shop-wide">
-{crumbs((fname, "Planners and journals"))}
+{crumbs((fname, "Shop"))}
 {eyebrow("Shop", "made by Stationery Drop Watch")}
 <h1>{SHOP_NAME}</h1>
 <p class="lede">{E(lede)}</p>
@@ -3518,7 +3524,7 @@ def build_shop():
 <p class="muted">{E(tpt_intro)}</p>
 <ul class="shop-list">{tpt}</ul>
 </article>"""
-    return fname, page(fname, title, desc, body, ld=(crumbs_ld((fname, "Planners and journals")),))
+    return fname, page(fname, title, desc, body, ld=(crumbs_ld((fname, "Shop")),))
 
 # Single-color marks. Paths are the Simple Icons glyphs (CC0). The circle stays the
 # existing cream, and the mark uses the rust already set on .follow-ico.

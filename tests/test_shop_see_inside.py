@@ -97,14 +97,14 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertIn('class="inside-grid samples inserts"', days)
         self.assertIn('class="inside-grid samples"', etsy)
 
-    def test_paperback_uses_the_plain_amazon_link_and_no_hardcoded_price(self):
+    def test_paperback_uses_the_plain_amazon_link_and_its_list_price(self):
         paper = card(self.shop, "Level Up! My 2027 Planner")
         self.assertIn('href="https://www.amazon.com/dp/B0HQW8273V"', paper)
         self.assertIn("data-own-product", paper)
         self.assertNotIn("tag=", paper)
         self.assertNotIn("a.co/d/02grz96c", paper)
-        self.assertIn("See price on Amazon", paper)
-        self.assertNotIn("$19.99", paper)
+        self.assertNotIn("See price on Amazon", paper)
+        self.assertIn("<strong>$19.99</strong> <span class=\"muted small\">List price, check current price on Amazon</span>", paper)
         self.assertNotIn("In Stock", paper)
         self.assertNotIn("B0nem0ther", paper)
         self.assertNotIn("Excelsior", paper)

@@ -1,7 +1,6 @@
 // Stationery Drop Watch: client-side table filtering. The check time is shown once per table (build_site.py).
 (function () {
   if (window.DropWatchTime) window.DropWatchTime.showLocalTimes(document);
-  document.querySelectorAll("details.feed-fold").forEach(d => { d.open = false; });
   const mast = document.querySelector(".masthead");
   const filterBar = document.querySelector("#filters");
   if (mast || filterBar) {
