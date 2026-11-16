@@ -358,7 +358,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     url = url_for(fname)
     title = seo_title(title)  # brand suffix only when the title still fits in a search result
     desc = seo_desc(desc)
-    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "hobonichi-january-start-vs-april-start/", "best-dot-grid-journals/", TN_GUIDE_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
+    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "hobonichi-january-start-vs-april-start/", "best-dot-grid-journals/", TN_GUIDE_SLUG + "/", GIFT_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
     # Hobonichi product pages sit under the tracker. The Techo vs Cousin vs Weeks guide
     # starts with hobonichi-techo-, but it is a guide, so only Guides is current.
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-")) and not guide_page
@@ -2082,7 +2082,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
     tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
-    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_PUBLISHED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), latest(tn_mod, CONTENT_LASTMOD)), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-12"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_PUBLISHED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), latest(tn_mod, CONTENT_LASTMOD)), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"])), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-12"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2142,7 +2142,8 @@ JAN_APR_PUBLISHED = "2026-11-12"  # owner-approved publication date
 DG_GUIDE_SLUG = "best-dot-grid-journals"
 HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), (JAN_APR_SLUG + "/", "January-start vs April-start"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
 GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared"),
-                        (TN_GUIDE_SLUG + "/", "Regular vs Passport vs Card Size")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
+                        (TN_GUIDE_SLUG + "/", "Regular vs Passport vs Card Size"),
+                        ("holiday-stationery-gift-guide-2026/", "Holiday gift guide 2026")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
 GUIDES_LASTMOD = "2026-10-29"
 DG_GUIDE_LASTMOD = "2026-11-04"  # last copy change on the dot grid guide
 GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin A5, Weeks and Weeks Mega in stock right now, checked about every 30 minutes, plus tips for catching a restock.",
@@ -2150,7 +2151,8 @@ GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin 
                 JAN_APR_SLUG + "/": "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1.",
                 "hobonichi-2027.html": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources.",
                 DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock.",
-                TN_GUIDE_SLUG + "/": "Leather cover and refill dimensions for Regular, Passport, and the limited Card Size 20th anniversary set, from TRAVELER'S COMPANY's own pages, plus which refills fit and which sizes we track."}  # last copy change on the guide pages (sitemap lastmod floor)
+                TN_GUIDE_SLUG + "/": "Leather cover and refill dimensions for Regular, Passport, and the limited Card Size 20th anniversary set, from TRAVELER'S COMPANY's own pages, plus which refills fit and which sizes we track.",
+                "holiday-stationery-gift-guide-2026/": "Hobonichi, MIDORI MD, Traveler's notebook, Leuchtturm1917 and Archer and Olive gifts, each with live stock from our last check, plus planners and printables we make."}  # last copy change on the guide pages (sitemap lastmod floor)
 H_SRC = {  # official Hobonichi pages used for product facts
     "orig": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6 (2027), specifications"),
     "cousin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_jan_en/", "English Cousin Book A5 (2027), specifications"),
@@ -2962,6 +2964,279 @@ def build_tn_sizes():
                        og_type="article", og_image=OG_TRAVELERS, og_alt=OG_TRAVELERS_ALT)
 
 
+# --- Holiday gift guide ------------------------------------------------------------------------
+# Every availability line on this page is rendered from data/stock.json at build time (each checker
+# run rebuilds it), the same way the Where to Buy guide counts shops. No shop prices: the checker
+# doesn't record them. Our own Amazon books show list price only (AMAZON_LIST_PRICES), the way /shop
+# does. Printables and our own books are not in stock.json, so they get no availability claim.
+GIFT_SLUG = "holiday-stationery-gift-guide-2026"
+# key -> (canonical, label filter or None, live page, short name). The live page is the item's design
+# page when one exists, otherwise its tracker page.
+GIFT_PICKS = {
+    "moomin": ("weeks-moomin-table", None, "hobonichi-weeks-2027/moomin-at-the-table/", "Weeks, Moomin: At the Table (English)"),
+    "whitecat": ("weeks-white-cat", None, "hobonichi-weeks-2027/white-cat-wallpaper/", "Weeks, White Cat Wallpaper (English)"),
+    "candy": ("weeks-mega-candy-dream", None, "hobonichi-weeks-mega-2027/candy-dream/", "Weeks Mega, Bow & Tie: Candy Dream (English)"),
+    "cousin": ("cousin-a5-en", None, "hobonichi-techo-2027-cousin-a5/", "English Cousin A5 book"),
+    "original": ("original-a6-en", None, "hobonichi-techo-2027-original-a6/", "English Original A6 book"),
+    "cathouse": ("cover-a6-white-cat-house", None, "hobonichi-techo-2027-covers/white-cat-house/", "A6 cover, White Cat House"),
+    "myyard": ("cover-a6-moomin", None, "hobonichi-techo-2027-covers/moomin-my-yard/", "A6 cover, Moomin: My Yard"),
+    "mddiary": ("md-diary-2027-a5", None, "midori-md-limited-edition/md-diary-2027-a5/", "MD Notebook Diary 2027, A5"),
+    "md1day": ("md-diary-1day-2027-a5", None, "midori-md-limited-edition/md-diary-1-day-1-page-2027-a5/", "MD Notebook Diary 1 Day 1 Page 2027, A5"),
+    "mdsticker": ("md-diary-sticker-2027-l", None, "midori-md-limited-edition/", "MD Diary Stickers 2027, Large"),
+    "tnblack": ("tn-regular-black", None, "travelers-company-limited-edition/regular-black/", "Traveler's notebook Regular, Black"),
+    "tnsticker": ("tn-2027-sticker-set", None, "travelers-company-limited-edition/", "Traveler's 2027 Customized Sticker Set"),
+    "tnfolder": ("tn-2027-clear-folder-regular", None, "travelers-company-limited-edition/", "Traveler's 2027 Clear Folder, Regular size"),
+    "lta5": ("lt-hardcover-a5", None, "archer-and-olive-dot-grid-journal/leuchtturm1917-hardcover-a5-dotted/", "Leuchtturm1917 Hardcover Medium (A5), dotted"),
+    "lted2": ("lt-bullet-journal-ed2", None, "archer-and-olive-dot-grid-journal/leuchtturm1917-edition-2/", "Leuchtturm1917 Bullet Journal Edition 2"),
+    "aonavy": ("ao-storybook-navy", "A5 ", "archer-and-olive-dot-grid-journal/archer-and-olive-storybook-navy/", "Archer and Olive Storybook in Navy, A5"),
+    "aobeige": ("ao-songbird-beige", "A5 ", "archer-and-olive-dot-grid-journal/archer-and-olive-songbird-beige/", "Archer and Olive Songbird in Beige, A5"),
+}
+GIFT_SRC = {  # (url, title, publisher)
+    "h_moomin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moomintable/", "Moomin: At the Table, Weeks (ENG edition)", "Hobonichi (official)"),
+    "h_whitecat": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_kitagishi/", "Yumi Kitagishi: White Cat Wallpaper, Weeks", "Hobonichi (official)"),
+    "h_candy": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_m_tiecandy/", "Bow & Tie: Candy Dream, Weeks Mega", "Hobonichi (official)"),
+    "h_cousin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_jan_en/", "English Cousin Book A5", "Hobonichi (official)"),
+    "h_original": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6", "Hobonichi (official)"),
+    "h_cathouse": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_kitagishi/", "Yumi Kitagishi: White Cat House, A6 cover", "Hobonichi (official)"),
+    "h_myyard": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_moomin/", "Moomin: My Yard, A6 cover", "Hobonichi (official)"),
+    "pm_moomin": ("https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-moomin-at-the-table-english", "Hobonichi Techo 2027 Weeks Planner, Moomin: At the Table, English", "The Paper Mouse"),
+    "as_whitecat": ("https://www.atlasstationers.com/products/hobonichi-techo-weeks-yumi-kitagishi-white-cat-wallpaper", "Hobonichi Techo Weeks, Yumi Kitagishi: White Cat Wallpaper", "Atlas Stationers"),
+    "as_myyard": ("https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-moomin-my-yard-pale-mint", "Hobonichi Techo A6 Original cover, Moomin: My Yard (Pale Mint)", "Atlas Stationers"),
+    "md_diary": ("https://md-product-usa.com/products/md-notebook-diary-2027", "MD Notebook Diary 2027", "MD PRODUCT USA (official)"),
+    "md_1day": ("https://md-product-usa.com/products/md-notebook-diary-1day1page-2027", "MD Notebook Diary 1 Day 1 Page 2027", "MD PRODUCT USA (official)"),
+    "md_sticker": ("https://md-product-usa.com/products/md-diary-sticker", "MD Diary Stickers 2027", "MD PRODUCT USA (official)"),
+    "sp_tn": ("https://simplepaper.co/products/travelers-notebook-regular-black", "Traveler's notebook Regular, Black", "Simple Paper"),
+    "tc_sticker": ("https://shop.travelerscompanyusa.com/products/customized-sticker-set-for-diary-2027", "Customized Sticker Set for Diary 2027", "Traveler's Company USA (official)"),
+    "tc_folder": ("https://shop.travelerscompanyusa.com/products/clear-folder-2027-regular-size", "Clear Folder 2027 (Regular Size)", "Traveler's Company USA (official)"),
+    "lt_hc": ("https://www.leuchtturm1917.us/products/hardcover-notebook", "Hardcover Notebook", "Leuchtturm1917 US (official)"),
+    "lt_ed2": ("https://www.leuchtturm1917.us/products/bullet-journal-edition-2", "Bullet Journal Edition 2", "Leuchtturm1917 US (official)"),
+    "pm_lt": ("https://www.thepapermouse.com/products/leuchtturm1917-hardcover-dot-grid-a5-notebook-black", "Leuchtturm1917 Hardcover Dot Grid A5 Notebook, Black", "The Paper Mouse"),
+    "ao_navy": ("https://www.archerandolive.com/products/storybook-in-navy-books", "Storybook in Navy", "Archer and Olive (official)"),
+    "ao_beige": ("https://www.archerandolive.com/products/songbird-in-beige-notebook", "Songbird in Beige", "Archer and Olive (official)"),
+    "shop": ("shop/", "Our planners and journals", "Stationery Drop Watch"),
+}
+
+def gift_listings(key):
+    canon, has, _, _ = GIFT_PICKS[key]
+    return [p for p in stock["products"] if p.get("canonical") == canon and (not has or has in p["label"])]
+
+def gift_status(key):
+    """(badge class, badge text, sentence) for one pick, from this build's stock.json. Never a fixed claim."""
+    ls = gift_listings(key)
+    if not ls:
+        return None
+    checked = [l for l in ls if l["status"] != "unknown"]
+    if not checked:
+        return ("unknown", STATUS["unknown"], "We couldn't check it on our last run.")
+    shops = sorted({l["store_id"] for l in checked})
+    buy = [l for l in checked if l["status"] in BUYABLE]
+    missed = len({l["store_id"] for l in ls} - set(shops))
+    tail = f" {nshops(missed)} couldn't be checked this run." if missed else ""
+    if len(shops) == 1:  # one shop (the maker's own): count the versions we track there
+        shop = checked[0]["store"]
+        if buy:
+            cls = "in_stock" if any(l["status"] == "in_stock" for l in buy) else "preorder"
+            return (cls, STATUS[cls],
+                    f"<strong>{len(buy)} of {nshops(len(checked), 'version')}</strong> we track in stock or on preorder at {E(shop)}." + tail)
+        if all(l["status"] == "sold_out" for l in checked):
+            return ("sold_out", STATUS["sold_out"], f"Sold out at {E(shop)}, the one shop we track for it." + tail)
+        return ("coming_soon", STATUS["coming_soon"], f"Not in stock or on preorder at {E(shop)}, the one shop we track for it." + tail)
+    bshops = _buy_shops(buy)
+    if bshops:
+        named = f" ({E(_names(bshops))})" if len(bshops) <= 3 else ""
+        cls = "in_stock" if any(l["status"] == "in_stock" for l in buy) else "preorder"
+        return (cls, STATUS[cls],
+                f"In stock or on preorder at <strong>{len(bshops)} of {len(shops)}</strong> shops we track{named}." + tail)
+    if all(l["status"] == "sold_out" for l in checked):
+        return ("sold_out", STATUS["sold_out"], f"Sold out at all {len(shops)} shops we track." + tail)
+    return ("coming_soon", STATUS["coming_soon"], f"Not in stock or on preorder at any of the {len(shops)} shops we track." + tail)
+
+def gift_stock_line(key, live_text=None):
+    """One live line under a pick: badge, shop count, link to its restock page, exact Amazon links if any."""
+    _, _, live, name = GIFT_PICKS[key]
+    st = gift_status(key)
+    link = f'<a href="{live}">{E(live_text or "Live stock")}</a>'
+    if not st:  # no longer tracked: no availability claim at all
+        return f'<p class="small">{link}</p>'
+    cls, badge, text = st
+    az = _exact_amazon(gift_listings(key))
+    az_html = (" · Also on Amazon (affiliate): " + ", ".join(
+        f'<a class="az" href="https://www.amazon.com/dp/{E(a)}" target="_blank">{E(n)}</a>' for a, n in az.items())) if az else ""
+    return (f'<p class="small"><span class="badge {cls}">{E(badge)}</span> At our last check: {text} '
+            f'{link}{az_html}</p>')
+
+def gift_own(asin, label):
+    """Our own Amazon book: plain link (data-own-product), list price only, no availability claim."""
+    price = AMAZON_LIST_PRICES.get(asin)
+    p = f' <strong>{E(price)}</strong> <span class="muted small">List price, check current price on Amazon</span>' if price else ""
+    return f'<a href="https://www.amazon.com/dp/{E(asin)}" data-own-product rel="noopener" target="_blank">{E(label)}</a>{p}'
+
+def build_gift_guide():
+    fname = GIFT_SLUG + "/"
+    title = "Stationery gifts that are actually in stock: holiday gift guide 2026"
+    desc = ("Planner and journal gifts you can still buy: Hobonichi Weeks, MIDORI MD diaries, Traveler's notebooks, "
+            "Leuchtturm1917 and more, with live stock.")
+    missing = [k for k in GIFT_PICKS if not gift_listings(k)]
+    if missing:
+        print("gift guide: no tracked listings for", ", ".join(missing), "(rendered with no availability claim)")
+    def s(*keys):
+        return '<span class="small">' + "".join(f'<a href="#src-{k}">[{list(GIFT_SRC).index(k) + 1}]</a>' for k in keys) + "</span>"
+    L = gift_stock_line
+    asof = time_tag(stock["run_finished"])
+    glance = []
+    for k, (_, _, live, name) in GIFT_PICKS.items():
+        st = gift_status(k)
+        cell = (f'<span class="badge {st[0]}">{E(st[1])}</span> {st[2]}' if st else '<span class="muted">Not tracked now</span>')
+        glance.append(f'<tr><td><a href="{live}">{E(name)}</a></td><td>{cell}</td></tr>')
+    faq = [
+        ("Will these still be in stock when I click?",
+         f"Not guaranteed. The stock lines on this page come from our last check, and each pick links to its restock page, which shows every shop we track and updates {CHECK_FREQ}. "
+         "If something sells out, sign up for restock emails and we'll tell you when it comes back."),
+        ("Which Weeks needs a cover?",
+         "None of them. Weeks books have the design on the book itself, so a cover is optional. The Original A6 and Cousin A5 books are sold without a cover."),
+        ("Are the Amazon links affiliate links?",
+         "Amazon links to products we don't make are affiliate links. " + AMAZON_DISCLOSURE +
+         " Links to shops we track, and to our own planners and journals, are plain links."),
+        ("Is the English Moomin Weeks the same as the Japanese one?",
+         "No. Hobonichi says the special specifications are for the Japanese edition only, and The Paper Mouse notes the English version doesn't include the special illustrations of the Japanese version."),
+        ("Why are there no prices?",
+         "Prices change and differ from shop to shop, and our checker doesn't record them. Check the current price at the shop. For our own books we show Amazon's list price; check the current price on Amazon."),
+    ]
+    faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
+    src_items = "".join(f'<li id="src-{k}"><a href="{u}"{"" if u == "shop/" else " rel=\"noopener\" target=\"_blank\""}>{E(t)}</a>, {E(b)}.</li>'
+                        for k, (u, t, b) in GIFT_SRC.items())
+    src_items += f'<li id="src-stock"><a href="data/stock.json">Live stock data</a>, Stationery Drop Watch, last check {asof}.</li>'
+    printables = [e for e in etsy_listings() if e.get("id") == "holiday-planner"]
+    hp = printables[0] if printables else None
+    hp_html = (f'<li><strong>The Holiday Planner Pages, our printable.</strong> Ten undated pages in three sizes (Narrow Weekly 85 × 175 mm, Pocket A6 95 × 138 mm, Standard A5 138 × 198 mm), '
+               f'including a Gift Tracker, Holiday Budget, Card Mailing List and December Countdown. A digital download for personal use. '
+               f'<a href="{E(etsy_listing_url(hp))}" rel="noopener" target="_blank">See it on Etsy</a> {s("shop")}</li>') if hp else ""
+    levelup = next((e for e in etsy_listings() if e.get("inside") == "levelup-etsy"), None)
+    lu_etsy = f' · <a href="{E(etsy_listing_url(levelup))}" rel="noopener" target="_blank">printable on Etsy</a>' if levelup else ""
+    body = f"""
+<article class="prose guide vs-page">
+{crumbs(("guides/", "Guides"), (fname, "Holiday gift guide"))}
+{eyebrow("Guide", "Gifts", guide_updated(build_gift_guide))}
+<h1>Stationery gifts that are actually in stock</h1>
+<p class="lede">Planner gift lists go stale fast in the holiday rush. This one is built from the same checks as our trackers: every stock line below is from our last check, {asof}, and each pick links to its live restock page so you can see which shops have it right now. Specs come from the maker's or the shop's own product page.</p>
+{signup()}
+
+<h2>The short version</h2>
+<ul>
+  <li><strong>For a Hobonichi fan:</strong> a 2027 Weeks with the design already on the cover, so there's nothing else to buy: <a href="#hobonichi">Moomin: At the Table or White Cat Wallpaper</a>.</li>
+  <li><strong>For someone who writes a lot:</strong> Weeks Mega, Bow &amp; Tie: Candy Dream. Same slim size as Weeks, with 219 grid memo pages in the English edition. {s("h_candy")}</li>
+  <li><strong>For a daily journaler:</strong> the English Cousin A5 or Original A6 book, plus an A6 cover if they want the Original.</li>
+  <li><strong>For someone new to planners:</strong> the <a href="#new-to-planners">MIDORI MD Notebook Diary 2027 in A5</a>, or one of our own 2027 planners.</li>
+  <li><strong>For a traveler:</strong> a <a href="#traveler">Traveler's notebook Regular size in Black</a>, or the 2027 sticker set or clear folder if they already own one.</li>
+  <li><strong>For a dot grid journaler:</strong> a <a href="#dot-grid">Leuchtturm1917 Hardcover Medium (A5) dotted, or an Archer and Olive A5</a>.</li>
+  <li><strong>Small or last-minute:</strong> <a href="#small-gifts">MD Diary Stickers 2027 (Large), the Traveler's 2027 Clear Folder, or our printable holiday pages</a>, which download instantly.</li>
+</ul>
+
+<h2>Every pick at our last check</h2>
+<p class="muted small">From our last check, {asof}. Each row links to its live restock page. We don't show shop prices: they change and differ by shop, so check the current price at the shop.</p>
+<div class="table-wrap"><table class="stock">
+<thead><tr><th>Gift</th><th>Stock at our last check</th></tr></thead>
+<tbody>{"".join(glance)}</tbody></table></div>
+
+<h2 id="hobonichi">For the Hobonichi fan</h2>
+<p>Weeks is the easiest Hobonichi gift because the cover is part of the book. Hobonichi's specs for the 2027 English Weeks books below: 188 × 94 × 11 mm (7.4 × 3.7 × 0.4 in), about 140 g, 240 pages, Tomoe River paper, January start, Monday start. {s("h_moomin", "h_whitecat")}</p>
+<h3>Weeks, Moomin: At the Table (English)</h3>
+<p>The cover shows a scene from <em>Moominsummer Madness</em>, with Emma the stage rat appearing before the Moomin family around the dinner table, and Little My in a sewing basket on the back. Hobonichi says the special specifications are for the Japanese edition only, and the English edition has the same specifications as the standard Weeks. The Paper Mouse adds that the English version does not include the special illustrations found in the Japanese version. {s("h_moomin", "pm_moomin")}</p>
+{L("moomin")}
+<h3>Weeks, Yumi Kitagishi: White Cat Wallpaper (English)</h3>
+<p>A wallpaper-style pattern of the white cat and other animals, with small flowers and ribbons stamped in gold foil along the spine, in Atlas Stationers' description. Hobonichi sells it in English or Japanese. {s("h_whitecat", "as_whitecat")}</p>
+{L("whitecat")}
+<h3>Weeks Mega, Bow &amp; Tie: Candy Dream (English), for someone who fills every page</h3>
+<p>Candies woven in necktie fabric. Hobonichi lists the Mega at 188 × 94 × 16 mm (7.4 × 3.7 × 0.6 in), about 182 g, 384 pages, and says it has about three times the grid memo pages of the standard Weeks: 219 in the English edition. {s("h_candy")}</p>
+{L("candy")}
+<h3>English Cousin A5 book, for the most room</h3>
+<p>One page per day, 544 pages, 210 × 148 × 18 mm (8.3 × 5.8 × 0.7 in), about 445 g, Tomoe River paper, thread-stitched so it opens flat. It's the book only; Hobonichi lists Cousin (A5) covers as the compatible covers. {s("h_cousin")}</p>
+{L("cousin")}
+<h3>English Original A6 book plus a cover, for a page a day they can carry</h3>
+<p>The book is 148 × 105 × 15 mm (5.8 × 4.1 × 0.6 in), about 195 g, 464 pages, with English Daily Quotes and a 3.7 mm grid. It's the book only, so pair it with an A6 cover. {s("h_original")}</p>
+{L("original")}
+<h3>Two A6 covers</h3>
+<p>Both list the Original A6 among compatible books on Hobonichi's page.</p>
+<p><strong>Yumi Kitagishi: White Cat House.</strong> A dollhouse-themed illustration printed on polyester; cover size 165 × 244 × 3 mm (excluding pen holders), about 100 g; butterfly-stopper pen holders double as a clasp. {s("h_cathouse")}</p>
+{L("cathouse")}
+<p><strong>Moomin: My Yard (Pale Mint).</strong> Navy embroidery on pale mint cotton showing Moominmamma asleep in the garden she painted on the lighthouse wall, with the line "We've time for that tomorrow." stitched in pink; cotton inside and out. {s("h_myyard", "as_myyard")}</p>
+{L("myyard")}
+<p>Not sure which book suits them? See <a href="{VS_SLUG}/">Techo vs Cousin vs Weeks</a>. If their year starts in spring, see <a href="{JAN_APR_SLUG}/">January-start vs April-start</a>.</p>
+
+<h2 id="new-to-planners">For someone new to planners</h2>
+<h3>MIDORI MD Notebook Diary 2027, A5</h3>
+<p>A thin dated diary: 2 yearly calendar pages, 28 monthly schedule pages (December 2026 to January 2028), 113 lined memo pages (7 mm) and 32 blank pages, 175 pages in all. A5 is 210 × 148 × 10 mm (8.3 × 5.8 × 0.4 in), 268 g, MD PAPER at 80 g/m², thread-stitched, with a glassine outer cover and index and bookplate stickers. MD PRODUCT says the lined pages can be split into eight sections so each spread covers a week. {s("md_diary")}</p>
+{L("mddiary")}
+<h3>MD Notebook Diary 1 Day 1 Page 2027, A5, for a page every day</h3>
+<p>385 undated free pages (you write the date), a vertical schedule from 8:00 AM to midnight on the left page, an open right page, a PVC cover meant to be used as is, and 12 numbered plus 12 blank index stickers. A5 is 216 × 157 × 23 mm and 587 g. MD Notebook Covers do not fit it. {s("md_1day")}</p>
+{L("md1day")}
+<h3>Our own 2027 planners</h3>
+<p>If they'd like the pages already drawn. Both come in a compact A5 paperback (5.83 × 8.27 in, 174 pages, Monday start, dated January 1 to December 31, 2027), and each also comes in an 8.5 × 11 Sunday-start edition. These are planners we make. Links to our own books are plain Amazon links, not affiliate links. {s("shop")}</p>
+<ul>
+  <li>2027 Planner, Blush: {gift_own("B0HRTLMZ1M", "A5 paperback")} · {gift_own("B0HPBDNS7F", "8.5 × 11 hardcover")}</li>
+  <li>2027 Planner for Men: {gift_own("B0HRTTCH4D", "A5 paperback")} · {gift_own("B0HP9PXSR1", "8.5 × 11 paperback")}</li>
+</ul>
+<p class="muted small">Our own books aren't in our stock checks, so we don't make a stock claim for them. Check availability and delivery dates on Amazon.</p>
+
+<h2 id="traveler">For the traveler</h2>
+<h3>Traveler's notebook Regular size, Black</h3>
+<p>Simple Paper describes the Regular notebook as similar to A5 but slightly slimmer, with room for maps, tickets and A4 paper folded in three. Our <a href="{TN_GUIDE_SLUG}/">size guide</a> has the maker's cover and refill dimensions. {s("sp_tn")}</p>
+{L("tnblack")}
+<p>Other colors are on the <a href="{TN_SLUG}/">Traveler's Company tracker</a>.</p>
+<h3>If they already have one: the 2027 add-ons</h3>
+<p><strong>Customized Sticker Set for Diary 2027</strong> (No. 84810006): six sheets of customization, dry transfer, index, schedule, clear round and film pocket stickers; PET and paper; H 8.3" × W 4.3"; made in Japan. {s("tc_sticker")}</p>
+{L("tnsticker", "Traveler's Company tracker")}
+<p><strong>Clear Folder 2027, Regular size</strong> (No. 14506006): a PP folder for A4 paper folded in thirds, postcards and other papers, with a foil-stamped 2027 design; H 8.4" × W 4.3" × D 0.04"; made in Japan. {s("tc_folder")}</p>
+{L("tnfolder", "Traveler's Company tracker")}
+
+<h2 id="dot-grid">For the dot grid journaler</h2>
+<h3>Leuchtturm1917 Hardcover Medium (A5), dotted</h3>
+<p>251 numbered pages of 80 gsm paper, 5.7 × 8.3 in, a blank table of contents, two page markers, a gusseted pocket and an elastic band. {s("lt_hc", "pm_lt")}</p>
+{L("lta5")}
+<h3>Leuchtturm1917 Bullet Journal Edition 2, for heavier paper</h3>
+<p>Medium (A5), 5.75 × 8.25 in, hardcover, dotted, 206 numbered pages, 120 gsm paper. {s("lt_ed2")}</p>
+{L("lted2")}
+<h3>Archer and Olive, for a decorated cover</h3>
+<p><strong>Storybook in Navy:</strong> vegan leather with gold detailing; the A5 has 192 pages of 160 gsm white dot grid paper, and also comes in kraft and ivory dot grid. {s("ao_navy")}</p>
+{L("aonavy")}
+<p><strong>Songbird in Beige:</strong> vegan leather, 160 gsm paper, lay-flat binding; the A5 has 192 pages. {s("ao_beige")}</p>
+{L("aobeige")}
+<p>More options and paper weights: <a href="{DG_GUIDE_SLUG}/">Best dot grid journals compared</a>.</p>
+
+<h2 id="small-gifts">Small gifts and stocking stuffers</h2>
+<ul>
+  <li><strong>MD Diary Stickers 2027 [Dated Monthly], Large.</strong> 16 stickers (14 monthly, December 2026 to January 2028, plus 2 yearly), 200 × 138 mm, for A5 and A4 Variant MD Notebooks. They turn a plain notebook into a dated diary and can't be removed once applied. {s("md_sticker")}{L("mdsticker", "MIDORI MD tracker")}</li>
+  <li><strong>Traveler's notebook 2027 Clear Folder, Regular size.</strong> <a href="#traveler">See above</a>.</li>
+  {hp_html}
+  <li><strong>Our other printables:</strong> 2027 printable planners, the Level Up! kids printable and more are on <a href="shop/">our shop page</a>.</li>
+  <li><strong>Undated journals we make:</strong> the Habit &amp; Mood Tracker Journal (6 × 9 in, 166 pages) and the Reading Journal (7 × 10 in, 152 pages, 100 review pages). Plain Amazon links: {gift_own("B0HQ5TLDK3", "Habit & Mood Tracker Journal")} · {gift_own("B0HQ5X3C7D", "Reading Journal")}</li>
+</ul>
+
+<h2>For a child aged 7 to 11</h2>
+<p><strong>Level Up! My 2027 Planner,</strong> our kids planner that plays like a video game, with a Reading Quest Log, Trophy Room and Coin Bank: 168 pages, 8.5 × 11 in, January to December 2027, Monday start. Plain links: {gift_own("B0HQW8273V", "paperback on Amazon")}{lu_etsy} {s("shop")}</p>
+
+<h2>How we keep this current</h2>
+<p>Every stock line on this page is rebuilt from our live data each time our checker runs, {CHECK_FREQ}, so a pick that sells out shows as sold out here too. The specs were checked against each pick's maker or shop page. Our own books and printables aren't part of the stock checks, so we don't make a stock claim for them. Amazon links are an extra option; our trackers don't check Amazon, so Amazon availability for products we don't make isn't covered here. <a href="#alerts">Sign up above</a> for free restock emails. You can unsubscribe anytime.</p>
+
+<section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
+
+<h2>Sources</h2>
+<ol class="sources">{src_items}</ol>
+{related_block(fname)}
+</article>"""
+    upd = json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"]
+    art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
+           "datePublished": upd, "dateModified": upd, "url": url_for(fname), "image": OG_IMAGE,
+           "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
+           "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
+    doc = page(fname, title + TITLE_SUFFIX, desc, body,
+               ld=(crumbs_ld(("guides/", "Guides"), (fname, "Holiday gift guide")), art, faq_ld), og_type="article")
+    check_none_claim(fname, doc)
+    return fname, doc
+
+
 def build_guides_index():
     fname = "guides/"
     items = "".join(f'<li><a href="{h}"><strong>{E(t)}</strong></a><br><span class="muted">{E(GUIDE_BLURBS[h])}</span></li>' for h, t in GUIDES)
@@ -2978,7 +3253,7 @@ def build_guides_index():
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": t, "url": url_for(h)} for i, (h, t) in enumerate(GUIDES)]}
     return fname, page(fname, "Stationery buying guides",
-                       "Guides from Stationery Drop Watch: where to buy Hobonichi 2027, Techo vs Cousin vs Weeks, the launch calendar, dot grid journals, and Traveler's sizes.",
+                       "Guides from Stationery Drop Watch: where to buy Hobonichi 2027, Techo vs Cousin vs Weeks, the launch calendar, dot grid journals, Traveler's sizes, and a holiday gift guide.",
                        body, ld=(crumbs_ld((fname, "Guides")), lst))
 
 # Soft Days listing confirmed by the owner on 2026-11-06.
@@ -3690,7 +3965,7 @@ def main():
         check_amz_doc(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_january_april, build_dotgrid_guide, build_tn_sizes, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):
+    for build in (build_where_to_buy, build_vs, build_january_april, build_dotgrid_guide, build_tn_sizes, build_gift_guide, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)

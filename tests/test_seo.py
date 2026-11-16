@@ -132,7 +132,7 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 81)  # 77, plus 4 HON Sheep and Weeks design pages
+        self.assertEqual(len(mods), 82)  # 77, plus 4 HON Sheep and Weeks design pages, plus the holiday gift guide
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):
