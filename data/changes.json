@@ -1117,5 +1117,77 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moomintable/",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-16T17:21:48+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive",
+  "label": "Cozy Critters · B5 dot grid · preorder",
+  "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293638811",
+  "from": "preorder",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-16T17:21:53+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive",
+  "label": "Cozy Critters · 8x8 dot grid · preorder",
+  "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293671579",
+  "from": "preorder",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-16T17:21:58+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive",
+  "label": "Cozy Critters · A5 dot grid · preorder",
+  "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293704347",
+  "from": "preorder",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-16T17:22:03+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive",
+  "label": "Cozy Critters · TN dot grid · preorder",
+  "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293802651",
+  "from": "preorder",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-16T17:22:08+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive",
+  "label": "Cozy Critters · B6 dot grid · preorder",
+  "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293835419",
+  "from": "preorder",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-16T17:22:14+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive",
+  "label": "Cozy Critters · pocket dot grid · preorder",
+  "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=50155293868187",
+  "from": "preorder",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-16T17:22:39+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive",
+  "label": "Stag · B6 dot grid · preorder",
+  "url": "https://www.archerandolive.com/products/stag-notebook?variant=50155013832859",
+  "from": "preorder",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-16T17:22:55+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive",
+  "label": "Winter Train · 8x8 dot grid · preorder",
+  "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=50155223908507",
+  "from": "preorder",
+  "to": "sold_out"
  }
 ]
