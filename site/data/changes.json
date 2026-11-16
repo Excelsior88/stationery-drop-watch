@@ -1198,5 +1198,15 @@
   "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-mina-perhonen-felice-blue",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-16T22:19:46+00:00",
+  "store_id": "simplepaper",
+  "store": "Simple Paper",
+  "label": "Traveler's notebook Regular size · Olive",
+  "url": "https://simplepaper.co/products/travelers-notebook-regular-olive",
+  "section": "travelers",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
