@@ -532,3 +532,8 @@ table.stock.compare thead th{vertical-align:top}
 .guide-list a:hover{color:var(--accent);background:none}
 .follow-card,.shop-card{border-radius:14px;box-shadow:0 2px 0 var(--line),0 12px 30px -24px rgba(60,40,20,.35)}
 .faq .faq-item{padding:12px 0}
+
+/* Gift guide sources: two columns on wide screens */
+@media (min-width:760px){.sources.two-col{columns:2;column-gap:2.5rem}.sources.two-col li{break-inside:avoid;margin:.25em 0;font-size:.86rem}}
+/* Gift guide table on phones: name on its own line, stock and price side by side below it */
+@media (max-width:600px){table.gift-table{table-layout:auto;font-size:.86rem}.gift-table .small{font-size:.8rem}.gift-table thead{display:none}.gift-table tr{display:grid;grid-template-columns:auto 1fr;column-gap:10px;border-top:1px solid var(--line);padding:6px 0}.gift-table td{border-top:0;padding:2px 8px}.gift-table td:first-child{grid-column:1/-1}}

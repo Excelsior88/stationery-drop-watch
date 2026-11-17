@@ -22,11 +22,15 @@ def with_status(canonical, status):
     return data
 
 
-def section(doc, h3):
-    """The HTML from one pick's heading to the next heading."""
-    i = doc.index(f"{h3}</h3>")
-    j = min(k for k in (doc.find("<h3>", i + 1), doc.find("<h2", i + 1)) if k != -1)
-    return doc[i:j]
+def section(doc, name):
+    """One pick's write-up: its list item, from the bold name to the end of the item."""
+    i = doc.index(f"<strong>{name}")
+    return doc[i:doc.index("</li>", i)]
+
+
+def glance_row(doc, name):
+    table = doc[doc.index('<h2 id="prices">'):doc.index('<h2 id="hobonichi">')]
+    return next(r for r in table.split("<tr>") if html.escape(name) in r or name in r)
 
 
 def text(s):
@@ -45,24 +49,24 @@ class GiftGuideLiveStockTests(unittest.TestCase):
 
     def test_flipping_a_fixture_status_changes_the_rendered_page(self):
         n = len({p["store_id"] for p in site.stock["products"] if p.get("canonical") == "weeks-moomin-table"})
-        sold = section(self.render(with_status("weeks-moomin-table", "sold_out")), MOOMIN)
-        self.assertIn(f"Sold out at all {n} shops we track.", text(sold))
+        doc = self.render(with_status("weeks-moomin-table", "sold_out"))
+        sold = section(doc, MOOMIN)
+        self.assertIn(f"at all {n} shops", text(glance_row(doc, MOOMIN)))
         self.assertIn('<span class="badge sold_out">Sold out</span>', sold)
         self.assertNotIn("badge in_stock", sold)
-        live = section(self.render(with_status("weeks-moomin-table", "in_stock")), MOOMIN)
-        self.assertIn(f"In stock or on preorder at {n} of {n} shops we track", text(live))
+        doc = self.render(with_status("weeks-moomin-table", "in_stock"))
+        live = section(doc, MOOMIN)
+        self.assertIn(f"{n} of {n} shops", text(glance_row(doc, MOOMIN)))
         self.assertIn('<span class="badge in_stock">In stock</span>', live)
         self.assertNotEqual(sold, live)
 
     def test_glance_table_follows_the_same_data(self):
         doc = self.render(with_status("tn-regular-black", "sold_out"))
-        table = doc[doc.index('<h2 id="prices">'):doc.index('<h2 id="hobonichi">')]
-        row = next(r for r in table.split("<tr>") if "Traveler&#x27;s notebook Regular, Black" in r or "Traveler's notebook Regular, Black" in r)
-        self.assertIn("Sold out at all", text(row))
+        self.assertIn("Sold out at all", text(glance_row(doc, "Traveler's notebook Regular, Black")))
 
     def test_unchecked_listings_are_not_called_sold_out(self):
         sec = text(section(self.render(with_status("weeks-moomin-table", "unknown")), MOOMIN))
-        self.assertIn("couldn't check it on our last run", sec)
+        self.assertIn("Couldn't check", sec)
         self.assertNotIn("Sold out", sec)
 
     def test_a_pick_that_leaves_tracking_gets_no_availability_claim(self):
@@ -76,8 +80,9 @@ class GiftGuideLiveStockTests(unittest.TestCase):
         doc = self.render()
         for key in site.GIFT_PICKS:
             self.assertTrue(site.gift_listings(key), f"{key} has no tracked listings")
-            cls, badge, sentence = site.gift_status(key)
-            self.assertIn(f'<span class="badge {cls}">{badge}</span> At our last check: {sentence}', doc, key)
+            cls, badge, _ = site.gift_status(key)
+            self.assertIn(f'<span class="badge {cls}">{badge}</span> <a href=', doc, key)
+            self.assertIn(site.gift_glance(key), doc, key)
         self.assertIn(site.time_tag(site.stock["run_finished"]), doc)
 
 
@@ -109,6 +114,15 @@ class GiftGuideCopyTests(unittest.TestCase):
                 self.assertIn(asin, known)
                 self.assertIn(f"tag={site.AMAZON_TAG}", a)
 
+    def test_one_signup_and_faq_markup_matches_visible_questions(self):
+        self.assertEqual(self.doc.count("<form "), 1)
+        self.assertEqual(self.doc.count('id="alerts"'), 1)
+        ld = [json.loads(m) for m in re.findall(r'<script type="application/ld\+json">(.*?)</script>', self.doc, re.S)]
+        faq = next(d for d in ld if d.get("@type") == "FAQPage")
+        faq_html = self.doc[self.doc.index('id="faq"'):]
+        visible = [html.unescape(q) for q in re.findall(r"<summary>(.*?)</summary>", faq_html)]
+        self.assertEqual([q["name"] for q in faq["mainEntity"]], visible)
+
     def test_every_live_link_exists(self):
         for key, (_, _, live, _) in site.GIFT_PICKS.items():
             self.assertTrue((SITE / live / "index.html").is_file(), live)
@@ -118,7 +132,7 @@ class GiftGuideCopyTests(unittest.TestCase):
         self.assertIn('href="/holiday-stationery-gift-guide-2026/"', (SITE / "guides/index.html").read_text())
         self.assertIn("https://stationerydropwatch.com/holiday-stationery-gift-guide-2026/", (SITE / "sitemap.xml").read_text())
         for part in ('<article class="prose guide vs-page">', 'class="signup-strip" id="alerts"', '<section class="card faq" id="faq">',
-                     '<ol class="sources">', '<section class="card related"'):
+                     '<ol class="sources two-col">', '<section class="card related"'):
             self.assertIn(part, self.doc)
         self.assertNotIn("document.cookie", self.doc)
         self.assertIn('<a href="/guides/" aria-current=page>Guides</a>', self.doc)

@@ -102,8 +102,7 @@ class GuidePriceColumn(unittest.TestCase):
         a, b = self.shops()[:2]
         name = next(p["store"] for p in site.stock["products"] if p["store_id"] == a)
         r1 = row(render(fixture("weeks-moomin-table", prices={a: 3800, b: 4000})), MOOMIN)
-        self.assertIn(f"From $38.00 at {name}", r1)
-        self.assertIn("up to $40.00 elsewhere", r1)
+        self.assertIn(f"$38.00 to $40.00 lowest at {name}", r1)
         r2 = row(render(fixture("weeks-moomin-table", prices={a: 3650})), MOOMIN)
         self.assertIn(f"$36.50 at {name}", r2)
         self.assertNotIn("$38.00", r2)
