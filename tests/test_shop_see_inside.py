@@ -360,6 +360,13 @@ class ShopSeeInsideTests(unittest.TestCase):
             "https://www.teacherspayteachers.com/Product/Cute-Pastel-Calm-Down-Corner-Kit-Kawaii-Breathing-Cards-Calm-Choices-SEL-18381516",
         ):
             self.assertEqual(pastel.count(url), 1)
+        self.assertIn("Printable classroom resources from our Teachers Pay Teachers store.", group)
+        self.assertNotIn("Each card is one collection", group)
+        self.assertIn('class="shop-img collection"', level)
+        self.assertIn('class="shop-img collection"', pastel)
+        self.assertNotIn('class="shop-img sheet"', level)
+        self.assertNotIn('class="shop-img sheet"', pastel)
+        self.assertIn('sizes="(max-width:760px) calc(100vw - 56px), 460px"', level)
         self.assertIn('width="800" height="475"', level)
         self.assertIn('width="800" height="492"', pastel)
         self.assertIn('width="240" height="240"', level)

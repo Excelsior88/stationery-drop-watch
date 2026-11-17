@@ -3089,7 +3089,7 @@ SHOP_TPT = [
          sub="Part of Level Up! by Stationery Drop Watch",
          blurb=("Original pixel-art, video-game-themed classroom printables for grades 2-5: "
                 "a student planner, goal-setting trackers, end-of-year review, and a reading log/XP classroom kit."),
-         img="assets/shop/level-up-collection-cover.webp", img_class="sheet", img_w=800, img_h=475,
+         img="assets/shop/level-up-collection-cover.webp", img_class="collection", img_w=800, img_h=475,
          alt="Level Up! collection: the student planner, goal quest pack, and classroom quest kit, in pixel art on a yellow and ink poster.",
          url=TPT_STORE,
          thumbs=[
@@ -3109,7 +3109,7 @@ SHOP_TPT = [
          blurb=("Soft pastel, kawaii-style picture supports for PreK-2 and special education: "
                 "visual schedules, First/Then boards, classroom labels, feelings check-ins, token boards, "
                 "and a calm-down corner kit, all sharing the same art."),
-         img="assets/shop/cute-pastel-collection-cover.webp", img_class="sheet", img_w=800, img_h=492,
+         img="assets/shop/cute-pastel-collection-cover.webp", img_class="collection", img_w=800, img_h=492,
          alt="Cute Pastel collection: visual schedule cards, classroom labels, and a calm-down corner kit.",
          url=TPT_STORE,
          thumbs=[
@@ -3373,7 +3373,7 @@ def build_shop():
         return ""
     def card(img, alt, title, sub, blurb, details, href, btn, own, price, inside=None, *,
              img_class="", dims=None, note="", templates=None, templates_label="Templates", card_id="",
-             also=None, thumbs=None):
+             also=None, thumbs=None, sizes=""):
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
         attr = ' data-own-product' if own else ''
         ins = ""
@@ -3405,7 +3405,8 @@ def build_shop():
         else:
             cls = "shop-img photo"
         dim = f' width="{int(dims[0])}" height="{int(dims[1])}"' if dims else ""
-        image = f'<img src="{E(img)}"{srcset(img)}{dim} sizes="(max-width:600px) 240px, 150px" alt="{E(alt)}" loading="lazy" decoding="async">'
+        img_sizes = sizes or "(max-width:600px) 240px, 150px"
+        image = f'<img src="{E(img)}"{srcset(img)}{dim} sizes="{E(img_sizes)}" alt="{E(alt)}" loading="lazy" decoding="async">'
         if href:
             media = f'<a class="{cls}" href="{E(href)}"{attr} rel="noopener" target="_blank">{image}</a>'
             action = f'<a class="btn" href="{E(href)}"{attr} rel="noopener" target="_blank">{E(btn)}</a>'
@@ -3473,7 +3474,8 @@ def build_shop():
                     [], item["url"], "See the collection on TpT", False, "",
                     img_class=item.get("img_class", ""),
                     dims=(item["img_w"], item["img_h"]) if item.get("img_w") and item.get("img_h") else None,
-                    card_id=item.get("id", ""), thumbs=item.get("thumbs"))
+                    card_id=item.get("id", ""), thumbs=item.get("thumbs"),
+                    sizes="(max-width:760px) calc(100vw - 56px), 460px")
     etsy = "".join(etsy_card(e) for e in etsy_listings())
     tpt = "".join(tpt_card(e) for e in SHOP_TPT)
     if shop_inserts_public():
@@ -3490,7 +3492,7 @@ def build_shop():
         desc = ("Planners and journals from Stationery Drop Watch: printed books on Amazon, printable PDFs on Etsy, "
                 "and classroom printables on Teachers Pay Teachers.")
         etsy_intro = ""
-    tpt_intro = "Each card is one collection. Its button opens the store, so new listings show up there."
+    tpt_intro = "Printable classroom resources from our Teachers Pay Teachers store."
     body = f"""
 <article class="prose shop shop-wide">
 {crumbs((fname, "Shop"))}

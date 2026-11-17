@@ -288,6 +288,14 @@ a.az:hover{color:var(--ink)}
 .shop-price{margin:6px 0 8px;font-family:var(--sans)}
 .shop-price strong{font-size:1.25rem;color:#2d2a32;margin-right:4px}
 .shop-inside{margin:6px 0 12px}
+/* Collection covers are wide posters. They sit across the top of their own card
+   at the file's ratio, with no 3:4 beige frame. Other shop cards stay 150px / 3:4. */
+#level-up-collection,
+#cute-pastel-collection{grid-template-columns:1fr}
+#level-up-collection .shop-img,
+#cute-pastel-collection .shop-img{aspect-ratio:auto;max-width:none;width:100%;margin:0;background:transparent}
+#level-up-collection .shop-img img,
+#cute-pastel-collection .shop-img img{width:100%;height:auto;object-fit:unset}
 #level-up-collection{border-color:#22223a}
 #level-up-collection h3{font-family:"Liberation Sans",Arial,sans-serif;font-weight:700;color:#22223a;letter-spacing:.02em}
 #level-up-collection h3::after{content:"";display:block;width:2.5rem;height:4px;margin-top:6px;background:#ffcb2e;border-radius:2px}
