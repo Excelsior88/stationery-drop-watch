@@ -2993,6 +2993,9 @@ GIFT_PICKS = {
     "lted2": ("lt-bullet-journal-ed2", None, "archer-and-olive-dot-grid-journal/leuchtturm1917-edition-2/", "Leuchtturm1917 Bullet Journal Edition 2"),
     "aonavy": ("ao-storybook-navy", "A5 ", "archer-and-olive-dot-grid-journal/archer-and-olive-storybook-navy/", "Archer and Olive Storybook in Navy, A5"),
     "aobeige": ("ao-songbird-beige", "A5 ", "archer-and-olive-dot-grid-journal/archer-and-olive-songbird-beige/", "Archer and Olive Songbird in Beige, A5"),
+    # Winter 2026 designs: only the ships-now A5 dot grid option (the Feb preorder option is a separate listing).
+    "aoice": ("ao-ice-castle", "A5 dot grid · ships now", "archer-and-olive-dot-grid-journal/archer-and-olive-ice-castle/", "Archer and Olive Ice Castle, A5"),
+    "aotrain": ("ao-winter-train", "A5 dot grid · ships now", "archer-and-olive-dot-grid-journal/archer-and-olive-winter-train/", "Archer and Olive Winter Train, A5"),
 }
 GIFT_SRC = {  # (url, title, publisher)
     "h_moomin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moomintable/", "Moomin: At the Table, Weeks (ENG edition)", "Hobonichi (official)"),
@@ -3016,6 +3019,8 @@ GIFT_SRC = {  # (url, title, publisher)
     "pm_lt": ("https://www.thepapermouse.com/products/leuchtturm1917-hardcover-dot-grid-a5-notebook-black", "Leuchtturm1917 Hardcover Dot Grid A5 Notebook, Black", "The Paper Mouse"),
     "ao_navy": ("https://www.archerandolive.com/products/storybook-in-navy-books", "Storybook in Navy", "Archer and Olive (official)"),
     "ao_beige": ("https://www.archerandolive.com/products/songbird-in-beige-notebook", "Songbird in Beige", "Archer and Olive (official)"),
+    "ao_ice": ("https://www.archerandolive.com/products/ice-castle-notebook", "Ice Castle | Notebook", "Archer and Olive (official)"),
+    "ao_train": ("https://www.archerandolive.com/products/winter-train-notebook", "Winter Train | Notebook", "Archer and Olive (official)"),
     "shop": ("shop/", "Our planners and journals", "Stationery Drop Watch"),
 }
 
@@ -3157,7 +3162,6 @@ def build_gift_guide():
     # Our own products: the list prices /shop shows (we set them), and the shared Etsy price line.
     own_rows = [("Our 2027 Planner, Blush or for Men, A5 paperback",
                  AMAZON_LIST_PRICES.get("B0HRTLMZ1M") if AMAZON_LIST_PRICES.get("B0HRTLMZ1M") == AMAZON_LIST_PRICES.get("B0HRTTCH4D") else None),
-                ("Our 2027 Planner, Blush, 8.5 × 11 hardcover", AMAZON_LIST_PRICES.get("B0HPBDNS7F")),
                 ("Our Habit & Mood Tracker Journal", AMAZON_LIST_PRICES.get("B0HQ5TLDK3")),
                 ("Our Reading Journal", AMAZON_LIST_PRICES.get("B0HQ5X3C7D")),
                 ("Level Up! My 2027 Planner, paperback", AMAZON_LIST_PRICES.get("B0HQW8273V"))]
@@ -3236,6 +3240,8 @@ def build_gift_guide():
   <li><strong>Leuchtturm1917 Bullet Journal Edition 2,</strong> for heavier paper: A5 hardcover, dotted, 206 numbered pages of 120 gsm paper. {s("lt_ed2")} {L("lted2")}</li>
   <li><strong>Archer and Olive Storybook in Navy, A5.</strong> Vegan leather with gold detailing; 192 pages of 160 gsm dot grid paper. {s("ao_navy")} {L("aonavy")}</li>
   <li><strong>Archer and Olive Songbird in Beige, A5.</strong> Vegan leather, 160 gsm paper, lay-flat binding, 192 pages. {s("ao_beige")} {L("aobeige")}</li>
+  <li><strong>Archer and Olive Ice Castle, A5,</strong> a winter design: an icy blue vegan leather hardcover with a frozen castle in platinum foil and gilded page edges; 192 pages of 160 gsm dot grid paper, lay-flat binding, elastic band and pen loop. {s("ao_ice")} {L("aoice")}</li>
+  <li><strong>Archer and Olive Winter Train, A5,</strong> a winter design: a deep olive-green vegan leather hardcover with a steam train through a snowy village in gold and white foil; 192 pages of 160 gsm dot grid paper, lay-flat binding, elastic band and pen loop. {s("ao_train")} {L("aotrain")}</li>
 </ul>
 <p class="small">More options: <a href="{DG_GUIDE_SLUG}/">Best dot grid journals compared</a>.</p>
 
@@ -3248,7 +3254,7 @@ def build_gift_guide():
 <h2 id="we-make">Planners and journals we make</h2>
 <p class="small">Plain Amazon links, not affiliate links; list prices are in the table above. {s("shop")}</p>
 <ul class="picks">
-  <li><strong>2027 Planners, Blush and for Men:</strong> A5 paperback, 174 pages, Monday start, January 1 to December 31, 2027; each also comes in an 8.5 × 11 Sunday-start edition. Blush: {gift_own("B0HRTLMZ1M", "A5 paperback")} · {gift_own("B0HPBDNS7F", "8.5 × 11 hardcover")}. For Men: {gift_own("B0HRTTCH4D", "A5 paperback")} · {gift_own("B0HP9PXSR1", "8.5 × 11 paperback")}.</li>
+  <li><strong>2027 Planners, Blush and for Men:</strong> A5 paperback, 174 pages, Monday start, January 1 to December 31, 2027. Blush: {gift_own("B0HRTLMZ1M", "A5 paperback")}. For Men: {gift_own("B0HRTTCH4D", "A5 paperback")} · {gift_own("B0HP9PXSR1", "8.5 × 11 Sunday-start paperback")}.</li>
   <li><strong>Level Up! My 2027 Planner,</strong> for a child aged 7 to 11: a kids planner that plays like a video game, with a Reading Quest Log, Trophy Room and Coin Bank; 8.5 × 11 in. {gift_own("B0HQW8273V", "Paperback on Amazon")}{lu_etsy}</li>
   <li><strong>Undated journals:</strong> {gift_own("B0HQ5TLDK3", "Habit & Mood Tracker Journal")} (6 × 9 in, 166 pages) · {gift_own("B0HQ5X3C7D", "Reading Journal")} (7 × 10 in, 152 pages).</li>
 </ul>

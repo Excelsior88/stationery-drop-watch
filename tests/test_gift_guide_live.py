@@ -123,6 +123,13 @@ class GiftGuideCopyTests(unittest.TestCase):
         visible = [html.unescape(q) for q in re.findall(r"<summary>(.*?)</summary>", faq_html)]
         self.assertEqual([q["name"] for q in faq["mainEntity"]], visible)
 
+    def test_owner_pick_changes_nov17(self):
+        # Owner t1333u: the Blush 8.5 x 11 hardcover is out; two winter Archer and Olive A5s are in, ships-now option only.
+        self.assertNotIn("B0HPBDNS7F", self.doc)
+        for key in ("aoice", "aotrain"):
+            self.assertIn(key, site.GIFT_PICKS)
+            self.assertTrue(all("ships now" in l["label"] for l in site.gift_listings(key)), key)
+
     def test_every_live_link_exists(self):
         for key, (_, _, live, _) in site.GIFT_PICKS.items():
             self.assertTrue((SITE / live / "index.html").is_file(), live)
