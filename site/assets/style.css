@@ -1,6 +1,7 @@
 /* Newsreader (Production Type, SIL Open Font License 1.1: assets/fonts/OFL.txt), self-hosted.
    Variable weight 500-700 with optical sizes, Latin subset. */
 @font-face{font-family:"Newsreader";src:url(fonts/newsreader-var.woff2) format("woff2");font-weight:500 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Liberation Sans";src:url(fonts/liberation-sans-bold.woff2) format("woff2");font-weight:700;font-style:normal;font-display:swap}
 :root{
   --paper:#fbf6ec; --paper-2:#f4ecdc; --card:#fffdf8; --ink:#2d2a32; --ink-2:#5b5560; --line:#e6dccb;
   --accent:#c1553b; --accent-2:#9e3f29; --sage:#5f8a6b; --mustard:#8a6412; --plum:#7a5c8a; --rose:#b34a4a;
@@ -287,6 +288,17 @@ a.az:hover{color:var(--ink)}
 .shop-price{margin:6px 0 8px;font-family:var(--sans)}
 .shop-price strong{font-size:1.25rem;color:#2d2a32;margin-right:4px}
 .shop-inside{margin:6px 0 12px}
+/* Collection cards lead with a 2x2 of the real listing covers. Other shop cards stay 150px / 3:4. */
+#level-up-collection,
+#cute-pastel-collection{grid-template-columns:1fr}
+#level-up-collection{background:#fffaf0;border-color:#22223a}
+#cute-pastel-collection{background:#fff5f8;border-color:#f3c6d6}
+#level-up-collection h3{font-family:"Liberation Sans",Arial,sans-serif;font-weight:700;color:#22223a;letter-spacing:.02em}
+#level-up-collection h3::after{content:"";display:block;width:2.5rem;height:4px;margin-top:6px;background:#ffcb2e;border-radius:2px}
+.collection-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.collection-grid a{display:block;border-radius:10px;overflow:hidden;line-height:0}
+.collection-grid a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.collection-grid img{width:100%;height:auto;display:block}
 .shop-inside summary{cursor:pointer;color:#c1553b;font-family:var(--sans);font-size:.92rem}
 .inside-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
 .inside-grid figure{margin:0}.inside-grid figure:first-child{grid-column:1/-1}
