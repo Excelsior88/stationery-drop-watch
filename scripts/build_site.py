@@ -3083,45 +3083,47 @@ SHOP_ETSY = [
 TPT_STORE = "https://www.teacherspayteachers.com/store/stationery-drop-watch"
 _TPT_LISTING = re.compile(r"^https://www\.teacherspayteachers\.com/Product/[A-Za-z0-9-]+$")
 _TPT_STORE = re.compile(r"^https://www\.teacherspayteachers\.com/store/[a-z0-9-]+$")
+def _tile(stem, alt, url):
+    """A square listing cover: 600px file, with a 300px srcset candidate for phones."""
+    return dict(src=f"/assets/shop/tiles/{stem}-600.webp", src300=f"/assets/shop/tiles/{stem}-300.webp",
+                w=600, h=600, alt=alt, url=url)
+
 SHOP_TPT = [
     dict(id="level-up-collection",
          title="Level Up!",
-         sub="Part of Level Up! by Stationery Drop Watch",
-         blurb=("Original pixel-art, video-game-themed classroom printables for grades 2-5: "
-                "a student planner, goal-setting trackers, end-of-year review, and a reading log/XP classroom kit."),
-         img="assets/shop/level-up-collection-cover.webp", img_class="collection", img_w=800, img_h=475,
-         alt="Level Up! collection: the student planner, goal quest pack, and classroom quest kit, in pixel art on a yellow and ink poster.",
+         blurb="Pixel-art, video-game classroom printables for grades 2-5.",
          url=TPT_STORE,
-         thumbs=[
-             dict(src="/assets/shop/thumbs/level-up-student-planner.webp", w=240, h=240,
-                  alt="Level Up! 2027 Student Planner cover, pixel-art pages on a blue background.",
-                  url="https://www.teacherspayteachers.com/Product/Level-Up-2027-Student-Planner-Video-Game-Theme-Printable-Planner-Grades-2-5-18365192"),
-             dict(src="/assets/shop/thumbs/level-up-goal-quest.webp", w=240, h=240,
-                  alt="Level Up! Goal Setting Quest Pack cover, goal trackers and badges.",
-                  url="https://www.teacherspayteachers.com/Product/Level-Up-Goal-Setting-Quest-Pack-Video-Game-Theme-Goal-Habit-Trackers-18365256"),
-             dict(src="/assets/shop/thumbs/level-up-classroom-kit.webp", w=240, h=240,
-                  alt="Level Up! Classroom Quest Kit cover, a reading map, rank ladder, and brag tags.",
-                  url="https://www.teacherspayteachers.com/Product/Level-Up-Classroom-Quest-Kit-Video-Game-Reading-Log-XP-Chart-Brag-Tags-18365332"),
+         tiles=[
+             _tile("level-up-student-planner",
+                   "Level Up! 2027 Student Planner cover: pixel-art title, sample planner pages, grades 2-5, 170 pages, Monday start.",
+                   "https://www.teacherspayteachers.com/Product/Level-Up-2027-Student-Planner-Video-Game-Theme-Printable-Planner-Grades-2-5-18365192"),
+             _tile("level-up-goal-quest",
+                   "Level Up! Goal Setting Quest Pack cover: pixel-art title, a goal sheet, an XP tracker, and achievement badges.",
+                   "https://www.teacherspayteachers.com/Product/Level-Up-Goal-Setting-Quest-Pack-Video-Game-Theme-Goal-Habit-Trackers-18365256"),
+             _tile("level-up-end-of-year",
+                   "Level Up! End of Year and Summer Review cover: pixel-art title, a word search, a math page, and a logic grid.",
+                   "https://www.teacherspayteachers.com/Product/Level-Up-End-of-Year-Review-Packet-Video-Game-Theme-Summer-Review-Puzzles-18365295"),
+             _tile("level-up-classroom-kit",
+                   "Level Up! Classroom Quest Kit cover: pixel-art title, a reading map, a rank ladder, and brag tags.",
+                   "https://www.teacherspayteachers.com/Product/Level-Up-Classroom-Quest-Kit-Video-Game-Reading-Log-XP-Chart-Brag-Tags-18365332"),
          ]),
     dict(id="cute-pastel-collection",
          title="Cute Pastel",
-         sub="",
-         blurb=("Soft pastel, kawaii-style picture supports for PreK-2 and special education: "
-                "visual schedules, First/Then boards, classroom labels, feelings check-ins, token boards, "
-                "and a calm-down corner kit, all sharing the same art."),
-         img="assets/shop/cute-pastel-collection-cover.webp", img_class="collection", img_w=800, img_h=492,
-         alt="Cute Pastel collection: visual schedule cards, classroom labels, and a calm-down corner kit.",
+         blurb="Soft pastel picture supports for PreK-2 and special ed.",
          url=TPT_STORE,
-         thumbs=[
-             dict(src="/assets/shop/thumbs/cute-pastel-visual-schedule.webp", w=240, h=240,
-                  alt="Cute Pastel Visual Schedule Cards cover, kawaii routine cards.",
-                  url="https://www.teacherspayteachers.com/Product/Cute-Pastel-Visual-Schedule-Cards-43-Kawaii-Daily-Routine-Cards-PreK2-SpEd-18381500"),
-             dict(src="/assets/shop/thumbs/cute-pastel-classroom-labels.webp", w=240, h=240,
-                  alt="Cute Pastel Classroom Labels cover, supply and center labels with pictures.",
-                  url="https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Labels-Editable-Kawaii-Supply-Bin-Labels-with-Pictures-18381372"),
-             dict(src="/assets/shop/thumbs/cute-pastel-calm-down.webp", w=240, h=240,
-                  alt="Cute Pastel Calm Down Corner Kit cover, breathing cards and calm choices.",
-                  url="https://www.teacherspayteachers.com/Product/Cute-Pastel-Calm-Down-Corner-Kit-Kawaii-Breathing-Cards-Calm-Choices-SEL-18381516"),
+         tiles=[
+             _tile("cute-pastel-visual-schedule",
+                   "Cute Pastel Visual Schedule Cards cover: kawaii routine cards for arrival, circle time, lunch, and recess.",
+                   "https://www.teacherspayteachers.com/Product/Cute-Pastel-Visual-Schedule-Cards-43-Kawaii-Daily-Routine-Cards-PreK2-SpEd-18381500"),
+             _tile("cute-pastel-first-then",
+                   "Cute Pastel First/Then and Now/Next boards cover: a Work First card and a Sticker reward.",
+                   "https://www.teacherspayteachers.com/Product/Cute-Pastel-First-Then-Now-Next-Boards-Kawaii-Visual-Supports-Reward-Cards-18381421"),
+             _tile("cute-pastel-classroom-labels",
+                   "Cute Pastel Classroom Labels cover: crayon, marker, reading center, and name labels.",
+                   "https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Labels-Editable-Kawaii-Supply-Bin-Labels-with-Pictures-18381372"),
+             _tile("cute-pastel-calm-down",
+                   "Cute Pastel Calm Down Corner Kit cover: a calm corner poster and breathing shape cards.",
+                   "https://www.teacherspayteachers.com/Product/Cute-Pastel-Calm-Down-Corner-Kit-Kawaii-Breathing-Cards-Calm-Choices-SEL-18381516"),
          ]),
 ]
 
@@ -3348,7 +3350,7 @@ def build_shop():
     fname = "shop/"
     books = {b["id"]: b for b in json.loads((ROOT / "content/editor_picks.json").read_text())["books"]}
     labels = SHOP_LABELS
-    for item in SHOP_ETSY + SHOP_TPT:
+    for item in SHOP_ETSY:
         if not (ROOT / "site" / item["img"]).is_file():
             raise SystemExit(f"missing shop asset {item['img']}")
         if item.get("id") == "soft-days" and len(item.get("templates") or []) != 16:
@@ -3356,13 +3358,14 @@ def build_shop():
     for item in SHOP_TPT:
         if not _TPT_STORE.match(item["url"]):
             raise SystemExit(f"{item['title']}: store URL must be a plain teacherspayteachers.com/store link")
-        if len(item.get("thumbs") or []) != 3:
-            raise SystemExit(f"{item['title']}: a collection card has three thumbnails")
-        for thumb in item["thumbs"]:
-            if not _TPT_LISTING.match(thumb["url"]):
-                raise SystemExit(f"{item['title']}: thumbnail URL must be a plain product link")
-            if not (SITE / thumb["src"].lstrip("/")).is_file():
-                raise SystemExit(f"missing shop asset {thumb['src']}")
+        if len(item.get("tiles") or []) != 4:
+            raise SystemExit(f"{item['title']}: a collection card has four covers")
+        for tile in item["tiles"]:
+            if not _TPT_LISTING.match(tile["url"]):
+                raise SystemExit(f"{item['title']}: cover URL must be a plain product link")
+            for key in ("src", "src300"):
+                if not (SITE / tile[key].lstrip("/")).is_file():
+                    raise SystemExit(f"missing shop asset {tile[key]}")
     def srcset(img):  # Etsy mockups ship 600w + 1200w copies; Amazon covers use their single file
         if img.startswith("assets/shop/") and img.endswith("-planner.jpg"):
             b = img[:-4]
@@ -3428,9 +3431,15 @@ def build_shop():
         if thumbs:
             links = "".join(
                 f'<a href="{E(t["url"])}" rel="noopener" target="_blank">'
-                f'<img src="{E(t["src"])}" alt="{E(t["alt"])}" width="{t["w"]}" height="{t["h"]}" loading="lazy" decoding="async"></a>'
+                f'<img src="{E(t["src"])}" srcset="{E(t["src300"])} 300w, {E(t["src"])} 600w" '
+                f'sizes="(max-width:760px) calc((100vw - 64px) / 2), 220px" '
+                f'alt="{E(t["alt"])}" width="{t["w"]}" height="{t["h"]}" loading="lazy" decoding="async"></a>'
                 for t in thumbs)
-            thumb_html = f'<div class="collection-thumbs">{links}</div>'
+            thumb_html = f'<div class="collection-grid">{links}</div>'
+        # A collection has no separate cover. The product grid leads the card.
+        if not img and thumb_html:
+            media = thumb_html
+            thumb_html = ""
         return f"""<li class="shop-card"{idattr}>
   {media}
   <div class="shop-body">{note_html}<h3>{E(title)}</h3>{sub_html}{price}<p>{E(blurb)}</p>{list_html}
@@ -3470,12 +3479,9 @@ def build_shop():
                     note=note, templates=item.get("templates"), templates_label=item.get("templates_label", "Templates"),
                     card_id=item.get("id", ""))
     def tpt_card(item):
-        return card(item["img"], item["alt"], item["title"], item.get("sub", ""), item["blurb"],
+        return card("", "", item["title"], "", item["blurb"],
                     [], item["url"], "See the collection on TpT", False, "",
-                    img_class=item.get("img_class", ""),
-                    dims=(item["img_w"], item["img_h"]) if item.get("img_w") and item.get("img_h") else None,
-                    card_id=item.get("id", ""), thumbs=item.get("thumbs"),
-                    sizes="(max-width:760px) calc(100vw - 56px), 460px")
+                    card_id=item.get("id", ""), thumbs=item.get("tiles"))
     etsy = "".join(etsy_card(e) for e in etsy_listings())
     tpt = "".join(tpt_card(e) for e in SHOP_TPT)
     if shop_inserts_public():
