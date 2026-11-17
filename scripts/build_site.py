@@ -2966,9 +2966,12 @@ def build_tn_sizes():
 
 # --- Holiday gift guide ------------------------------------------------------------------------
 # Every availability line on this page is rendered from data/stock.json at build time (each checker
-# run rebuilds it), the same way the Where to Buy guide counts shops. No shop prices: the checker
-# doesn't record them. Our own Amazon books show list price only (AMAZON_LIST_PRICES), the way /shop
-# does. Printables and our own books are not in stock.json, so they get no availability claim.
+# run rebuilds it), the same way the Where to Buy guide counts shops. Prices come from the same run:
+# the checker records each Shopify listing's price (price_cents) when the shop sells in USD, and the
+# table shows the lowest one among shops that had the pick in stock or on preorder. No price is ever
+# typed in here; a pick with no recorded price says so. Our own Amazon books show list price only
+# (AMAZON_LIST_PRICES) and printables the shared ETSY_PRICE line, the way /shop does. Printables and
+# our own books are not in stock.json, so they get no availability claim.
 GIFT_SLUG = "holiday-stationery-gift-guide-2026"
 # key -> (canonical, label filter or None, live page, short name). The live page is the item's design
 # page when one exists, otherwise its tracker page.
@@ -3065,6 +3068,52 @@ def gift_stock_line(key, live_text=None):
     return (f'<p class="small"><span class="badge {cls}">{E(badge)}</span> At our last check: {text} '
             f'{link}{az_html}</p>')
 
+def _usd(cents):
+    return f"${cents / 100:,.2f}"
+
+def gift_price(key):
+    """Price cell for one pick, from this build's stock.json: the lowest USD price at the shops that had
+    it in stock or on preorder at the last check. Never a fixed number; missing prices say so."""
+    ls = gift_listings(key)
+    if not ls:
+        return '<span class="muted">Not tracked now</span>'
+    buy = [l for l in ls if l["status"] in BUYABLE]
+    # One price per listing: a product whose variants are priced differently (sizes, sets) is left
+    # unpriced rather than showing a price that might be another size's.
+    priced = [l for l in buy if l.get("currency") == "USD" and isinstance(l.get("price_cents"), int)
+              and l["price_cents"] > 0 and "price_max_cents" not in l]
+    if priced:
+        lo = min(l["price_cents"] for l in priced)
+        hi = max(l["price_cents"] for l in priced)
+        at_lo = sorted({l["store"] for l in priced if l["price_cents"] == lo})
+        shops = _names(at_lo) if len(at_lo) <= 2 else f"{', '.join(at_lo[:2])} and {len(at_lo) - 2} more"
+        more = len({l["store"] for l in buy} - {l["store"] for l in priced})
+        tail = f'<br><span class="muted small">{more} more {"shop" if more == 1 else "shops"} in stock, not priced</span>' if more else ""
+        if hi == lo:
+            return f'<strong>{_usd(lo)}</strong> at {E(shops)}{tail}'
+        return f'From <strong>{_usd(lo)}</strong> at {E(shops)}, up to {_usd(hi)} elsewhere{tail}'
+    if buy:
+        return '<span class="muted">See price at the shop</span>'
+    if all(l["status"] == "unknown" for l in ls):
+        return f'<span class="muted">{STATUS["unknown"]}</span>'
+    return '<span class="muted">No price: not in stock or on preorder</span>'
+
+GIFT_SALE_ENDS = dt.date(2026, 11, 30)  # last day of the Etsy launch sale named in ETSY_PRICE[1]
+
+def gift_today():
+    return dt.datetime.now(ET).date()
+
+def gift_sale_note():
+    """The Etsy sale line, from the same ETSY_PRICE the /shop cards use. Empty once the sale has ended
+    (each checker run rebuilds the page, so it comes off on Dec 1 by itself), when /shop drops the
+    sale line, or when any listed printable isn't on the shared price and sale."""
+    items = etsy_listings()
+    if not items or gift_today() > GIFT_SALE_ENDS or "% off" not in ETSY_PRICE[1]:
+        return ""
+    if not all(e.get("sale_confirmed", True) and e.get("price", ETSY_PRICE[0]) == ETSY_PRICE[0] for e in items):
+        return ""
+    return ETSY_PRICE[1]
+
 def gift_own(asin, label):
     """Our own Amazon book: plain link (data-own-product), list price only, no availability claim."""
     price = AMAZON_LIST_PRICES.get(asin)
@@ -3087,7 +3136,21 @@ def build_gift_guide():
     for k, (_, _, live, name) in GIFT_PICKS.items():
         st = gift_status(k)
         cell = (f'<span class="badge {st[0]}">{E(st[1])}</span> {st[2]}' if st else '<span class="muted">Not tracked now</span>')
-        glance.append(f'<tr><td><a href="{live}">{E(name)}</a></td><td>{cell}</td></tr>')
+        glance.append(f'<tr><td><a href="{live}">{E(name)}</a></td><td>{cell}</td><td>{gift_price(k)}</td></tr>')
+    # Our own products: the list prices /shop shows (we set them), and the shared Etsy price line.
+    own_rows = [("Our 2027 Planner, Blush or for Men, A5 paperback",
+                 AMAZON_LIST_PRICES.get("B0HRTLMZ1M") if AMAZON_LIST_PRICES.get("B0HRTLMZ1M") == AMAZON_LIST_PRICES.get("B0HRTTCH4D") else None),
+                ("Our 2027 Planner, Blush, 8.5 × 11 hardcover", AMAZON_LIST_PRICES.get("B0HPBDNS7F")),
+                ("Our Habit & Mood Tracker Journal", AMAZON_LIST_PRICES.get("B0HQ5TLDK3")),
+                ("Our Reading Journal", AMAZON_LIST_PRICES.get("B0HQ5X3C7D")),
+                ("Level Up! My 2027 Planner, paperback", AMAZON_LIST_PRICES.get("B0HQW8273V"))]
+    own = [f'<tr><td><a href="shop/">{E(n)}</a></td><td><span class="muted">We make it; not stock-checked</span></td><td>'
+           + (f'<strong>{E(lp)}</strong> list price on Amazon' if lp else '<span class="muted">See price on Amazon</span>') + '</td></tr>'
+           for n, lp in own_rows]
+    sale = gift_sale_note()
+    if etsy_listings():
+        own.append(f'<tr><td><a href="shop/">Our printables</a></td><td><span class="muted">Instant download</span></td>'
+                   f'<td><strong>{E(ETSY_PRICE[0])}</strong> each on Etsy{", " + E(sale) if sale else ""}</td></tr>')
     faq = [
         ("Will these still be in stock when I click?",
          f"Not guaranteed. The stock lines on this page come from our last check, and each pick links to its restock page, which shows every shop we track and updates {CHECK_FREQ}. "
@@ -3099,8 +3162,11 @@ def build_gift_guide():
          " Links to shops we track, and to our own planners and journals, are plain links."),
         ("Is the English Moomin Weeks the same as the Japanese one?",
          "No. Hobonichi says the special specifications are for the Japanese edition only, and The Paper Mouse notes the English version doesn't include the special illustrations of the Japanese version."),
-        ("Why are there no prices?",
-         "Prices change and differ from shop to shop, and our checker doesn't record them. Check the current price at the shop. For our own books we show Amazon's list price; check the current price on Amazon."),
+        ("Are the prices current?",
+         f"They're from our last check, which runs {CHECK_FREQ}: the lowest US-dollar price on the product data of the shops we track that had the pick in stock or on preorder. "
+         "Shipping, tax and checkout discounts aren't included, and a price can change between checks, so confirm it at the shop. "
+         "We don't show prices for shops that don't sell in US dollars, including Hobonichi's own store; when no price was recorded, the table says so instead of guessing. "
+         "For our own books we show the Amazon list price; check the current price on Amazon."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}"{"" if u == "shop/" else " rel=\"noopener\" target=\"_blank\""}>{E(t)}</a>, {E(b)}.</li>'
@@ -3132,11 +3198,11 @@ def build_gift_guide():
   <li><strong>Small or last-minute:</strong> <a href="#small-gifts">MD Diary Stickers 2027 (Large), the Traveler's 2027 Clear Folder, or our printable holiday pages</a>, which download instantly.</li>
 </ul>
 
-<h2>Every pick at our last check</h2>
-<p class="muted small">From our last check, {asof}. Each row links to its live restock page. We don't show shop prices: they change and differ by shop, so check the current price at the shop.</p>
+<h2 id="prices">Every pick at our last check: stock and price</h2>
+<p class="small"><strong>Stock and prices checked {asof}.</strong> The price is the lowest US-dollar price among the shops we track that had the pick in stock or on preorder; shipping and tax aren't included, so confirm it at the shop. Each row links to its live restock page.</p>
 <div class="table-wrap"><table class="stock">
-<thead><tr><th>Gift</th><th>Stock at our last check</th></tr></thead>
-<tbody>{"".join(glance)}</tbody></table></div>
+<thead><tr><th>Gift</th><th>Stock at our last check</th><th>Price at our last check</th></tr></thead>
+<tbody>{"".join(glance)}{"".join(own)}</tbody></table></div>
 
 <h2 id="hobonichi">For the Hobonichi fan</h2>
 <p>Weeks is the easiest Hobonichi gift because the cover is part of the book. Hobonichi's specs for the 2027 English Weeks books below: 188 × 94 × 11 mm (7.4 × 3.7 × 0.4 in), about 140 g, 240 pages, Tomoe River paper, January start, Monday start. {s("h_moomin", "h_whitecat")}</p>
@@ -3208,7 +3274,7 @@ def build_gift_guide():
   <li><strong>MD Diary Stickers 2027 [Dated Monthly], Large.</strong> 16 stickers (14 monthly, December 2026 to January 2028, plus 2 yearly), 200 × 138 mm, for A5 and A4 Variant MD Notebooks. They turn a plain notebook into a dated diary and can't be removed once applied. {s("md_sticker")}{L("mdsticker", "MIDORI MD tracker")}</li>
   <li><strong>Traveler's notebook 2027 Clear Folder, Regular size.</strong> <a href="#traveler">See above</a>.</li>
   {hp_html}
-  <li><strong>Our other printables:</strong> 2027 printable planners, the Level Up! kids printable and more are on <a href="shop/">our shop page</a>.</li>
+  <li><strong>Our other printables:</strong> 2027 printable planners, the Level Up! kids printable and more are on <a href="shop/">our shop page</a>.{f" Each is {E(ETSY_PRICE[0])} on Etsy, with a {E(sale)}." if sale else ""}</li>
   <li><strong>Undated journals we make:</strong> the Habit &amp; Mood Tracker Journal (6 × 9 in, 166 pages) and the Reading Journal (7 × 10 in, 152 pages, 100 review pages). Plain Amazon links: {gift_own("B0HQ5TLDK3", "Habit & Mood Tracker Journal")} · {gift_own("B0HQ5X3C7D", "Reading Journal")}</li>
 </ul>
 

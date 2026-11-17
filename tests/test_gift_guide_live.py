@@ -56,7 +56,7 @@ class GiftGuideLiveStockTests(unittest.TestCase):
 
     def test_glance_table_follows_the_same_data(self):
         doc = self.render(with_status("tn-regular-black", "sold_out"))
-        table = doc[doc.index("<h2>Every pick at our last check</h2>"):doc.index('<h2 id="hobonichi">')]
+        table = doc[doc.index('<h2 id="prices">'):doc.index('<h2 id="hobonichi">')]
         row = next(r for r in table.split("<tr>") if "Traveler&#x27;s notebook Regular, Black" in r or "Traveler's notebook Regular, Black" in r)
         self.assertIn("Sold out at all", text(row))
 
@@ -84,9 +84,13 @@ class GiftGuideLiveStockTests(unittest.TestCase):
 class GiftGuideCopyTests(unittest.TestCase):
     doc = (SITE / "holiday-stationery-gift-guide-2026/index.html").read_text()
 
-    def test_no_shop_prices_or_dated_notes(self):
-        prices = set(re.findall(r"\$\d+(?:\.\d\d)?", text(self.doc)))
-        self.assertLessEqual(prices, set(site.AMAZON_LIST_PRICES.values()))
+    def test_every_price_comes_from_data_and_no_dated_notes(self):
+        # Shop prices are rendered from stock.json at build time; the only other prices are our own
+        # list prices (AMAZON_LIST_PRICES) and the shared Etsy price, the same ones /shop shows.
+        recorded = {site._usd(c) for p in site.stock["products"]
+                    for c in (p.get("price_cents"), p.get("price_max_cents")) if isinstance(c, int)}
+        prices = set(re.findall(r"\$\d+(?:,\d{3})*(?:\.\d\d)?", text(self.doc)))
+        self.assertLessEqual(prices, set(site.AMAZON_LIST_PRICES.values()) | {site.ETSY_PRICE[0]} | recorded)
         low = text(self.doc).lower()
         for banned in ("black friday", "cyber monday", "ships within", "prices when we checked", "price seen",
                        "b0nem0ther", "bullet journal\u00a0", "#bulletjournal"):
