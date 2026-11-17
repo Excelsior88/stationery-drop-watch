@@ -1208,5 +1208,15 @@
   "section": "travelers",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-17T00:19:29+00:00",
+  "store_id": "papermouse",
+  "store": "The Paper Mouse",
+  "label": "Traveler's notebook Regular size · Camel (No. 15193006)",
+  "url": "https://www.thepapermouse.com/products/traveler-s-notebook-regular-camel",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
