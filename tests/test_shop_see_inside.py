@@ -246,7 +246,7 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertIn("Paperback", card(self.shop, "Level Up! My 2027 Planner"))
         self.assertIn("Front cover of the Level Up! 2027 printable planner", self.shop)
         self.assertIn("20% off launch sale Oct 31 to Nov 30", card(self.shop, "Level Up! My 2027 Kids Planner"))
-        self.assertEqual(site.shop_lastmod(), "2026-11-16")
+        self.assertEqual(site.shop_lastmod(), "2026-11-17")
         grid = card(self.shop, "Lines for the Grid Page")
         self.assertIn("https://www.etsy.com/listing/4614089507/lines-for-the-grid-page-printable-tip-in", grid)
         self.assertIn("$6.99", grid)
@@ -304,25 +304,12 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertNotIn("<details class=\"shop-inside\" open", holiday)
         self.assertNotIn("The Holiday Planner Pages", self.home)
         self.assertIn(
-            "https://stationerydropwatch.com/shop/</loc><lastmod>2026-11-16T00:00:00+00:00</lastmod>",
+            "https://stationerydropwatch.com/shop/</loc><lastmod>2026-11-17T00:00:00+00:00</lastmod>",
             site.build_sitemap())
 
-    def test_level_up_classroom_editions_follow_the_etsy_section(self):
+    def test_tpt_section_is_two_collection_cards(self):
         from PIL import Image
-        products = [
-            ("Level Up! 2027 Student Planner", "$9.00",
-             "https://www.teacherspayteachers.com/Product/Level-Up-2027-Student-Planner-Video-Game-Theme-Printable-Planner-Grades-2-5-18365192",
-             "levelup-tpt-student-planner.webp", "170 pages"),
-            ("Level Up! Goal Setting Quest Pack", "$3.75",
-             "https://www.teacherspayteachers.com/Product/Level-Up-Goal-Setting-Quest-Pack-Video-Game-Theme-Goal-Habit-Trackers-18365256",
-             "levelup-tpt-goal-quest.webp", "18 pages"),
-            ("Level Up! End of Year Review Packet", "$4.50",
-             "https://www.teacherspayteachers.com/Product/Level-Up-End-of-Year-Review-Packet-Video-Game-Theme-Summer-Review-Puzzles-18365295",
-             "levelup-tpt-end-of-year.webp", "31 pages"),
-            ("Level Up! Classroom Quest Kit", "$4.50",
-             "https://www.teacherspayteachers.com/Product/Level-Up-Classroom-Quest-Kit-Video-Game-Reading-Log-XP-Chart-Brag-Tags-18365332",
-             "levelup-tpt-classroom-kit.webp", "21 pages"),
-        ]
+        store = "https://www.teacherspayteachers.com/store/stationery-drop-watch"
         etsy_at = self.shop.find("<h2>Printable PDFs on Etsy</h2>")
         tpt_at = self.shop.find('<h2 id="classroom-printables">Classroom printables on Teachers Pay Teachers</h2>')
         self.assertGreater(etsy_at, 0)
@@ -333,46 +320,72 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertLess(etsy_section.find("2027 Printable Planner for Men"), etsy_section.find("Level Up! My 2027 Kids Planner"))
         self.assertLess(etsy_section.find("Level Up! My 2027 Kids Planner"), etsy_section.find("Soft Days Narrow Planner Inserts"))
         self.assertNotIn("teacherspayteachers.com", etsy_section)
-        self.assertIn("https://www.etsy.com/listing/4610143237", etsy_section)
         etsy = card(etsy_section, "Level Up! My 2027 Kids Planner")
         self.assertEqual(etsy.count("https://www.etsy.com/listing/4610143237"), 2)
         self.assertIn("Personal-use edition on Etsy", etsy)
-        self.assertIn("20% off launch sale Oct 31 to Nov 30", etsy)
         self.assertIn("$6.99", etsy)
-        self.assertIn("Part of Level Up! by Stationery Drop Watch", group)
-        self.assertIn("classroom editions of Level Up!", group)
-        self.assertNotIn("Level Up line", self.shop)
+        self.assertNotIn("<h3>Level Up! 2027 Student Planner</h3>", group)
+        self.assertNotIn("18365866", group)
+        self.assertNotIn("18381628", group)
+        self.assertNotIn("18381644", group)
         self.assertNotIn("bundle", group.lower())
-        self.assertNotIn("etsy.com/listing/4610143237", group)
-        for title, price, url, image, pages in products:
-            block = card(group, title)
-            self.assertEqual(block.count(url), 2, title)
+        self.assertNotIn("bestseller", group.lower())
+        self.assertNotIn("popular", group.lower())
+        cards = group[group.find("<ul"):group.find("</ul>")]
+        self.assertNotIn("$", cards)
+        level = card(group, "Level Up!")
+        pastel = card(group, "Cute Pastel")
+        self.assertEqual(level.count(store), 1)
+        self.assertEqual(pastel.count(store), 1)
+        self.assertEqual(level.count("See the collection on TpT"), 1)
+        self.assertEqual(pastel.count("See the collection on TpT"), 1)
+        self.assertNotIn("Part of Level Up!", level)
+        self.assertIn("Pixel-art, video-game classroom printables for grades 2-5.", level)
+        self.assertIn("Soft pastel picture supports for PreK-2 and special ed.", pastel)
+        self.assertIn('id="level-up-collection"', level)
+        self.assertIn('class="collection-grid"', level)
+        self.assertIn('class="collection-grid"', pastel)
+        self.assertNotIn("collection-thumbs", group)
+        self.assertNotIn("level-up-collection-cover", group)
+        self.assertNotIn("shop-img", level)
+        css = (ROOT / "site/assets/style.css").read_text()
+        self.assertIn('font-family:"Liberation Sans"', css)
+        self.assertIn("#ffcb2e", css)
+        self.assertIn("#22223a", css)
+        self.assertIn("#fff5f8", css)
+        for url in (
+            "https://www.teacherspayteachers.com/Product/Level-Up-2027-Student-Planner-Video-Game-Theme-Printable-Planner-Grades-2-5-18365192",
+            "https://www.teacherspayteachers.com/Product/Level-Up-Goal-Setting-Quest-Pack-Video-Game-Theme-Goal-Habit-Trackers-18365256",
+            "https://www.teacherspayteachers.com/Product/Level-Up-End-of-Year-Review-Packet-Video-Game-Theme-Summer-Review-Puzzles-18365295",
+            "https://www.teacherspayteachers.com/Product/Level-Up-Classroom-Quest-Kit-Video-Game-Reading-Log-XP-Chart-Brag-Tags-18365332",
+        ):
+            self.assertEqual(level.count(url), 1)
             self.assertNotIn("?", url)
-            self.assertIn(f"<strong>{price}</strong>", block)
-            self.assertIn("Classroom license", block)
-            self.assertIn("grades 2 to 5", block)
-            self.assertIn("one teacher", block)
-            if title == "Level Up! 2027 Student Planner":
-                self.assertIn("own students or classroom, or for one household", block)
-            elif title == "Level Up! Classroom Quest Kit":
-                self.assertNotIn("household", block)
-                self.assertIn("one teacher", block)
-            else:
-                self.assertIn("classroom or one household", block)
-            self.assertIn(pages, block)
-            self.assertIn(f"/assets/shop/{image}", block.split("<details", 1)[0])
-            self.assertIn(f"/assets/shop/inside/{image}", block.split("<details", 1)[1])
-            self.assertIn("View on Teachers Pay Teachers", block)
-            self.assertIn('class="shop-img sheet"', block)
-            self.assertIn('width="1500" height="1500"', block)
-            self.assertNotIn("etsy.com", block)
-            for rel in (f"site/assets/shop/{image}", f"site/assets/shop/inside/{image}"):
-                path = ROOT / rel
+        for url in (
+            "https://www.teacherspayteachers.com/Product/Cute-Pastel-Visual-Schedule-Cards-43-Kawaii-Daily-Routine-Cards-PreK2-SpEd-18381500",
+            "https://www.teacherspayteachers.com/Product/Cute-Pastel-First-Then-Now-Next-Boards-Kawaii-Visual-Supports-Reward-Cards-18381421",
+            "https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Labels-Editable-Kawaii-Supply-Bin-Labels-with-Pictures-18381372",
+            "https://www.teacherspayteachers.com/Product/Cute-Pastel-Calm-Down-Corner-Kit-Kawaii-Breathing-Cards-Calm-Choices-SEL-18381516",
+        ):
+            self.assertEqual(pastel.count(url), 1)
+        self.assertIn("Printable classroom resources from our Teachers Pay Teachers store.", group)
+        self.assertIn('width="600" height="600"', level)
+        self.assertIn("300w", level)
+        self.assertIn("600w", level)
+        self.assertEqual(level.count("<img "), 4)
+        self.assertEqual(pastel.count("<img "), 4)
+        for stem in (
+            "level-up-student-planner", "level-up-goal-quest", "level-up-end-of-year", "level-up-classroom-kit",
+            "cute-pastel-visual-schedule", "cute-pastel-first-then", "cute-pastel-classroom-labels", "cute-pastel-calm-down",
+        ):
+            for size in (600, 300):
+                path = ROOT / f"site/assets/shop/tiles/{stem}-{size}.webp"
                 with Image.open(path) as im:
-                    self.assertEqual(im.size, (1500, 1500), rel)
-                self.assertLess(path.stat().st_size, 200_000, rel)
-            self.assertNotIn(title, self.home)
+                    self.assertEqual(im.size, (size, size), path.name)
+        self.assertFalse((ROOT / "site/assets/shop/level-up-collection-cover.webp").exists())
+        self.assertFalse((ROOT / "site/assets/shop/cute-pastel-collection-cover.webp").exists())
         self.assertNotIn("teacherspayteachers.com", self.home)
+        self.assertNotIn("Level Up! 2027 Student Planner", self.home)
         self.assertNotIn("<script src=\"https://", self.shop)
         self.assertEqual(self.shop.count("application/ld+json"), 1)
 

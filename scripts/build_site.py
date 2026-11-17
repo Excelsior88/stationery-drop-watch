@@ -3353,60 +3353,53 @@ SHOP_ETSY = [
          inside="holiday-planner"),
 ]
 
-# Level Up! classroom editions. Live on Teachers Pay Teachers 2026-11-15. Facts below are from
-# each product's own page that day: title, price, grades, and what's included. No bundle card.
-# Plain product URLs only, with no tracking query. One license is for one teacher.
+# Teachers Pay Teachers is two collection cards. Individual listings stay on the store,
+# so a new listing does not need a site change. No prices, and no bundle listing.
+TPT_STORE = "https://www.teacherspayteachers.com/store/stationery-drop-watch"
 _TPT_LISTING = re.compile(r"^https://www\.teacherspayteachers\.com/Product/[A-Za-z0-9-]+$")
+_TPT_STORE = re.compile(r"^https://www\.teacherspayteachers\.com/store/[a-z0-9-]+$")
+def _tile(stem, alt, url):
+    """A square listing cover: 600px file, with a 300px srcset candidate for phones."""
+    return dict(src=f"/assets/shop/tiles/{stem}-600.webp", src300=f"/assets/shop/tiles/{stem}-300.webp",
+                w=600, h=600, alt=alt, url=url)
+
 SHOP_TPT = [
-    dict(id="levelup-tpt-student-planner", inside="levelup-tpt-student-planner",
-         title="Level Up! 2027 Student Planner",
-         img="assets/shop/levelup-tpt-student-planner.webp", img_class="sheet", img_w=1500, img_h=1500,
-         alt="Level Up! 2027 Student Planner cover: pixel-art title, three sample pages, and labels for grades 2-5, 170 pages, and Monday start.",
-         url="https://www.teacherspayteachers.com/Product/Level-Up-2027-Student-Planner-Video-Game-Theme-Printable-Planner-Grades-2-5-18365192",
-         price="$9.00",
-         sub="Classroom license · grades 2 to 5 · on Teachers Pay Teachers",
-         blurb="A printable 2027 planner that plays like a video game. Every month is a Level, with Main Quests, Side Quests, and a Boss Battle. Students plan the week, track habits, and earn XP through Level 12.",
-         details=["Grades 2 to 5. 170 pages, dated 2027, Monday start",
-                  "53 weeks, from Monday Dec 28, 2026 to Sunday Jan 2, 2028",
-                  "US Letter. Print at actual size (100%)",
-                  "Classroom license: one teacher, for their own students or classroom, or for one household"]),
-    dict(id="levelup-tpt-goal-quest", inside="levelup-tpt-goal-quest",
-         title="Level Up! Goal Setting Quest Pack",
-         img="assets/shop/levelup-tpt-goal-quest.webp", img_class="sheet", img_w=1500, img_h=1500,
-         alt="Level Up! Goal Setting Quest Pack cover: pixel-art title, three sample pages, and labels for grades 2-5, goal setting, and color plus low ink.",
-         url="https://www.teacherspayteachers.com/Product/Level-Up-Goal-Setting-Quest-Pack-Video-Game-Theme-Goal-Habit-Trackers-18365256",
-         price="$3.75",
-         sub="Classroom license · grades 2 to 5 · on Teachers Pay Teachers",
-         blurb="Turn goal setting into a game. Students pick one big goal, their Boss Challenge, break it into quest steps, earn XP, and level up when they reach it.",
-         details=["Grades 2 to 5. Undated, so it can be used any time of year",
-                  "18 pages: a Boss Challenge sheet, a 12-level quest map, XP trackers, habit trackers, and badges to color",
-                  "A low-ink version is included for black-and-white copiers",
-                  "Classroom license: one teacher's classroom or one household"]),
-    dict(id="levelup-tpt-end-of-year", inside="levelup-tpt-end-of-year",
-         title="Level Up! End of Year Review Packet",
-         img="assets/shop/levelup-tpt-end-of-year.webp", img_class="sheet", img_w=1500, img_h=1500,
-         alt="Level Up! End of Year Review Packet cover: pixel-art title, a word search, a math page, and a logic grid, labeled grades 2-5.",
-         url="https://www.teacherspayteachers.com/Product/Level-Up-End-of-Year-Review-Packet-Video-Game-Theme-Summer-Review-Puzzles-18365295",
-         price="$4.50",
-         sub="Classroom license · grades 2 to 5 · on Teachers Pay Teachers",
-         blurb="For the last weeks of school or a summer take-home packet. Students move through 5 worlds. Each world has a word search, a math power-up, a maze, and a logic grid, and every page earns 25 XP.",
-         details=["Grades 2 to 5. 31 pages, including a 4-page answer key",
-                  "5 worlds, 20 challenges, 500 XP, from Rookie to Legend",
-                  "Word searches, math power-ups, mazes, and logic grids",
-                  "Classroom license: one teacher's classroom or one household"]),
-    dict(id="levelup-tpt-classroom-kit", inside="levelup-tpt-classroom-kit",
-         title="Level Up! Classroom Quest Kit",
-         img="assets/shop/levelup-tpt-classroom-kit.webp", img_class="sheet", img_w=1500, img_h=1500,
-         alt="Level Up! Classroom Quest Kit cover: pixel-art title, a reading map, a rank ladder, and brag tags, labeled grades 2-5.",
-         url="https://www.teacherspayteachers.com/Product/Level-Up-Classroom-Quest-Kit-Video-Game-Reading-Log-XP-Chart-Brag-Tags-18365332",
-         price="$4.50",
-         sub="Classroom license · grades 2 to 5 · on Teachers Pay Teachers",
-         blurb="Students earn XP for reading, homework, kindness, and teamwork, and climb from Rookie to Legend. Brag tags, certificates, and a pennant banner match the trackers and the quest board.",
-         details=["Grades 2 to 5. 21 pages, undated, with a low-ink version for black-and-white copiers",
-                  "Reading log, homework trackers, a class XP chart for 26 players, and a team scoreboard",
-                  "18 brag tags plus 9 design-your-own tags, four posters, and a pennant banner",
-                  "Classroom license: one teacher's classroom",
-                  "XP is for effort and kindness, and it is never taken away"]),
+    dict(id="level-up-collection",
+         title="Level Up!",
+         blurb="Pixel-art, video-game classroom printables for grades 2-5.",
+         url=TPT_STORE,
+         tiles=[
+             _tile("level-up-student-planner",
+                   "Level Up! 2027 Student Planner cover: pixel-art title, sample planner pages, grades 2-5, 170 pages, Monday start.",
+                   "https://www.teacherspayteachers.com/Product/Level-Up-2027-Student-Planner-Video-Game-Theme-Printable-Planner-Grades-2-5-18365192"),
+             _tile("level-up-goal-quest",
+                   "Level Up! Goal Setting Quest Pack cover: pixel-art title, a goal sheet, an XP tracker, and achievement badges.",
+                   "https://www.teacherspayteachers.com/Product/Level-Up-Goal-Setting-Quest-Pack-Video-Game-Theme-Goal-Habit-Trackers-18365256"),
+             _tile("level-up-end-of-year",
+                   "Level Up! End of Year and Summer Review cover: pixel-art title, a word search, a math page, and a logic grid.",
+                   "https://www.teacherspayteachers.com/Product/Level-Up-End-of-Year-Review-Packet-Video-Game-Theme-Summer-Review-Puzzles-18365295"),
+             _tile("level-up-classroom-kit",
+                   "Level Up! Classroom Quest Kit cover: pixel-art title, a reading map, a rank ladder, and brag tags.",
+                   "https://www.teacherspayteachers.com/Product/Level-Up-Classroom-Quest-Kit-Video-Game-Reading-Log-XP-Chart-Brag-Tags-18365332"),
+         ]),
+    dict(id="cute-pastel-collection",
+         title="Cute Pastel",
+         blurb="Soft pastel picture supports for PreK-2 and special ed.",
+         url=TPT_STORE,
+         tiles=[
+             _tile("cute-pastel-visual-schedule",
+                   "Cute Pastel Visual Schedule Cards cover: kawaii routine cards for arrival, circle time, lunch, and recess.",
+                   "https://www.teacherspayteachers.com/Product/Cute-Pastel-Visual-Schedule-Cards-43-Kawaii-Daily-Routine-Cards-PreK2-SpEd-18381500"),
+             _tile("cute-pastel-first-then",
+                   "Cute Pastel First/Then and Now/Next boards cover: a Work First card and a Sticker reward.",
+                   "https://www.teacherspayteachers.com/Product/Cute-Pastel-First-Then-Now-Next-Boards-Kawaii-Visual-Supports-Reward-Cards-18381421"),
+             _tile("cute-pastel-classroom-labels",
+                   "Cute Pastel Classroom Labels cover: crayon, marker, reading center, and name labels.",
+                   "https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Labels-Editable-Kawaii-Supply-Bin-Labels-with-Pictures-18381372"),
+             _tile("cute-pastel-calm-down",
+                   "Cute Pastel Calm Down Corner Kit cover: a calm corner poster and breathing shape cards.",
+                   "https://www.teacherspayteachers.com/Product/Cute-Pastel-Calm-Down-Corner-Kit-Kawaii-Breathing-Cards-Calm-Choices-SEL-18381516"),
+         ]),
 ]
 
 # FIX-06: prices on /shop. Amazon list prices were read from each product's own amazon.com page on
@@ -3520,30 +3513,6 @@ SHOP_SAMPLES = {
                 "The Holiday Planner Pages print file: Gift Tracker, Holiday Budget, Order and Package Tracker, Card Mailing List, Party and Menu Planner, Baking and Meal Prep Timeline, and December Countdown, shown in Standard A5.",
                 "The 7 trackers and planners, shown in Standard A5. The same layouts come in Narrow Weekly and Pocket A6.", 2700, 2025),
     ]},
-    "levelup-tpt-student-planner": {"class": " samples inserts",
-        "note": "Pages in the download, shown together. Not a photograph of a printed copy.", "items": [
-        _sample("/assets/shop/inside/levelup-tpt-student-planner.webp",
-                "What's inside the Level Up! 2027 Student Planner: sample pages and a list of the 170 pages, dated January to December 2027, Monday start.",
-                "What's inside: 170 pages, dated 2027, Monday start.", 1500, 1500),
-    ]},
-    "levelup-tpt-goal-quest": {"class": " samples inserts",
-        "note": "Pages in the download, shown together. Not a photograph of a printed copy.", "items": [
-        _sample("/assets/shop/inside/levelup-tpt-goal-quest.webp",
-                "What's inside the Level Up! Goal Setting Quest Pack: sample goal, tracker, and badge pages, and a list of the 18 pages.",
-                "What's inside: 18 pages, plus a low-ink version.", 1500, 1500),
-    ]},
-    "levelup-tpt-end-of-year": {"class": " samples inserts",
-        "note": "Pages in the download, shown together. Not a photograph of a printed copy.", "items": [
-        _sample("/assets/shop/inside/levelup-tpt-end-of-year.webp",
-                "What's inside the Level Up! End of Year Review Packet: sample puzzles and a list of the 31 pages, including the answer key.",
-                "What's inside: 31 pages, including the answer key.", 1500, 1500),
-    ]},
-    "levelup-tpt-classroom-kit": {"class": " samples inserts",
-        "note": "Pages in the download, shown together. Not a photograph of a printed copy.", "items": [
-        _sample("/assets/shop/inside/levelup-tpt-classroom-kit.webp",
-                "What's inside the Level Up! Classroom Quest Kit: sample reading, homework, poster, and brag-tag pages, and a list of the 21 pages.",
-                "What's inside: 21 pages, plus a low-ink version.", 1500, 1500),
-    ]},
 }
 
 import hashlib as _hl
@@ -3593,9 +3562,9 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
-    # Shop facts changed 2026-11-16 (A5 blush and men's A5 planners featured on /shop; Level Up! classroom editions on Teachers Pay Teachers, live 2026-11-15).
-    if SHOP_TPT and all(tpt_listing_url(e) for e in SHOP_TPT):
-        return "2026-11-16"
+    # Shop facts changed 2026-11-17 (Teachers Pay Teachers section is two collection cards).
+    if SHOP_TPT:
+        return "2026-11-17"
     # Shop facts changed 2026-11-13 (The Holiday Planner Pages listing).
     if any(e.get("id") == "holiday-planner" and etsy_listing_url(e) for e in SHOP_ETSY):
         return "2026-11-13"
@@ -3656,16 +3625,22 @@ def build_shop():
     fname = "shop/"
     books = {b["id"]: b for b in json.loads((ROOT / "content/editor_picks.json").read_text())["books"]}
     labels = SHOP_LABELS
-    for item in SHOP_ETSY + SHOP_TPT:
+    for item in SHOP_ETSY:
         if not (ROOT / "site" / item["img"]).is_file():
             raise SystemExit(f"missing shop asset {item['img']}")
         if item.get("id") == "soft-days" and len(item.get("templates") or []) != 16:
             raise SystemExit(f"{item['title']} must list 16 templates")
     for item in SHOP_TPT:
-        tpt_listing_url(item)
-        for sample in SHOP_SAMPLES[item["inside"]]["items"]:
-            if not (SITE / sample["src"].lstrip("/")).is_file():
-                raise SystemExit(f"missing shop asset {sample['src']}")
+        if not _TPT_STORE.match(item["url"]):
+            raise SystemExit(f"{item['title']}: store URL must be a plain teacherspayteachers.com/store link")
+        if len(item.get("tiles") or []) != 4:
+            raise SystemExit(f"{item['title']}: a collection card has four covers")
+        for tile in item["tiles"]:
+            if not _TPT_LISTING.match(tile["url"]):
+                raise SystemExit(f"{item['title']}: cover URL must be a plain product link")
+            for key in ("src", "src300"):
+                if not (SITE / tile[key].lstrip("/")).is_file():
+                    raise SystemExit(f"missing shop asset {tile[key]}")
     def srcset(img):  # Etsy mockups ship 600w + 1200w copies; Amazon covers use their single file
         if img.startswith("assets/shop/") and img.endswith("-planner.jpg"):
             b = img[:-4]
@@ -3676,7 +3651,7 @@ def build_shop():
         return ""
     def card(img, alt, title, sub, blurb, details, href, btn, own, price, inside=None, *,
              img_class="", dims=None, note="", templates=None, templates_label="Templates", card_id="",
-             also=None):
+             also=None, thumbs=None, sizes=""):
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
         attr = ' data-own-product' if own else ''
         ins = ""
@@ -3708,7 +3683,8 @@ def build_shop():
         else:
             cls = "shop-img photo"
         dim = f' width="{int(dims[0])}" height="{int(dims[1])}"' if dims else ""
-        image = f'<img src="{E(img)}"{srcset(img)}{dim} sizes="(max-width:600px) 240px, 150px" alt="{E(alt)}" loading="lazy" decoding="async">'
+        img_sizes = sizes or "(max-width:600px) 240px, 150px"
+        image = f'<img src="{E(img)}"{srcset(img)}{dim} sizes="{E(img_sizes)}" alt="{E(alt)}" loading="lazy" decoding="async">'
         if href:
             media = f'<a class="{cls}" href="{E(href)}"{attr} rel="noopener" target="_blank">{image}</a>'
             action = f'<a class="btn" href="{E(href)}"{attr} rel="noopener" target="_blank">{E(btn)}</a>'
@@ -3724,10 +3700,25 @@ def build_shop():
                 f'{E(also["link_text"])}</a></p>'
             )
         idattr = f' id="{E(card_id)}"' if card_id else ""
+        sub_html = f'<p class="muted small">{E(sub)}</p>' if sub else ""
+        list_html = f'<ul class="small">{dl}</ul>' if details else ""
+        thumb_html = ""
+        if thumbs:
+            links = "".join(
+                f'<a href="{E(t["url"])}" rel="noopener" target="_blank">'
+                f'<img src="{E(t["src"])}" srcset="{E(t["src300"])} 300w, {E(t["src"])} 600w" '
+                f'sizes="(max-width:760px) calc((100vw - 64px) / 2), 220px" '
+                f'alt="{E(t["alt"])}" width="{t["w"]}" height="{t["h"]}" loading="lazy" decoding="async"></a>'
+                for t in thumbs)
+            thumb_html = f'<div class="collection-grid">{links}</div>'
+        # A collection has no separate cover. The product grid leads the card.
+        if not img and thumb_html:
+            media = thumb_html
+            thumb_html = ""
         return f"""<li class="shop-card"{idattr}>
   {media}
-  <div class="shop-body">{note_html}<h3>{E(title)}</h3><p class="muted small">{E(sub)}</p>{price}<p>{E(blurb)}</p><ul class="small">{dl}</ul>
-  {also_html}{ins}{action}</div></li>"""
+  <div class="shop-body">{note_html}<h3>{E(title)}</h3>{sub_html}{price}<p>{E(blurb)}</p>{list_html}
+  {also_html}{ins}{thumb_html}{action}</div></li>"""
     def amz_price(a):
         lp = AMAZON_LIST_PRICES.get(a)
         if not lp:
@@ -3763,30 +3754,26 @@ def build_shop():
                     note=note, templates=item.get("templates"), templates_label=item.get("templates_label", "Templates"),
                     card_id=item.get("id", ""))
     def tpt_card(item):
-        price = f'<p class="shop-price"><strong>{E(item["price"])}</strong></p>'
-        return card(item["img"], item["alt"], item["title"], item["sub"], item["blurb"],
-                    item.get("details", []), tpt_listing_url(item), "View on Teachers Pay Teachers", False, price,
-                    item.get("inside"), img_class=item.get("img_class", ""),
-                    dims=(item["img_w"], item["img_h"]) if item.get("img_w") and item.get("img_h") else None,
-                    card_id=item.get("id", ""))
+        return card("", "", item["title"], "", item["blurb"],
+                    [], item["url"], "See the collection on TpT", False, "",
+                    card_id=item.get("id", ""), thumbs=item.get("tiles"))
     etsy = "".join(etsy_card(e) for e in etsy_listings())
     tpt = "".join(tpt_card(e) for e in SHOP_TPT)
     if shop_inserts_public():
         lede = ("Planners, journals, and printable pages we make. Printed books are on Amazon. "
-                "Printable PDFs and tip-ins are on Etsy. Level Up! classroom editions are on Teachers Pay Teachers.")
+                "Printable PDFs and tip-ins are on Etsy. Classroom printables are on Teachers Pay Teachers.")
         title = "Our planners and journals"
         desc = ("Planners and journals from Stationery Drop Watch: printed books on Amazon, printable PDFs on Etsy, "
-                "and Level Up! classroom editions on Teachers Pay Teachers.")
+                "and classroom printables on Teachers Pay Teachers.")
         etsy_intro = '<p class="muted">Printable planner PDFs, and undated paper tip-ins you print and cut yourself.</p>'
     else:
         lede = ("Planners and journals we make. Printed books are on Amazon, printable PDFs are on Etsy, "
-                "and Level Up! classroom editions are on Teachers Pay Teachers.")
+                "and classroom printables are on Teachers Pay Teachers.")
         title = "Our planners and journals"
         desc = ("Planners and journals from Stationery Drop Watch: printed books on Amazon, printable PDFs on Etsy, "
-                "and Level Up! classroom editions on Teachers Pay Teachers.")
+                "and classroom printables on Teachers Pay Teachers.")
         etsy_intro = ""
-    tpt_intro = ("Part of Level Up! by Stationery Drop Watch. These are the classroom editions of Level Up!, "
-                 "for one teacher and their own students.")
+    tpt_intro = "Printable classroom resources from our Teachers Pay Teachers store."
     body = f"""
 <article class="prose shop shop-wide">
 {crumbs((fname, "Shop"))}
