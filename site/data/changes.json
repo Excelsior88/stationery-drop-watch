@@ -1263,5 +1263,15 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_tdaisuke/",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-17T04:49:32+00:00",
+  "store_id": "papermouse",
+  "store": "The Paper Mouse",
+  "label": "Traveler's notebook Regular size · Blue (No. 15239006)",
+  "url": "https://www.thepapermouse.com/products/traveler-s-notebook-regular-blue",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
