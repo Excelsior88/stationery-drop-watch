@@ -94,9 +94,12 @@ class PageFilterMarkupTests(unittest.TestCase):
             if is_group:
                 self.assertIn('data-group-toggle', doc, name)
                 self.assertIn("Expand all", doc, name)
-                self.assertIn("hidden>Expand all</button>", doc.replace(" hidden>", " hidden>"), name)
-            else:
-                self.assertNotIn("data-group-toggle", doc, name)
+                self.assertIn("hidden>Expand all</button>", doc, name)
+            elif "data-group-toggle" in doc:
+                # Design pages share list_filter; the control stays hidden because there are no groups.
+                self.assertIn("hidden>Expand all</button>", doc, name)
+                self.assertNotIn("group-fold", doc, name)
+                self.assertNotIn("fam-block", doc, name)
 
     def test_jump_row_is_gone_and_design_pages_fold(self):
 

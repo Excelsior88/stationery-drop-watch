@@ -434,7 +434,7 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 #filters{scroll-margin-top:calc(var(--mast) + 8px)}
 .shop-head,.group-sec,.fam-block,.group-fold,.compare{scroll-margin-top:calc(var(--mast) + 12px)}
 .filter-note{margin:-4px 0 12px}
-.group-toolbar{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.group-toolbar{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap;flex:1 1 100%;margin:8px 0 0}
 .group-toolbar:not(:has([data-group-toggle]:not([hidden]))){display:none}
 button.group-toggle{background:none;color:var(--ink);border:1.5px solid var(--line);padding:6px 12px;font:600 .8rem/1.2 var(--sans);letter-spacing:.02em;cursor:pointer;border-radius:10px;min-height:40px}
 button.group-toggle:hover{border-color:var(--ink);background:var(--paper-2)}
@@ -477,6 +477,7 @@ table.stock.compare thead th{vertical-align:top}
 .compare-shops li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;min-height:44px;padding:6px 0;border-top:1px dashed var(--line)}
 .compare-shop{flex:1 1 180px;min-width:0}
 .compare-shop a{overflow-wrap:anywhere}
+.compare-shop .region{margin-right:.4em}
 .compare-shops .badge{margin-left:auto;flex-shrink:0}
 @media (max-width:560px){
   .compare-shops li{align-items:flex-start}

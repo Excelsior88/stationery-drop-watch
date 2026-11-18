@@ -771,7 +771,7 @@ def compare_product(ls):
     note = sold_everywhere_html(ls, "st", "sid")
     items = []
     for r in ls:
-        region = f' <span class="region" title="Shop\'s home country">{E(r["rg"])}</span>' if r.get("rg") else ""
+        region = f' <span class="region" title="Shop\'s home country">{E(r["rg"])}</span> ' if r.get("rg") else ""
         variant = f'<span class="sub variant">{E(r["p"])}</span>' if r.get("p") and r["p"] != r.get("gn") else ""
         title = f'<span class="sub">{E(r["title"])}</span>' if r.get("title") and r["title"] not in (r.get("gn"), r.get("p")) else ""
         row_az = _az_link(r) if r.get("az") and not same_az else ""
@@ -849,9 +849,9 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
         </details>
         <label class="grow">Search<input id="f-q" type="search" placeholder="{E(search_hint)}" autocomplete="off"></label>
         <button type="button" class="filter-reset" id="f-reset">Reset</button>
+        {group_toggle_html()}
       </form>
       {lang_note}
-      {group_toggle_html()}
       <div id="rows" class="tracker-groups"><noscript>{noscript_rows}</noscript></div>
       <button type="button" id="more" class="btn-ghost more" hidden>Show all</button>
       <p class="muted small">Groups can be collapsed. "Not yet on sale" means the store has a preview page up but isn't taking orders yet. "Couldn't check" is a failed check, not a sold-out guess.</p>
@@ -1518,6 +1518,7 @@ def list_filter(ls, hint):
       </details>
       <label class="grow">Search<input data-filter="q" type="search" placeholder="{E(hint)}" autocomplete="off"></label>
       <button type="button" class="filter-reset" data-filter="reset">Reset</button>
+      {group_toggle_html()}
     </form>
     {lang_note}"""
 
@@ -1671,7 +1672,7 @@ def build_group(g, oe):
   <div class="main-col">
     <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
     <div id="tracker"{' class="card-filtered"' if ext else ''}>
-    {design_nav}{shop_nav}{card_filter}{group_toggle_html()}{''.join(parts)}
+    {design_nav}{shop_nav}{card_filter}{''.join(parts)}
     <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
     </div>
     {dg_tracker}{lines_grid_card() if g.get("slug") == "hobonichi-weeks-2027" else ""}
