@@ -7,7 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 CSS = (ROOT / "site" / "assets" / "style.css").read_text()
 FONTS = ROOT / "site" / "assets" / "fonts"
 FOOTER_RE = re.compile(
-    r'<p class="foot-follow"><a href="follow/">Follow us</a></p>'
+    r'<nav class="foot-nav"[^>]*>.*?<a href="/?follow/">Follow us</a>.*?</nav>',
+    re.S,
 )
 
 
@@ -50,9 +51,10 @@ class FontPolishTests(unittest.TestCase):
         self.assertRegex(
             CSS, r"\.foot-nav a,\.foot-follow a\{[^}]*text-decoration:none"
         )
-        # The follow link is not inside nav, so it must not rely on `nav a`.
+        # Follow us sits in the footer nav row and uses the same un-underlined style.
         html = (ROOT / "site" / "index.html").read_text()
-        self.assertRegex(html, r'<p class="foot-follow"><a href="/?follow/">Follow us</a></p>')
+        self.assertRegex(html, r'<nav class="foot-nav"[^>]*>.*<a href="/?follow/">Follow us</a>.*</nav>')
+        self.assertNotIn('class="foot-follow"', html)
 
     def test_phone_shows_lede_and_homepage_card_blurbs(self):
         blocks = re.findall(r"@media \(max-width:700px\)\{(.*?)\n\}", CSS, flags=re.S)

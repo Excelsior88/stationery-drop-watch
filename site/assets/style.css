@@ -247,7 +247,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .guide-list li{margin:0 0 1rem}
 @media (max-width:420px){nav{justify-content:center;gap:2px}nav a{padding:5px 7px;font-size:.82rem}}
 .shop-list{list-style:none;padding:0;display:grid;gap:22px}
-.shop-card{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start;padding:16px;border:1px solid #e6dccb;border-radius:12px;background:#fff}
+.shop-card{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:stretch;height:100%;padding:16px;border:1px solid #e6dccb;border-radius:12px;background:#fff}
 .shop-card h3{margin:0 0 2px}.shop-card ul{padding-left:18px}
 .shop-img{display:block;aspect-ratio:3/4;width:100%;background:#f6efe3;border-radius:8px;overflow:hidden;box-shadow:0 6px 14px -8px rgba(60,40,20,.45)}
 /* Every cover fills the same 3:4 frame. Amazon covers are 2:3 to ~3:4 (trims a sliver top and bottom);
@@ -262,6 +262,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 @media(max-width:600px){.shop-card{grid-template-columns:1fr;gap:14px;padding:14px}.shop-img{max-width:240px;margin:0 auto}.shop-card .btn{display:block;text-align:center}}
 
 .follow-list{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (min-width:601px){.follow-list>li:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc((100% - 16px) / 2)}}
 .follow-card{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid #e6dccb;border-radius:12px;background:#fff}
 .follow-card h3{margin:0}.follow-card p{margin:2px 0}
 .follow-ico{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#f6efe3;color:#c1553b;font:700 1rem var(--sans)}
@@ -294,9 +295,10 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 
 /* Shop (FIX-06): two-column card grid on desktop, one column on small screens, price on every card */
 .prose.shop-wide{max-width:1040px}
-.shop-wide .shop-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.shop-wide .shop-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:stretch}
 .shop-wide .shop-card{grid-template-columns:150px 1fr;gap:16px}
-.shop-wide .shop-body{min-width:0}
+.shop-wide .shop-body{min-width:0;display:flex;flex-direction:column;height:100%}
+.shop-wide .shop-body .btn{margin-top:auto}
 .shop-price{margin:6px 0 8px;font-family:var(--sans)}
 .shop-price strong{font-size:1.25rem;color:#2d2a32;margin-right:4px}
 .shop-inside{margin:6px 0 12px}
@@ -426,6 +428,7 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 .trust span{display:block;color:var(--ink-2);font-size:.8rem;font-weight:500}
 .trust-miss{display:block;margin-top:4px;font:500 .75rem/1.35 var(--sans);color:var(--ink-2)}
 .hero .section-switch{margin:8px 0 0}
+.nobr{white-space:nowrap}
 .hero{padding-bottom:6px}
 .hub-trackers{margin-top:12px}
 .hub-art{display:block;margin:-4px 0 8px}
