@@ -78,7 +78,7 @@ nav a[aria-current]{background:var(--ink);color:var(--paper)}
 .feed-body>a:not(.hub-tag){flex:1 1 100%;overflow-wrap:anywhere;font:600 1.05rem/1.3 var(--serif);color:var(--ink);text-decoration:none}
 .feed-body>a:not(.hub-tag):hover{color:var(--accent)}
 .feed-now{flex:0 0 auto;font-size:.78rem;color:var(--ink-2)}
-.feed-now .badge{display:inline-block;margin-left:6px;font-size:.95rem;padding:6px 12px}
+.feed-now .badge{display:inline-flex;align-items:center;gap:.36em;margin-left:6px;font-size:.95rem;padding:6px 12px}
 .feed-when{flex:1 1 100%;margin-left:0;font-size:.78rem;color:var(--ink-2)}
 .feed-item[data-tone="sold"] .feed-when{color:var(--rose)}
 .feed-history{flex:1 1 100%;margin:2px 0 0}
@@ -105,11 +105,14 @@ table.stock{width:100%;border-collapse:collapse;font-size:.93rem}
 .stock td a:hover{color:var(--accent)}
 .stock .sub{display:block;font-size:.8rem;color:var(--ink-2)}
 .badge{display:inline-block;white-space:nowrap;font-size:.76rem;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid}
-.badge.in_stock{color:#2f6b45;background:#e7f2ea;border-color:#bcd9c5}
-.badge.preorder{color:#5d3f73;background:#f0e9f5;border-color:#d8c6e5}
-.badge.coming_soon{color:#80601a;background:#fbf1d8;border-color:#ecd59a}
-.badge.sold_out{color:#9b3434;background:#f9e6e4;border-color:#ebc0bb}
-.badge.unknown{color:#555;background:#eee;border-color:#ccc}
+.badge.in_stock,.badge.preorder,.badge.coming_soon,.badge.sold_out,.badge.unknown{display:inline-flex;align-items:center;gap:.36em;line-height:1.2}
+.badge.in_stock::before,.badge.preorder::before,.badge.coming_soon::before,.badge.sold_out::before,.badge.unknown::before{content:"";width:.45em;height:.45em;border-radius:50%;background:currentColor;flex-shrink:0}
+.badge.in_stock{color:#14532d;background:#dcfce7;border-color:#bbf7d0}
+.badge.preorder{color:#1e3a8a;background:#dbeafe;border-color:#bfdbfe}
+.badge.coming_soon{color:#78350f;background:#fef3c7;border-color:#fde68a}
+.badge.sold_out{color:#5c564f;background:#f5f4f1;border-color:#e4dfd7}
+.badge.sold_out::before{background:transparent;border:1.5px solid currentColor;box-sizing:border-box}
+.badge.unknown{color:#475569;background:#f8fafc;border-color:#cbd5e1;border-style:dashed}
 .empty-row td{text-align:center;color:var(--ink-2);padding:24px}
 details{margin-top:10px} summary{cursor:pointer}
 
@@ -431,6 +434,11 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 #filters{scroll-margin-top:calc(var(--mast) + 8px)}
 .shop-head,.group-sec,.fam-block,.group-fold,.compare{scroll-margin-top:calc(var(--mast) + 12px)}
 .filter-note{margin:-4px 0 12px}
+.group-toolbar{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.group-toolbar:not(:has([data-group-toggle]:not([hidden]))){display:none}
+button.group-toggle{background:none;color:var(--ink);border:1.5px solid var(--line);padding:6px 12px;font:600 .8rem/1.2 var(--sans);letter-spacing:.02em;cursor:pointer;border-radius:10px;min-height:40px}
+button.group-toggle:hover{border-color:var(--ink);background:var(--paper-2)}
+button.group-toggle[hidden]{display:none}
 .fam-block{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:0 0 12px;padding:0 14px 6px}
 .fam-block>summary,.group-fold>summary{display:flex;align-items:baseline;justify-content:space-between;gap:12px;min-height:48px;padding:12px 0 12px 1.2em;cursor:pointer;list-style:none;position:relative}
 .fam-block>summary::-webkit-details-marker,.group-fold>summary::-webkit-details-marker{display:none}
@@ -469,7 +477,12 @@ table.stock.compare thead th{vertical-align:top}
 .compare-shops li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;min-height:44px;padding:6px 0;border-top:1px dashed var(--line)}
 .compare-shop{flex:1 1 180px;min-width:0}
 .compare-shop a{overflow-wrap:anywhere}
-.compare-shops .badge{margin-left:auto}
+.compare-shops .badge{margin-left:auto;flex-shrink:0}
+@media (max-width:560px){
+  .compare-shops li{align-items:flex-start}
+  .compare-shop .sub{display:block;font-size:.8rem;color:var(--ink-2)}
+  .compare-shops .badge{margin-top:2px}
+}
 .tracker-groups{min-width:0}
 @media (max-width:760px){
   .trust{grid-template-columns:1fr 1fr}
@@ -479,7 +492,7 @@ table.stock.compare thead th{vertical-align:top}
 @media (max-width:640px){
   .filters:has(.filter-more[open]){position:static}
   .filters label,.filter-fields label{flex:1 1 100%}
-  .filters select,.filters input,.filters button.filter-reset,.feed-controls label,.hero .signup-strip button{min-height:44px}
+  .filters select,.filters input,.filters button.filter-reset,button.group-toggle,.feed-controls label,.hero .signup-strip button{min-height:44px}
   .table-wrap{overflow-x:hidden}
   table.stock{table-layout:fixed}
   .stock td:last-child,#rows td:last-child{width:auto;white-space:normal}

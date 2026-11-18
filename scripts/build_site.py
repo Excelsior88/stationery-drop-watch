@@ -146,6 +146,25 @@ def region_tag(store_id):
     r = REGION.get(store_id, "")
     return f' <span class="region" title="Shop based in {REGION_NAME[r]}">{r}</span>' if r else ""
 
+def countries_present(store_ids):
+    """Country codes actually used by these shops, in REGION_NAME order. No invented countries."""
+    present = {REGION.get(i) for i in store_ids if REGION.get(i)}
+    return [c for c in REGION_NAME if c in present]
+
+def country_filter_label(store_ids, attr):
+    """A Based-in filter, only when two or more countries are present. attr is the select's id or data-filter."""
+    cs = countries_present(store_ids)
+    if len(cs) < 2:
+        return ""
+    opts = "".join(f'<option value="{E(c)}">{E(REGION_NAME[c])}</option>' for c in cs)
+    return (f'<label>Based in<select {attr}><option value="">All countries</option>{opts}</select></label>')
+
+def group_toggle_html():
+    """Hidden until JS runs; without JS the native <details> summaries still open one group at a time."""
+    return ('<div class="group-toolbar">'
+            '<button type="button" class="group-toggle" data-group-toggle hidden>Expand all</button>'
+            '</div>')
+
 def names_and(n):
     return ", ".join(n[:-1]) + " and " + n[-1] if len(n) > 1 else "".join(n)
 
@@ -810,6 +829,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
                       + "".join(f'<option value="{E(v)}">{E(v)}</option>' for v in langs) + '</select></label>')
         if any(not listing_language(p) for p in prods):
             lang_note = '<p class="muted small filter-note">Language is taken from the shop\'s own title. Listings that don\'t name one stay under All languages.</p>'
+    country_label = country_filter_label(sids, 'id="f-country"')
     noscript_rows = tracker_static(rows)
     return f"""<section class="card" id="tracker">
       {prefix}
@@ -823,6 +843,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
             {size_label}
             {lang_label}
             <label>Store<select id="f-store"><option value="">All stores</option>{store_opts}</select></label>
+            {country_label}
             <label>Status<select id="f-status"><option value="">Any status</option>{status_opts}</select></label>
           </div>
         </details>
@@ -830,6 +851,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
         <button type="button" class="filter-reset" id="f-reset">Reset</button>
       </form>
       {lang_note}
+      {group_toggle_html()}
       <div id="rows" class="tracker-groups"><noscript>{noscript_rows}</noscript></div>
       <button type="button" id="more" class="btn-ghost more" hidden>Show all</button>
       <p class="muted small">Groups can be collapsed. "Not yet on sale" means the store has a preview page up but isn't taking orders yet. "Couldn't check" is a failed check, not a sold-out guess.</p>
@@ -1457,7 +1479,7 @@ def status_rows(ls, oe):
     for l in sorted(ls, key=lambda l: (order.get(l["status"], 9), l["store"])):
         since = l.get("status_since")
         since_html = f'<span class="sub">since {time_tag(since)}</span>' if since and l["status"] != "unknown" else ""
-        rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
+        rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
   <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td></tr>""")
     return "".join(rows)
 
@@ -1482,6 +1504,7 @@ def list_filter(ls, hint):
                       + "".join(f'<option value="{E(v)}">{E(v)}</option>' for v in langs) + '</select></label>')
         if any(not listing_language(l) for l in ls):
             lang_note = '<p class="muted small filter-note">Language is taken from the shop\'s own title. Listings that don\'t name one stay under All languages.</p>'
+    country_label = country_filter_label((sid for sid, _ in seen), 'data-filter="country"')
     return f"""<form class="filters page-filter card-filter" id="filters" role="search" aria-label="Filters" onsubmit="return false">
       <details class="filter-more" open>
         <summary>Filters</summary>
@@ -1489,6 +1512,7 @@ def list_filter(ls, hint):
           {size_label}
           {lang_label}
           <label>Store<select data-filter="store"><option value="">All stores</option>{store_opts}</select></label>
+          {country_label}
           <label>Status<select data-filter="status"><option value="">Any status</option>{status_opts}</select></label>
         </div>
       </details>
@@ -1647,7 +1671,7 @@ def build_group(g, oe):
   <div class="main-col">
     <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
     <div id="tracker"{' class="card-filtered"' if ext else ''}>
-    {design_nav}{shop_nav}{card_filter}{''.join(parts)}
+    {design_nav}{shop_nav}{card_filter}{group_toggle_html()}{''.join(parts)}
     <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
     </div>
     {dg_tracker}{lines_grid_card() if g.get("slug") == "hobonichi-weeks-2027" else ""}

@@ -21,12 +21,40 @@
   } else if (here === "/" || here === "/index.html") {
     const moved = { tracker: "tracker", listings: "tracker", "by-product": "by-product", rows: "tracker" };
     const h = location.hash.slice(1), q = new URLSearchParams(location.search);
-    const filt = ["product", "type", "store", "status", "q"].some(k => q.get(k));
+    const filt = ["product", "type", "store", "status", "q", "country"].some(k => q.get(k));
     // Old /#faq and /faq land on this page's Good to know, not the Hobonichi tracker.
     if (h === "faq" && !filt) location.replace("/#good-to-know" + location.search);
     else if (moved[h] || filt) location.replace("/hobonichi-restock-tracker/" + location.search + (moved[h] ? "#" + moved[h] : (h ? "#" + h : "#tracker")));
   }
   const LABEL = { in_stock: "In stock", preorder: "Preorder", coming_soon: "Not yet on sale", sold_out: "Sold out", unknown: "Couldn't check" };
+
+  const groupSel = "details.fam-block, details.group-fold";
+  function bindGroupToggle(btn, root) {
+    if (!btn) return () => {};
+    const scope = root || document;
+    const sync = () => {
+      const items = [...scope.querySelectorAll(groupSel)].filter(d => !d.hidden);
+      if (!items.length) { btn.hidden = true; return; }
+      btn.hidden = false;
+      const allOpen = items.every(d => d.open);
+      btn.textContent = allOpen ? "Collapse all" : "Expand all";
+      btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+    };
+    if (!btn.dataset.bound) {
+      btn.dataset.bound = "1";
+      btn.addEventListener("click", () => {
+        const items = [...scope.querySelectorAll(groupSel)].filter(d => !d.hidden);
+        const open = !items.every(d => d.open);
+        items.forEach(d => { d.open = open; });
+        sync();
+      });
+      scope.addEventListener("toggle", ev => {
+        if (ev.target.closest && ev.target.matches && ev.target.matches(groupSel)) sync();
+      }, true);
+    }
+    sync();
+    return sync;
+  }
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const dataEl = document.getElementById("stock-data");
   if (dataEl) {
@@ -35,7 +63,7 @@
     rows.sort((a, b) => (order[a.st] - order[b.st]) || a.s.localeCompare(b.s));
     const $ = id => document.getElementById(id);
     const f = {};
-    ["product", "type", "store", "status", "q", "size", "lang"].forEach(k => {
+    ["product", "type", "store", "status", "q", "size", "lang", "country"].forEach(k => {
       const el = $("f-" + k);
       if (el) f[k] = el;
     });
@@ -127,6 +155,7 @@
         (!f.status.value || r.st === f.status.value) &&
         (!f.size || !f.size.value || (r.sz || "") === f.size.value) &&
         (!f.lang || !f.lang.value || (r.lg || "") === f.lang.value) &&
+        (!f.country || !f.country.value || (r.rg || "") === f.country.value) &&
         (!q || (r.p + " " + r.gn + " " + r.title + " " + r.s).toLowerCase().includes(q)));
       const groups = groupRows(out);
       const hasFam = groups.some(ls => ls[0].fam);
@@ -168,6 +197,8 @@
       box.innerHTML = html;
       if (honorHash) openHashTarget(false);
       $("count").textContent = `Showing ${n} of ${out.length} matching listings in ${groups.length} ${groups.length === 1 ? "product" : "products"} (${rows.length} tracked)`;
+      const toggleBtn = document.querySelector("#tracker [data-group-toggle]") || document.querySelector("[data-group-toggle]");
+      bindGroupToggle(toggleBtn, box.closest("#tracker") || document);
     }
     const reset = document.getElementById("f-reset");
     const onFilter = (push) => { limit = PAGE; render(); syncUrl(push); };
@@ -196,6 +227,7 @@
     const statusEl = form.querySelector("[data-filter=status]");
     const sizeEl = form.querySelector("[data-filter=size]");
     const langEl = form.querySelector("[data-filter=lang]");
+    const countryEl = form.querySelector("[data-filter=country]");
     const reset = form.querySelector("[data-filter=reset]");
     const read = () => {
       const params = new URLSearchParams(location.search);
@@ -204,6 +236,7 @@
       if (statusEl) statusEl.value = params.get("status") || "";
       if (sizeEl) sizeEl.value = params.get("size") || "";
       if (langEl) langEl.value = params.get("lang") || "";
+      if (countryEl) countryEl.value = params.get("country") || "";
     };
     const write = (push) => {
       const p = new URLSearchParams(location.search);
@@ -213,6 +246,7 @@
       set("status", statusEl && statusEl.value);
       set("size", sizeEl && sizeEl.value);
       set("lang", langEl && langEl.value);
+      set("country", countryEl && countryEl.value);
       p.delete("product");
       const next = location.pathname + (p.toString() ? "?" + p : "") + location.hash;
       if (next !== location.pathname + location.search + location.hash)
@@ -239,22 +273,24 @@
       const status = statusEl ? statusEl.value : "";
       const size = sizeEl ? sizeEl.value : "";
       const lang = langEl ? langEl.value : "";
+      const country = countryEl ? countryEl.value : "";
+      const active = !!(q || store || status || size || lang || country);
       let shown = 0;
       for (const c of cards) {
         let any = false;
         for (const tr of c.querySelectorAll("tbody tr")) {
           const head = c.closest("details.group-fold")?.querySelector("summary")?.textContent || c.querySelector("h2,h3")?.textContent || "";
           const text = (head + " " + tr.textContent).toLowerCase();
-          const hit = (!q || text.includes(q)) && (!store || tr.getAttribute("data-store") === store) && (!status || tr.getAttribute("data-status") === status) && (!size || tr.getAttribute("data-size") === size) && (!lang || tr.getAttribute("data-lang") === lang);
+          const hit = (!q || text.includes(q)) && (!store || tr.getAttribute("data-store") === store) && (!status || tr.getAttribute("data-status") === status) && (!size || tr.getAttribute("data-size") === size) && (!lang || tr.getAttribute("data-lang") === lang) && (!country || tr.getAttribute("data-country") === country);
           tr.hidden = !hit; any = any || hit;
         }
         const keep = c.contains(form);
-        c.hidden = !keep && (q || store || status) && !any;
+        c.hidden = !keep && active && !any;
         const fold = c.closest("details.group-fold");
         if (fold) {
           fold.hidden = c.hidden;
-          if ((q || store || status || size || lang) && any) fold.open = true;
-          else if (!(q || store || status || size || lang)) fold.open = false;
+          if (active && any) fold.open = true;
+          else if (!active) fold.open = false;
         }
         if (any) shown++;
       }
@@ -270,6 +306,8 @@
       if (empty) empty.hidden = shown > 0;
       if (skipHash) skipHash = false;
       else { openGroupHash(!hashScrolled); hashScrolled = true; }
+      const toggleBtn = form.parentElement && form.parentElement.querySelector("[data-group-toggle]");
+      bindGroupToggle(toggleBtn, wrap);
     };
     const schedule = (push, wait) => {
       clearTimeout(timer);
@@ -291,12 +329,14 @@
     if (statusEl) statusEl.addEventListener("input", () => schedule(true, 0));
     if (sizeEl) sizeEl.addEventListener("input", () => schedule(true, 0));
     if (langEl) langEl.addEventListener("input", () => schedule(true, 0));
+    if (countryEl) countryEl.addEventListener("input", () => schedule(true, 0));
     if (reset) reset.addEventListener("click", () => {
       if (qEl) qEl.value = "";
       if (storeEl) storeEl.value = "";
       if (statusEl) statusEl.value = "";
       if (sizeEl) sizeEl.value = "";
       if (langEl) langEl.value = "";
+      if (countryEl) countryEl.value = "";
       document.querySelectorAll("details.group-fold").forEach(d => { d.open = false; });
       skipHash = true;
       schedule(true, 0);
