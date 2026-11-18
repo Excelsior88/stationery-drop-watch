@@ -8,6 +8,12 @@
   --serif:"Newsreader","Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --r:14px;
+  /* Status palette: pills, stat numbers, and restock-row accents share these. */
+  --st-instock:#14532d; --st-instock-bg:#dcfce7; --st-instock-line:#bbf7d0;
+  --st-preorder:#1e3a8a; --st-preorder-bg:#dbeafe; --st-preorder-line:#bfdbfe;
+  --st-coming:#78350f; --st-coming-bg:#fef3c7; --st-coming-line:#fde68a;
+  --st-soldout:#5c564f; --st-soldout-bg:#f5f4f1; --st-soldout-line:#e4dfd7;
+  --st-unknown:#475569; --st-unknown-bg:#f8fafc; --st-unknown-line:#cbd5e1;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -48,9 +54,9 @@ nav a[aria-current]{background:var(--ink);color:var(--paper)}
 .stats div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;box-shadow:0 1px 0 var(--line)}
 .stats b{display:block;font:600 1.8rem/1 var(--serif)}
 .stats span{font-size:.82rem;color:var(--ink-2)}
-.stats div:nth-child(1) b{color:var(--sage)} .stats div:nth-child(2) b{color:var(--plum)}
-.stats div:nth-child(3) b{color:var(--rose)} .stats div:nth-child(4) b{color:var(--mustard)}
-.stats.five{grid-template-columns:repeat(5,minmax(0,1fr))} .stats div.unk b{color:var(--ink-2)}
+.stats div:nth-child(1) b{color:var(--st-instock)} .stats div:nth-child(2) b{color:var(--st-preorder)}
+.stats div:nth-child(3) b{color:var(--st-soldout)} .stats div:nth-child(4) b{color:var(--st-coming)}
+.stats.five{grid-template-columns:repeat(5,minmax(0,1fr))} .stats div.unk b{color:var(--st-unknown)}
 
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start;padding-bottom:40px}
 .main-col,.side-col{display:grid;gap:24px;min-width:0}
@@ -70,17 +76,19 @@ nav a[aria-current]{background:var(--ink);color:var(--paper)}
 .feed-controls input{width:auto;min-height:0;padding:0;accent-color:var(--accent)}
 .feed{list-style:none;margin:10px 0 0;padding:0;min-width:0;display:flex;flex-direction:column;gap:10px}
 .feed-item{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);min-width:0}
-.feed-item[data-tone="live"]{border-left:4px solid var(--sage)}
-.feed-item[data-tone="hold"]{border-left:4px solid var(--plum)}
+.feed-item[data-now="in_stock"]{border-left:4px solid var(--st-instock)}
+.feed-item[data-now="preorder"]{border-left:4px solid var(--st-preorder)}
+.feed-item[data-now="coming_soon"]{border-left:4px solid var(--st-coming)}
+.feed-item[data-now="unknown"]{border-left:4px solid var(--st-unknown)}
 .feed-item[data-tone="sold"],.feed-item[data-tone="past"]{background:var(--paper-2);border-style:dashed}
-.feed-item[data-tone="sold"]{border-color:#e0c8c4}
+.feed-item[data-now="sold_out"]{border-color:var(--st-soldout-line);border-left:4px solid var(--st-soldout)}
 .feed-body{flex:1 1 200px;min-width:0;display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}
 .feed-body>a:not(.hub-tag){flex:1 1 100%;overflow-wrap:anywhere;font:600 1.05rem/1.3 var(--serif);color:var(--ink);text-decoration:none}
 .feed-body>a:not(.hub-tag):hover{color:var(--accent)}
 .feed-now{flex:0 0 auto;font-size:.78rem;color:var(--ink-2)}
 .feed-now .badge{display:inline-flex;align-items:center;gap:.36em;margin-left:6px;font-size:.95rem;padding:6px 12px}
 .feed-when{flex:1 1 100%;margin-left:0;font-size:.78rem;color:var(--ink-2)}
-.feed-item[data-tone="sold"] .feed-when{color:var(--rose)}
+.feed-item[data-now="sold_out"] .feed-when{color:var(--st-soldout)}
 .feed-history{flex:1 1 100%;margin:2px 0 0}
 .feed-history summary{font-size:.82rem;color:var(--ink-2);cursor:pointer;min-height:44px;display:inline-flex;align-items:center}
 .feed-earlier{font-size:.85rem;color:var(--ink-2);padding:2px 0 2px 1.1em}
@@ -107,12 +115,12 @@ table.stock{width:100%;border-collapse:collapse;font-size:.93rem}
 .badge{display:inline-block;white-space:nowrap;font-size:.76rem;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid}
 .badge.in_stock,.badge.preorder,.badge.coming_soon,.badge.sold_out,.badge.unknown{display:inline-flex;align-items:center;gap:.36em;line-height:1.2}
 .badge.in_stock::before,.badge.preorder::before,.badge.coming_soon::before,.badge.sold_out::before,.badge.unknown::before{content:"";width:.45em;height:.45em;border-radius:50%;background:currentColor;flex-shrink:0}
-.badge.in_stock{color:#14532d;background:#dcfce7;border-color:#bbf7d0}
-.badge.preorder{color:#1e3a8a;background:#dbeafe;border-color:#bfdbfe}
-.badge.coming_soon{color:#78350f;background:#fef3c7;border-color:#fde68a}
-.badge.sold_out{color:#5c564f;background:#f5f4f1;border-color:#e4dfd7}
+.badge.in_stock{color:var(--st-instock);background:var(--st-instock-bg);border-color:var(--st-instock-line)}
+.badge.preorder{color:var(--st-preorder);background:var(--st-preorder-bg);border-color:var(--st-preorder-line)}
+.badge.coming_soon{color:var(--st-coming);background:var(--st-coming-bg);border-color:var(--st-coming-line)}
+.badge.sold_out{color:var(--st-soldout);background:var(--st-soldout-bg);border-color:var(--st-soldout-line)}
 .badge.sold_out::before{background:transparent;border:1.5px solid currentColor;box-sizing:border-box}
-.badge.unknown{color:#475569;background:#f8fafc;border-color:#cbd5e1;border-style:dashed}
+.badge.unknown{color:var(--st-unknown);background:var(--st-unknown-bg);border-color:var(--st-unknown-line);border-style:dashed}
 .empty-row td{text-align:center;color:var(--ink-2);padding:24px}
 details{margin-top:10px} summary{cursor:pointer}
 
