@@ -49,9 +49,11 @@ class NewsreaderItalicAndOfficial1101Tests(unittest.TestCase):
             self.assertEqual(row["status"], "in_stock")
             self.assertEqual(row["method"], "1101 items.json")
             self.assertIsNone(row["error"])
-            self.assertEqual(row["first_seen"], row["checked_at"])
-            self.assertEqual(row["status_since"], row["checked_at"])
+            # first_seen/status_since stay at the first observed time; later checker
+            # runs update checked_at only.
             self.assertEqual(row["first_seen"], "2026-11-18T04:25:57+00:00")
+            self.assertEqual(row["status_since"], "2026-11-18T04:25:57+00:00")
+            self.assertGreaterEqual(row["checked_at"], row["first_seen"])
             self.assertNotIn(url, event_urls)
 
     def test_official_rows_render_on_their_pages(self):

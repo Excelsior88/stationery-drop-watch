@@ -409,6 +409,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
            f'<nav class="site-nav site-nav-panel" aria-label="Main">{nav_inner}</nav></details>')
     foot_items = list(NAV_TRACKERS) + [
         ("guides/", "Guides"), ("hobonichi-2027.html", "2027 calendar"), ("shop/", "Shop"),
+        ("follow/", "Follow us"),
         ("about.html", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy.html", "Privacy")]
     foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
     ld_html = "".join(jsonld(x) for x in ld)
@@ -445,7 +446,6 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <footer class="foot"><div class="wrap">
   <p class="foot-brand"><strong>Stationery Drop Watch</strong> checks {N_STORES} shops {CHECK_FREQ}.</p>
   <nav class="foot-nav" aria-label="Footer">{foot_nav}</nav>
-  <p class="foot-follow"><a href="follow/">Follow us</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="63" loading="lazy"></a> <a href="/privacy"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></a> <img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="63" loading="lazy"></p>
 </div></footer>
@@ -1026,7 +1026,7 @@ def build_hobo_tracker():
 
 HUB_TRACKERS = {  # one line per tracker card on the hub homepage
     "hobonichi": ("Hobonichi Techo 2027", "Original A6, Cousin A5, Weeks, Weeks Mega and covers, at the official store and independent shops."),
-    "dotgrid": ("Dot grid journals", ""),  # shop names filled in from stores.json
+    "dotgrid": ("Dot grid journals", ""),  # short homepage blurb is filled in below; official-store detail stays on the hub
     # Live listings are the five Regular colors, the ROAD TRIP exclusive, anniversary sets, and 2027 diary
     # accessories. Refills and Passport size are not listings on this tracker (the size guide says so).
     "travelers": ("Traveler's Company", "Regular size colors, plus limited editions: 2027 diary accessories, anniversary sets and shop exclusives."),
@@ -1090,7 +1090,8 @@ def build_index():
         st = {x: sum(p["status"] == x for p in ps) for x in STATUS}
         name, line = HUB_TRACKERS[k]
         if k == "dotgrid":
-            line = f"{dotgrid_brand_names()}. {dotgrid_where_checked()}"
+            # Short homepage blurb only. Official-store / independent-shop detail stays on the hub.
+            line = f"Flagship notebooks from {dotgrid_brand_names()}, plus Archer and Olive refills."
         bits = [f"{N_SEC[k]} shops"]
         if st["preorder"]:
             bits.append(f'{st["preorder"]} on preorder')
@@ -1130,7 +1131,7 @@ def build_index():
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
   {signup()}
   {trust_strip(prods)}
-  <p class="small section-switch">More on the site: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a href="sold-out-everywhere/">Sold out everywhere</a>.</p>
+  <p class="small section-switch">More on the site: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a class="nobr" href="sold-out-everywhere/">Sold out everywhere</a>.</p>
 </section>
 
 <section class="hub-trackers" id="trackers" aria-labelledby="trackers-h">
