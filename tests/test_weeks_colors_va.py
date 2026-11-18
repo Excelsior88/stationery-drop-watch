@@ -373,12 +373,11 @@ class WeeksColorsVaTests(unittest.TestCase):
         orig = site.stock["products"]
         try:
             site.stock["products"] = products
-            oe = site.amazon_main(products)
-            pink_doc = site.build_design(pink, oe)[1]
-            sea_doc = site.build_design(sea, oe)[1]
-            family_doc = site.build_design(family, oe)[1]
+            pink_doc = site.build_design(pink)[1]
+            sea_doc = site.build_design(sea)[1]
+            family_doc = site.build_design(family)[1]
             weeks = next(g for g in site.GROUPS if g["slug"] == "hobonichi-weeks-2027")
-            _weeks_name, weeks_doc = site.build_group(weeks, oe)
+            _weeks_name, weeks_doc = site.build_group(weeks)
             tracker = site.build_hobo_tracker()
             _where_name, where = site.build_where_to_buy()
         finally:
@@ -395,9 +394,11 @@ class WeeksColorsVaTests(unittest.TestCase):
         self.assertNotIn("hobonichi-techo-weeks-mega-2027-colors-pink-sapphire", pink_doc)
         self.assertNotIn(BAUM_MIXED + '"', pink_doc)
         self.assertNotIn("Sold out at the only shop we track", pink_doc)
-        self.assertIn("B0H6P9F2S9", site.amazon_for(PINK, ATLAS_PINK)[0])
-        self.assertIn("tag=excelsior88-20", site.amazon_for(PINK, ATLAS_PINK)[0])
-        self.assertNotIn("B0H6P9F2S9", pink_doc)  # one listing is in stock and one could not be checked
+        self.assertNotIn("B0H6P9F2S9", pink_doc)
+        self.assertNotIn("excelsior88-20", pink_doc)
+        self.assertNotIn("View on Amazon", pink_doc)
+        self.assertNotIn("excelsior88-20", sea_doc)
+        self.assertNotIn("View on Amazon", sea_doc)
         self.assertIn('rel="canonical" href="https://stationerydropwatch.com/hobonichi-weeks-2027/sea-glass/"', sea_doc)
         self.assertIn("Sold out at every shop we track (2 shops)", sea_doc)
         self.assertNotIn("only shop", sea_doc)
@@ -421,7 +422,7 @@ class WeeksColorsVaTests(unittest.TestCase):
         self.assertIn("Pink Sapphire", where)
         self.assertIn("Welcome to the V&amp;A", where)
         self.assertIn("Leicester", where)
-        rows_out = site.tracker_rows(products, oe)
+        rows_out = site.tracker_rows(products)
         by_url = {r["u"]: r for r in rows_out}
         self.assertEqual(by_url[URLS[PINK]["1101"]]["g"], PINK)
         self.assertEqual(by_url[URLS[WELCOME]["baum"]]["g"], WELCOME)

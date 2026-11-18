@@ -102,17 +102,17 @@ class GiftGuideCopyTests(unittest.TestCase):
             self.assertNotIn(banned, low)
         self.assertNotIn("bullet journal", low.replace("bullet journal edition 2", ""))
 
-    def test_own_books_are_plain_links_and_affiliate_asins_come_from_the_link_file(self):
-        amz = json.loads((ROOT / "content/amazon_links.json").read_text())
-        known = {m["asin"] for m in amz["products"].values()} | {m["asin"] for m in amz.get("listings", {}).values()}
-        for a in re.findall(r'<a\b[^>]*amazon\.com[^>]*>', self.doc):
+    def test_only_own_books_link_to_amazon_with_no_tag(self):
+        links = re.findall(r'<a\b[^>]*amazon\.com[^>]*>', self.doc)
+        self.assertTrue(links)
+        for a in links:
             asin = re.search(r"/dp/([A-Z0-9]{10})", a).group(1)
-            if asin in site.AMAZON_LIST_PRICES:
-                self.assertIn("data-own-product", a)
-                self.assertNotIn("tag=", a)
-            else:
-                self.assertIn(asin, known)
-                self.assertIn(f"tag={site.AMAZON_TAG}", a)
+            self.assertIn(asin, site.AMAZON_LIST_PRICES)
+            self.assertIn("data-own-product", a)
+            self.assertNotIn("tag=", a)
+        low = text(self.doc).lower()
+        for banned in ("affiliate link", "amazon associate", "qualifying purchases", "also on amazon"):
+            self.assertNotIn(banned, low)
 
     def test_one_signup_and_faq_markup_matches_visible_questions(self):
         self.assertEqual(self.doc.count("<form "), 1)

@@ -2,11 +2,11 @@
 
 Live at https://stationerydropwatch.com/. A restock tracker, checked about every 30 minutes, with separate sections:
 
-- **Hobonichi Techo 2027** (home page, plus per-product pages): Original A6, Cousin A5, Weeks, Weeks Mega and covers at the Hobonichi shops in `stores.json`. Sold-out items link to the same item on Amazon (Associates tag, `rel="sponsored"`).
-- **Dot grid journaling** (`/archer-and-olive-dot-grid-journal/`): Archer and Olive, Leuchtturm1917 US, Scribbles That Matter and Notebook Therapy (Tsuki), size by size and color by color, plus Archer and Olive's dot grid refills. The URL is the original Archer and Olive slug and is kept on purpose. The old `/archer-and-olive-bullet-journal/` URL is a noindex redirect. This page also shows the owner's own 2027 Planner as a gift pick, with a plain Amazon link (no tag, not sponsored).
+- **Hobonichi Techo 2027** (home page, plus per-product pages): Original A6, Cousin A5, Weeks, Weeks Mega and covers at the Hobonichi shops in `stores.json`.
+- **Dot grid journaling** (`/archer-and-olive-dot-grid-journal/`): Archer and Olive, Leuchtturm1917 US, Scribbles That Matter and Notebook Therapy (Tsuki), size by size and color by color, plus Archer and Olive's dot grid refills. The URL is the original Archer and Olive slug and is kept on purpose. The old `/archer-and-olive-bullet-journal/` URL is a noindex redirect. This page also shows the owner's own 2027 Planner as a gift pick, with a plain Amazon link.
 
-- **Traveler's Notebook regular colors and limited editions** (`/travelers-company-limited-edition/`): the five Regular size notebook colors (Black, Brown, Blue, Camel, Olive), yearly diary accessories (sticker set, clear folder, plastic sheet), 20th anniversary sets and shop exclusives at the official Traveler's Company USA shop and independent shops. The URL still says `limited-edition` and is kept on purpose. Passport size and refills are not listings on this tracker. Sold-out items fall back to an Amazon brand search with the Associates tag.
-- **MIDORI MD seasonal releases** (`/midori-md-limited-edition/`; MIDORI sells MD as "MD PRODUCT" in 2026): the dated 2027 MD diaries, 2027 diary stickers and online store limited editions at the official MD PRODUCT USA store and independent shops. Sold-out items fall back to an Amazon MD search with the Associates tag.
+- **Traveler's Notebook regular colors and limited editions** (`/travelers-company-limited-edition/`): the five Regular size notebook colors (Black, Brown, Blue, Camel, Olive), yearly diary accessories (sticker set, clear folder, plastic sheet), 20th anniversary sets and shop exclusives at the official Traveler's Company USA shop and independent shops. The URL still says `limited-edition` and is kept on purpose. Passport size and refills are not listings on this tracker.
+- **MIDORI MD seasonal releases** (`/midori-md-limited-edition/`; MIDORI sells MD as "MD PRODUCT" in 2026): the dated 2027 MD diaries, 2027 diary stickers and online store limited editions at the official MD PRODUCT USA store and independent shops.
 - A new section is added in `SECTIONS` (`build_site.py`); until it has listings it shows only in the home page's "Coming to the tracker" box, which disappears when every section is live.
 
 Pens, inks and other paper are not tracked.
@@ -17,7 +17,7 @@ Pens, inks and other paper are not tracked.
 
 - `stores.json`: tracked retailers and product URLs (first built by build_stores.py, now edited by hand). A product or store with `"section": "travelers"` or `"midori"` belongs to that section (`SECTIONS` in `build_site.py`); otherwise Hobonichi shops are Hobonichi and the rest are dot grid. The checker copies `section` into `data/stock.json` and `data/changes.json`, so alerts can link the right page. A section page is built only once it has listings.
 - `content/editor_picks.json`: the "From the editor" house ad. Add another object to `books` to show a second book.
-- TODOs: grep for `TODO` / `data-todo` (newsletter form action, affiliate links, Associates tag).
+- TODOs: grep for `TODO` / `data-todo` (newsletter form action).
 - The checker only reports what stores return. Failed checks show as "Couldn't check" and are never guessed.
 - Restock times and last-check times are stored as ISO timestamps and rendered as Eastern Time. `site/assets/local-time.js` rewrites `time.time-instant` into the visitor's time zone and names that zone. If the browser cannot, the Eastern Time label stays. Guide dates and the 2027 calendar dates are not rewritten.
 

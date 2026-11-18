@@ -198,13 +198,6 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .more[hidden]{display:none}
 .stock time{white-space:nowrap}
 
-/* Amazon affiliate links: deliberately quiet so the stock status stays the focus */
-a.az{color:var(--ink-2);font-size:.85em;text-decoration:underline dotted;text-underline-offset:2px}
-a.az:hover{color:var(--ink)}
-
-/* Amazon as a quiet extra action on a sold-out row */
-.btn-amz{background:var(--accent);border-color:var(--accent);color:#fff!important;white-space:nowrap;flex:none}
-.btn-amz:hover{background:var(--accent-2);border-color:var(--accent-2)}
 .btn-sm{display:inline-block;margin-top:6px;padding:4px 12px;font-size:.8rem;min-height:0}
 
 /* Product restock pages, product links, FAQ */
@@ -285,7 +278,7 @@ a.az:hover{color:var(--ink)}
 .grp-name a:hover{color:var(--accent)}
 .grp-head .sub{display:inline;font-size:.8rem;color:var(--ink-2);font-weight:400}
 .grp-head .sub a{color:inherit}
-.grp-head a.az.grp-az,.grp-head .btn-sm{margin-left:auto;margin-top:0}
+.grp-head .btn-sm{margin-left:auto;margin-top:0}
 #rows tr.child td{padding-top:7px;padding-bottom:7px}
 #rows tr.child td:first-child{padding-left:26px}
 #rows td:last-child{width:1%;white-space:nowrap}
@@ -369,7 +362,7 @@ a.az:hover{color:var(--ink)}
 :root{--accent:#a8452e}
 h1{text-wrap:wrap}h2{text-wrap:balance}
 .follow-card h2.h3{font-size:1.17em;margin:0}
-nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-visible,a.btn-amz:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 @media (min-width:1200px){.prose p,.prose li,.faq p,.faq-item p,.faq dd{font-size:1.125rem}}
 @media (min-width:901px){.nav-menu{display:none}}
 @media (max-width:900px){
@@ -505,7 +498,6 @@ table.stock.compare thead th{vertical-align:top}
   .table-wrap{overflow-x:hidden}
   table.stock{table-layout:fixed}
   .stock td:last-child,#rows td:last-child{width:auto;white-space:normal}
-  .btn-amz{white-space:normal}
   .stock td,.stock th{overflow-wrap:anywhere}
 }
 /* Narrow homepage: hide the repeated eyebrow and the long intro, keep the signup on the first screen. */

@@ -11,51 +11,21 @@ SITE = Path(os.environ["DROPWATCH_SITE_OUT"]) if os.environ.get("DROPWATCH_SITE_
 ET = ZoneInfo("America/New_York")
 E = html.escape
 
-# Amazon Associates tracking ID. Every amazon.com product link on the site is rewritten to
-# https://www.amazon.com/dp/<ASIN>?tag=<AMAZON_TAG> with rel="sponsored noopener" (see tag_amazon_links).
-AMAZON_TAG = "excelsior88-20"
-AMAZON_DISCLOSURE = "As an Amazon Associate we earn from qualifying purchases."
-# One affiliate statement, used in the footer and on About. Keep it true to how tag_amazon_links works.
-AFFILIATE_NOTE = ("Amazon links on this site are affiliate links. " + AMAZON_DISCLOSURE +
-                  " Links to the shops we track, and to our own planners and journals on Amazon, are plain links.")
+# Amazon links on this site are only for the owner's own planners and journals on /shop.
+# Those stay as plain amazon.com/dp/<ASIN> URLs with no Associates tag.
 _ASIN = re.compile(r"/(?:dp|gp/product|gp/aw/d)/([A-Z0-9]{10})")
-_AMAZON_A = re.compile(r'<a\b[^>]*\bhref="https?://(?:www\.)?amazon\.com/[^"]*"[^>]*>')
 
 def own_amazon_link(url):
     """Plain amazon.com/dp/<ASIN> URL with no tag or ref params (for the owner's own products)."""
     m = _ASIN.search(url)
     return f"https://www.amazon.com/dp/{m.group(1)}" if m else url.split("?")[0]
 
-def amazon_link(url):
-    """Clean, tagged Amazon product URL; non-product Amazon URLs just get the tag added."""
-    m = _ASIN.search(url)
-    if m:
-        return f"https://www.amazon.com/dp/{m.group(1)}?tag={AMAZON_TAG}"
-    base = re.sub(r"([?&])tag=[^&]*&?", r"\1", url).rstrip("?&")
-    return f"{base}{'&' if '?' in base else '?'}tag={AMAZON_TAG}"
-
-def tag_amazon_links(doc):
-    """Final pass over a rendered page: tag every amazon.com link and mark it sponsored."""
-    def fix(m):
-        a = m.group(0)
-        if "data-own-product" in a:  # owner's own books: plain link, no Associates tag
-            return a
-        if "data-plain-amazon" in a:  # policy pages, not product links: no Associates tag, no rel=sponsored
-            return a
-        href = html.unescape(re.search(r'href="([^"]*)"', a).group(1))
-        a = re.sub(r'href="[^"]*"', f'href="{E(amazon_link(href))}"', a)
-        a = re.sub(r'\s(rel|data-todo)="[^"]*"', "", a)
-        return a.replace("<a ", '<a rel="sponsored noopener" ', 1)
-    return _AMAZON_A.sub(fix, doc)
-
 stores = json.loads((ROOT / "stores.json").read_text())
 stock = json.loads((ROOT / "data/stock.json").read_text())
 changes = json.loads((ROOT / "data/changes.json").read_text())
 picks = json.loads((ROOT / "content/editor_picks.json").read_text())
-amz = json.loads((ROOT / "content/amazon_links.json").read_text())  # links only; never fetched by the checker
 
-# Canonical products from other brands (e.g. Archer and Olive). Dot grid items get no Amazon fallback link:
-# we don't link a brand to a product it isn't. Sections with their own Amazon brand link (Traveler's, MIDORI) use that.
+# Canonical products from other brands (e.g. Archer and Olive).
 OTHER_BRAND = {c["id"] for c in stores["canonical"] if c.get("brand")}
 CANON_SECTION = {c["id"]: c["section"] for c in stores["canonical"] if c.get("section")}
 HOBO_SHOPS = {s["id"] for s in stores["stores"] if not s.get("brand") and not s.get("section")}
@@ -186,23 +156,6 @@ def organization():
             "sameAs": [s[2] for s in SOCIALS],
             "address": {"@type": "PostalAddress", "addressLocality": "Hamtramck",
                         "addressRegion": "MI", "addressCountry": "US"}}
-
-def amazon_for(canonical, listing_url=""):
-    """(tagged url, label) for a tracked listing: exact verified ASIN, else the brand link of its section
-    (Hobonichi, Traveler's Company or MIDORI). ("", "") for dot grid products without an exact listing."""
-    sec = CANON_SECTION.get(canonical or "")
-    if canonical in OTHER_BRAND and not (sec and SECTIONS[sec]["amazon"]):  # dot grid: exact verified listing only
-        m = amz.get("listings", {}).get(listing_url)
-        return (amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "View on Amazon") if m else ("", "")
-    m = amz["products"].get(canonical or "") or amz.get("listings", {}).get(listing_url)
-    if m:
-        return amazon_link(f"https://www.amazon.com/dp/{m['asin']}"), "View on Amazon"
-    b = amz["brands"][SECTIONS[sec]["amazon"] if sec else "hobonichi"]
-    return amazon_link(b["url"]), b["label"]
-
-def brand_amazon(key):
-    b = amz["brands"][key]
-    return f'<a class="az" target="_blank" href="{E(b["url"])}">{E(b["label"])}</a>'
 
 def fmt_et(iso):
     """No-JS label for one instant: "Nov 3, 11:47 AM ET" (the year is added only when it isn't this year).
@@ -346,7 +299,7 @@ X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
 
 def page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE, og_alt=OG_ALT, noindex=False):
-    return tag_amazon_links(_page(fname, title, desc, body, ld, og_type, og_image, og_alt, noindex))
+    return _page(fname, title, desc, body, ld, og_type, og_image, og_alt, noindex)
 
 def pretty(path):
     """Public form of a local page path: 'index.html' -> '', 'about.html#x' -> 'about#x', 'slug/' unchanged.
@@ -436,7 +389,6 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <nav class="foot-nav" aria-label="Footer">{foot_nav}</nav>
   <p class="foot-follow"><a href="follow/">Follow us</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
-  <p class="disclosure">{E(AFFILIATE_NOTE)}</p>
   <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="63" loading="lazy"></a> <a href="/privacy"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></a> <img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="63" loading="lazy"></p>
 </div></footer>
 <script src="assets/local-time.js?v={ASSET_V['local-time.js']}" defer></script>
@@ -592,82 +544,17 @@ def product_key(p):
     t = re.sub(r"\b(hobonichi|techo|2027|planner)\b", " ", t)
     return "t:" + " ".join(re.findall(r"[a-z0-9&]+", t))
 
-def exact_only(canonical):
-    """Dot grid products are tracked size by size and only ever get an exact verified Amazon listing."""
-    return canonical in OTHER_BRAND and not SECTIONS.get(CANON_SECTION.get(canonical or ""), {}).get("amazon")
-
-def oe_key(p):
-    return p["url"] if exact_only(p.get("canonical")) else product_key(p)
-
-def amazon_main(prods):
-    """Products that no tracked shop can sell right now (every listing sold out / not yet on sale).
-    Recomputed from data/stock.json on every build. A product with any listing we couldn't
-    check ('unknown') is left out, since we can't honestly say it's unavailable everywhere."""
-    groups = {}
-    for p in prods:
-        groups.setdefault(oe_key(p), []).append(p)
-    out = {}
-    for k, ls in groups.items():
-        other = exact_only(ls[0].get("canonical"))
-        brand = SECTIONS.get(CANON_SECTION.get(ls[0].get("canonical") or ""), {}).get("amazon") or "hobonichi"
-        sts = {l["status"] for l in ls}
-        if not sts <= set(NOT_BUYABLE):
-            continue
-        if other:  # match the exact size/paper listing only
-            hit = amz.get("listings", {}).get(ls[0]["url"])
-        else:
-            hit = next((amz["products"].get(l.get("canonical") or "") or amz.get("listings", {}).get(l["url"]) for l in ls
-                        if amz["products"].get(l.get("canonical") or "") or amz.get("listings", {}).get(l["url"])), None)
-        if other and not hit:  # no verified Amazon listing of this exact item: offer nothing rather than a stand-in
-            continue
-        if hit:
-            url, label, exact = amazon_link(f"https://www.amazon.com/dp/{hit['asin']}"), "View on Amazon", True
-        else:
-            url, label, exact = amazon_link(amz["brands"][brand]["url"]), amz["brands"][brand]["label"], False
-        out[k] = dict(url=url, label=label, exact=exact, note=oe_note(ls), listings=ls)
-    return out
-
-def oe_note(ls):
-    n = len({l["store_id"] for l in ls})
-    sts = {l["status"] for l in ls}
-    if sts == {"sold_out"}:
-        note = "Sold out at every shop we track" if n > 1 else "Sold out at the only shop we track"
-    elif sts == {"coming_soon"}:
-        note = "Not on sale yet at any shop we track" if n > 1 else "Not on sale yet at the only shop we track"
-    else:
-        note = "Sold out or not yet on sale at every shop we track"
-    return f"{note} ({n} shops)" if n > 1 else note
-
 def sold_everywhere_html(items, status="status", shop="store_id"):
-    """The Traveler's sold-out sentence, inside a product group.
+    """The sold-out sentence, inside a product group.
 
     Shown only when every listing in that group is sold out. A coming-soon or unchecked
-    listing keeps the group quiet, the same way the Amazon note does."""
+    listing keeps the group quiet."""
     if not items or {item[status] for item in items} != {"sold_out"}:
         return ""
     n = len({item[shop] for item in items})
     text = (f"Sold out at every shop we track ({n} shops)." if n > 1
             else "Sold out at the only shop we track.")
     return f'<p class="muted small">{text}</p>'
-
-def page_amz(ls, oe):
-    """Top Amazon button for a set of listings shown together. Only offered when every one of
-    those listings is sold out / not yet on sale; the note is worded over all of them."""
-    if not ls or any(l["status"] not in NOT_BUYABLE for l in ls):
-        return None
-    keys = list(dict.fromkeys(oe_key(l) for l in ls))
-    if exact_only(ls[0].get("canonical")) and len(keys) > 1:  # several exact sizes: no single Amazon match
-        return None
-    m = next((oe[k] for k in keys if k in oe), None)
-    if not m:
-        return None
-    m = dict(m, note=oe_note(ls))
-    check_amz_note(ls, m["note"])
-    return m
-
-def check_amz_note(ls, note):
-    if any(l["status"] not in NOT_BUYABLE for l in ls):
-        raise SystemExit(f"top Amazon note '{note}' contradicts a listing that is buyable or unchecked: {ls[0]['url']}")
 
 # Size and language come only from fields the checker already stores (type, label, title).
 # A listing that does not name one is left blank. It is never guessed, and it is never counted as in stock.
@@ -748,39 +635,28 @@ def shop_tally(ls):
     word = "shop" if shops == 1 else "shops"
     return f"{in_stock_tally([r['st'] for r in ls])} · {in_shops} of {shops} {word} in stock"
 
-def _az_link(r, primary=False):
-    if not r.get("az"):
-        return ""
-    cls = "btn btn-amz btn-sm" if r.get("azm") else "az"
-    if primary and r.get("azm"):
-        cls = "btn btn-amz btn-sm"
-    return f'<a class="{cls}" href="{E(r["az"])}" target="_blank" rel="sponsored noopener">{E(r["azl"])}</a>'
-
 def compare_product(ls):
     """One product, every shop that lists it, so the statuses sit next to each other."""
     order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
     ls = sorted(ls, key=lambda r: (order.get(r["st"], 9), r["s"].lower()))
     h = ls[0]
-    same_az = all(r.get("az") == h.get("az") and bool(r.get("azm")) == bool(h.get("azm")) for r in ls)
     name = f'<a href="{E(h["dp"])}">{E(h["gn"])}</a>' if h.get("dp") else E(h["gn"])
     shops = len({r["sid"] for r in ls})
     bits = [E(h.get("t") or ""), f"{shops} {'shop' if shops == 1 else 'shops'}"]
     if h.get("dp"):
         bits.append(f'<a href="{E(h["dp"])}">Design page</a>')
-    az = _az_link(h, primary=True) if h.get("az") and same_az else ""
     note = sold_everywhere_html(ls, "st", "sid")
     items = []
     for r in ls:
         region = f' <span class="region" title="Shop\'s home country">{E(r["rg"])}</span> ' if r.get("rg") else ""
         variant = f'<span class="sub variant">{E(r["p"])}</span>' if r.get("p") and r["p"] != r.get("gn") else ""
         title = f'<span class="sub">{E(r["title"])}</span>' if r.get("title") and r["title"] not in (r.get("gn"), r.get("p")) else ""
-        row_az = _az_link(r) if r.get("az") and not same_az else ""
         items.append(
-            f'<li><span class="compare-shop"><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region}{variant}{title}{row_az}</span>'
+            f'<li><span class="compare-shop"><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region}{variant}{title}</span>'
             f'<span class="badge {E(r["st"])}">{STATUS[r["st"]]}</span></li>')
     anchor = f' id="{E(h["g"])}"' if re.fullmatch(r"[A-Za-z][\w-]*", h.get("g") or "") else ""
     return f'''<article class="compare"{anchor}>
-  <header class="compare-head"><h3>{name}</h3><p class="compare-tally">{E(shop_tally(ls))}</p><p class="sub">{" · ".join(b for b in bits if b)}</p>{az}{note}</header>
+  <header class="compare-head"><h3>{name}</h3><p class="compare-tally">{E(shop_tally(ls))}</p><p class="sub">{" · ".join(b for b in bits if b)}</p>{note}</header>
   <ul class="compare-shops">{"".join(items)}</ul>
 </article>'''
 
@@ -859,7 +735,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
       {extra}
     </section>"""
 
-def tracker_rows(prods, out_everywhere):
+def tracker_rows(prods, out_everywhere=None):
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
     fam_index = {g["slug"]: i for i, g in enumerate(g for g in GROUPS if g_sec(g) == "hobonichi")}
     rows = []
@@ -868,12 +744,7 @@ def tracker_rows(prods, out_everywhere):
         rows.append(dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st=p["status"],
                  u=p["url"], at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
                  va=p.get("available_variants"), tv=p.get("total_variants"),
-                 sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99),
-                 az=amazon_for(p.get("canonical"), p["url"])[0], azl=amazon_for(p.get("canonical"), p["url"])[1]))
-    for r in rows:  # product unavailable at every tracked shop: Amazon becomes the main action
-        m = out_everywhere.get(r["u"] if exact_only(r["c"]) else r["g"])
-        if m:
-            r.update(az=m["url"], azl=m["label"], azm=1)
+                 sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99)))
     for r, p in zip(rows, prods):  # design page link (FIX-09), shown on the product's group header
         dp = design_page_for([p])
         if dp:
@@ -960,10 +831,10 @@ def stock_data(rows):
 
 def soon_block():
     """Sections we plan to track but don't have listings for yet. Disappears once every one is live."""
-    soon = [k for k in SECTIONS if k not in LIVE and SECTIONS[k]["amazon"]]
+    soon = [k for k in SECTIONS if k not in LIVE]
     if not soon:
         return ""
-    items = "".join(f'<li>{E(SECTIONS[k]["name"])} <span class="muted small">· {brand_amazon(SECTIONS[k]["amazon"])}</span></li>' for k in soon)
+    items = "".join(f'<li>{E(SECTIONS[k]["name"])}</li>' for k in soon)
     return f"""<section class="card soon">
       <p class="eyebrow">Coming to the tracker</p>
       <ul>{items}</ul>
@@ -1055,8 +926,7 @@ def build_hobo_tracker():
   <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet. Those are the ones we're watching.{f" {s['unknown']} couldn't be checked this run." if s['unknown'] else ""}</p></div>"""
 
     # table data (embedded so the page works without fetch)
-    out_everywhere = amazon_main(prods)
-    rows = tracker_rows(prods, out_everywhere)
+    rows = tracker_rows(prods)
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a>: <span class="muted">{E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
 
     faq_html, faq_ld = tracker_good_to_know(HOBO_NOTE_Q, HOBO_NOTE)
@@ -1288,7 +1158,7 @@ def build_privacy():
     body = f"""
 <article class="prose">
 {crumbs((fname, "Privacy"))}
-{eyebrow("Privacy", "updated Nov 4, 2026")}
+{eyebrow("Privacy", "updated Nov 17, 2026")}
 <h1>Privacy</h1>
 <p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, and cookie-free page view counts.</p>
 <h2>Email alerts (Buttondown)</h2>
@@ -1296,12 +1166,12 @@ def build_privacy():
 <h2>Page view counts (Cloudflare Web Analytics)</h2>
 <p>The site is hosted on Cloudflare Pages and uses Cloudflare Web Analytics to count visits. It doesn't use cookies or local storage and doesn't follow you across other sites. Cloudflare also handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
 <p>This site doesn't set its own cookies and doesn't run ad trackers.</p>
-<h2>Amazon and affiliate links</h2>
-<p>{E(AFFILIATE_NOTE)} When you open an Amazon link, Amazon may set its own cookies to credit the referral; that happens on Amazon's side under <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ" data-plain-amazon target="_blank" rel="noopener">Amazon's privacy notice</a>. Links to the shops we track are plain links, and what you do on their sites is covered by their own policies.</p>
+<h2>Links to other sites</h2>
+<p>When you follow a link to a shop we track, or to Amazon or Etsy for our own planners and journals, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email {plain_email()}.</p>
 </article>"""
-    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown), cookie-free Cloudflare Web Analytics and Amazon affiliate links. We don't set our own cookies.", body, ld=(crumbs_ld((fname, "Privacy")),))
+    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown) and cookie-free Cloudflare Web Analytics. We don't set our own cookies or track you off this site.", body, ld=(crumbs_ld((fname, "Privacy")),))
 
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
@@ -1321,8 +1191,6 @@ def build_about():
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email {plain_email()} for rates and dates.</p>
-<h2>Affiliate links</h2>
-<p>{E(AFFILIATE_NOTE)} Buying through an Amazon link costs you nothing extra, and it never changes what the tracker shows.</p>
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email {plain_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
@@ -1468,19 +1336,14 @@ def dotgrid_group_key(cid):
         bi = len(DOTGRID_BRAND_ORDER)
     return (bi, pos, cid)
 
-def row_amz(l, oe):
-    """Per-size Amazon button for other brands' listings (their oe entries are keyed by listing URL)."""
-    m = oe.get(l["url"]) if exact_only(l.get("canonical")) else None
-    return f'<a class="btn btn-amz btn-sm" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a>' if m else ""
-
-def status_rows(ls, oe):
+def status_rows(ls, oe=None):
     order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
     rows = []
     for l in sorted(ls, key=lambda l: (order.get(l["status"], 9), l["store"])):
         since = l.get("status_since")
         since_html = f'<span class="sub">since {time_tag(since)}</span>' if since and l["status"] != "unknown" else ""
         rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
-  <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td></tr>""")
+  <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}</td></tr>""")
     return "".join(rows)
 
 def list_filter(ls, hint):
@@ -1566,7 +1429,7 @@ def group_signup(g, buy, placement="top"):
     """Section, product and design trackers use a brand-level label, never a single item."""
     return signup_for(section=g_sec(g), placement=placement)
 
-def build_group(g, oe):
+def build_group(g, oe=None):
     ls = group_listings(g)
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
     shops = len({l["store_id"] for l in ls})
@@ -1595,16 +1458,6 @@ def build_group(g, oe):
         else:
             name = "Other designs and editions" if len(order) > 1 else "Listings"
         sold_html = sold_everywhere_html(sl)
-        m = page_amz(sl, oe) if cid else None
-        if m:
-            # The sold-out sentence is its own line in the group. Don't print it again beside the button.
-            span = "" if sold_html else f' <span class="muted small">{E(m["note"])}.</span>'
-            amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a>'
-                       f'{span}</p>')
-        else:
-            amz_btn = ""
-        az_url, az_label = amazon_for(cid, sl[0]["url"])
-        az_sub = "" if m or not az_url or exact_only(cid) else f' · <a class="az" href="{E(az_url)}" target="_blank">{E(az_label)}</a>'
         tracker = ("" if ext else
                    f' · <a href="{HOBO_TRACKER}?product={E(cid)}#tracker">Filter in the tracker</a>') if cid else ""
         dp = design_page_for(sl)
@@ -1624,12 +1477,12 @@ def build_group(g, oe):
         parts.append(f"""<details class="card group-fold">
   <summary><{hx} class="fam-name">{E(name)}</{hx}><span class="fam-meta">{meta}</span></summary>
   <section class="group-sec" id="{E(re.sub(r'[^A-Za-z0-9]+', '-', cid).strip('-') or 'other')}">
-  {sold_html}{amz_btn}
+  {sold_html}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
-    <tbody>{status_rows(sl, oe)}</tbody>
+    <tbody>{status_rows(sl)}</tbody>
   </table></div>
-  <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{az_sub}{tracker}{dp_link}</p>
+  <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{tracker}{dp_link}</p>
   {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
 </section></details>""")
     urls = {l["url"] for l in ls}
@@ -1879,7 +1732,7 @@ def design_page_for(listings):
 def designs_of(parent_slug):
     return [d for d in DESIGNS if d["parent"] == parent_slug]
 
-def build_design(d, oe):
+def build_design(d, oe=None):
     parent = next(g for g in GROUPS if g["slug"] == d["parent"])
     ls = design_listings(d)
     pids = {id(x) for x in group_listings(parent)}
@@ -1893,18 +1746,15 @@ def build_design(d, oe):
     sec = g_sec(parent)
     ey = parent.get("eyebrow", "Hobonichi Techo 2027")
     h1 = f'{d["full"]} restock tracker'
-    m = page_amz(ls, oe)
-    amz_btn = (f'<p><a class="btn btn-amz" href="{E(m["url"])}" target="_blank">{E(m["label"])}</a> '
-               f'<span class="muted small">{E(m["note"])}.</span></p>') if m else ""
     thanks = ('<p class="suggest">Thank you to our follower Angela for suggesting we track these restocks.</p>'
               if d["slug"] in {"nothing-to-hide-green", "nothing-to-hide-pink", "nothing-to-hide-yellow"} else "")
     table = (f"""<section class="card group-sec" id="stock">
   <div class="section-head"><h2>Stock by shop</h2><p class="muted small">{E(count_line(ls).capitalize())} · {checked_line(ls)}</p></div>
   {list_filter(ls, "Shop name")}
-  {amz_btn}
+  {sold_everywhere_html(ls)}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
-    <tbody>{status_rows(ls, oe)}</tbody>
+    <tbody>{status_rows(ls)}</tbody>
   </table></div>
   <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
   <p class="muted small">Open a shop's name to go straight to its listing.</p>
@@ -1932,7 +1782,7 @@ def build_design(d, oe):
         of = f"{nshops(chk)} we could check" if unk else nshops(shops)
         if not buy:
             a1 = (f"Not at the shops we track. At the last check ({when}) none of the {of} had it in stock or on preorder." if chk > 1 else
-                  f"Not at the shops we track. At the last check ({when}) the {'one shop we could check' if unk else 'one shop we track'} didn't have it in stock or on preorder.") + (f" {m['note']}, so we link to Amazon, which may still have it." if m else "")
+                  f"Not at the shops we track. At the last check ({when}) the {'one shop we could check' if unk else 'one shop we track'} didn't have it in stock or on preorder.")
         else:
             a1 = f"Yes, at {len({l['store_id'] for l in buy})} of {of} at the last check ({when}): {names(buy)}. Stock can change within minutes, so confirm on the shop's page."
         if unk:
@@ -2023,8 +1873,7 @@ FAQ = [
      "We show that instead of guessing whether it's in stock."),
     ("Do you sell planners?",
      "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon and as printable PDFs on Etsy. "
-     "The stationery we track is sold by the shops themselves; we just link you to them. "
-     "Amazon links on the site are affiliate links, and we say so on every page; links to the shops we track are plain links."),
+     "The stationery we track is sold by the shops themselves; we just link you to them. "),
     ("How do restock alerts work?",
      "Sign up with your email and you'll get free restock emails from every shop we track. "
      "It's one list, and you can unsubscribe anytime."),
@@ -2069,8 +1918,7 @@ def faq_block(only=None, sid="faq"):
         if q == "Do you sell planners?" and shop_inserts_public():
             a = ("Yes, our own: we make planners, journals, and printable planner inserts, and sell them on our shop page ({shop}). "
                  "Printed books are on Amazon. Printable PDFs, including undated paper tip-ins, are on Etsy. "
-                 "The stationery we track is sold by the shops themselves; we just link you to them. "
-                 "Amazon links on the site are affiliate links, and we say so on every page; links to the shops we track are plain links.")
+                 "The stationery we track is sold by the shops themselves; we just link you to them. ")
         answers.append((q, a))
     if only is None:
         pairs = answers
@@ -2097,7 +1945,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-16", "privacy.html": "2026-11-12"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-17", "privacy.html": "2026-11-17"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -2267,20 +2115,6 @@ def _names(xs):
     xs = list(xs)
     return ", ".join(xs[:-1]) + " and " + xs[-1] if len(xs) > 1 else "".join(xs)
 
-def _exact_amazon(ls):
-    """Exact, verified Amazon listings for these tracked listings (never the brand-store fallback)."""
-    canon = {c["id"]: c["label"] for c in stores["canonical"]}
-    out = {}
-    for l in ls:
-        m = amz["products"].get(l.get("canonical") or "")
-        name = canon.get(l.get("canonical") or "")
-        if not m:
-            m = amz.get("listings", {}).get(l["url"])
-            name = m and m["amazon_title"]
-        if m and m["asin"] not in out:
-            out[m["asin"]] = name
-    return out
-
 def _shop_table(ls):
     rank = {s["id"]: i for i, s in enumerate(stores["stores"])}
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
@@ -2313,14 +2147,10 @@ def build_where_to_buy():
         quick.append(f'<li><a href="#{E(g["slug"])}">{E(g["short"])}</a>: in stock or on preorder at '
                      f'<strong>{len(buy)} of {shops}</strong> {"shop" if shops == 1 else "shops"} we track'
                      f'{" (" + E(_names(buy)) + ")" if 0 < len(buy) <= 4 else ""}.</li>')
-        az = _exact_amazon(ls)
-        az_html = ("<p class=\"small\">Also on Amazon (exact listings, affiliate links): " + " · ".join(
-            f'<a class="az" href="https://www.amazon.com/dp/{E(a)}" target="_blank">{E(n)}</a>' for a, n in az.items()) + "</p>") if az else ""
         secs.append(f'''<details class="card group-fold" id="{E(g["slug"])}">
   <summary><h2 class="fam-name">{E(g["product"])}</h2><span class="fam-meta">{E(count_line(ls).capitalize())}</span></summary>
   <div class="group-body">
   {_shop_table(ls)}
-  {az_html}
   <p class="small"><a href="{g["slug"]}/">Full {E(g["short"])} restock page</a> <span class="muted">· every listing, when it last changed, and recent restocks</span></p>
   </div>
 </details>''')
@@ -2658,9 +2488,6 @@ def build_dotgrid_guide():
         return f'{E(t)} <span class="small">{"".join(n(k) for k in keys.split())}</span>'
     rows_html = "".join(f'<tr><th scope="row">{E(r[0])}</th>' + "".join(f"<td>{cell(*c)}</td>" for c in r[1:]) + "</tr>" for r in rows)
     rows_html += '<tr><th scope="row">In stock now</th>' + "".join(f"<td>{avail(sid, cs)}</td>" for _, sid, cs in DG_COLS) + "</tr>"
-    az = _exact_amazon([p for p in dg if p.get("canonical") in ("lt-hardcover-a5", "lt-120g-a5", "stm-pro")])
-    az_html = ('<p class="small">Also on Amazon (exact listings, affiliate links): ' + " · ".join(
-        f'<a class="az" href="https://www.amazon.com/dp/{E(a)}" target="_blank">{E(n)}</a>' for a, n in az.items()) + "</p>") if az else ""
     faq = [
         ("What paper weight (gsm) is best for a dot grid journal?",
          "Heavier paper is thicker. Archer and Olive, Notebook Therapy's Tsuki and the 160gsm Scribbles That Matter journals use 160gsm paper. "
@@ -2704,7 +2531,6 @@ def build_dotgrid_guide():
 <thead><tr><th></th>{"".join(f"<th>{E(h)}</th>" for h, _, _ in DG_COLS)}</tr></thead>
 <tbody>{rows_html}</tbody></table></div>
 <p class="muted small">Stock in each column is what that maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop. Other shops that sell the same notebooks are on the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. Across the four makers: {E(dg_total)}. Across every shop: {E(dg_all)}.</p>
-{az_html}
 
 <h2>Who each one suits</h2>
 <h3>Archer and Olive: for markers, paint and lots of size choices</h3>
@@ -3106,18 +2932,15 @@ def gift_glance(key):
     return f'<span class="badge {cls}">{E(badge)}</span> {text}{tail}'
 
 def gift_stock_line(key, live_text=None):
-    """Inline live line at the end of a pick: badge from this build's stock.json, link to its restock
-    page, exact Amazon links if any. The shop counts are in the table at the top."""
+    """Inline live line at the end of a pick: badge from this build's stock.json and a link to its restock
+    page. The shop counts are in the table at the top."""
     _, _, live, name = GIFT_PICKS[key]
     st = gift_status(key)
     link = f'<a href="{live}">{E(live_text or "Live stock")}</a>'
     if not st:  # no longer tracked: no availability claim at all
         return f'<span class="small">{link}</span>'
     cls, badge, _ = st
-    az = _exact_amazon(gift_listings(key))
-    az_html = (" · Also on Amazon (affiliate): " + ", ".join(
-        f'<a class="az" href="https://www.amazon.com/dp/{E(a)}" target="_blank">{E(n)}</a>' for a, n in az.items())) if az else ""
-    return f'<span class="small"><span class="badge {cls}">{E(badge)}</span> {link}{az_html}</span>'
+    return f'<span class="small"><span class="badge {cls}">{E(badge)}</span> {link}</span>'
 
 def _usd(cents):
     return f"${cents / 100:,.2f}"
@@ -3205,9 +3028,6 @@ def build_gift_guide():
          "They're the lowest US-dollar price at the shops we track that had the pick in stock or on preorder at our last check. "
          "Shipping, tax and checkout discounts aren't included, so confirm at the shop. Shops that don't sell in US dollars, including Hobonichi's own store, aren't priced. "
          "For our own books we show the Amazon list price."),
-        ("Are the Amazon links affiliate links?",
-         "Amazon links to products we don't make are affiliate links. " + AMAZON_DISCLOSURE +
-         " Links to shops we track, and to our own planners and journals, are plain links."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}"{"" if u == "shop/" else " rel=\"noopener\" target=\"_blank\""}>{E(t)}</a>, {E(b)}.</li>'
@@ -3277,7 +3097,7 @@ def build_gift_guide():
 </ul>
 
 <h2 id="we-make">Planners and journals we make</h2>
-<p class="small">Plain Amazon links, not affiliate links; list prices are in the table above. {s("shop")}</p>
+<p class="small">List prices for our books are in the table above. {s("shop")}</p>
 <ul class="picks">
   <li><strong>2027 Planners, Blush and for Men:</strong> A5 paperback, 174 pages, Monday start, January 1 to December 31, 2027. Blush: {gift_own("B0HRTLMZ1M", "A5 paperback")}. For Men: {gift_own("B0HRTTCH4D", "A5 paperback")} · {gift_own("B0HP9PXSR1", "8.5 × 11 Sunday-start paperback")}.</li>
   <li><strong>Level Up! My 2027 Planner,</strong> for a child aged 7 to 11: a kids planner that plays like a video game, with a Reading Quest Log, Trophy Room and Coin Bank; 8.5 × 11 in. {gift_own("B0HQW8273V", "Paperback on Amazon")}{lu_etsy}</li>
@@ -4048,18 +3868,6 @@ def check_none_claim(fname, doc):
     if badges and all(b == "unknown" for b in badges) and _NONE_CLAIM.search(doc):
         raise SystemExit(f"{fname}: says none in stock but every listing is Couldn't check")
 
-_AMZ_NOTE = re.compile(r'class="btn btn-amz"[^>]*>[^<]*</a> <span class="muted small">(Sold out|Not on sale yet)[^<]*</span>')
-
-def check_amz_doc(fname, doc):
-    """Build check: a design page's top Amazon note must not claim sold out while a listing on it is buyable or unchecked.
-
-    Only the stock table counts. A recent-restock row names the latest check too, but the
-    Amazon note is about the listings in the table. A later sell-out still gets the sold-out
-    note, and this check still fails if any current row is in stock, on preorder, or unchecked."""
-    listings = "\n".join(m.group(1) for m in re.finditer(r'<table class="stock">(.*?)</table>', doc, re.S))
-    if _AMZ_NOTE.search(doc) and re.search(r'<span class="badge (in_stock|preorder|unknown)">', listings):
-        raise SystemExit(f"{fname}: top note claims sold out but a listing on the page is in stock, on preorder or unchecked")
-
 def main():
     if shop_preview() and SITE.resolve() == (ROOT / "site").resolve():
         raise SystemExit("Refusing to write a shop preview into site/. Set DROPWATCH_SITE_OUT to another directory.")
@@ -4073,16 +3881,14 @@ def main():
     (SITE / "about.html").write_text(build_about())
     (SITE / "privacy.html").write_text(build_privacy())
     (SITE / "404.html").write_text(build_404())
-    oe = amazon_main(stock["products"])
     for g in GROUPS:
-        fname, doc = build_group(g, oe)
+        fname, doc = build_group(g)
         check_none_claim(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for d in DESIGNS:
-        fname, doc = build_design(d, oe)
+        fname, doc = build_design(d)
         check_none_claim(fname, doc)
-        check_amz_doc(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for build in (build_where_to_buy, build_vs, build_january_april, build_dotgrid_guide, build_tn_sizes, build_gift_guide, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):

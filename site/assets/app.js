@@ -84,7 +84,7 @@
       history[push ? "pushState" : "replaceState"](null, "", next);
     };
     // Filters work on listings; the table then groups the matching listings by product:
-    // one header row per product (name, type, design page, Amazon link), then one row per shop with its status.
+    // one header row per product (name, type, design page), then one row per shop with its status.
     function groupRows(out) {
       const groups = new Map();
       for (const r of out) {
@@ -95,9 +95,6 @@
       const nShops = ls => new Set(ls.map(r => r.sid)).size;
       return [...groups.values()].sort((a, b) => (best(a) - best(b)) || (nShops(b) - nShops(a)) || a[0].gn.localeCompare(b[0].gn));
     }
-    const azLink = (r, cls) => r.azm
-      ? `<a class="btn btn-amz btn-sm" href="${esc(r.az)}" target="_blank" rel="sponsored noopener">${esc(r.azl)}</a>`
-      : `<a class="az${cls ? " " + cls : ""}" href="${esc(r.az)}" target="_blank" rel="sponsored noopener">${esc(r.azl)}</a>`;
     function tally(ls) {
       const n = ls.length;
       const unk = ls.filter(r => r.st === "unknown").length;
@@ -121,12 +118,11 @@
     function productCard(ls) {
       const h = ls[0];
       const anchor = h.c && /^[A-Za-z][\w-]*$/.test(h.c) ? ` id="${esc(h.c)}"` : "";
-      const sameAz = ls.every(r => r.az === h.az && !!r.azm === !!h.azm);
       const shops = new Set(ls.map(r => r.sid)).size;
       const bits = [esc(h.t), shops + " " + (shops === 1 ? "shop" : "shops")];
       if (h.dp) bits.push(`<a href="${esc(h.dp)}">Design page</a>`);
-      const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span> ` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}${r.az && !sameAz ? azLink(r) : ""}</span><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></li>`).join("");
-      return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${h.az && sameAz ? azLink(h, "grp-az") : ""}${soldEverywhereNote(ls)}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
+      const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span> ` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}</span><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></li>`).join("");
+      return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${soldEverywhereNote(ls)}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
     }
     let honorHash = true;
     const filtersActive = () => Object.values(f).some(el => (el.value || "").trim() !== "");

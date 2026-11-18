@@ -152,10 +152,9 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
 
     def test_angela_thanks_is_only_on_the_three_design_pages(self):
         line = "Thank you to our follower Angela for suggesting we track these restocks."
-        oe = site.amazon_main(site.stock["products"])
         wanted = {"nothing-to-hide-green", "nothing-to-hide-pink", "nothing-to-hide-yellow"}
         for design in site.DESIGNS:
-            _, doc = site.build_design(design, oe)
+            _, doc = site.build_design(design)
             visible = re.sub(r"<script[\s\S]*?</script>", " ", doc)
             visible = re.sub(r"<meta[^>]*>", " ", visible)
             if design["slug"] in wanted:
@@ -171,8 +170,8 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
             else:
                 self.assertNotIn("Angela", doc)
         self.assertNotIn("Angela", site.build_index())
-        self.assertNotIn("Angela", site.build_group(next(g for g in site.GROUPS if g["slug"] == "hobonichi-techo-2027-covers"), oe)[1])
-        self.assertNotIn("Angela", site.build_group(next(g for g in site.GROUPS if g["slug"] == "hobonichi-weeks-2027"), oe)[1])
+        self.assertNotIn("Angela", site.build_group(next(g for g in site.GROUPS if g["slug"] == "hobonichi-techo-2027-covers"))[1])
+        self.assertNotIn("Angela", site.build_group(next(g for g in site.GROUPS if g["slug"] == "hobonichi-weeks-2027"))[1])
 
 
 if __name__ == "__main__":
