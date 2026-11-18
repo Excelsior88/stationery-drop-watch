@@ -178,7 +178,7 @@ class PageFilterMarkupTests(unittest.TestCase):
             notes = re.findall(r'class="strip-note">(.*?)</p>', doc)
             self.assertEqual(len(notes), 2, name)
             for note in notes:
-                self.assertIn("Free restock emails from every shop we track. Unsubscribe anytime.", html.unescape(note), name)
+                self.assertIn(site.LIST_LINE, html.unescape(note), name)
                 self.assertIn("Sent via", note, name)
                 self.assertIn("Buttondown", note, name)
                 self.assertIn("Privacy", note, name)

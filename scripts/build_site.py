@@ -464,20 +464,22 @@ NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatc
 # Tracker, product and design pages add a compact repeat at the bottom (id="alerts-bottom").
 SIGNUP_ACTION = f"https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}"
 
-SIGNUP_COPY = {
-    "alerts": ("Get restock alerts by email",
-               "Free restock emails from every shop we track. Unsubscribe anytime."),
-    "shop": ("Hear about new planners and journals",
-             "An occasional email when we release a new planner or journal, plus our restock alerts. No spam, unsubscribe anytime."),
-}
-
-# One Buttondown list: every subscriber gets every restock email, not alerts for one product.
-# Tracker, product and design labels name the brand or category on that page, never a single design or SKU.
-# The signup note is a short, honest line. It must not give a daily number.
+# One Buttondown list: every subscriber gets every restock email, not alerts for one product,
+# plus occasional site updates. Tracker, product and design labels name the brand or category
+# on that page, never a single design or SKU. The signup note is the same on every box,
+# including the shop, and mentions confirmation because Buttondown is double opt-in.
+# It must not give a daily number.
 # SPEED_LINE is backed by data/changes.json (Oct 26-Nov 11, 2026): of 19 restocks where we also saw the sell-out,
 # 7 sold out within an hour and 14 within 6 hours. Re-check it before changing the wording.
 SPEED_LINE = "Restocks often sell out within hours."
-LIST_LINE = "Free restock emails from every shop we track. Unsubscribe anytime."
+LIST_LINE = (
+    "Free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. "
+    "Unsubscribe anytime. We'll email you a confirmation link. You aren't on the list until you click it."
+)
+SIGNUP_COPY = {
+    "alerts": ("Get restock alerts by email", LIST_LINE),
+    "shop": ("Get restock alerts by email", LIST_LINE),
+}
 TAGLINE = "Never miss a stationery restock"
 ONE_LIST_LABEL = "Get every restock alert by email"
 SIGNUP_LABELS = {
@@ -499,9 +501,6 @@ def signup(kind="alerts", label=None, note=None, placement="top", kicker=None):
     id="alerts", so "#alerts" links work on every page. A bottom repeat uses id="alerts-bottom" and a second
     email field id so the markup stays valid. The form action and fields never change."""
     d_label, d_note = SIGNUP_COPY[kind]
-    if kind == "shop" and shop_inserts_public():
-        d_label = "Hear about new planners, journals, and inserts"
-        d_note = "An occasional email when we release a new planner, journal, or printable insert, plus our restock alerts. No spam, unsubscribe anytime."
     label, note = label or d_label, note or d_note
     sid = "alerts" if placement == "top" else "alerts-bottom"
     eid = "email-top" if placement == "top" else "email-bottom"
@@ -1025,7 +1024,7 @@ def build_hobo_tracker():
                 body, ld=(faq_ld, crumbs_ld((HOBO_TRACKER, "Hobonichi tracker"))))
 
 HUB_TRACKERS = {  # one line per tracker card on the hub homepage
-    "hobonichi": ("Hobonichi Techo 2027", "Original A6, Cousin A5, Weeks, Weeks Mega and covers, at the official store and independent shops."),
+    "hobonichi": ("Hobonichi Techo 2027", "Original A6, Cousin A5, the English Planner A6, HON, Weeks, Weeks Mega and covers, at the official store and independent shops."),
     "dotgrid": ("Dot grid journals", ""),  # short homepage blurb is filled in below; official-store detail stays on the hub
     # Live listings are the five Regular colors, the ROAD TRIP exclusive, anniversary sets, and 2027 diary
     # accessories. Refills and Passport size are not listings on this tracker (the size guide says so).
@@ -1217,16 +1216,17 @@ def build_privacy():
     body = f"""
 <article class="prose">
 {crumbs((fname, "Privacy"))}
-{eyebrow("Privacy", "updated Nov 17, 2026")}
+{eyebrow("Privacy", "updated Nov 18, 2026")}
 <h1>Privacy</h1>
 <p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, and cookie-free page view counts.</p>
 <h2>Email alerts (Buttondown)</h2>
-<p>If you sign up for restock alerts, your email address goes to <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>, the service that stores the list and sends the emails. We use it only to send the alerts and occasional updates you signed up for. Every email has an unsubscribe link, and you can also email us to be removed. Buttondown's own privacy policy is at <a href="https://buttondown.com/legal/privacy" target="_blank" rel="noopener">buttondown.com/legal/privacy</a>.</p>
+<p>If you sign up for restock alerts, your email address goes to <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>, the service that stores the list and sends the emails. Buttondown sends a confirmation email first; we only add the address to the list after you click the link. We use it only to send restock alerts and occasional site updates. Every email has an unsubscribe link, and you can also email us to be removed. Buttondown's own privacy policy is at <a href="https://buttondown.com/legal/privacy" target="_blank" rel="noopener">buttondown.com/legal/privacy</a>.</p>
 <h2>Page view counts (Cloudflare Web Analytics)</h2>
 <p>The site is hosted on Cloudflare Pages and uses Cloudflare Web Analytics to count visits. It doesn't use cookies or local storage and doesn't follow you across other sites. Cloudflare also handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
+<p>The source code, the checker, and a backup copy of the site are hosted on GitHub (GitHub Pages).</p>
 <p>This site doesn't set its own cookies and doesn't run ad trackers.</p>
 <h2>Links to other sites</h2>
-<p>When you follow a link to a shop we track, or to Amazon or Etsy for our own planners and journals, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
+<p>When you follow a link to a shop we track, or to Amazon, Etsy, or Teachers Pay Teachers for our own planners, journals, and printables, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email {plain_email()}.</p>
 </article>"""
@@ -1864,7 +1864,7 @@ def build_design(d, oe=None):
           ("How often do you check?",
            f"Every shop is checked {CHECK_FREQ}. Each status is exactly what the shop's public product data said at that time. \"Not yet on sale\" means the shop has a preview page up but isn't taking orders yet, and \"Couldn't check\" means our check failed, so we don't guess."),
           ("Can I get restock alerts?",
-           f"Yes, sign up above. It's one free list of restock emails from every shop we track, not just {d['full']}. You can unsubscribe anytime.")]
+           f"Yes, sign up above. We'll email you a confirmation link; you aren't on the list until you click it. Once you confirm, it's one free list of restock emails from every shop we track, plus an occasional update when we add a tracker or release something new, not just {d['full']}. You can unsubscribe anytime.")]
     when_html = time_tag(run)
     faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(
         f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a).replace(E(when), when_html, 1)}</p></details>' for q, a in qa) + "</section>"
@@ -1933,16 +1933,16 @@ FAQ = [
     ("Which shops do you check?",
      "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
-     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 and A5 covers. {tracks} We don't track pens."),
+     "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and a few A6 and A5 covers. {tracks} We don't track pens."),
     ('What do "Not yet on sale" and "Couldn\'t check" mean?',
      '"Not yet on sale" means the shop has a preview page up but isn\'t taking orders yet. That\'s different from sold out. '
      '"Couldn\'t check" means our check failed, for example because the shop\'s site didn\'t respond, so we don\'t know. '
      "We show that instead of guessing whether it's in stock."),
     ("Do you sell planners?",
-     "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon and as printable PDFs on Etsy. "
+     "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon, as printable PDFs on Etsy, and as classroom printables on Teachers Pay Teachers. "
      "The stationery we track is sold by the shops themselves; we just link you to them. "),
     ("How do restock alerts work?",
-     "Sign up with your email and you'll get free restock emails from every shop we track. "
+     "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. "
      "It's one list, and you can unsubscribe anytime."),
 ]
 
@@ -1977,7 +1977,8 @@ def faq_block(only=None, sid="faq"):
     """only: questions to show, in that order. None shows the full list."""
     n = len({p["store_id"] for p in stock["products"]})
     # {shop} is a link in the page and the plain URL in the FAQ structured data
-    secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + ((". " + dotgrid_where_checked()) if k == "dotgrid" else "") for k in LIVE)
+    # rstrip the coverage sentence so the ". " join does not add a second period after "shops."
+    secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + ((". " + dotgrid_where_checked().rstrip(".")) if k == "dotgrid" else "") for k in LIVE)
     secs += ". Some shops sell more than one brand, so they're counted once in the total"
     tracks = " ".join(FAQ_TRACKS[k] for k in LIVE)
     answers = []
@@ -1985,6 +1986,7 @@ def faq_block(only=None, sid="faq"):
         if q == "Do you sell planners?" and shop_inserts_public():
             a = ("Yes, our own: we make planners, journals, and printable planner inserts, and sell them on our shop page ({shop}). "
                  "Printed books are on Amazon. Printable PDFs, including undated paper tip-ins, are on Etsy. "
+                 "Classroom printables are on Teachers Pay Teachers. "
                  "The stationery we track is sold by the shops themselves; we just link you to them. ")
         answers.append((q, a))
     if only is None:
@@ -2012,7 +2014,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-17", "privacy.html": "2026-11-17"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-17", "privacy.html": "2026-11-18"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -2240,7 +2242,7 @@ def build_where_to_buy():
         ("Will sold-out 2027 books come back?",
          "Often, but not always. The Paper Mouse says almost all items have been restocked at least once after launch in past years, but it can't guarantee restocks."),
         ("How do I get told when something restocks?",
-         "Sign up for Stationery Drop Watch alerts. We check the shops about every 30 minutes and send free restock emails from every shop we track. You can unsubscribe anytime."),
+         "Sign up for Stationery Drop Watch alerts. We'll email you a confirmation link. Once you confirm, we send free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. We check the shops about every 30 minutes. You can unsubscribe anytime."),
     ]
     checked_at = fmt_et(stock["run_finished"])
     faq_html = "".join(
@@ -2568,7 +2570,7 @@ def build_dotgrid_guide():
          "Leuchtturm1917 (numbered pages and a blank table of contents) and Scribbles That Matter (numbered pages, an index, a key page and a pen test page). "
          "Archer and Olive's and Notebook Therapy's product pages don't mention numbered pages or an index."),
         ("How do the email alerts work?",
-         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up for free restock emails from every shop we track, including sold-out sizes and colors coming back. You can unsubscribe anytime."),
+         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up and we'll email you a confirmation link. Once you confirm, you'll get free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new, including sold-out sizes and colors coming back. You can unsubscribe anytime."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, {E(b)} (official product page).</li>'
