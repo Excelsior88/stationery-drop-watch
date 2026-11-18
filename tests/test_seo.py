@@ -55,7 +55,7 @@ class SeoHeadTests(unittest.TestCase):
             self.assertNotIn("hourly", title.lower(), path)
             titles.append(title)
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 81)  # 77, plus 4 HON Sheep and Weeks design pages
+        self.assertEqual(len(titles), 82)  # 77, plus 4 HON Sheep and Weeks design pages, plus Planner A6
 
     def test_descriptions_match_social_tags_and_stay_under_160(self):
         descs = []
@@ -131,7 +131,7 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 81)  # 77, plus 4 HON Sheep and Weeks design pages
+        self.assertEqual(len(mods), 82)  # 77, plus 4 HON Sheep and Weeks design pages, plus Planner A6
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):
@@ -198,7 +198,7 @@ class SeoHeadTests(unittest.TestCase):
         home = dict(self.docs)["index.html"]
         line = "Stationery Drop Watch is built in Hamtramck, Michigan."
         self.assertIn(line, about)
-        self.assertIn("He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together.", about)
+        self.assertIn("He built the tracker after seeing how frustrating it was for his partner, Arden, to keep up with planner restocks, and now they run it together.", about)
         self.assertNotIn("display:none", about.lower())
         about_blocks = [json.loads(html.unescape(b.replace("<\\/", "</")))
                         for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', about)]
