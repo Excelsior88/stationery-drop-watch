@@ -532,3 +532,17 @@ table.stock.compare thead th{vertical-align:top}
 .guide-list a:hover{color:var(--accent);background:none}
 .follow-card,.shop-card{border-radius:14px;box-shadow:0 2px 0 var(--line),0 12px 30px -24px rgba(60,40,20,.35)}
 .faq .faq-item{padding:12px 0}
+
+/* Small "Made by us" cards sit below tracker stock listings, never above them. */
+.made-by-us{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:start;margin:0 0 16px}
+.made-by-us .made-by-us-thumb{display:block;max-width:100%}
+.made-by-us .shop-img{width:120px;max-width:100%;aspect-ratio:1;margin:0}
+.made-by-us h2{font-size:1.15rem;margin:0 0 .35em}
+.made-by-us .made-by-us-body{min-width:0}
+.made-by-us .made-by-us-body p{margin:.25em 0 .55em}
+.made-by-us .btn{margin-top:.15em}
+@media(max-width:600px){
+  .made-by-us{grid-template-columns:1fr;gap:12px;padding:16px 18px}
+  .made-by-us .shop-img{width:160px;margin:0 auto}
+  .made-by-us .btn{display:block;text-align:center}
+}
