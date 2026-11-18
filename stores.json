@@ -475,6 +475,14 @@
      "source_title": "Hobonichi Techo 2027 English Original Book"
     },
     {
+     "canonical": "planner-a6-en",
+     "label": "Planner A6 book (English)",
+     "type": "Book",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/pb27_jan/",
+     "source_key": "pb27_jan",
+     "source_title": "Hobonichi Techo 2027 English Planner Book"
+    },
+    {
      "canonical": "cousin-a5-en",
      "label": "Cousin A5 book (English)",
      "type": "Book",
@@ -489,6 +497,14 @@
      "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan/",
      "source_key": "ob27_jan",
      "source_title": "Hobonichi Techo 2027 Japanese Original Book"
+    },
+    {
+     "canonical": "original-a6-jp-one-piece",
+     "label": "Original A6 book (Japanese) · One Piece Edition",
+     "type": "Book",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_op/",
+     "source_key": "ob27_op",
+     "source_title": "Hobonichi Techo 2027 Japanese Original Book - One Piece Edition"
     },
     {
      "canonical": "weeks-midnight-blue",
