@@ -1579,5 +1579,23 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moominsnufkin/",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-18T15:17:47+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks · Moomin: At the Table",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moomintable/",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-18T15:19:50+00:00",
+  "store_id": "goulet",
+  "store": "The Goulet Pen Company",
+  "label": "Leuchtturm1917 · Bullet Journal Edition 2",
+  "url": "https://www.gouletpens.com/products/leuchtturm1917-bullet-journal-notebook-black-edition-2",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
