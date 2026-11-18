@@ -2666,8 +2666,8 @@
   {
    "store_id": "baum",
    "store": "Baum-kuchen",
-   "canonical": null,
-   "label": "[Hobonichi 2027] Planner Book (A6 / English)",
+   "canonical": "planner-a6-en",
+   "label": "Planner A6 book (English)",
    "type": "Book",
    "url": "https://www.baum-kuchen.net/products/hobonichi-2027-planner-book-a6-english",
    "checked_at": "2026-11-18T03:17:45+00:00",
@@ -3096,8 +3096,8 @@
   {
    "store_id": "wonder",
    "store": "Wonder Pens",
-   "canonical": null,
-   "label": "Hobonichi 2027 - Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]",
+   "canonical": "original-a6-jp-one-piece",
+   "label": "Original A6 book (Japanese) · One Piece Edition",
    "type": "Book",
    "url": "https://wonderpens.ca/products/hobonichi-2027-japanese-original-book-one-piece-edition-a6-size-daily-jan-start-mon-start",
    "checked_at": "2026-11-18T03:17:39+00:00",
@@ -6318,8 +6318,8 @@
   {
    "store_id": "kinousa",
    "store": "Kinokuniya USA",
-   "canonical": null,
-   "label": "Hobonichi Techo 2027 Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]",
+   "canonical": "original-a6-jp-one-piece",
+   "label": "Original A6 book (Japanese) · One Piece Edition",
    "type": "Book",
    "url": "https://usa.kinokuniya.com/products/4580812710374",
    "checked_at": "2026-11-18T03:18:19+00:00",
@@ -10269,7 +10269,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · A5 white dot grid",
    "type": "Dot grid notebook",
@@ -10286,7 +10286,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · B5 white dot grid",
    "type": "Dot grid notebook",
@@ -10303,7 +10303,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-blue",
    "label": "Songbird in Blue · A5 dot grid",
    "type": "Dot grid notebook",
@@ -10320,7 +10320,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-blue",
    "label": "Songbird in Blue · B5 dot grid",
    "type": "Dot grid notebook",
@@ -10337,7 +10337,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-majestic-skies",
    "label": "Majestic Skies · A5 dot grid",
    "type": "Dot grid notebook",
@@ -10354,7 +10354,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-apothecary-shelf",
    "label": "Apothecary Shelf (Halloween 2026) · B5 white dot grid",
    "type": "Dot grid notebook",
@@ -10371,7 +10371,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-refill-soft",
    "label": "A5 Soft Cover Refill Notebook · white dot grid",
    "type": "Dot grid refill",
@@ -10388,7 +10388,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-refill-notepad",
    "label": "A5 Notepad Refill · white dot grid",
    "type": "Dot grid refill",
@@ -10405,7 +10405,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · letter white dot grid",
    "type": "Dot grid notebook",
@@ -10422,7 +10422,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-apothecary-shelf",
    "label": "Apothecary Shelf (Halloween 2026) · 8x8 white dot grid",
    "type": "Dot grid notebook",
@@ -10439,7 +10439,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · 8x8 white dot grid",
    "type": "Dot grid notebook",
@@ -10456,7 +10456,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-apothecary-shelf",
    "label": "Apothecary Shelf (Halloween 2026) · A5 white dot grid",
    "type": "Dot grid notebook",
@@ -10473,7 +10473,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · TN white dot grid",
    "type": "Dot grid notebook",
@@ -10490,7 +10490,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · B6 white dot grid",
    "type": "Dot grid notebook",
@@ -10507,7 +10507,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · pocket white dot grid",
    "type": "Dot grid notebook",
@@ -10524,7 +10524,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-blue",
    "label": "Songbird in Blue · letter dot grid",
    "type": "Dot grid notebook",
@@ -10541,7 +10541,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-majestic-skies",
    "label": "Majestic Skies · B5 dot grid",
    "type": "Dot grid notebook",
@@ -10558,7 +10558,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-majestic-skies",
    "label": "Majestic Skies · square dot grid",
    "type": "Dot grid notebook",
@@ -10575,7 +10575,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-blue",
    "label": "Songbird in Blue · square dot grid",
    "type": "Dot grid notebook",
@@ -10592,7 +10592,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-majestic-skies",
    "label": "Majestic Skies · TN dot grid",
    "type": "Dot grid notebook",
@@ -10609,7 +10609,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-blue",
    "label": "Songbird in Blue · TN dot grid",
    "type": "Dot grid notebook",
@@ -10626,7 +10626,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-blue",
    "label": "Songbird in Blue · B6 dot grid",
    "type": "Dot grid notebook",
@@ -10643,7 +10643,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-blue",
    "label": "Songbird in Blue · pocket dot grid",
    "type": "Dot grid notebook",
@@ -10660,7 +10660,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · B5 kraft dot grid",
    "type": "Dot grid notebook",
@@ -10677,7 +10677,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · 8x8 kraft dot grid",
    "type": "Dot grid notebook",
@@ -10694,7 +10694,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · A5 kraft dot grid",
    "type": "Dot grid notebook",
@@ -10711,7 +10711,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · B5 ivory dot grid",
    "type": "Dot grid notebook",
@@ -10728,7 +10728,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · 8x8 ivory dot grid",
    "type": "Dot grid notebook",
@@ -10745,7 +10745,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · A5 ivory dot grid",
    "type": "Dot grid notebook",
@@ -10762,7 +10762,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-apothecary-shelf",
    "label": "Apothecary Shelf (Halloween 2026) · A5 black dot grid",
    "type": "Dot grid notebook",
@@ -10779,7 +10779,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · B5 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -10796,7 +10796,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · B5 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -10813,7 +10813,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · 8x8 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -10830,7 +10830,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · 8x8 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -10847,7 +10847,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · A5 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -10864,7 +10864,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · A5 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -10881,7 +10881,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · TN dot grid · ships now",
    "type": "Dot grid notebook",
@@ -10898,7 +10898,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · TN dot grid · preorder",
    "type": "Dot grid notebook",
@@ -10915,7 +10915,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · B6 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -10932,7 +10932,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · B6 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -10949,7 +10949,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · pocket dot grid · ships now",
    "type": "Dot grid notebook",
@@ -10966,7 +10966,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-ice-castle",
    "label": "Ice Castle · pocket dot grid · preorder",
    "type": "Dot grid notebook",
@@ -10983,7 +10983,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · B5 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11000,7 +11000,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · B5 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11017,7 +11017,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · 8x8 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11034,7 +11034,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · 8x8 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11051,7 +11051,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · A5 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11068,7 +11068,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · A5 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11085,7 +11085,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · TN dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11102,7 +11102,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · TN dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11119,7 +11119,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · B6 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11136,7 +11136,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · B6 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11153,7 +11153,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · pocket dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11170,7 +11170,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-cozy-critters",
    "label": "Cozy Critters · pocket dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11187,7 +11187,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · B5 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11204,7 +11204,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · B5 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11221,7 +11221,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · 8x8 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11238,7 +11238,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · 8x8 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11255,7 +11255,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · A5 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11272,7 +11272,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · A5 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11289,7 +11289,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · TN dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11306,7 +11306,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · TN dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11323,7 +11323,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · B6 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11340,7 +11340,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · B6 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11357,7 +11357,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · pocket dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11374,7 +11374,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-stag",
    "label": "Stag · pocket dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11391,7 +11391,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · B5 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11408,7 +11408,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · B5 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11425,7 +11425,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · 8x8 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11442,7 +11442,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · 8x8 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11459,7 +11459,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · A5 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11476,7 +11476,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · A5 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11493,7 +11493,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · TN dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11510,7 +11510,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · TN dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11527,7 +11527,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · B6 dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11544,7 +11544,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · B6 dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11561,7 +11561,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · pocket dot grid · ships now",
    "type": "Dot grid notebook",
@@ -11578,7 +11578,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-winter-train",
    "label": "Winter Train · pocket dot grid · preorder",
    "type": "Dot grid notebook",
@@ -11595,7 +11595,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-beige",
    "label": "Songbird in Beige · B5 dot grid",
    "type": "Dot grid notebook",
@@ -11612,7 +11612,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-beige",
    "label": "Songbird in Beige · square dot grid",
    "type": "Dot grid notebook",
@@ -11629,7 +11629,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-beige",
    "label": "Songbird in Beige · A5 dot grid",
    "type": "Dot grid notebook",
@@ -11646,7 +11646,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-beige",
    "label": "Songbird in Beige · TN dot grid",
    "type": "Dot grid notebook",
@@ -11663,7 +11663,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-beige",
    "label": "Songbird in Beige · B6 dot grid",
    "type": "Dot grid notebook",
@@ -11680,7 +11680,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-plum",
    "label": "Storybook in Plum · letter dot grid",
    "type": "Dot grid notebook",
@@ -11697,7 +11697,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-plum",
    "label": "Storybook in Plum · B5 dot grid",
    "type": "Dot grid notebook",
@@ -11714,7 +11714,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-plum",
    "label": "Storybook in Plum · 8x8 dot grid",
    "type": "Dot grid notebook",
@@ -11731,7 +11731,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-plum",
    "label": "Storybook in Plum · A5 dot grid",
    "type": "Dot grid notebook",
@@ -11748,7 +11748,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-plum",
    "label": "Storybook in Plum · TN dot grid",
    "type": "Dot grid notebook",
@@ -11765,7 +11765,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-plum",
    "label": "Storybook in Plum · B6 dot grid",
    "type": "Dot grid notebook",
@@ -11782,7 +11782,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-plum",
    "label": "Storybook in Plum · pocket dot grid",
    "type": "Dot grid notebook",
@@ -11799,7 +11799,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-songbird-warm-gray",
    "label": "Songbird in Warm Gray · letter dot grid",
    "type": "Dot grid notebook",
@@ -11816,7 +11816,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-olive",
    "label": "Storybook in Olive · letter dot grid",
    "type": "Dot grid notebook",
@@ -11833,7 +11833,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-olive",
    "label": "Storybook in Olive · square dot grid",
    "type": "Dot grid notebook",
@@ -11850,7 +11850,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-olive",
    "label": "Storybook in Olive · A5 dot grid",
    "type": "Dot grid notebook",
@@ -11867,7 +11867,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-olive",
    "label": "Storybook in Olive · TN dot grid",
    "type": "Dot grid notebook",
@@ -11884,7 +11884,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-olive",
    "label": "Storybook in Olive · pocket dot grid",
    "type": "Dot grid notebook",
@@ -11901,7 +11901,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-meteor-shower",
    "label": "Meteor Shower · 8x8 dot grid",
    "type": "Dot grid notebook",
@@ -11918,7 +11918,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-meteor-shower",
    "label": "Meteor Shower · A5 dot grid",
    "type": "Dot grid notebook",
@@ -11935,7 +11935,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-meteor-shower",
    "label": "Meteor Shower · Travelers dot grid",
    "type": "Dot grid notebook",
@@ -11952,7 +11952,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-refill-soft",
    "label": "A5 Soft Cover Refill Notebook · kraft dot grid",
    "type": "Dot grid refill",
@@ -11969,7 +11969,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-refill-soft",
    "label": "A5 Soft Cover Refill Notebook · ivory dot grid",
    "type": "Dot grid refill",
@@ -11986,7 +11986,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-refill-notepad",
    "label": "A5 Notepad Refill · kraft dot grid",
    "type": "Dot grid refill",
@@ -12003,7 +12003,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-refill-notepad",
    "label": "A5 Notepad Refill · black dot grid",
    "type": "Dot grid refill",
@@ -12020,7 +12020,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-refill-notepad",
    "label": "A5 Notepad Refill · neapolitan dot grid",
    "type": "Dot grid refill",
@@ -12037,7 +12037,7 @@
   },
   {
    "store_id": "archerolive",
-   "store": "Archer and Olive",
+   "store": "Archer and Olive (official)",
    "canonical": "ao-refill-notepad",
    "label": "A5 Notepad Refill · pastel dot grid",
    "type": "Dot grid refill",
@@ -12054,7 +12054,7 @@
   },
   {
    "store_id": "leuchtturm-us",
-   "store": "Leuchtturm1917 US",
+   "store": "Leuchtturm1917 US (official)",
    "canonical": "lt-hardcover-a5",
    "label": "Hardcover Medium (A5) · dotted · Black",
    "type": "Dot grid notebook",
@@ -12071,7 +12071,7 @@
   },
   {
    "store_id": "leuchtturm-us",
-   "store": "Leuchtturm1917 US",
+   "store": "Leuchtturm1917 US (official)",
    "canonical": "lt-hardcover-a5",
    "label": "Hardcover Medium (A5) · dotted · Navy",
    "type": "Dot grid notebook",
@@ -12088,7 +12088,7 @@
   },
   {
    "store_id": "leuchtturm-us",
-   "store": "Leuchtturm1917 US",
+   "store": "Leuchtturm1917 US (official)",
    "canonical": "lt-hardcover-a5",
    "label": "Hardcover Medium (A5) · dotted · Sage",
    "type": "Dot grid notebook",
@@ -12105,7 +12105,7 @@
   },
   {
    "store_id": "leuchtturm-us",
-   "store": "Leuchtturm1917 US",
+   "store": "Leuchtturm1917 US (official)",
    "canonical": "lt-120g-a5",
    "label": "Medium (A5) 120G · dotted · Black",
    "type": "Dot grid notebook",
@@ -12122,7 +12122,7 @@
   },
   {
    "store_id": "leuchtturm-us",
-   "store": "Leuchtturm1917 US",
+   "store": "Leuchtturm1917 US (official)",
    "canonical": "lt-bullet-journal-ed2",
    "label": "Bullet Journal Edition 2 · Black",
    "type": "Dot grid notebook",
@@ -12139,7 +12139,7 @@
   },
   {
    "store_id": "leuchtturm-us",
-   "store": "Leuchtturm1917 US",
+   "store": "Leuchtturm1917 US (official)",
    "canonical": "lt-bullet-journal-ed2",
    "label": "Bullet Journal Edition 2 · Purple26",
    "type": "Dot grid notebook",
@@ -12156,7 +12156,7 @@
   },
   {
    "store_id": "scribbles",
-   "store": "Scribbles That Matter",
+   "store": "Scribbles That Matter (official)",
    "canonical": "stm-pro",
    "label": "Dotted Journal Pro · A5 160gsm · Charcoal",
    "type": "Dot grid notebook",
@@ -12173,7 +12173,7 @@
   },
   {
    "store_id": "scribbles",
-   "store": "Scribbles That Matter",
+   "store": "Scribbles That Matter (official)",
    "canonical": "stm-pro",
    "label": "Dotted Journal Pro · B5 160gsm · Charcoal",
    "type": "Dot grid notebook",
@@ -12190,7 +12190,7 @@
   },
   {
    "store_id": "scribbles",
-   "store": "Scribbles That Matter",
+   "store": "Scribbles That Matter (official)",
    "canonical": "stm-pro",
    "label": "Dotted Journal Pro · A5 160gsm · Bottle Green",
    "type": "Dot grid notebook",
@@ -12207,7 +12207,7 @@
   },
   {
    "store_id": "scribbles",
-   "store": "Scribbles That Matter",
+   "store": "Scribbles That Matter (official)",
    "canonical": "stm-iconic",
    "label": "Dotted Journal Iconic · A5 160gsm · Bottle Green",
    "type": "Dot grid notebook",
@@ -12224,7 +12224,7 @@
   },
   {
    "store_id": "scribbles",
-   "store": "Scribbles That Matter",
+   "store": "Scribbles That Matter (official)",
    "canonical": "stm-starry-night",
    "label": "Starry Night · A5 · black paper",
    "type": "Dot grid notebook",
@@ -12241,7 +12241,7 @@
   },
   {
    "store_id": "notebooktherapy",
-   "store": "Notebook Therapy",
+   "store": "Notebook Therapy (official)",
    "canonical": "nt-tsuki-160",
    "label": "Tsuki 160GSM Bullet Journal · Pink Sakura",
    "type": "Dot grid notebook",
@@ -12258,7 +12258,7 @@
   },
   {
    "store_id": "notebooktherapy",
-   "store": "Notebook Therapy",
+   "store": "Notebook Therapy (official)",
    "canonical": "nt-tsuki-160",
    "label": "Tsuki 160GSM Bullet Journal · Mint Matcha",
    "type": "Dot grid notebook",
@@ -12275,7 +12275,7 @@
   },
   {
    "store_id": "notebooktherapy",
-   "store": "Notebook Therapy",
+   "store": "Notebook Therapy (official)",
    "canonical": "nt-tsuki-dark-academia",
    "label": "Tsuki 'Dark Academia' · A5 (176 pages)",
    "type": "Dot grid notebook",
@@ -12292,7 +12292,7 @@
   },
   {
    "store_id": "notebooktherapy",
-   "store": "Notebook Therapy",
+   "store": "Notebook Therapy (official)",
    "canonical": "nt-tsuki-violet-nocturne",
    "label": "Tsuki 'Violet Nocturne' · A5 white paper",
    "type": "Dot grid notebook",
@@ -12309,7 +12309,7 @@
   },
   {
    "store_id": "notebooktherapy",
-   "store": "Notebook Therapy",
+   "store": "Notebook Therapy (official)",
    "canonical": "nt-tsuki-ravens-secret",
    "label": "Tsuki 'Raven's Secret' · A5 (176 pages)",
    "type": "Dot grid notebook",
