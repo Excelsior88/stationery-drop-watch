@@ -1759,5 +1759,15 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moominsnufkin/",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-18T19:49:19+00:00",
+  "store_id": "travelerscompanyusa",
+  "store": "Traveler's Company USA (official)",
+  "label": "Traveler's notebook ROAD TRIP Brown · Regular size (US exclusive)",
+  "url": "https://shop.travelerscompanyusa.com/products/travelers-notebook-brown-road-trip",
+  "section": "travelers",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
