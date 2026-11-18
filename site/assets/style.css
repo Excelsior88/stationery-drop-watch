@@ -249,14 +249,12 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .shop-list{list-style:none;padding:0;display:grid;gap:22px}
 .shop-card{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:stretch;height:100%;padding:16px;border:1px solid #e6dccb;border-radius:12px;background:#fff}
 .shop-card h3{margin:0 0 2px}.shop-card ul{padding-left:18px}
-.shop-img{display:block;aspect-ratio:3/4;width:100%;background:#f6efe3;border-radius:8px;overflow:hidden;box-shadow:0 6px 14px -8px rgba(60,40,20,.45)}
-/* Every cover fills the same 3:4 frame. Amazon covers are 2:3 to ~3:4 (trims a sliver top and bottom);
-   the square Etsy mockups trim their props at the sides, keeping the whole planner in frame. */
-.shop-img img{width:100%;height:100%;object-fit:cover;display:block}
-.shop-img.photo img{object-position:40% 50%}
-/* Landscape listing art uses the same 3:4 frame as every other shop cover.
-   contain keeps the whole design visible inside that frame; it is not cropped or stretched. */
-.shop-img.sheet img{object-fit:contain;object-position:center}
+.shop-img{display:block;align-self:start;width:100%;background:#f6efe3;border-radius:8px;overflow:hidden;box-shadow:0 6px 14px -8px rgba(60,40,20,.45)}
+/* Each cover shows in full at its natural aspect ratio. The image column stays the grid
+   width and does not grow with card height, so equal-height rows do not crop the sides. */
+.shop-img img{width:100%;height:auto;object-fit:contain;object-position:top center;display:block}
+.shop-img.photo img{object-position:top center}
+.shop-img.sheet img{object-fit:contain;object-position:top center}
 .release-gate{margin:0 0 10px;padding:8px 10px;border:1px dashed #c4a574;border-radius:8px;background:#fbf6ec;color:#5c5148;font-size:.82rem;line-height:1.4}
 .btn.is-disabled{background:#efe6d8;color:#5c5148;cursor:default;text-align:center}
 @media(max-width:600px){.shop-card{grid-template-columns:1fr;gap:14px;padding:14px}.shop-img{max-width:240px;margin:0 auto}.shop-card .btn{display:block;text-align:center}}
@@ -302,7 +300,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .shop-price{margin:6px 0 8px;font-family:var(--sans)}
 .shop-price strong{font-size:1.25rem;color:#2d2a32;margin-right:4px}
 .shop-inside{margin:6px 0 12px}
-/* Collection cards lead with a 2x2 of the real listing covers. Other shop cards stay 150px / 3:4. */
+/* Collection cards lead with a 2x2 of the real listing covers. Other shop cards stay a 150px image column. */
 #level-up-collection,
 #cute-pastel-collection{grid-template-columns:1fr}
 #level-up-collection{background:#fffaf0;border-color:#22223a}
@@ -312,7 +310,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .collection-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .collection-grid a{display:block;border-radius:10px;overflow:hidden;line-height:0}
 .collection-grid a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.collection-grid img{width:100%;height:auto;display:block}
+.collection-grid img{width:100%;height:auto;object-fit:contain;display:block}
 .shop-inside summary{cursor:pointer;color:#c1553b;font-family:var(--sans);font-size:.92rem}
 .inside-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
 .inside-grid figure{margin:0}.inside-grid figure:first-child{grid-column:1/-1}
@@ -341,7 +339,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .hub-card a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .hub-card h3{font-family:var(--serif);font-size:1.3rem;margin:0 0 6px}
 .hub-card p{margin:0 0 10px;color:var(--ink-2);font-size:.93rem}
-.hub-card .hub-count{margin-top:auto;color:var(--ink)}
+.hub-card .hub-count{margin-top:auto;padding-top:20px;color:var(--ink)}
 .hub-card .hub-count b{font:600 1.7rem var(--serif);color:var(--accent);margin-right:4px}
 .hub-card .hub-count .muted{display:block;margin-top:2px}
 .hub-go{font-weight:600;font-size:.92rem;color:var(--accent)}
@@ -565,6 +563,7 @@ table.stock.compare thead th{vertical-align:top}
 .made-by-us{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:start;margin:0 0 16px}
 .made-by-us .made-by-us-thumb{display:block;max-width:100%}
 .made-by-us .shop-img{width:120px;max-width:100%;aspect-ratio:1;margin:0}
+.made-by-us .shop-img img{width:100%;height:100%;object-fit:contain;object-position:center}
 .made-by-us h2{font-size:1.15rem;margin:0 0 .35em}
 .made-by-us .made-by-us-body{min-width:0}
 .made-by-us .made-by-us-body p{margin:.25em 0 .55em}

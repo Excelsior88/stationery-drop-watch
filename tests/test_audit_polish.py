@@ -78,6 +78,25 @@ class AuditPolishTests(unittest.TestCase):
         self.assertIn("own store", hub)
         self.assertIn("We check Archer and Olive", hub)
 
+
+    def test_shop_covers_show_in_full(self):
+        self.assertIn(".shop-img{display:block;align-self:start;", CSS)
+        self.assertNotIn("aspect-ratio:3/4", CSS)
+        self.assertRegex(CSS, r"\.shop-img img\{[^}]*height:auto")
+        self.assertRegex(CSS, r"\.shop-img img\{[^}]*object-fit:contain")
+        self.assertNotRegex(CSS, r"\.shop-img img\{[^}]*object-fit:cover")
+        self.assertIn(".collection-grid img{width:100%;height:auto;object-fit:contain;display:block}", CSS)
+        # Amazon, Etsy, and TpT collection cards are all present.
+        self.assertIn('class="shop-img"', SHOP)
+        self.assertIn('class="shop-img photo"', SHOP)
+        self.assertIn('class="shop-img sheet"', SHOP)
+        self.assertIn('class="collection-grid"', SHOP)
+        self.assertIn("See inside", SHOP)
+
+    def test_homepage_cards_have_breathing_room_above_the_count(self):
+        self.assertIn(".hub-card .hub-count{margin-top:auto;padding-top:20px;color:var(--ink)}", CSS)
+        self.assertIn(".hub-go{", CSS)
+        self.assertIn("margin-top:12px", CSS)
     def test_fonts_badges_and_privacy_claims_unchanged(self):
         self.assertIn('--sans:"Liberation Sans"', CSS)
         self.assertIn('--serif:"Newsreader"', CSS)
