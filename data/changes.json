@@ -1642,5 +1642,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moominsnufkin/",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-18T17:47:42+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks · Moomin: At the Table",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moomintable/",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
