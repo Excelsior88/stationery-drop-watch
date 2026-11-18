@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class PageFilterMarkupTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        oe = site.amazon_main(site.stock["products"])
+        oe = None
         cls.docs = []
         cls.docs.append(("hobonichi-restock-tracker/", site.build_hobo_tracker()))
         for g in site.GROUPS:
@@ -201,7 +201,7 @@ class PageFilterMarkupTests(unittest.TestCase):
         for g in site.GROUPS:
             ls = site.group_listings(g)
             tracked, checked, _ = site.shop_sets(ls)
-            name, doc = site.build_group(g, site.amazon_main(site.stock["products"]))
+            name, doc = site.build_group(g)
             self.assertIn(f"{site.nshops(len(tracked))} ·", doc.split("<h1>")[0], name)
             self.assertIn(f"{len(checked)} of {site.nshops(len(tracked))} checked", doc, name)
             unk = sum(1 for l in ls if l["status"] == "unknown")
@@ -229,7 +229,7 @@ class PageFilterMarkupTests(unittest.TestCase):
         ]
         expected = [key for key, _pat in markers]
         pages = [("hobonichi-restock-tracker/", site.build_hobo_tracker())]
-        oe = site.amazon_main(site.stock["products"])
+        oe = None
         for g in site.GROUPS:
             pages.append(site.build_group(g, oe))
         sequences = {}
@@ -257,7 +257,7 @@ class PageFilterMarkupTests(unittest.TestCase):
         self.assertEqual(len(sequences), 1 + len(site.GROUPS))
 
     def test_sold_out_note_is_inside_the_product_group(self):
-        oe = site.amazon_main(site.stock["products"])
+        oe = None
 
         def sentence(n):
             if n > 1:
@@ -279,7 +279,7 @@ class PageFilterMarkupTests(unittest.TestCase):
                 self.assertEqual(doc.count(text), count, (g["slug"], text))
 
         prods = site.hobo_products()
-        rows = site.tracker_rows(prods, site.amazon_main(prods))
+        rows = site.tracker_rows(prods, None)
         groups = {}
         for row in rows:
             groups.setdefault(row["g"], []).append(row)
@@ -308,14 +308,13 @@ class PageFilterMarkupTests(unittest.TestCase):
         self.assertEqual(site.sold_everywhere_html([{"status": "coming_soon", "store_id": "a"}]), "")
         card = site.compare_product([
             {"st": "sold_out", "sid": "a", "s": "Alpha", "gn": "Camel", "g": "tn-regular-camel",
-             "p": "Camel", "t": "Notebook", "u": "https://example.test/a", "rg": "", "title": "",
-             "az": "https://www.amazon.com/dp/TEST?tag=excelsior88-20", "azl": "View on Amazon", "azm": 1},
+             "p": "Camel", "t": "Notebook", "u": "https://example.test/a", "rg": "", "title": ""},
             {"st": "sold_out", "sid": "b", "s": "Beta", "gn": "Camel", "g": "tn-regular-camel",
-             "p": "Camel", "t": "Notebook", "u": "https://example.test/b", "rg": "", "title": "",
-             "az": "https://www.amazon.com/dp/TEST?tag=excelsior88-20", "azl": "View on Amazon", "azm": 1},
+             "p": "Camel", "t": "Notebook", "u": "https://example.test/b", "rg": "", "title": ""},
         ])
         self.assertIn("Sold out at every shop we track (2 shops).", card)
-        self.assertIn("https://www.amazon.com/dp/TEST?tag=excelsior88-20", card)
+        self.assertNotIn("amazon.com", card)
+        self.assertNotIn("View on Amazon", card)
         self.assertEqual(card.count("Sold out at every shop we track (2 shops)."), 1)
         one = site.compare_product([{
             "st": "sold_out", "sid": "a", "s": "Alpha", "gn": "Camel", "g": "tn-regular-camel",
@@ -345,8 +344,9 @@ class PageFilterMarkupTests(unittest.TestCase):
             self.assertIn(f'href="/{g["slug"]}/"', hobo[more_at:])
             for d in site.designs_of(g["slug"]):
                 self.assertIn(f'href="/{site.design_fname(d)}"', fold)
-        for match in site.amazon_main(prods).values():
-            self.assertIn(match["url"], hobo)
+        self.assertNotIn("excelsior88-20", hobo)
+        self.assertNotIn("View on Amazon", hobo)
+        self.assertNotIn("affiliate link", hobo.lower())
         self.assertIn('href="/sold-out-everywhere/"', site.build_index())
         js = (ROOT / "site/assets/app.js").read_text()
         self.assertIn('location.hash === "#sold-out-everywhere"', js)
@@ -364,7 +364,7 @@ class PageFilterMarkupTests(unittest.TestCase):
             "How do restock alerts work?",
         )
         pages = [("hobonichi-restock-tracker/", site.build_hobo_tracker())]
-        oe = site.amazon_main(site.stock["products"])
+        oe = None
         for g in site.GROUPS:
             pages.append(site.build_group(g, oe))
         for name, doc in pages:

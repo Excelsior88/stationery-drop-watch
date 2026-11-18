@@ -244,16 +244,14 @@ class RestockFeedTests(unittest.TestCase):
         self.assertLess(empty, end)
 
     def test_tracker_pages_use_the_same_current_status(self):
-        oe = site.amazon_main(site.stock["products"])
         docs = [("index", site.build_index()), ("hobo", site.build_hobo_tracker())]
         for g in site.GROUPS:
-            fname, doc = site.build_group(g, oe)
+            fname, doc = site.build_group(g)
             site.check_none_claim(fname, doc)
             docs.append((fname, doc))
         for d in site.DESIGNS:
-            fname, doc = site.build_design(d, oe)
+            fname, doc = site.build_design(d)
             site.check_none_claim(fname, doc)
-            site.check_amz_doc(fname, doc)
             docs.append((fname, doc))
         by_url = {}
         for p in site.stock["products"]:

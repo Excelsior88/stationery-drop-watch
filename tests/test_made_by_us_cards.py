@@ -51,11 +51,10 @@ def assert_plain_etsy(self, html, url):
 class MadeByUsCardTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.oe = site.amazon_main(site.stock["products"])
         cls.weeks = next(g for g in site.GROUPS if g["slug"] == "hobonichi-weeks-2027")
         cls.mega = next(g for g in site.GROUPS if g["slug"] == "hobonichi-weeks-mega-2027")
         cls.a6 = next(g for g in site.GROUPS if g["slug"] == "hobonichi-techo-2027-original-a6")
-        cls.weeks_doc = site.build_group(cls.weeks, cls.oe)[1]
+        cls.weeks_doc = site.build_group(cls.weeks)[1]
         cls.hobo_doc = site.build_hobo_tracker()
         cls.lines = next(e for e in site.SHOP_ETSY if e.get("id") == "lines-grid")
         cls.holiday = next(e for e in site.SHOP_ETSY if e.get("id") == "holiday-planner")
@@ -100,8 +99,8 @@ class MadeByUsCardTests(unittest.TestCase):
         self.assertNotIn("Regular", html)
 
     def test_cards_stay_off_other_pages(self):
-        mega = site.build_group(self.mega, self.oe)[1]
-        a6 = site.build_group(self.a6, self.oe)[1]
+        mega = site.build_group(self.mega)[1]
+        a6 = site.build_group(self.a6)[1]
         home = site.build_index()
         for name, doc in (("mega", mega), ("a6", a6), ("home", home)):
             self.assertNotIn("made-by-us", doc, name)

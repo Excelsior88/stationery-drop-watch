@@ -32,9 +32,8 @@ def pages():
         ("privacy.html", site.build_privacy()),
         ("404.html", site.build_404()),
     ]
-    oe = site.amazon_main(site.stock["products"])
-    found.extend(site.build_group(g, oe) for g in site.GROUPS)
-    found.extend(site.build_design(d, oe) for d in site.DESIGNS)
+    found.extend(site.build_group(g) for g in site.GROUPS)
+    found.extend(site.build_design(d) for d in site.DESIGNS)
     for build in (site.build_where_to_buy, site.build_vs, site.build_january_april, site.build_dotgrid_guide,
                   site.build_tn_sizes, site.build_guides_index, site.build_shop, site.build_follow,
                   site.build_contact):

@@ -193,7 +193,7 @@ class OmoiGapsAndFloralTests(unittest.TestCase):
         orig = site.stock["products"]
         try:
             site.stock["products"] = [product]
-            doc = site.build_design(floral, site.amazon_main([product]))[1]
+            doc = site.build_design(floral)[1]
         finally:
             site.stock["products"] = orig
         self.assertIn('rel="canonical" href="https://stationerydropwatch.com/hobonichi-weeks-2027/floral-remedy/"', doc)
