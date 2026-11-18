@@ -1,6 +1,8 @@
 /* Newsreader (Production Type, SIL Open Font License 1.1: assets/fonts/OFL.txt), self-hosted.
    Variable weight 500-700 with optical sizes, Latin subset. */
 @font-face{font-family:"Newsreader";src:url(fonts/newsreader-var.woff2) format("woff2");font-weight:500 700;font-style:normal;font-display:swap}
+/* Newsreader italic (Production Type, SIL OFL 1.1: assets/fonts/OFL.txt), static weight 500. */
+@font-face{font-family:"Newsreader";src:url(fonts/newsreader-italic-500.woff2) format("woff2");font-weight:500;font-style:italic;font-display:swap}
 /* Liberation Sans (SIL Open Font License 1.1: assets/fonts/LICENSE-liberation.txt), self-hosted Latin subset.
    Body, top nav, footer, and UI all use this family so sans text matches across the site. */
 @font-face{font-family:"Liberation Sans";src:url(fonts/liberation-sans-regular.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
@@ -53,7 +55,7 @@ nav a[aria-current]{background:var(--ink);color:var(--paper)}
 
 .hero{padding:44px 0 26px;max-width:760px}
 .lede{font-size:1.15rem;color:var(--ink-2);margin:0 0 1.2em}
-.suggest{font-family:var(--serif);font-style:italic;font-size:1.12rem;line-height:1.45;color:var(--ink);margin:-.45em 0 1.15em}
+.suggest{font-family:var(--serif);font-style:italic;font-weight:500;font-size:1.12rem;line-height:1.45;color:var(--ink);margin:-.45em 0 1.15em}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 10px}
 .hero-compact .stats{margin:12px 0 8px}
 .stats div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;box-shadow:0 1px 0 var(--line)}
@@ -415,7 +417,7 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 :root{--mast:7.5rem}
 .hero-shops{font:600 clamp(1.15rem,2vw,1.5rem)/1.3 var(--serif);margin:0 0 .35em;color:var(--ink)}
 .hero .hero-shops{margin-bottom:.9em}
-.hero .suggest{margin:.15em 0 1.35em;font-size:1rem;font-weight:400;color:var(--ink-2)}
+.hero .suggest{margin:.15em 0 1.35em;font-size:1rem;font-weight:500;color:var(--ink-2)}
 .hero .signup-strip{border:1.5px solid var(--accent);padding:16px 18px;background:var(--card);box-shadow:0 10px 24px -18px rgba(168,69,46,.85)}
 .hero .signup-strip .strip-label{font-size:1.28rem}
 .trust{list-style:none;margin:4px 0 14px;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
