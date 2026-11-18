@@ -146,6 +146,25 @@ def region_tag(store_id):
     r = REGION.get(store_id, "")
     return f' <span class="region" title="Shop based in {REGION_NAME[r]}">{r}</span>' if r else ""
 
+def countries_present(store_ids):
+    """Country codes actually used by these shops, in REGION_NAME order. No invented countries."""
+    present = {REGION.get(i) for i in store_ids if REGION.get(i)}
+    return [c for c in REGION_NAME if c in present]
+
+def country_filter_label(store_ids, attr):
+    """A Based-in filter, only when two or more countries are present. attr is the select's id or data-filter."""
+    cs = countries_present(store_ids)
+    if len(cs) < 2:
+        return ""
+    opts = "".join(f'<option value="{E(c)}">{E(REGION_NAME[c])}</option>' for c in cs)
+    return (f'<label>Based in<select {attr}><option value="">All countries</option>{opts}</select></label>')
+
+def group_toggle_html():
+    """Hidden until JS runs; without JS the native <details> summaries still open one group at a time."""
+    return ('<div class="group-toolbar">'
+            '<button type="button" class="group-toggle" data-group-toggle hidden>Expand all</button>'
+            '</div>')
+
 def names_and(n):
     return ", ".join(n[:-1]) + " and " + n[-1] if len(n) > 1 else "".join(n)
 
@@ -752,7 +771,7 @@ def compare_product(ls):
     note = sold_everywhere_html(ls, "st", "sid")
     items = []
     for r in ls:
-        region = f' <span class="region" title="Shop\'s home country">{E(r["rg"])}</span>' if r.get("rg") else ""
+        region = f' <span class="region" title="Shop\'s home country">{E(r["rg"])}</span> ' if r.get("rg") else ""
         variant = f'<span class="sub variant">{E(r["p"])}</span>' if r.get("p") and r["p"] != r.get("gn") else ""
         title = f'<span class="sub">{E(r["title"])}</span>' if r.get("title") and r["title"] not in (r.get("gn"), r.get("p")) else ""
         row_az = _az_link(r) if r.get("az") and not same_az else ""
@@ -810,6 +829,7 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
                       + "".join(f'<option value="{E(v)}">{E(v)}</option>' for v in langs) + '</select></label>')
         if any(not listing_language(p) for p in prods):
             lang_note = '<p class="muted small filter-note">Language is taken from the shop\'s own title. Listings that don\'t name one stay under All languages.</p>'
+    country_label = country_filter_label(sids, 'id="f-country"')
     noscript_rows = tracker_static(rows)
     return f"""<section class="card" id="tracker">
       {prefix}
@@ -823,11 +843,13 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
             {size_label}
             {lang_label}
             <label>Store<select id="f-store"><option value="">All stores</option>{store_opts}</select></label>
+            {country_label}
             <label>Status<select id="f-status"><option value="">Any status</option>{status_opts}</select></label>
           </div>
         </details>
         <label class="grow">Search<input id="f-q" type="search" placeholder="{E(search_hint)}" autocomplete="off"></label>
         <button type="button" class="filter-reset" id="f-reset">Reset</button>
+        {group_toggle_html()}
       </form>
       {lang_note}
       <div id="rows" class="tracker-groups"><noscript>{noscript_rows}</noscript></div>
@@ -1059,7 +1081,7 @@ def build_hobo_tracker():
       <h2>Recent restocks</h2>
       {feed_html}
     </section>
-    {tracker_html}
+    {tracker_html}{holiday_planner_card()}
     {faq_html}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{more}</ul></section>
     {guides_block()}
@@ -1457,7 +1479,7 @@ def status_rows(ls, oe):
     for l in sorted(ls, key=lambda l: (order.get(l["status"], 9), l["store"])):
         since = l.get("status_since")
         since_html = f'<span class="sub">since {time_tag(since)}</span>' if since and l["status"] != "unknown" else ""
-        rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
+        rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
   <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}{row_amz(l, oe)}</td></tr>""")
     return "".join(rows)
 
@@ -1482,6 +1504,7 @@ def list_filter(ls, hint):
                       + "".join(f'<option value="{E(v)}">{E(v)}</option>' for v in langs) + '</select></label>')
         if any(not listing_language(l) for l in ls):
             lang_note = '<p class="muted small filter-note">Language is taken from the shop\'s own title. Listings that don\'t name one stay under All languages.</p>'
+    country_label = country_filter_label((sid for sid, _ in seen), 'data-filter="country"')
     return f"""<form class="filters page-filter card-filter" id="filters" role="search" aria-label="Filters" onsubmit="return false">
       <details class="filter-more" open>
         <summary>Filters</summary>
@@ -1489,11 +1512,13 @@ def list_filter(ls, hint):
           {size_label}
           {lang_label}
           <label>Store<select data-filter="store"><option value="">All stores</option>{store_opts}</select></label>
+          {country_label}
           <label>Status<select data-filter="status"><option value="">Any status</option>{status_opts}</select></label>
         </div>
       </details>
       <label class="grow">Search<input data-filter="q" type="search" placeholder="{E(hint)}" autocomplete="off"></label>
       <button type="button" class="filter-reset" data-filter="reset">Reset</button>
+      {group_toggle_html()}
     </form>
     {lang_note}"""
 
@@ -1650,7 +1675,7 @@ def build_group(g, oe):
     {design_nav}{shop_nav}{card_filter}{''.join(parts)}
     <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
     </div>
-    {dg_tracker}
+    {dg_tracker}{lines_grid_card() if g.get("slug") == "hobonichi-weeks-2027" else ""}
     {faq_html}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
     {"" if ext else guides_block()}
@@ -3616,6 +3641,73 @@ def shop_lastmod():
     if any(e.get("kind") == "insert" and etsy_listing_url(e) for e in SHOP_ETSY):
         return "2026-11-08"
     return "2026-11-03"
+
+HOLIDAY_CARD_ENDS = dt.date(2026, 12, 31)  # last day the Hobonichi tracker shows The Holiday Planner Pages
+
+def site_today():
+    """Calendar date for this build, in Eastern Time, the same zone as other site dates."""
+    return dt.datetime.now(ET).date()
+
+def shop_item(item_id):
+    """A live /shop Etsy item, or None when that listing is not in this build."""
+    return next((e for e in etsy_listings() if e.get("id") == item_id), None)
+
+def _require_shop_phrases(item, source, phrases):
+    for phrase in phrases:
+        if phrase not in source:
+            raise SystemExit(f"{item['title']}: made-by-us copy is missing source phrase {phrase!r}")
+
+def made_by_us_markup(item, body, disclaimer):
+    """A small, understated card. Plain Etsy link, no price or sale line."""
+    url = etsy_listing_url(item)
+    if not url:
+        return ""
+    img = "/" + item["img"].lstrip("/")
+    dims = ""
+    if item.get("img_w") and item.get("img_h"):
+        dims = f' width="{int(item["img_w"])}" height="{int(item["img_h"])}"'
+    sheet = " sheet" if item.get("img_class") == "sheet" else ""
+    return f"""<aside class="card made-by-us" id="made-by-us-{E(item['id'])}" aria-label="Made by us">
+  <a class="made-by-us-thumb shop-img{sheet}" href="{E(url)}" rel="noopener" target="_blank">
+    <img src="{E(img)}" alt="{E(item['alt'])}"{dims} loading="lazy" decoding="async">
+  </a>
+  <div class="made-by-us-body">
+    <p class="eyebrow">Made by us</p>
+    <h2>{E(item['title'])}</h2>
+    <p>{E(body)}</p>
+    <p class="muted small">{E(disclaimer)}</p>
+    <a class="btn" href="{E(url)}" rel="noopener" target="_blank">View on Etsy</a>
+  </div>
+</aside>"""
+
+def lines_grid_card():
+    """Weeks tracker card. Every sentence is stitched from the existing /shop item."""
+    item = shop_item("lines-grid")
+    if not item:
+        return ""
+    source = " ".join((item.get("sub") or "", item.get("blurb") or "", *(item.get("details") or [])))
+    lead, layouts = "Printable tip-in liners", "13 undated layouts"
+    fit = ("Finished cut size is 85 × 175 mm, drawn for a narrow weekly planner whose book is "
+           "about 94 × 188 mm, including the Hobonichi Weeks")
+    digital = "A digital download for personal use"
+    disc = "Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."
+    _require_shop_phrases(item, source, (lead, layouts, fit, digital, disc.rstrip(".")))
+    return made_by_us_markup(item, f"{lead} in {layouts}. {fit}. {digital}.", disc)
+
+def holiday_planner_card(today=None):
+    """Hobonichi tracker card. Present through Dec 31, 2026; omitted on later builds."""
+    if (today if today is not None else site_today()) > HOLIDAY_CARD_ENDS:
+        return ""
+    item = shop_item("holiday-planner")
+    if not item:
+        return ""
+    source = " ".join((item.get("sub") or "", item.get("blurb") or "", *(item.get("details") or [])))
+    lead = "Printable holiday tip-ins"
+    sizes = "Narrow Weekly 85 × 175 mm, Pocket A6 95 × 138 mm, and Standard A5 138 × 198 mm"
+    pages, digital = "Ten undated pages", "A digital download for personal use"
+    disc = "Not a physical planner, and not affiliated with any planner brand."
+    _require_shop_phrases(item, source, (lead, sizes, pages, digital, disc.rstrip(".")))
+    return made_by_us_markup(item, f"{lead} in three sizes: {sizes}. {pages}. {digital}.", disc)
 
 _BANNED_CLAIMS = ("$5.59", "us$5.59", "launch20", "ai-generated", "artificial intelligence",
                   "made with ai", "created with ai", "generated by ai", "weeks size",
