@@ -189,6 +189,6 @@ class HonSheepWeeksDesignsTests(unittest.TestCase):
         self.assertIn('alt="Stationery Drop Watch on SaaSHub"', src)
         self.assertIn('class="badge-saashub"', src)
         css = (ROOT / "site" / "assets" / "style.css").read_text()
-        self.assertIn(".foot-badge{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}", css)
+        self.assertIn(".foot-badge{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}", css)
         self.assertIn(".foot-badge a{display:inline-block;line-height:0;max-width:100%}", css)
         self.assertIn(".foot-badge img{width:150px;height:63px;object-fit:contain;object-position:center;display:block;max-width:100%}", css)
