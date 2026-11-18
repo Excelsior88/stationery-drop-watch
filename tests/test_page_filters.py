@@ -34,7 +34,7 @@ class PageFilterMarkupTests(unittest.TestCase):
     def test_every_multi_shop_list_has_the_same_filter(self):
         for name, doc in self.docs:
             if name == "hobonichi-restock-tracker/":
-                for needle in ('id="f-product"', 'id="f-type"', 'id="f-store"', 'id="f-status"', 'id="f-q"', 'id="f-reset"', 'aria-label="Filters"'):
+                for needle in ('id="f-product"', 'id="f-type"', 'id="f-store"', 'id="f-status"', 'id="f-q"', 'id="f-reset"', 'id="f-country"', 'aria-label="Filters"', "Based in", "All countries", "data-group-toggle"):
                     self.assertIn(needle, doc, name)
                 self.assertIn("<noscript>", doc, name)
                 continue
@@ -49,8 +49,60 @@ class PageFilterMarkupTests(unittest.TestCase):
             self.assertIn('data-filter="reset"', doc, name)
             self.assertIn("Nothing on this page matches those filters.", doc, name)
             self.assertGreaterEqual(rows, 2, name)
+            if "data-country=" in doc:
+                self.assertGreaterEqual(doc.count("data-country="), 2, name)
+
+    def _countries_for(self, name):
+        if name == "hobonichi-restock-tracker/":
+            return site.countries_present(p["store_id"] for p in site.hobo_products())
+        for g in site.GROUPS:
+            if name == g["slug"] + "/":
+                return site.countries_present(l["store_id"] for l in site.group_listings(g))
+        for d in site.DESIGNS:
+            if name == site.design_fname(d):
+                return site.countries_present(l["store_id"] for l in site.design_listings(d))
+        return []
+
+    def test_country_filter_uses_only_present_countries(self):
+        """The Based-in filter lists the page's shop countries, from stores.json, and never invents one."""
+        known = set(site.REGION_NAME)
+        for name, doc in self.docs:
+            countries = self._countries_for(name)
+            if len(countries) < 2:
+                self.assertNotIn('id="f-country"', doc, name)
+                self.assertNotIn('data-filter="country"', doc, name)
+                continue
+            if name == "hobonichi-restock-tracker/":
+                self.assertIn('id="f-country"', doc, name)
+            else:
+                self.assertIn('data-filter="country"', doc, name)
+            self.assertIn("Based in", doc, name)
+            self.assertIn("All countries", doc, name)
+            for code in countries:
+                self.assertIn(f'<option value="{code}">{site.REGION_NAME[code]}</option>', doc, name)
+            # No country outside this page's data, and none outside the known map.
+            listed = re.findall(r'<option value="([A-Z]{2})">', doc.split("Based in", 1)[1].split("</select>", 1)[0])
+            self.assertEqual(listed, countries, name)
+            self.assertTrue(set(listed) <= known, name)
+        # The five codes in REGION_NAME are exactly the ones stores.json (plus the US site fixes) uses.
+        self.assertEqual(set(site.REGION.values()) <= known, True)
+        self.assertEqual(set(site.REGION.values()), set(site.countries_present(s["id"] for s in site.stores["stores"])))
+
+    def test_group_trackers_have_a_hidden_expand_control(self):
+        for name, doc in self.docs:
+            is_group = name == "hobonichi-restock-tracker/" or any(name == g["slug"] + "/" for g in site.GROUPS)
+            if is_group:
+                self.assertIn('data-group-toggle', doc, name)
+                self.assertIn("Expand all", doc, name)
+                self.assertIn("hidden>Expand all</button>", doc, name)
+            elif "data-group-toggle" in doc:
+                # Design pages share list_filter; the control stays hidden because there are no groups.
+                self.assertIn("hidden>Expand all</button>", doc, name)
+                self.assertNotIn("group-fold", doc, name)
+                self.assertNotIn("fam-block", doc, name)
 
     def test_jump_row_is_gone_and_design_pages_fold(self):
+
         for name, doc in self.docs:
             self.assertNotIn("Jump to", doc, name)
             self.assertNotIn('aria-label="Products on this page"', doc, name)
@@ -482,13 +534,15 @@ class PageFilterBrowserTests(unittest.TestCase):
 <main id="content"><section class="card group-sec" id="stock">
 <form class="filters page-filter" role="search" onsubmit="return false">
 <label>Store<select data-filter="store"><option value="">All stores</option><option value="atlas">Atlas</option><option value="yoseka">Yoseka</option></select></label>
+<label>Based in<select data-filter="country"><option value="">All countries</option><option value="US">United States</option><option value="CA">Canada</option></select></label>
 <label>Status<select data-filter="status"><option value="">Any status</option><option value="in_stock">In stock</option><option value="sold_out">Sold out</option></select></label>
 <label class="grow">Search<input data-filter="q" type="search"></label>
 <button type="button" data-filter="reset">Reset</button></form>
+<button type="button" data-group-toggle hidden>Expand all</button>
 <table><tbody>
-<tr data-store="atlas" data-status="in_stock"><td>Atlas Sage dotted</td></tr>
-<tr data-store="yoseka" data-status="sold_out"><td>Yoseka Black</td></tr>
-<tr data-store="paper" data-status="in_stock"><td>Paper Mouse Navy</td></tr>
+<tr data-store="atlas" data-status="in_stock" data-country="US"><td>Atlas Sage dotted</td></tr>
+<tr data-store="yoseka" data-status="sold_out" data-country="US"><td>Yoseka Black</td></tr>
+<tr data-store="paper" data-status="in_stock" data-country="CA"><td>Paper Mouse Navy</td></tr>
 </tbody></table>
 <p class="card-empty" hidden>Nothing on this page matches those filters.</p>
 </section></main>
@@ -499,10 +553,11 @@ class PageFilterBrowserTests(unittest.TestCase):
 <select id="f-product"><option value="">All products</option><option value="sage">Sage</option></select>
 <select id="f-type"><option value="">All types</option><option value="Cover">Cover</option></select>
 <select id="f-store"><option value="">All stores</option><option value="atlas">Atlas</option></select>
+<select id="f-country"><option value="">All countries</option><option value="US">United States</option><option value="CA">Canada</option></select>
 <select id="f-status"><option value="">Any status</option><option value="in_stock">In stock</option><option value="sold_out">Sold out</option></select>
 <input id="f-q" type="search"><button type="button" id="f-reset">Reset</button></form>
 <p id="count"></p><table><tbody id="rows"></tbody></table><button id="more" hidden></button>
-<script id="stock-data" type="application/json">[{"g":"sage","p":"Sage","gn":"Sage","c":"sage","t":"Cover","s":"Atlas","sid":"atlas","st":"in_stock","u":"https://example.test/sage","title":"Sage dotted","az":"","azl":""},{"g":"black","p":"Black","gn":"Black","c":"black","t":"Cover","s":"Yoseka","sid":"yoseka","st":"sold_out","u":"https://example.test/black","title":"Black","az":"","azl":""}]</script>
+<script id="stock-data" type="application/json">[{"g":"sage","p":"Sage","gn":"Sage","c":"sage","t":"Cover","s":"Atlas","sid":"atlas","rg":"US","st":"in_stock","u":"https://example.test/sage","title":"Sage dotted","az":"","azl":""},{"g":"black","p":"Black","gn":"Black","c":"black","t":"Cover","s":"Yoseka","sid":"yoseka","rg":"CA","st":"sold_out","u":"https://example.test/black","title":"Black","az":"","azl":""}]</script>
 <script src="/assets/local-time.js"></script><script src="/assets/app.js"></script>
 </body></html>""")
         (out / "fam.html").write_text("""<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body>
@@ -510,10 +565,11 @@ class PageFilterBrowserTests(unittest.TestCase):
 <select id="f-product"><option value="">All products</option></select>
 <select id="f-type"><option value="">All types</option><option value="Book">Book</option></select>
 <select id="f-store"><option value="">All stores</option></select>
+<select id="f-country"><option value="">All countries</option><option value="US">United States</option><option value="CA">Canada</option></select>
 <select id="f-status"><option value="">Any status</option><option value="in_stock">In stock</option></select>
 <input id="f-q" type="search"><button type="button" id="f-reset">Reset</button></form>
-<p id="count"></p><div id="rows"></div><button id="more" hidden></button>
-<script id="stock-data" type="application/json">[{"g":"a6-en","p":"English","gn":"English book","c":"original-a6-en","t":"Book","s":"Atlas","sid":"atlas","st":"in_stock","u":"https://example.test/a","title":"","az":"","azl":"","fam":"original-a6","famn":"Original A6","fo":0},{"g":"weeks","p":"Weeks","gn":"Weeks book","c":"weeks-en","t":"Book","s":"Yoseka","sid":"yoseka","st":"sold_out","u":"https://example.test/w","title":"","az":"","azl":"","fam":"weeks","famn":"Weeks","fo":1}]</script>
+<p id="count"></p><div class="group-toolbar"><button type="button" class="group-toggle" data-group-toggle hidden>Expand all</button></div><div id="rows"></div><button id="more" hidden></button>
+<script id="stock-data" type="application/json">[{"g":"a6-en","p":"English","gn":"English book","c":"original-a6-en","t":"Book","s":"Atlas","sid":"atlas","rg":"US","st":"in_stock","u":"https://example.test/a","title":"","az":"","azl":"","fam":"original-a6","famn":"Original A6","fo":0},{"g":"weeks","p":"Weeks","gn":"Weeks book","c":"weeks-en","t":"Book","s":"Yoseka","sid":"yoseka","rg":"CA","st":"sold_out","u":"https://example.test/w","title":"","az":"","azl":"","fam":"weeks","famn":"Weeks","fo":1}]</script>
 <script src="/assets/local-time.js"></script><script src="/assets/app.js"></script>
 </body></html>""")
         env = os.environ.copy()

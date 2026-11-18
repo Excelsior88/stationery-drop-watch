@@ -52,6 +52,24 @@ async function run() {
     state = await rows(page, "#stock tbody tr");
     check("reset shows every shop", state.every(r => !r.hidden) && state.length === 3, JSON.stringify(state));
 
+    await page.select("[data-filter=country]", "CA");
+    await page.waitForFunction(() => location.search.includes("country=CA"));
+    state = await rows(page, "#stock tbody tr");
+    const ca = state.filter(r => !r.hidden);
+    check("country filter keeps the Canadian shop", ca.length === 1 && ca[0].text.includes("Paper Mouse"), JSON.stringify(state));
+    check("country writes the URL", (await page.evaluate(() => location.search)).includes("country=CA"), await page.evaluate(() => location.search));
+
+    await page.select("[data-filter=status]", "sold_out");
+    await page.waitForFunction(() => location.search.includes("status=sold_out") && location.search.includes("country=CA"));
+    state = await rows(page, "#stock tbody tr");
+    check("country and status together can match nothing", state.every(r => r.hidden), JSON.stringify(state));
+    check("empty note is visible after country+status", await page.$eval(".card-empty", el => !el.hidden), "");
+
+    await page.click("[data-filter=reset]");
+    await page.waitForFunction(() => !location.search);
+    state = await rows(page, "#stock tbody tr");
+    check("reset clears the country filter", state.every(r => !r.hidden) && state.length === 3, JSON.stringify(state));
+
     await page.goBack();
     await page.waitForFunction(() => location.search.includes("status=sold_out"));
     state = await rows(page, "#stock tbody tr");
@@ -70,6 +88,13 @@ async function run() {
     await page.waitForFunction(() => !location.search);
     check("tracker reset clears the URL", (await page.evaluate(() => location.search)) === "", await page.evaluate(() => location.search));
 
+    await page.select("#f-country", "CA");
+    await page.waitForFunction(() => location.search.includes("country=CA"));
+    const caCount = await page.$eval("#count", el => el.textContent);
+    check("tracker country filter counts the Canadian row", caCount.includes("1 of 1"), caCount);
+    await page.click("#f-reset");
+    await page.waitForFunction(() => !location.search);
+
     await page.goto(base + "/fam.html", { waitUntil: "networkidle0" });
     const closed = await page.$$eval("details.fam-block", (els) => els.map((d) => ({ name: d.querySelector(".fam-name").textContent, open: d.open, meta: d.querySelector(".fam-meta").textContent })));
     check("families start collapsed with a stock count", closed.length === 2 && closed.every((d) => !d.open && /listings in stock/.test(d.meta)) && closed.some((d) => d.name === "Original A6"), JSON.stringify(closed));
@@ -80,6 +105,16 @@ async function run() {
     await page.click("#f-reset");
     await page.waitForFunction(() => document.querySelectorAll("details.fam-block").length === 2 && [...document.querySelectorAll("details.fam-block")].every((d) => !d.open));
     check("reset collapses every family", true, "");
+    const toggle = await page.$eval("[data-group-toggle]", el => ({ hidden: el.hidden, text: el.textContent }));
+    check("expand-all is visible when families are collapsed", !toggle.hidden && toggle.text === "Expand all", JSON.stringify(toggle));
+    await page.click("[data-group-toggle]");
+    const expanded = await page.$$eval("details.fam-block", (els) => els.map((d) => d.open));
+    const afterExpand = await page.$eval("[data-group-toggle]", el => el.textContent);
+    check("expand-all opens every family", expanded.length === 2 && expanded.every(Boolean) && afterExpand === "Collapse all", JSON.stringify({ expanded, afterExpand }));
+    await page.click("[data-group-toggle]");
+    const collapsed = await page.$$eval("details.fam-block", (els) => els.map((d) => d.open));
+    const afterCollapse = await page.$eval("[data-group-toggle]", el => el.textContent);
+    check("collapse-all closes every family", collapsed.length === 2 && collapsed.every(open => !open) && afterCollapse === "Expand all", JSON.stringify({ collapsed, afterCollapse }));
     await page.goto(base + "/fam.html#original-a6-en", { waitUntil: "networkidle0" });
     const linked = await page.$eval("#original-a6", (d) => d.open && d.contains(document.getElementById("original-a6-en")));
     check("a link inside a family opens that family", linked, "");
