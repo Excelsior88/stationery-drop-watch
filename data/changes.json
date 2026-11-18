@@ -1805,5 +1805,15 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moominsnufkin/",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-18T21:20:23+00:00",
+  "store_id": "mlovewell",
+  "store": "M.Lovewell",
+  "label": "MD Notebook Diary 2027 · A5",
+  "url": "https://www.mlovewell.com/products/md-product-a5-2027-diary",
+  "section": "midori",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
