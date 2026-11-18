@@ -1,12 +1,17 @@
 /* Newsreader (Production Type, SIL Open Font License 1.1: assets/fonts/OFL.txt), self-hosted.
    Variable weight 500-700 with optical sizes, Latin subset. */
 @font-face{font-family:"Newsreader";src:url(fonts/newsreader-var.woff2) format("woff2");font-weight:500 700;font-style:normal;font-display:swap}
-@font-face{font-family:"Liberation Sans";src:url(fonts/liberation-sans-bold.woff2) format("woff2");font-weight:700;font-style:normal;font-display:swap}
+/* Liberation Sans (SIL Open Font License 1.1: assets/fonts/LICENSE-liberation.txt), self-hosted Latin subset.
+   Body, top nav, footer, and UI all use this family so sans text matches across the site. */
+@font-face{font-family:"Liberation Sans";src:url(fonts/liberation-sans-regular.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Liberation Sans";src:url(fonts/liberation-sans-italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Liberation Sans";src:url(fonts/liberation-sans-bold.woff2) format("woff2");font-weight:600 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Liberation Sans";src:url(fonts/liberation-sans-bolditalic.woff2) format("woff2");font-weight:600 700;font-style:italic;font-display:swap}
 :root{
   --paper:#fbf6ec; --paper-2:#f4ecdc; --card:#fffdf8; --ink:#2d2a32; --ink-2:#5b5560; --line:#e6dccb;
   --accent:#c1553b; --accent-2:#9e3f29; --sage:#5f8a6b; --mustard:#8a6412; --plum:#7a5c8a; --rose:#b34a4a;
   --serif:"Newsreader","Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
-  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --sans:"Liberation Sans",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --r:14px;
   /* Status palette: pills, stat numbers, and restock-row accents share these. */
   --st-instock:#14532d; --st-instock-bg:#dcfce7; --st-instock-line:#bbf7d0;
@@ -23,7 +28,7 @@ body{margin:0;color:var(--ink);font:16px/1.6 var(--sans);
   background-size:18px 18px}
 a{color:var(--accent-2)} a:hover{color:var(--accent)}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
-h1,h2,h3{font-family:var(--serif);line-height:1.2;color:var(--ink);font-weight:600}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.2;color:var(--ink);font-weight:600}
 h1{font-size:clamp(2rem,4.5vw,3.1rem);margin:.2em 0 .3em;letter-spacing:-.01em}
 h2{font-size:1.45rem;margin:0 0 .6em}
 h3{font-size:1.15rem;margin:.1em 0 .4em}
@@ -42,7 +47,7 @@ h3{font-size:1.15rem;margin:.1em 0 .4em}
 @media (max-width:560px){.brand-logo{height:40px}}
 @media (max-width:340px){.brand-logo{height:44px}}
 nav{display:flex;gap:4px;flex-wrap:wrap}
-nav a{color:var(--ink-2);text-decoration:none;padding:6px 12px;border-radius:999px;font-size:.93rem}
+nav a{color:var(--ink-2);text-decoration:none;padding:6px 12px;border-radius:999px;font-size:.93rem;font-family:var(--sans)}
 nav a:hover{background:var(--paper-2);color:var(--ink)}
 nav a[aria-current]{background:var(--ink);color:var(--paper)}
 
@@ -169,7 +174,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .timeline p{margin:0}
 .sources li{margin:.4em 0;font-size:.94rem}
 
-.foot{border-top:1px solid var(--line);background:var(--paper-2);padding:28px 0;font-size:.92rem}
+.foot{border-top:1px solid var(--line);background:var(--paper-2);padding:28px 0;font-size:.92rem;font-family:var(--sans)}
 .foot .wrap{display:flex;flex-direction:column;gap:12px}
 .foot p{margin:0;max-width:760px}
 
@@ -298,7 +303,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 #cute-pastel-collection{grid-template-columns:1fr}
 #level-up-collection{background:#fffaf0;border-color:#22223a}
 #cute-pastel-collection{background:#fff5f8;border-color:#f3c6d6}
-#level-up-collection h3{font-family:"Liberation Sans",Arial,sans-serif;font-weight:700;color:#22223a;letter-spacing:.02em}
+#level-up-collection h3{font-family:var(--sans);font-weight:700;color:#22223a;letter-spacing:.02em}
 #level-up-collection h3::after{content:"";display:block;width:2.5rem;height:4px;margin-top:6px;background:#ffcb2e;border-radius:2px}
 .collection-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .collection-grid a{display:block;border-radius:10px;overflow:hidden;line-height:0}
@@ -371,7 +376,7 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
   .masthead .brand{align-self:center;min-width:0}
   .site-nav-bar{display:none}
   .nav-menu{display:block;position:relative;flex:none}
-  .nav-menu>summary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 16px;border:1.5px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);font-weight:650;cursor:pointer;list-style:none}
+  .nav-menu>summary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 16px;border:1.5px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);font-family:var(--sans);font-weight:650;cursor:pointer;list-style:none}
   .nav-menu>summary::-webkit-details-marker{display:none}
   .nav-menu .site-nav-panel{display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:6;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:8px;min-width:min(18rem,calc(100vw - 2rem));max-width:calc(100vw - 2rem);box-shadow:0 12px 30px -18px rgba(60,40,20,.45);flex-direction:column;align-items:stretch;gap:2px;margin:0;overflow:visible}
   .nav-menu[open] .site-nav-panel{display:flex}
@@ -468,7 +473,7 @@ table.stock.compare thead th{vertical-align:top}
 .card>.group-fold>summary{padding:12px 0 12px 1.4em}
 .card>.group-fold>summary::before{left:0}
 .card>.group-fold>ul.link-list{padding:0 0 12px 1.4em}
-.fam-name{font-family:var(--serif);font-size:1.28rem}
+.fam-name{font-family:var(--serif);font-weight:600;font-size:1.28rem}
 .fam-meta{font-weight:500;font-size:.82rem;color:var(--ink-2);text-align:right}
 .compare{padding:12px 0 14px;border-top:1px solid var(--line)}
 .compare-head h3{margin:0 0 2px;font-size:1.12rem}
@@ -501,9 +506,10 @@ table.stock.compare thead th{vertical-align:top}
   .stock td:last-child,#rows td:last-child{width:auto;white-space:normal}
   .stock td,.stock th{overflow-wrap:anywhere}
 }
-/* Narrow homepage: hide the repeated eyebrow and the long intro, keep the signup on the first screen. */
+/* Narrow screens: keep the repeated eyebrow and italic suggest hidden, but show the lede and homepage card blurbs. */
 @media (max-width:700px){
-  .hero .eyebrow,.hero .lede,.hero .suggest{display:none}
+  .hero .eyebrow,.hero .suggest{display:none}
+  .hero .lede{font-size:1rem;line-height:1.45;margin:0 0 .85em}
   .hero{padding-top:8px;padding-bottom:8px}
   .trust-with-clip{align-items:center;gap:12px}
   .clip{width:84px}
@@ -514,7 +520,8 @@ table.stock.compare thead th{vertical-align:top}
   .trust .trust-miss{display:block;margin-top:4px;font-size:.68rem;font-weight:500;color:var(--ink-2)}
   .hero .section-switch{margin-top:6px}
   .hub-grid{grid-template-columns:1fr 1fr;gap:10px}
-  .hub-art,.hub-card p:not(.hub-count){display:none}
+  .hub-art{display:none}
+  .hub-card p:not(.hub-count){font-size:.82rem;line-height:1.4;margin:0 0 8px}
   .hub-card a{padding:12px}
   .hub-card h3{font-size:1.05rem;margin-bottom:4px}
   .hub-card .hub-count{font-size:.88rem}
@@ -524,9 +531,9 @@ table.stock.compare thead th{vertical-align:top}
 .trust-with-clip{display:flex;align-items:center;gap:18px;margin-top:8px}
 .trust-with-clip .trust{flex:1 1 auto;min-width:0}
 .clip{height:100px;width:auto;flex:none;display:block}
-.foot-brand{margin:0}
+.foot-brand{margin:0}.foot-brand strong{font-family:var(--serif);font-weight:600}
 .foot-nav{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:8px 14px;margin:0}
-.foot-nav a,.foot-follow a{position:relative;display:inline-flex;align-items:center;padding:0;background:none;border-radius:0;color:var(--ink-2)}
+.foot-nav a,.foot-follow a{position:relative;display:inline-flex;align-items:center;padding:0;background:none;border-radius:0;color:var(--ink-2);font-family:var(--sans);font-size:inherit;text-decoration:none}
 .foot-nav a::before,.foot-follow a::before{content:"";position:absolute;left:50%;top:50%;width:100%;min-width:44px;height:44px;transform:translate(-50%,-50%)}
 .foot-nav a:hover,.foot-follow a:hover{background:none;color:var(--accent)}
 .foot-follow{margin:0}
@@ -536,6 +543,7 @@ table.stock.compare thead th{vertical-align:top}
 
 @media (max-width:700px){
   .clip{width:84px;height:auto}
+  .foot-badge{justify-content:center}
 }
 /* Guides, shop, about, follow, calendar, and sold-out pages use the homepage heading scale and card surface. */
 .prose h1{font-size:clamp(2rem,3.55vw,3.25rem);letter-spacing:-.01em}

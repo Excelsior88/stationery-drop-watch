@@ -425,6 +425,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="{X_HANDLE}">
 <meta name="twitter:title" content="{E(title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:image" content="{og_image}"><meta name="twitter:image:alt" content="{E(og_alt)}">
 <link rel="preload" href="assets/fonts/newsreader-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/liberation-sans-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/style.css?v={ASSET_V['style.css']}">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
