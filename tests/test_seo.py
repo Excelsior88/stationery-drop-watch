@@ -198,7 +198,7 @@ class SeoHeadTests(unittest.TestCase):
         home = dict(self.docs)["index.html"]
         line = "Stationery Drop Watch is built in Hamtramck, Michigan."
         self.assertIn(line, about)
-        self.assertIn("He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together.", about)
+        self.assertIn("He built the tracker after seeing how frustrating it was for his partner, Arden, to keep up with planner restocks, and now they run it together.", about)
         self.assertNotIn("display:none", about.lower())
         about_blocks = [json.loads(html.unescape(b.replace("<\\/", "</")))
                         for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', about)]

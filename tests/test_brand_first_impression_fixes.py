@@ -24,11 +24,16 @@ class AboutContactNameTests(unittest.TestCase):
     def test_about_names_andrew_and_arden_and_keeps_the_story(self):
         doc = site.build_about()
         text = plain(doc)
-        self.assertIn("Andrew Robinson and his partner, Arden", text)
+        self.assertIn(
+            "Drop Watch is run by Andrew Robinson. "
+            "He built the tracker after seeing how frustrating it was for his partner, Arden, "
+            "to keep up with planner restocks, and now they run it together.",
+            text,
+        )
         self.assertIn("The couple behind Drop Watch", text)
-        self.assertIn("He built the tracker after seeing how frustrating it was for his partner", text)
-        self.assertIn("they run it together", text)
         self.assertIn("Stationery Drop Watch is built in Hamtramck, Michigan.", text)
+        self.assertEqual(text.count("his partner"), 1)
+        self.assertNotIn("Andrew Robinson and his partner, Arden", text)
         self.assertIn("admin@stationerydropwatch.com", text)
         self.assertNotIn("birthday", text.lower())
         self.assertNotRegex(text, r"\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b")
