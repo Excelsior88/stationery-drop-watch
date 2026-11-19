@@ -1986,5 +1986,14 @@
   "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-bow-tie-sheep-sheep-sheep",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-19T19:20:23+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · Liberty Fabrics: Floral Remedy",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-liberty-fabrics-floral-remedy",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
