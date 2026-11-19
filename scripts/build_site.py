@@ -2996,7 +2996,53 @@ SHOP_ETSY = [
                     "Party & Menu Planner", "Baking & Meal Prep Timeline", "December Countdown & Bucket List"],
          templates_label="7 trackers & planners",
          inside="holiday-planner"),
+    # Listed 2026-11-18. Same card as the other Etsy tip-ins: regular price and the shared
+    # launch-sale note. Do not print the sale price or the sale code.
+    dict(id="happy-mail", kind="insert", sale_confirmed=True, price="$5.99",
+         title="Happy Mail & Washi Club",
+         img="assets/shop/happy-mail-washi-club.webp", img_class="sheet", img_w=2000, img_h=2000,
+         url="https://www.etsy.com/listing/4620269140/happy-mail-washi-club-printable-tip-ins",
+         alt=("Happy Mail & Washi Club: four fanned cream tip-in sheets titled Washi Swatch Club, "
+              "Happy Mail Tracker, Snapshot Memories, and Color Palette Lab, on a pale pink background. "
+              "The header reads \"4 printable tip-ins · washi swatches · happy mail · snapshots · palettes\" "
+              "and \"85 × 175 mm tip-ins for 94 × 188 mm slim weekly planners\"."),
+         sub="Printable paper tip-ins · personal use · instant download from Etsy",
+         hub_sub="Printable tip-ins",
+         blurb=("Four cozy pastel tip-ins you print, cut, and tip in yourself, with a little bunny mascot "
+                "on every page: a washi swatch, a happy mail tracker, snapshot memories, and a color palette lab. "
+                "Finished cut size is 85 × 175 mm (3.35 × 6.89 in). A digital download for personal use."),
+         details=["Four print PDFs, 3 pages each: US Letter and A4, cream and white editions, plus a 1-page printing guide",
+                  "Two tip-ins per US Letter or A4 sheet. Print at actual size (100%) and measure the 50 mm scale check bar before you trim",
+                  "Each tip-in trims to 85 × 175 mm, including a 4 mm hinge strip on the left edge for washi tape or glue. Sized for planners with a 94 × 188 mm (3.7 × 7.4 in) cover. Planner sizes vary, so please measure yours or test-print on plain paper first",
+                  "Personal use only: don't share, resell, or redistribute the PDFs",
+                  "Digital download only. Not a physical planner. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+         templates=["Washi Swatch Club", "Happy Mail Tracker", "Snapshot Memories", "Color Palette Lab"],
+         templates_label="4 tip-ins",
+         inside="happy-mail"),
+    dict(id="seasonal-dashboards", kind="insert", sale_confirmed=True, price="$6.99",
+         title="Seasonal Reset Dashboards & Slip Pocket",
+         img="assets/shop/seasonal-reset-dashboards.webp", img_class="sheet", img_w=2000, img_h=2000,
+         url="https://www.etsy.com/listing/4620269960/seasonal-reset-dashboard-printable",
+         alt=("Seasonal Reset Dashboards: four fanned cream tip-in sheets titled Spring, Summer, Autumn, "
+              "and Winter, each with a line-art arch illustration and a CURRENTLY section, on a pale background. "
+              "The header reads \"FOUR PRINTABLE TIP-INS · CUT-AND-FOLD SLIP POCKET\" "
+              "and \"85 × 175 mm tip-ins for 94 × 188 mm slim weekly planners\"."),
+         sub="Printable paper tip-ins · personal use · instant download from Etsy",
+         hub_sub="Printable tip-ins",
+         blurb=("Four calm, minimal seasonal reset dashboards to tip into your weekly planner, plus a "
+                "cut-and-fold slip pocket for the inside cover. Dashboards trim to 85 × 175 mm (3.35 × 6.89 in). "
+                "The slip pocket is 84 × 138 mm (3.31 × 5.43 in) when folded. A digital download for personal use."),
+         details=["Four print PDFs, 4 pages each: US Letter and A4, cream and no-fill editions, plus a 2-page printing and assembly guide",
+                  "Dashboards print two per US Letter or A4 sheet. Print at actual size (100%) and measure the 50 mm scale check bar before you trim",
+                  "Dashboards trim to 85 × 175 mm, including a 4 mm hinge strip on the left edge for washi tape, a vellum strip or glue. The slip pocket is 84 × 138 mm when folded. Sized for planners with a 94 × 188 mm (3.7 × 7.4 in) cover. Planner sizes vary, so please measure yours or test-print on plain paper first",
+                  "The no-fill edition is line art only, for vellum or white paper. On vellum, print the no-fill edition",
+                  "Personal use only: don't share, resell, or redistribute the PDFs",
+                  "Digital download only. Not a physical planner. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+         templates=["Spring", "Summer", "Autumn", "Winter", "Slip pocket"],
+         templates_label="4 dashboards & slip pocket",
+         inside="seasonal-dashboards"),
 ]
+
 
 # Teachers Pay Teachers is two collection cards. Individual listings stay on the store,
 # so a new listing does not need a site change. No prices, and no bundle listing.
@@ -3158,6 +3204,16 @@ SHOP_SAMPLES = {
                 "The Holiday Planner Pages print file: Gift Tracker, Holiday Budget, Order and Package Tracker, Card Mailing List, Party and Menu Planner, Baking and Meal Prep Timeline, and December Countdown, shown in Standard A5.",
                 "The 7 trackers and planners, shown in Standard A5. The same layouts come in Narrow Weekly and Pocket A6.", 2700, 2025),
     ]},
+    "happy-mail": {"class": " samples inserts", "note": "Layouts from the print file, not a photograph of a printed copy.", "items": [
+        _sample("/assets/shop/inside/happy-mail-washi-club-included.webp",
+                "Happy Mail & Washi Club print file: Sheet 1 and Sheet 2 in the cream and white editions, showing Washi Swatch Club, Happy Mail Tracker, Snapshot Memories, and Color Palette Lab.",
+                "The four tip-ins, shown as cream and white print sheets.", 2000, 2000),
+    ]},
+    "seasonal-dashboards": {"class": " samples inserts", "note": "Layouts from the print file, not a photograph of a printed copy.", "items": [
+        _sample("/assets/shop/inside/seasonal-reset-dashboards-included.webp",
+                "Seasonal Reset Dashboards print file: Spring and Summer, Autumn and Winter, the slip pocket template, and the no-fill edition for vellum.",
+                "The four dashboards, the slip pocket, and the no-fill edition, from the print file.", 2000, 2000),
+    ]},
 }
 
 import hashlib as _hl
@@ -3207,6 +3263,9 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
+    # Shop facts changed 2026-11-18 (Happy Mail & Washi Club and Seasonal Reset Dashboards).
+    if any(e.get("id") in {"happy-mail", "seasonal-dashboards"} and etsy_listing_url(e) for e in SHOP_ETSY):
+        return "2026-11-18"
     # Shop facts changed 2026-11-17 (Teachers Pay Teachers section is two collection cards).
     if SHOP_TPT:
         return "2026-11-17"
@@ -3363,7 +3422,7 @@ def build_shop():
         return ""
     def card(img, alt, title, sub, blurb, details, href, btn, own, price, inside=None, *,
              img_class="", dims=None, note="", templates=None, templates_label="Templates", card_id="",
-             also=None, thumbs=None, sizes=""):
+             also=None, thumbs=None, sizes="", collapse_details=False):
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
         attr = ' data-own-product' if own else ''
         ins = ""
@@ -3414,6 +3473,9 @@ def build_shop():
         idattr = f' id="{E(card_id)}"' if card_id else ""
         sub_html = f'<p class="muted small">{E(sub)}</p>' if sub else ""
         list_html = f'<ul class="small">{dl}</ul>' if details else ""
+        if list_html and collapse_details:
+            list_html = f'<details class="shop-inside"><summary>Details</summary>{list_html}</details>'
+
         thumb_html = ""
         if thumbs:
             links = "".join(
@@ -3429,8 +3491,8 @@ def build_shop():
             thumb_html = ""
         return f"""<li class="shop-card"{idattr}>
   {media}
-  <div class="shop-body">{note_html}<h3>{E(title)}</h3>{sub_html}{price}<p>{E(blurb)}</p>{list_html}
-  {also_html}{ins}{thumb_html}{action}</div></li>"""
+  <div class="shop-body">{note_html}<h3>{E(title)}</h3>{sub_html}{price}<p>{E(blurb)}</p>{also_html}{list_html}
+  {ins}{thumb_html}{action}</div></li>"""
     def amz_price(a):
         lp = AMAZON_LIST_PRICES.get(a)
         if not lp:
@@ -3440,7 +3502,7 @@ def build_shop():
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True,
                        amz_price(a), a if a in SHOP_INSIDE or a in SHOP_SAMPLES else None,
                        dims=(books[a]["cover_w"], books[a]["cover_h"]) if books[a].get("cover_w") and books[a].get("cover_h") else None,
-                       also=SHOP_ALSO.get(a))
+                       also=SHOP_ALSO.get(a), collapse_details=True)
                   for a in SHOP_ORDER)
     def etsy_price_html(item):
         price = item.get("price", ETSY_PRICE[0])
@@ -3464,7 +3526,7 @@ def build_shop():
                     item.get("inside"), img_class=item.get("img_class", ""),
                     dims=(item["img_w"], item["img_h"]) if item.get("img_w") and item.get("img_h") else None,
                     note=note, templates=item.get("templates"), templates_label=item.get("templates_label", "Templates"),
-                    card_id=item.get("id", ""))
+                    card_id=item.get("id", ""), collapse_details=True)
     def tpt_card(item):
         return card("", "", item["title"], "", item["blurb"],
                     [], item["url"], "See the collection on TpT", False, "",
