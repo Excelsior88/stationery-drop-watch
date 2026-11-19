@@ -73,7 +73,7 @@ class PolicyWordingTests(unittest.TestCase):
             ("How do restock alerts work?", (ALERTS_FAQ,)),
             ("What do you track?", (TRACK_HOBO, "the English Planner A6 book", "HON")),
             ("Do you sell planners?", (SELL_TPT,)),
-            ("Which shops do you check?", ("9 independent shops.",)),
+            ("Which shops do you check?", ("12 independent shops.",)),
         ):
             visible = visible_answer(home, q)
             schema = faq_schema_text(home, q)

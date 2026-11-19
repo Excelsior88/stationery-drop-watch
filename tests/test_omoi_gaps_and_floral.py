@@ -66,9 +66,8 @@ class OmoiGapsAndFloralTests(unittest.TestCase):
         self.assertEqual(jet["platform"], "blocked")
         for url in OMOI.values():
             self.assertNotIn(url, urls)
-        omoi = next(s for s in self.cfg["stores"] if s["id"] == "omoi")
-        self.assertEqual({p["canonical"] for p in omoi["products"]},
-                         {"md-diary-2027-a5", "md-diary-1day-2027-a5", "tn-20th-card-black"})
+        # Omoi's remaining rows were Traveler's Company and MIDORI, removed on Nov 19, 2026.
+        self.assertFalse(any(s["id"] == "omoi" for s in self.cfg["stores"]))
         mega = self._rows("weeks-mega-midnight-blue")
         self.assertIn("1101", mega)
         self.assertEqual(mega["1101"][0]["source_key"], "wb27_m_colorsmblue")

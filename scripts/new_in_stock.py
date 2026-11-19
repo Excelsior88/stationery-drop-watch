@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Write this run's NEW changes to in_stock (in data/changes.json but not in HEAD's copy).
 
-Every new to=in_stock change is included. There is no product, cover, or Weeks filter.
+Every new to=in_stock change is included, except Traveler's Company and MIDORI (removed Nov 19, 2026).
+There is no product, cover, or Weeks filter.
 The webhook body is that list plus the run clock. Run before the data commit.
 """
 import datetime
@@ -15,9 +16,19 @@ def key(change):
     return "|".join(str(change.get(k, "")) for k in ("at", "store_id", "label", "to"))
 
 
+# Removed at TRAVELER'S COMPANY USA's request on Nov 19, 2026: never alert or email for these, even if a row comes back.
+TAKEDOWN_SECTIONS = ("travelers", "midori")
+TAKEDOWN_STORES = {"travelerscompanyusa", "mdproductusa"}  # the two brands' own stores
+
+
+def taken_down(change):
+    return change.get("section") in TAKEDOWN_SECTIONS or change.get("store_id") in TAKEDOWN_STORES
+
+
 def fresh_in_stock(old, new):
     seen = {key(change) for change in old}
-    return [change for change in new if change.get("to") == "in_stock" and key(change) not in seen]
+    return [change for change in new
+            if change.get("to") == "in_stock" and key(change) not in seen and not taken_down(change)]
 
 
 def webhook_body(changes, run_at, test=False):

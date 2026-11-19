@@ -41,7 +41,7 @@ class BreadcrumbTests(unittest.TestCase):
         stag = (SITE / "archer-and-olive-dot-grid-journal/archer-and-olive-stag/index.html").read_text()
         self.assertEqual(crumb_names(stag), ["Home", "Dot grid journals", "Archer and Olive Stag"])
         tn = (SITE / "travelers-company-limited-edition/index.html").read_text()
-        self.assertEqual(crumb_names(tn), ["Home", "Traveler's Company"])
+        self.assertEqual(crumb_names(tn), ["Home", "Why Traveler's Company and MIDORI are gone"])
 
     def test_shop_crumb_matches_the_nav(self):
         shop = (SITE / "shop/index.html").read_text()

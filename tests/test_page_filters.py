@@ -384,13 +384,7 @@ class PageFilterMarkupTests(unittest.TestCase):
         dot = next(doc for n, doc in pages if n.startswith("archer-and-olive"))
         self.assertIn("best dot grid journals compared", dot)
         self.assertIn("sells out on its own", dot)
-        tn = next(doc for n, doc in pages if "travelers-company" in n)
-        self.assertIn("No. 13714006", tn)
-        self.assertIn("counterfeit", tn)
-        self.assertIn("Regular vs Passport vs Card Size", tn)
-        midori = next(doc for n, doc in pages if "midori-md" in n)
-        self.assertIn("once a year", midori)
-        self.assertIn("plain MD notebooks", midori)
+        self.assertFalse(any("travelers-company" in n or "midori-md" in n for n, _doc in pages))
         home = site.build_index()
         home_q = re.findall(r'<section class="card faq" id="good-to-know">.*?</section>', home, re.S)[0]
         home_names = re.findall(r"<summary>(.*?)</summary>", home_q)
@@ -457,9 +451,6 @@ class PageFilterMarkupTests(unittest.TestCase):
         self.assertIn("<h3>Hobonichi</h3>", guides)
         dot = site.build_dotgrid_guide()[1]
         self.assertNotIn("group-fold", dot)
-        tn = site.build_tn_sizes()[1]
-        self.assertIn("<h2>Sources</h2>", tn)
-        self.assertNotIn("group-fold", tn)
         cal = site.build_hobonichi()
         self.assertNotIn("group-fold", cal)
 
@@ -473,19 +464,6 @@ class PageFilterMarkupTests(unittest.TestCase):
         self.assertIn('viewBox="0 0 99 142"', vs)
         self.assertIn('viewBox="0 0 142 204"', vs)
         self.assertIn('viewBox="0 0 88 182"', vs)
-        tn = site.build_tn_sizes()[1]
-        self.assertNotIn("guide-figure", tn)
-        self.assertNotIn("travelers-notebook-sizes.png", tn)
-        self.assertEqual(tn.count('class="fmt-icon"'), 3)
-        self.assertIn('viewBox="0 0 120 220"', tn)
-        self.assertIn('viewBox="0 0 98 134"', tn)
-        self.assertIn('viewBox="0 0 75 110"', tn)
-        self.assertIn('fill="#b2522f"', tn)
-        self.assertIn('fill="#5e7f62"', tn)
-        self.assertIn('fill="#d1992e"', tn)
-        for pair in ("220 × 120", "210 × 110", "134 × 98", "124 × 89", "110 × 75", "100 × 65"):
-            h, w = pair.split(" × ")
-            self.assertIn(f"H{h} × W{w}", tn)
 
     def test_angela_line_is_unchanged(self):
         thanks = "Thank you to our follower Angela for suggesting we track these restocks."

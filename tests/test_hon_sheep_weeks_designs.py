@@ -60,6 +60,8 @@ ONCE_SHOPS = {
 
 METEOR_SHOPS = {
     "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_kubota/",
+    # Added Nov 19, 2026 (JAN 4580812709767, same as the other English Weeks listings).
+    "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
     "papermouse": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-hiroko-kubota-meteor-shower-in-the-light-blue-forest-english",
     "atlas": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
     "wonder": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
@@ -73,7 +75,7 @@ METEOR_SHOPS = {
 }
 
 SKIPPED_NO_LISTING = {
-    "bobo", "baum", "laywines", "kinosg", "omoi", "goulet", "simplepaper", "lovenotebooks",
+    "bobo", "baum", "laywines", "kinosg", "goulet", "lovenotebooks",  # omoi and simplepaper left the catalog Nov 19, 2026
 }
 
 NEW_URLS = set(A5_SHOPS.values()) | set(A6_EN_SHOPS.values()) | set(ONCE_SHOPS.values()) | set(METEOR_SHOPS.values()) | {PEN_JP_A6}
