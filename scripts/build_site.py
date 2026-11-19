@@ -3422,7 +3422,7 @@ def build_shop():
         return ""
     def card(img, alt, title, sub, blurb, details, href, btn, own, price, inside=None, *,
              img_class="", dims=None, note="", templates=None, templates_label="Templates", card_id="",
-             also=None, thumbs=None, sizes=""):
+             also=None, thumbs=None, sizes="", collapse_details=False):
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
         attr = ' data-own-product' if own else ''
         ins = ""
@@ -3473,6 +3473,9 @@ def build_shop():
         idattr = f' id="{E(card_id)}"' if card_id else ""
         sub_html = f'<p class="muted small">{E(sub)}</p>' if sub else ""
         list_html = f'<ul class="small">{dl}</ul>' if details else ""
+        if list_html and collapse_details:
+            list_html = f'<details class="shop-inside"><summary>Details</summary>{list_html}</details>'
+
         thumb_html = ""
         if thumbs:
             links = "".join(
@@ -3523,7 +3526,7 @@ def build_shop():
                     item.get("inside"), img_class=item.get("img_class", ""),
                     dims=(item["img_w"], item["img_h"]) if item.get("img_w") and item.get("img_h") else None,
                     note=note, templates=item.get("templates"), templates_label=item.get("templates_label", "Templates"),
-                    card_id=item.get("id", ""))
+                    card_id=item.get("id", ""), collapse_details=True)
     def tpt_card(item):
         return card("", "", item["title"], "", item["blurb"],
                     [], item["url"], "See the collection on TpT", False, "",

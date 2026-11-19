@@ -403,7 +403,51 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertLess(etsy_section.find("The Holiday Planner Pages"), etsy_section.find("Happy Mail &amp; Washi Club"))
         self.assertLess(etsy_section.find("Happy Mail &amp; Washi Club"), etsy_section.find("Seasonal Reset Dashboards &amp; Slip Pocket"))
 
+    def test_etsy_detail_lists_are_behind_a_collapsed_details_toggle(self):
+        etsy_at = self.shop.find("<h2>Printable PDFs on Etsy</h2>")
+        tpt_at = self.shop.find('<h2 id="classroom-printables">Classroom printables on Teachers Pay Teachers</h2>')
+        etsy_section = self.shop[etsy_at:tpt_at]
+        amazon_section = self.shop.split("<h2>Printable PDFs on Etsy</h2>", 1)[0]
+        tpt_section = self.shop[tpt_at:]
+        titles = [
+            "2027 Printable Planner, Blush",
+            "2027 Printable Planner for Men",
+            "Level Up! My 2027 Kids Planner",
+            "Soft Days Narrow Planner Inserts",
+            "Lines for the Grid Page",
+            "The Holiday Planner Pages",
+            "Happy Mail &amp; Washi Club",
+            "Seasonal Reset Dashboards &amp; Slip Pocket",
+        ]
+        for title in titles:
+            html = card(etsy_section, title)
+            self.assertIn(html, etsy_section)
+            visible, rest = html.split("<details", 1)
+            self.assertIn(f"<h3>{title}</h3>", visible)
+            self.assertIn("instant download from Etsy", visible)
+            self.assertIn('<p class="shop-price">', visible)
+            self.assertIn("20% off launch sale Oct 31 to Nov 30", visible)
+            self.assertIn("<p>", visible)  # blurb
+            self.assertNotIn('<ul class="small">', visible)
+            self.assertIn('class="shop-inside"><summary>Details</summary><ul class="small">', html)
+            self.assertIn("View on Etsy", html)
+            self.assertGreater(html.rfind("View on Etsy"), html.find("<summary>Details</summary>"))
+            self.assertTrue(html.rstrip().endswith("View on Etsy</a></div></li>"))
+            self.assertNotIn('<details class="shop-inside" open', html)
+            if "<summary>See inside</summary>" in html:
+                self.assertIn("<summary>See inside</summary>", rest)
+                self.assertLess(html.find("<summary>Details</summary>"), html.find("<summary>See inside</summary>"))
+        # Amazon and TpT cards still show their bullets (or have none) and have no Details toggle.
+        self.assertNotIn("<summary>Details</summary>", amazon_section)
+        self.assertNotIn("<summary>Details</summary>", tpt_section)
+        blush = card(amazon_section, "2027 Planner, Blush")
+        visible, _ = blush.split("<details", 1)
+        self.assertIn('<ul class="small">', visible)
+        self.assertIn("5.83 x 8.27 in (A5) paperback, 174 pages, color interior", visible)
+        self.assertNotIn("<summary>Details</summary>", blush)
+
     def test_tpt_section_is_two_collection_cards(self):
+
 
         from PIL import Image
         store = "https://www.teacherspayteachers.com/store/stationery-drop-watch"
