@@ -3055,10 +3055,9 @@ def gift_shared_price_listings():
     return [e for e in etsy_listings() if etsy_item_price(e) == ETSY_PRICE[0]]
 
 def gift_sale_note():
-    """The Etsy sale line for printables on the shared ETSY_PRICE. Empty once the sale has ended
+    """The Etsy sale line used on every printables price-table row. Empty once the sale has ended
     (each checker run rebuilds the page, so it comes off on Dec 1 by itself), when /shop drops the
-    sale line, or when a shared-price printable isn't on that sale. Printables at a different
-    regular price are listed on their own row and do not hide this line."""
+    sale line, or when a shared-price printable isn't on that sale."""
     items = gift_shared_price_listings()
     if not items or gift_today() > GIFT_SALE_ENDS or "% off" not in ETSY_PRICE[1]:
         return ""
@@ -3068,18 +3067,19 @@ def gift_sale_note():
 
 def gift_printable_rows():
     """Price-table rows for our Etsy printables, using each listing's data-source price.
-    Shared-price printables share one 'Our printables' row, with the sale line when it applies.
-    A printable at a different regular price gets its own row and no sale claim."""
+    Shared-price printables share one 'Our printables' row. A printable at a different
+    regular price gets its own row. Both rows use the same sale line, which drops after Nov 30."""
     items = etsy_listings()
     if not items:
         return []
     rows = []
+    sale = gift_sale_note()
+    sale_suffix = f", {E(sale)}" if sale else ""
     if gift_shared_price_listings():
-        sale = gift_sale_note()
         rows.append(
             '<tr><td><a href="shop/">Our printables</a></td>'
             '<td><span class="muted small">Instant download</span></td>'
-            f'<td><strong>{E(ETSY_PRICE[0])}</strong> each on Etsy{", " + E(sale) if sale else ""}</td></tr>'
+            f'<td><strong>{E(ETSY_PRICE[0])}</strong> each on Etsy{sale_suffix}</td></tr>'
         )
     seen = set()
     for e in items:
@@ -3094,7 +3094,7 @@ def gift_printable_rows():
         rows.append(
             f'<tr><td><a href="{E(href)}">{E(e["title"])}</a></td>'
             '<td><span class="muted small">Instant download</span></td>'
-            f'<td><strong>{E(price)}</strong> on Etsy</td></tr>'
+            f'<td><strong>{E(price)}</strong> on Etsy{sale_suffix}</td></tr>'
         )
     return rows
 
