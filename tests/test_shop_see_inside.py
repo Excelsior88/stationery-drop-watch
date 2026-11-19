@@ -247,7 +247,7 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertIn("Paperback", card(self.shop, "Level Up! My 2027 Planner"))
         self.assertIn("Front cover of the Level Up! 2027 printable planner", self.shop)
         self.assertIn("20% off launch sale Oct 31 to Nov 30", card(self.shop, "Level Up! My 2027 Kids Planner"))
-        self.assertEqual(site.shop_lastmod(), "2026-11-17")
+        self.assertEqual(site.shop_lastmod(), "2026-11-18")
         grid = card(self.shop, "Lines for the Grid Page")
         self.assertIn("https://www.etsy.com/listing/4614089507/lines-for-the-grid-page-printable-tip-in", grid)
         self.assertIn("$6.99", grid)
@@ -305,10 +305,106 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertNotIn("<details class=\"shop-inside\" open", holiday)
         self.assertNotIn("The Holiday Planner Pages", self.home)
         self.assertIn(
-            "https://stationerydropwatch.com/shop/</loc><lastmod>2026-11-17T00:00:00+00:00</lastmod>",
+            "https://stationerydropwatch.com/shop/</loc><lastmod>2026-11-18T00:00:00+00:00</lastmod>",
             site.build_sitemap())
 
+    def test_happy_mail_and_seasonal_dashboards_follow_the_insert_card(self):
+        from PIL import Image
+        files = {
+            ROOT / "site/assets/shop/happy-mail-washi-club.webp": (2000, 2000),
+            ROOT / "site/assets/shop/inside/happy-mail-washi-club-included.webp": (2000, 2000),
+            ROOT / "site/assets/shop/seasonal-reset-dashboards.webp": (2000, 2000),
+            ROOT / "site/assets/shop/inside/seasonal-reset-dashboards-included.webp": (2000, 2000),
+        }
+        for path, size in files.items():
+            with Image.open(path) as im:
+                self.assertEqual(im.size, size)
+            self.assertLess(path.stat().st_size, 200_000)
+            self.assertFalse(path.with_suffix(".png").exists())
+            self.assertFalse(path.with_suffix(".jpg").exists())
+
+        happy = card(self.shop, "Happy Mail &amp; Washi Club")
+        happy_url = "https://www.etsy.com/listing/4620269140/happy-mail-washi-club-printable-tip-ins"
+        self.assertEqual(happy.count(happy_url), 2)
+        self.assertIn('class="shop-img sheet"', happy)
+        self.assertIn('width="2000" height="2000"', happy)
+        self.assertIn("happy-mail-washi-club.webp", happy.split("<details", 1)[0])
+        self.assertNotIn("happy-mail-washi-club-included.webp", happy.split("<details", 1)[0])
+        self.assertIn("$5.99", happy)
+        self.assertNotIn("$4.79", happy)
+        self.assertIn("20% off launch sale Oct 31 to Nov 30", happy)
+        self.assertNotIn("launch20", happy.lower())
+        self.assertIn("View on Etsy", happy)
+        self.assertIn('class="inside-grid samples inserts"', happy)
+        self.assertIn("not a photograph of a printed copy", happy.lower())
+        self.assertIn("happy-mail-washi-club-included.webp", happy)
+        self.assertIn(">Larger view</a>", happy)
+        self.assertIn("<summary>See inside</summary>", happy)
+        self.assertIn("<summary>4 tip-ins</summary>", happy)
+        for name in ("Washi Swatch Club", "Happy Mail Tracker", "Snapshot Memories", "Color Palette Lab"):
+            self.assertIn(name, happy)
+        self.assertIn("85 × 175 mm", happy)
+        self.assertIn("94 × 188 mm", happy)
+        self.assertIn("actual size (100%)", happy)
+        self.assertIn("50 mm", happy)
+        self.assertIn("US Letter", happy)
+        self.assertIn("A4", happy)
+        self.assertIn("personal use", happy.lower())
+        self.assertIn("Not a Hobonichi product", happy)
+        self.assertIn("not affiliated", happy.lower())
+        self.assertNotIn("Tested in a Hobonichi Weeks Mega", happy)
+        self.assertNotIn("weeks size", happy.lower())
+        self.assertNotIn("guaranteed to fit", happy.lower())
+        self.assertNotIn("<details class=\"shop-inside\" open", happy)
+        self.assertNotIn("Happy Mail &amp; Washi Club", self.home)
+        self.assertNotIn("Happy Mail & Washi Club", self.home)
+
+        seasonal = card(self.shop, "Seasonal Reset Dashboards &amp; Slip Pocket")
+        seasonal_url = "https://www.etsy.com/listing/4620269960/seasonal-reset-dashboard-printable"
+        self.assertEqual(seasonal.count(seasonal_url), 2)
+        self.assertIn('class="shop-img sheet"', seasonal)
+        self.assertIn('width="2000" height="2000"', seasonal)
+        self.assertIn("seasonal-reset-dashboards.webp", seasonal.split("<details", 1)[0])
+        self.assertNotIn("seasonal-reset-dashboards-included.webp", seasonal.split("<details", 1)[0])
+        self.assertIn("$6.99", seasonal)
+        self.assertNotIn("$5.59", seasonal)
+        self.assertIn("20% off launch sale Oct 31 to Nov 30", seasonal)
+        self.assertNotIn("launch20", seasonal.lower())
+        self.assertIn("View on Etsy", seasonal)
+        self.assertIn('class="inside-grid samples inserts"', seasonal)
+        self.assertIn("not a photograph of a printed copy", seasonal.lower())
+        self.assertIn("seasonal-reset-dashboards-included.webp", seasonal)
+        self.assertIn(">Larger view</a>", seasonal)
+        self.assertIn("<summary>See inside</summary>", seasonal)
+        self.assertIn("<summary>4 dashboards &amp; slip pocket</summary>", seasonal)
+        for name in ("Spring", "Summer", "Autumn", "Winter", "Slip pocket"):
+            self.assertIn(name, seasonal)
+        self.assertIn("85 × 175 mm", seasonal)
+        self.assertIn("84 × 138 mm", seasonal)
+        self.assertIn("94 × 188 mm", seasonal)
+        self.assertIn("actual size (100%)", seasonal)
+        self.assertIn("50 mm", seasonal)
+        self.assertIn("no-fill", seasonal)
+        self.assertIn("vellum", seasonal.lower())
+        self.assertIn("US Letter", seasonal)
+        self.assertIn("A4", seasonal)
+        self.assertIn("personal use", seasonal.lower())
+        self.assertIn("Not a Hobonichi product", seasonal)
+        self.assertIn("not affiliated", seasonal.lower())
+        self.assertNotIn("Tested in a Hobonichi Weeks Mega", seasonal)
+        self.assertNotIn("weeks size", seasonal.lower())
+        self.assertNotIn("guaranteed to fit", seasonal.lower())
+        self.assertNotIn("<details class=\"shop-inside\" open", seasonal)
+        self.assertNotIn("Seasonal Reset Dashboards", self.home)
+
+        etsy_at = self.shop.find("<h2>Printable PDFs on Etsy</h2>")
+        tpt_at = self.shop.find('<h2 id="classroom-printables">Classroom printables on Teachers Pay Teachers</h2>')
+        etsy_section = self.shop[etsy_at:tpt_at]
+        self.assertLess(etsy_section.find("The Holiday Planner Pages"), etsy_section.find("Happy Mail &amp; Washi Club"))
+        self.assertLess(etsy_section.find("Happy Mail &amp; Washi Club"), etsy_section.find("Seasonal Reset Dashboards &amp; Slip Pocket"))
+
     def test_tpt_section_is_two_collection_cards(self):
+
         from PIL import Image
         store = "https://www.teacherspayteachers.com/store/stationery-drop-watch"
         etsy_at = self.shop.find("<h2>Printable PDFs on Etsy</h2>")
