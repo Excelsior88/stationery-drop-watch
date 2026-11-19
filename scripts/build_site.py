@@ -3491,8 +3491,8 @@ def build_shop():
             thumb_html = ""
         return f"""<li class="shop-card"{idattr}>
   {media}
-  <div class="shop-body">{note_html}<h3>{E(title)}</h3>{sub_html}{price}<p>{E(blurb)}</p>{list_html}
-  {also_html}{ins}{thumb_html}{action}</div></li>"""
+  <div class="shop-body">{note_html}<h3>{E(title)}</h3>{sub_html}{price}<p>{E(blurb)}</p>{also_html}{list_html}
+  {ins}{thumb_html}{action}</div></li>"""
     def amz_price(a):
         lp = AMAZON_LIST_PRICES.get(a)
         if not lp:
@@ -3502,7 +3502,7 @@ def build_shop():
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True,
                        amz_price(a), a if a in SHOP_INSIDE or a in SHOP_SAMPLES else None,
                        dims=(books[a]["cover_w"], books[a]["cover_h"]) if books[a].get("cover_w") and books[a].get("cover_h") else None,
-                       also=SHOP_ALSO.get(a))
+                       also=SHOP_ALSO.get(a), collapse_details=True)
                   for a in SHOP_ORDER)
     def etsy_price_html(item):
         price = item.get("price", ETSY_PRICE[0])
