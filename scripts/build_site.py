@@ -90,12 +90,23 @@ assert all(REGION[x["id"]] in REGION_NAME for x in stores["stores"]), "every sho
 
 # A shop whose name ends with its country (e.g. "Leuchtturm1917 US") shows the plain name plus the
 # country tag, like every other shop, so the country never appears twice.
+# "Leuchtturm1917 US (official)" becomes "Leuchtturm1917 (official)" plus the tag, so official
+# stores stay marked without repeating the country.
 _STRIP = {}
 for _x in stores["stores"]:
+    _raw = _x["name"]
+    _name = _raw.rstrip()
+    _official = ""
+    if re.search(r"\s+\(official\)$", _name, flags=re.I):
+        _official = " (official)"
+        _name = re.sub(r"\s+\(official\)$", "", _name, flags=re.I).rstrip()
     _sfx = " " + REGION[_x["id"]]
-    if _x["name"].rstrip().upper().endswith(_sfx):
-        _STRIP[_x["name"]] = _x["name"].rstrip()[:-len(_sfx)]
-        _x["name"] = _STRIP[_x["name"]]
+    if _name.upper().endswith(_sfx):
+        _name = _name[:-len(_sfx)].rstrip()
+    _display = _name + _official
+    if _display != _raw:
+        _STRIP[_raw] = _display
+        _x["name"] = _display
 for _r in stock["products"] + changes + stock.get("not_checked", []):
     for _k in ("store", "name"):
         if _r.get(_k) in _STRIP:
@@ -139,7 +150,53 @@ def names_and(n):
     return ", ".join(n[:-1]) + " and " + n[-1] if len(n) > 1 else "".join(n)
 
 def dotgrid_names():
+    """Store names as shown in shop lists, including an (official) mark when present."""
     return names_and([s["name"] for s in DOTGRID_SHOPS])
+
+def bare_shop_name(name):
+    """Store name without a trailing (official) mark, for brand lists in prose."""
+    return re.sub(r"\s+\(official\)$", "", name, flags=re.I).rstrip()
+
+def dotgrid_brand_names():
+    return names_and([bare_shop_name(s["name"]) for s in DOTGRID_SHOPS])
+
+def _dotgrid_coverage():
+    """Maker-only brand names, mixed-coverage phrases, and independent-shop counts."""
+    only, mixed, counts = [], [], {}
+    listings = section_products("dotgrid")
+    for s in DOTGRID_SHOPS:
+        canons = {p.get("canonical") for p in s.get("products") or [] if p.get("canonical")}
+        shops = {p["store_id"] for p in listings if p.get("canonical") in canons}
+        name = bare_shop_name(s["name"])
+        independents = shops - {s["id"]}
+        if not independents:
+            only.append(name)
+        else:
+            n = len(independents)
+            counts[s["id"]] = n
+            mixed.append(f"{name} at its official US store and {n} independent {'shop' if n == 1 else 'shops'}")
+    return only, mixed, counts
+
+def leuchtturm_independent_count():
+    return _dotgrid_coverage()[2].get("leuchtturm-us", 0)
+
+def dotgrid_meta_desc():
+    """Tracker meta/og description, kept within DESC_LIMIT so it is not cut mid-phrase."""
+    n = leuchtturm_independent_count()
+    shops = "shop" if n == 1 else "shops"
+    return (
+        f"Are {dotgrid_brand_names()} in stock? Official-store checks, "
+        f"plus {n} independent {shops} for Leuchtturm1917."
+    )
+
+def dotgrid_where_checked():
+    """Which shops we check for each dot-grid brand, from the live stock file."""
+    only, mixed, _counts = _dotgrid_coverage()
+    if only and mixed:
+        return f"We check {names_and(only)} on each maker's own store, and {names_and(mixed)}."
+    if mixed:
+        return f"We check {names_and(mixed)}."
+    return f"We check {names_and(only) or dotgrid_brand_names()} on each maker's own store."
 
 def shop_names(sec):
     return dotgrid_names() if sec == "dotgrid" else names_and([s["name"] for s in section_shops(sec)])
@@ -352,6 +409,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
            f'<nav class="site-nav site-nav-panel" aria-label="Main">{nav_inner}</nav></details>')
     foot_items = list(NAV_TRACKERS) + [
         ("guides/", "Guides"), ("hobonichi-2027.html", "2027 calendar"), ("shop/", "Shop"),
+        ("follow/", "Follow us"),
         ("about.html", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy.html", "Privacy")]
     foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
     ld_html = "".join(jsonld(x) for x in ld)
@@ -368,6 +426,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="{X_HANDLE}">
 <meta name="twitter:title" content="{E(title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:image" content="{og_image}"><meta name="twitter:image:alt" content="{E(og_alt)}">
 <link rel="preload" href="assets/fonts/newsreader-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/liberation-sans-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/style.css?v={ASSET_V['style.css']}">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
@@ -387,7 +446,6 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <footer class="foot"><div class="wrap">
   <p class="foot-brand"><strong>Stationery Drop Watch</strong> checks {N_STORES} shops {CHECK_FREQ}.</p>
   <nav class="foot-nav" aria-label="Footer">{foot_nav}</nav>
-  <p class="foot-follow"><a href="follow/">Follow us</a></p>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="63" loading="lazy"></a> <a href="/privacy"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></a> <img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="63" loading="lazy"></p>
 </div></footer>
@@ -406,20 +464,22 @@ NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatc
 # Tracker, product and design pages add a compact repeat at the bottom (id="alerts-bottom").
 SIGNUP_ACTION = f"https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}"
 
-SIGNUP_COPY = {
-    "alerts": ("Get restock alerts by email",
-               "Free restock emails from every shop we track. Unsubscribe anytime."),
-    "shop": ("Hear about new planners and journals",
-             "An occasional email when we release a new planner or journal, plus our restock alerts. No spam, unsubscribe anytime."),
-}
-
-# One Buttondown list: every subscriber gets every restock email, not alerts for one product.
-# Tracker, product and design labels name the brand or category on that page, never a single design or SKU.
-# The signup note is a short, honest line. It must not give a daily number.
+# One Buttondown list: every subscriber gets every restock email, not alerts for one product,
+# plus occasional site updates. Tracker, product and design labels name the brand or category
+# on that page, never a single design or SKU. The signup note is the same on every box,
+# including the shop, and mentions confirmation because Buttondown is double opt-in.
+# It must not give a daily number.
 # SPEED_LINE is backed by data/changes.json (Oct 26-Nov 11, 2026): of 19 restocks where we also saw the sell-out,
 # 7 sold out within an hour and 14 within 6 hours. Re-check it before changing the wording.
 SPEED_LINE = "Restocks often sell out within hours."
-LIST_LINE = "Free restock emails from every shop we track. Unsubscribe anytime."
+LIST_LINE = (
+    "Free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. "
+    "Unsubscribe anytime. We'll email you a confirmation link. You aren't on the list until you click it."
+)
+SIGNUP_COPY = {
+    "alerts": ("Get restock alerts by email", LIST_LINE),
+    "shop": ("Get restock alerts by email", LIST_LINE),
+}
 TAGLINE = "Never miss a stationery restock"
 ONE_LIST_LABEL = "Get every restock alert by email"
 SIGNUP_LABELS = {
@@ -441,9 +501,6 @@ def signup(kind="alerts", label=None, note=None, placement="top", kicker=None):
     id="alerts", so "#alerts" links work on every page. A bottom repeat uses id="alerts-bottom" and a second
     email field id so the markup stays valid. The form action and fields never change."""
     d_label, d_note = SIGNUP_COPY[kind]
-    if kind == "shop" and shop_inserts_public():
-        d_label = "Hear about new planners, journals, and inserts"
-        d_note = "An occasional email when we release a new planner, journal, or printable insert, plus our restock alerts. No spam, unsubscribe anytime."
     label, note = label or d_label, note or d_note
     sid = "alerts" if placement == "top" else "alerts-bottom"
     eid = "email-top" if placement == "top" else "email-bottom"
@@ -967,8 +1024,8 @@ def build_hobo_tracker():
                 body, ld=(faq_ld, crumbs_ld((HOBO_TRACKER, "Hobonichi tracker"))))
 
 HUB_TRACKERS = {  # one line per tracker card on the hub homepage
-    "hobonichi": ("Hobonichi Techo 2027", "Original A6, Cousin A5, Weeks, Weeks Mega and covers, at the official store and independent shops."),
-    "dotgrid": ("Dot grid journals", ""),  # shop names filled in from stores.json
+    "hobonichi": ("Hobonichi Techo 2027", "Original A6, Cousin A5, the English Planner A6, HON, Weeks, Weeks Mega and covers, at the official store and independent shops."),
+    "dotgrid": ("Dot grid journals", ""),  # short homepage blurb is filled in below; official-store detail stays on the hub
     # Live listings are the five Regular colors, the ROAD TRIP exclusive, anniversary sets, and 2027 diary
     # accessories. Refills and Passport size are not listings on this tracker (the size guide says so).
     "travelers": ("Traveler's Company", "Regular size colors, plus limited editions: 2027 diary accessories, anniversary sets and shop exclusives."),
@@ -1032,7 +1089,8 @@ def build_index():
         st = {x: sum(p["status"] == x for p in ps) for x in STATUS}
         name, line = HUB_TRACKERS[k]
         if k == "dotgrid":
-            line = f"{dotgrid_names()}, each checked on its own store."
+            # Short homepage blurb only. Official-store / independent-shop detail stays on the hub.
+            line = f"Flagship notebooks from {dotgrid_brand_names()}, plus Archer and Olive refills."
         bits = [f"{N_SEC[k]} shops"]
         if st["preorder"]:
             bits.append(f'{st["preorder"]} on preorder')
@@ -1072,7 +1130,7 @@ def build_index():
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
   {signup()}
   {trust_strip(prods)}
-  <p class="small section-switch">More on the site: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a href="sold-out-everywhere/">Sold out everywhere</a>.</p>
+  <p class="small section-switch">More on the site: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a class="nobr" href="sold-out-everywhere/">Sold out everywhere</a>.</p>
 </section>
 
 <section class="hub-trackers" id="trackers" aria-labelledby="trackers-h">
@@ -1158,16 +1216,17 @@ def build_privacy():
     body = f"""
 <article class="prose">
 {crumbs((fname, "Privacy"))}
-{eyebrow("Privacy", "updated Nov 17, 2026")}
+{eyebrow("Privacy", "updated Nov 18, 2026")}
 <h1>Privacy</h1>
 <p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, and cookie-free page view counts.</p>
 <h2>Email alerts (Buttondown)</h2>
-<p>If you sign up for restock alerts, your email address goes to <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>, the service that stores the list and sends the emails. We use it only to send the alerts and occasional updates you signed up for. Every email has an unsubscribe link, and you can also email us to be removed. Buttondown's own privacy policy is at <a href="https://buttondown.com/legal/privacy" target="_blank" rel="noopener">buttondown.com/legal/privacy</a>.</p>
+<p>If you sign up for restock alerts, your email address goes to <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>, the service that stores the list and sends the emails. Buttondown sends a confirmation email first; we only add the address to the list after you click the link. We use it only to send restock alerts and occasional site updates. Every email has an unsubscribe link, and you can also email us to be removed. Buttondown's own privacy policy is at <a href="https://buttondown.com/legal/privacy" target="_blank" rel="noopener">buttondown.com/legal/privacy</a>.</p>
 <h2>Page view counts (Cloudflare Web Analytics)</h2>
 <p>The site is hosted on Cloudflare Pages and uses Cloudflare Web Analytics to count visits. It doesn't use cookies or local storage and doesn't follow you across other sites. Cloudflare also handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
+<p>The source code, the checker, and a backup copy of the site are hosted on GitHub (GitHub Pages).</p>
 <p>This site doesn't set its own cookies and doesn't run ad trackers.</p>
 <h2>Links to other sites</h2>
-<p>When you follow a link to a shop we track, or to Amazon or Etsy for our own planners and journals, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
+<p>When you follow a link to a shop we track, or to Amazon, Etsy, or Teachers Pay Teachers for our own planners, journals, and printables, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email {plain_email()}.</p>
 </article>"""
@@ -1184,7 +1243,7 @@ def build_about():
 {signup()}
 <section class="couple" aria-labelledby="couple-h">
 <h2 id="couple-h">The couple behind Drop Watch</h2>
-<p>Drop Watch is run by a couple. He built the tracker after seeing how frustrating it was for his partner to keep up with planner restocks, and now they run it together. Stationery Drop Watch is built in Hamtramck, Michigan.</p>
+<p>Drop Watch is run by Andrew Robinson. He built the tracker after seeing how frustrating it was for his partner, Arden, to keep up with planner restocks, and now they run it together. Stationery Drop Watch is built in Hamtramck, Michigan.</p>
 </section>
 <h2>How it works</h2>
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
@@ -1207,7 +1266,7 @@ def build_contact():
 {eyebrow("Contact", "Stationery Drop Watch")}
 <h1>Contact</h1>
 <p class="lede">Stationery Drop Watch checks planner and journal stock at official stores and independent shops, and writes down what each shop last reported.</p>
-<p>Questions, corrections, a shop we should track, or a featured restock slot: {shown}</p>
+<p>Andrew Robinson runs the site and can be reached at {shown}. Questions, corrections, a shop we should track, or a featured restock slot are welcome.</p>
 <p class="small"><a href="about.html">About</a> explains how the checks work. <a href="privacy.html">Privacy</a> explains the email list.</p>
 </article>"""
     desc = ("How to reach Stationery Drop Watch: questions, corrections, a shop to add, "
@@ -1217,14 +1276,22 @@ def build_contact():
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
 # Every status on these pages comes from data/stock.json exactly as the checker wrote it.
 def _is_a6_book(p):
-    return p["type"] == "Book" and (p.get("canonical") in ("original-a6-en", "original-a6-jp")
-                                     or (not p.get("canonical") and "a6" in p["label"].lower()))
+    return p.get("canonical") in ("original-a6-en", "original-a6-jp", "original-a6-jp-one-piece") or (
+        p["type"] == "Book" and not p.get("canonical") and "a6" in p["label"].lower()
+        and "planner book" not in p["label"].lower())
 
 GROUPS = [
     dict(slug="hobonichi-techo-2027-original-a6", short="Original A6", product="Hobonichi Techo 2027 Original (A6)",
          match=_is_a6_book,
          desc="Is the Hobonichi Original A6 in stock? Live status for the English and Japanese books at {shops} shops, with a link to each shop's listing. See each shop's page.",
          intro="The Original is Hobonichi's A6 one-page-a-day book, sold in an English and a Japanese edition. "
+               "Below is what each shop we track reported at its last check: in stock, on preorder, sold out, or not on sale yet. "
+               "If a check failed we say \"Couldn't check\" rather than guess."),
+    dict(slug="hobonichi-techo-2027-planner-a6", short="Planner A6", product="Hobonichi Techo 2027 Planner (A6)",
+         match=lambda p: p.get("canonical") == "planner-a6-en",
+         desc="Is the Hobonichi Planner A6 in stock? Live status for the English Planner Book at {nshops}, with a link to each shop's listing. See each shop's page.",
+         intro="The Planner is Hobonichi's English-language A6 one-page-a-day book, with a January start and Monday-start weeks. "
+               "Hobonichi lists it as a separate line from the Original book (English Planner Book on the official store). "
                "Below is what each shop we track reported at its last check: in stock, on preorder, sold out, or not on sale yet. "
                "If a check failed we say \"Couldn't check\" rather than guess."),
     dict(slug="hobonichi-techo-2027-cousin-a5", short="Cousin A5", product="Hobonichi Techo 2027 Cousin (A5)",
@@ -1265,11 +1332,11 @@ GROUPS = [
                "To compare paper weight, pages and size across the four brands, see <a href=\"best-dot-grid-journals/\">best dot grid journals compared</a>.",
          # Published URL stays /archer-and-olive-dot-grid-journal/ so existing links keep working.
          # The title, heading, nav, and breadcrumb name every maker we check.
-         title=f"Dot grid journal restock tracker: {dotgrid_names()}",
-         desc=f"Are {dotgrid_names()} dot grid journals in stock? Live size-by-size status at each maker's shop.",
+         title=f"Dot grid journal restock tracker: {dotgrid_brand_names()}",
+         desc=dotgrid_meta_desc(),
          og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
-               f"We track a focused set of flagship dot grid notebooks from {dotgrid_names()}, each on that maker's own store, size by size and color by color, plus Archer and Olive's dot grid refills. "
+               f"We track a focused set of flagship dot grid notebooks from {dotgrid_brand_names()}, size by size and color by color, plus Archer and Olive's dot grid refills. {dotgrid_where_checked()} "
                "This page covers those dot grid notebooks and refills, not pens or other paper, and Hobonichi and our other sections have their own pages."),
     dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Notebook", section="travelers",
          h1="Traveler's Notebook restock tracker: regular colors and limited editions",
@@ -1525,7 +1592,7 @@ def build_group(g, oe=None):
   <div class="main-col">
     <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
     <div id="tracker"{' class="card-filtered"' if ext else ''}>
-    {design_nav}{shop_nav}{card_filter}{''.join(parts)}
+    {design_nav}{shop_nav}{card_filter or group_toggle_html()}{''.join(parts)}
     <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
     </div>
     {dg_tracker}{lines_grid_card() if g.get("slug") == "hobonichi-weeks-2027" else ""}
@@ -1542,7 +1609,7 @@ def build_group(g, oe=None):
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: (l.get("canonical") or "~", l["store"])))]}
     title = group_seo_title(g)
-    return fname, page(fname, title, g["desc"].format(shops=shops), body, ld=(crumbs_ld(*hub_trail(g), (fname, g["short"])), items, faq_ld),
+    return fname, page(fname, title, g["desc"].format(shops=shops, nshops=nshops(shops)), body, ld=(crumbs_ld(*hub_trail(g), (fname, g["short"])), items, faq_ld),
                        og_image=g.get("og_image", OG_IMAGE), og_alt=g.get("og_alt", OG_ALT))
 
 def group_lastmod(g):
@@ -1589,7 +1656,7 @@ DESIGNS = [
          why="Sold out at all 5 shops we track."),
     # --- Round 3: one page per tracked planner or journal design. Facts come from the shops' own listing titles in data/stock.json.
     dict(parent="hobonichi-techo-2027-original-a6", slug="one-piece-edition", name="One Piece Edition", full="Hobonichi Techo 2027 One Piece Edition",
-         match=lambda p: p["type"] == "Book" and "one piece edition" in p["label"].lower()),
+         match=lambda p: p.get("canonical") == "original-a6-jp-one-piece" or (p["type"] == "Book" and "one piece edition" in p["label"].lower())),
     dict(parent="hobonichi-weeks-2027", slug="pink-sapphire", name="Pink Sapphire", full="Hobonichi Weeks 2027 Pink Sapphire",
          match=lambda p: p.get("canonical") == "weeks-pink-sapphire",
          why="Colors Pink Sapphire, the regular 2027 Weeks hardcover. The official listing includes English and Japanese. The other shops sell the English book."),
@@ -1797,7 +1864,7 @@ def build_design(d, oe=None):
           ("How often do you check?",
            f"Every shop is checked {CHECK_FREQ}. Each status is exactly what the shop's public product data said at that time. \"Not yet on sale\" means the shop has a preview page up but isn't taking orders yet, and \"Couldn't check\" means our check failed, so we don't guess."),
           ("Can I get restock alerts?",
-           f"Yes, sign up above. It's one free list of restock emails from every shop we track, not just {d['full']}. You can unsubscribe anytime.")]
+           f"Yes, sign up above. We'll email you a confirmation link; you aren't on the list until you click it. Once you confirm, it's one free list of restock emails from every shop we track, plus an occasional update when we add a tracker or release something new, not just {d['full']}. You can unsubscribe anytime.")]
     when_html = time_tag(run)
     faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(
         f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a).replace(E(when), when_html, 1)}</p></details>' for q, a in qa) + "</section>"
@@ -1866,16 +1933,16 @@ FAQ = [
     ("Which shops do you check?",
      "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
     ("What do you track?",
-     "Hobonichi Techo 2027 planners: the Original A6 and Cousin A5 books, Weeks and Weeks Mega, and a few A6 and A5 covers. {tracks} We don't track pens."),
+     "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and a few A6 and A5 covers. {tracks} We don't track pens."),
     ('What do "Not yet on sale" and "Couldn\'t check" mean?',
      '"Not yet on sale" means the shop has a preview page up but isn\'t taking orders yet. That\'s different from sold out. '
      '"Couldn\'t check" means our check failed, for example because the shop\'s site didn\'t respond, so we don\'t know. '
      "We show that instead of guessing whether it's in stock."),
     ("Do you sell planners?",
-     "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon and as printable PDFs on Etsy. "
+     "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon, as printable PDFs on Etsy, and as classroom printables on Teachers Pay Teachers. "
      "The stationery we track is sold by the shops themselves; we just link you to them. "),
     ("How do restock alerts work?",
-     "Sign up with your email and you'll get free restock emails from every shop we track. "
+     "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. "
      "It's one list, and you can unsubscribe anytime."),
 ]
 
@@ -1910,7 +1977,8 @@ def faq_block(only=None, sid="faq"):
     """only: questions to show, in that order. None shows the full list."""
     n = len({p["store_id"] for p in stock["products"]})
     # {shop} is a link in the page and the plain URL in the FAQ structured data
-    secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + (", each checked on its own store" if k == "dotgrid" else "") for k in LIVE)
+    # rstrip the coverage sentence so the ". " join does not add a second period after "shops."
+    secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + ((". " + dotgrid_where_checked().rstrip(".")) if k == "dotgrid" else "") for k in LIVE)
     secs += ". Some shops sell more than one brand, so they're counted once in the total"
     tracks = " ".join(FAQ_TRACKS[k] for k in LIVE)
     answers = []
@@ -1918,6 +1986,7 @@ def faq_block(only=None, sid="faq"):
         if q == "Do you sell planners?" and shop_inserts_public():
             a = ("Yes, our own: we make planners, journals, and printable planner inserts, and sell them on our shop page ({shop}). "
                  "Printed books are on Amazon. Printable PDFs, including undated paper tip-ins, are on Etsy. "
+                 "Classroom printables are on Teachers Pay Teachers. "
                  "The stationery we track is sold by the shops themselves; we just link you to them. ")
         answers.append((q, a))
     if only is None:
@@ -1925,8 +1994,8 @@ def faq_block(only=None, sid="faq"):
     else:
         by_q = dict(answers)
         pairs = [(q, by_q[q]) for q in only]
-    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_names()), shop=url_for("shop/")),
-           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in pairs]
+    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_brand_names()), shop=url_for("shop/")),
+           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_brand_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in pairs]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}
@@ -1945,7 +2014,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-17", "privacy.html": "2026-11-17"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-17", "privacy.html": "2026-11-18"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -1955,7 +2024,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
     tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
-    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_PUBLISHED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), latest(tn_mod, CONTENT_LASTMOD)), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"])), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-12"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_PUBLISHED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), latest(tn_mod, CONTENT_LASTMOD)), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"])), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-17"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2175,7 +2244,7 @@ def build_where_to_buy():
         ("Will sold-out 2027 books come back?",
          "Often, but not always. The Paper Mouse says almost all items have been restocked at least once after launch in past years, but it can't guarantee restocks."),
         ("How do I get told when something restocks?",
-         "Sign up for Stationery Drop Watch alerts. We check the shops about every 30 minutes and send free restock emails from every shop we track. You can unsubscribe anytime."),
+         "Sign up for Stationery Drop Watch alerts. We'll email you a confirmation link. Once you confirm, we send free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. We check the shops about every 30 minutes. You can unsubscribe anytime."),
     ]
     checked_at = fmt_et(stock["run_finished"])
     faq_html = "".join(
@@ -2308,7 +2377,7 @@ def build_vs():
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
 <h2>Sources</h2>
-<ol class="sources two-col">{src_items}</ol>
+<ol class="sources">{src_items}</ol>
 <p class="muted small">Hobonichi makes other types too, such as the A5 and A6 HON. This guide covers only the three above.</p>
 {design_links_block()}
 {related_block(fname)}
@@ -2503,7 +2572,7 @@ def build_dotgrid_guide():
          "Leuchtturm1917 (numbered pages and a blank table of contents) and Scribbles That Matter (numbered pages, an index, a key page and a pen test page). "
          "Archer and Olive's and Notebook Therapy's product pages don't mention numbered pages or an index."),
         ("How do the email alerts work?",
-         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up for free restock emails from every shop we track, including sold-out sizes and colors coming back. You can unsubscribe anytime."),
+         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up and we'll email you a confirmation link. Once you confirm, you'll get free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new, including sold-out sizes and colors coming back. You can unsubscribe anytime."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, {E(b)} (official product page).</li>'
@@ -2552,7 +2621,7 @@ def build_dotgrid_guide():
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
 <h2>Sources</h2>
-<ol class="sources two-col">{src_items}</ol>
+<ol class="sources">{src_items}</ol>
 <p class="muted small">Each maker sells other dot grid journals too. This guide covers the A5 versions above.</p>
 {design_links_block("dotgrid")}
 {related_block(fname)}
@@ -3237,7 +3306,53 @@ SHOP_ETSY = [
                     "Party & Menu Planner", "Baking & Meal Prep Timeline", "December Countdown & Bucket List"],
          templates_label="7 trackers & planners",
          inside="holiday-planner"),
+    # Listed 2026-11-18. Same card as the other Etsy tip-ins: regular price and the shared
+    # launch-sale note. Do not print the sale price or the sale code.
+    dict(id="happy-mail", kind="insert", sale_confirmed=True, price="$5.99",
+         title="Happy Mail & Washi Club",
+         img="assets/shop/happy-mail-washi-club.webp", img_class="sheet", img_w=2000, img_h=2000,
+         url="https://www.etsy.com/listing/4620269140/happy-mail-washi-club-printable-tip-ins",
+         alt=("Happy Mail & Washi Club: four fanned cream tip-in sheets titled Washi Swatch Club, "
+              "Happy Mail Tracker, Snapshot Memories, and Color Palette Lab, on a pale pink background. "
+              "The header reads \"4 printable tip-ins · washi swatches · happy mail · snapshots · palettes\" "
+              "and \"85 × 175 mm tip-ins for 94 × 188 mm slim weekly planners\"."),
+         sub="Printable paper tip-ins · personal use · instant download from Etsy",
+         hub_sub="Printable tip-ins",
+         blurb=("Four cozy pastel tip-ins you print, cut, and tip in yourself, with a little bunny mascot "
+                "on every page: a washi swatch, a happy mail tracker, snapshot memories, and a color palette lab. "
+                "Finished cut size is 85 × 175 mm (3.35 × 6.89 in). A digital download for personal use."),
+         details=["Four print PDFs, 3 pages each: US Letter and A4, cream and white editions, plus a 1-page printing guide",
+                  "Two tip-ins per US Letter or A4 sheet. Print at actual size (100%) and measure the 50 mm scale check bar before you trim",
+                  "Each tip-in trims to 85 × 175 mm, including a 4 mm hinge strip on the left edge for washi tape or glue. Sized for planners with a 94 × 188 mm (3.7 × 7.4 in) cover. Planner sizes vary, so please measure yours or test-print on plain paper first",
+                  "Personal use only: don't share, resell, or redistribute the PDFs",
+                  "Digital download only. Not a physical planner. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+         templates=["Washi Swatch Club", "Happy Mail Tracker", "Snapshot Memories", "Color Palette Lab"],
+         templates_label="4 tip-ins",
+         inside="happy-mail"),
+    dict(id="seasonal-dashboards", kind="insert", sale_confirmed=True, price="$6.99",
+         title="Seasonal Reset Dashboards & Slip Pocket",
+         img="assets/shop/seasonal-reset-dashboards.webp", img_class="sheet", img_w=2000, img_h=2000,
+         url="https://www.etsy.com/listing/4620269960/seasonal-reset-dashboard-printable",
+         alt=("Seasonal Reset Dashboards: four fanned cream tip-in sheets titled Spring, Summer, Autumn, "
+              "and Winter, each with a line-art arch illustration and a CURRENTLY section, on a pale background. "
+              "The header reads \"FOUR PRINTABLE TIP-INS · CUT-AND-FOLD SLIP POCKET\" "
+              "and \"85 × 175 mm tip-ins for 94 × 188 mm slim weekly planners\"."),
+         sub="Printable paper tip-ins · personal use · instant download from Etsy",
+         hub_sub="Printable tip-ins",
+         blurb=("Four calm, minimal seasonal reset dashboards to tip into your weekly planner, plus a "
+                "cut-and-fold slip pocket for the inside cover. Dashboards trim to 85 × 175 mm (3.35 × 6.89 in). "
+                "The slip pocket is 84 × 138 mm (3.31 × 5.43 in) when folded. A digital download for personal use."),
+         details=["Four print PDFs, 4 pages each: US Letter and A4, cream and no-fill editions, plus a 2-page printing and assembly guide",
+                  "Dashboards print two per US Letter or A4 sheet. Print at actual size (100%) and measure the 50 mm scale check bar before you trim",
+                  "Dashboards trim to 85 × 175 mm, including a 4 mm hinge strip on the left edge for washi tape, a vellum strip or glue. The slip pocket is 84 × 138 mm when folded. Sized for planners with a 94 × 188 mm (3.7 × 7.4 in) cover. Planner sizes vary, so please measure yours or test-print on plain paper first",
+                  "The no-fill edition is line art only, for vellum or white paper. On vellum, print the no-fill edition",
+                  "Personal use only: don't share, resell, or redistribute the PDFs",
+                  "Digital download only. Not a physical planner. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+         templates=["Spring", "Summer", "Autumn", "Winter", "Slip pocket"],
+         templates_label="4 dashboards & slip pocket",
+         inside="seasonal-dashboards"),
 ]
+
 
 # Teachers Pay Teachers is two collection cards. Individual listings stay on the store,
 # so a new listing does not need a site change. No prices, and no bundle listing.
@@ -3399,6 +3514,16 @@ SHOP_SAMPLES = {
                 "The Holiday Planner Pages print file: Gift Tracker, Holiday Budget, Order and Package Tracker, Card Mailing List, Party and Menu Planner, Baking and Meal Prep Timeline, and December Countdown, shown in Standard A5.",
                 "The 7 trackers and planners, shown in Standard A5. The same layouts come in Narrow Weekly and Pocket A6.", 2700, 2025),
     ]},
+    "happy-mail": {"class": " samples inserts", "note": "Layouts from the print file, not a photograph of a printed copy.", "items": [
+        _sample("/assets/shop/inside/happy-mail-washi-club-included.webp",
+                "Happy Mail & Washi Club print file: Sheet 1 and Sheet 2 in the cream and white editions, showing Washi Swatch Club, Happy Mail Tracker, Snapshot Memories, and Color Palette Lab.",
+                "The four tip-ins, shown as cream and white print sheets.", 2000, 2000),
+    ]},
+    "seasonal-dashboards": {"class": " samples inserts", "note": "Layouts from the print file, not a photograph of a printed copy.", "items": [
+        _sample("/assets/shop/inside/seasonal-reset-dashboards-included.webp",
+                "Seasonal Reset Dashboards print file: Spring and Summer, Autumn and Winter, the slip pocket template, and the no-fill edition for vellum.",
+                "The four dashboards, the slip pocket, and the no-fill edition, from the print file.", 2000, 2000),
+    ]},
 }
 
 import hashlib as _hl
@@ -3448,6 +3573,9 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
+    # Shop facts changed 2026-11-18 (Happy Mail & Washi Club and Seasonal Reset Dashboards).
+    if any(e.get("id") in {"happy-mail", "seasonal-dashboards"} and etsy_listing_url(e) for e in SHOP_ETSY):
+        return "2026-11-18"
     # Shop facts changed 2026-11-17 (Teachers Pay Teachers section is two collection cards).
     if SHOP_TPT:
         return "2026-11-17"
@@ -3604,7 +3732,7 @@ def build_shop():
         return ""
     def card(img, alt, title, sub, blurb, details, href, btn, own, price, inside=None, *,
              img_class="", dims=None, note="", templates=None, templates_label="Templates", card_id="",
-             also=None, thumbs=None, sizes=""):
+             also=None, thumbs=None, sizes="", collapse_details=False):
         dl = "".join(f"<li>{E(d)}</li>" for d in details)
         attr = ' data-own-product' if own else ''
         ins = ""
@@ -3655,6 +3783,9 @@ def build_shop():
         idattr = f' id="{E(card_id)}"' if card_id else ""
         sub_html = f'<p class="muted small">{E(sub)}</p>' if sub else ""
         list_html = f'<ul class="small">{dl}</ul>' if details else ""
+        if list_html and collapse_details:
+            list_html = f'<details class="shop-inside"><summary>Details</summary>{list_html}</details>'
+
         thumb_html = ""
         if thumbs:
             links = "".join(
@@ -3670,8 +3801,8 @@ def build_shop():
             thumb_html = ""
         return f"""<li class="shop-card"{idattr}>
   {media}
-  <div class="shop-body">{note_html}<h3>{E(title)}</h3>{sub_html}{price}<p>{E(blurb)}</p>{list_html}
-  {also_html}{ins}{thumb_html}{action}</div></li>"""
+  <div class="shop-body">{note_html}<h3>{E(title)}</h3>{sub_html}{price}<p>{E(blurb)}</p>{also_html}{list_html}
+  {ins}{thumb_html}{action}</div></li>"""
     def amz_price(a):
         lp = AMAZON_LIST_PRICES.get(a)
         if not lp:
@@ -3681,7 +3812,7 @@ def build_shop():
                        books[a].get("blurb", ""), books[a].get("details", []), own_amazon_link(books[a]["url"]), "View on Amazon", True,
                        amz_price(a), a if a in SHOP_INSIDE or a in SHOP_SAMPLES else None,
                        dims=(books[a]["cover_w"], books[a]["cover_h"]) if books[a].get("cover_w") and books[a].get("cover_h") else None,
-                       also=SHOP_ALSO.get(a))
+                       also=SHOP_ALSO.get(a), collapse_details=True)
                   for a in SHOP_ORDER)
     def etsy_price_html(item):
         price = item.get("price", ETSY_PRICE[0])
@@ -3705,7 +3836,7 @@ def build_shop():
                     item.get("inside"), img_class=item.get("img_class", ""),
                     dims=(item["img_w"], item["img_h"]) if item.get("img_w") and item.get("img_h") else None,
                     note=note, templates=item.get("templates"), templates_label=item.get("templates_label", "Templates"),
-                    card_id=item.get("id", ""))
+                    card_id=item.get("id", ""), collapse_details=True)
     def tpt_card(item):
         return card("", "", item["title"], "", item["blurb"],
                     [], item["url"], "See the collection on TpT", False, "",

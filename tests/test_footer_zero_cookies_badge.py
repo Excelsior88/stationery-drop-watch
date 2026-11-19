@@ -99,7 +99,7 @@ class FooterMatchedBadgeTests(unittest.TestCase):
             self.assertIn('loading="lazy"', tag)
 
         self.assertIn(
-            ".foot-badge{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}",
+            ".foot-badge{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}",
             css,
         )
         self.assertIn(".foot-badge a{display:inline-block;line-height:0;max-width:100%}", css)

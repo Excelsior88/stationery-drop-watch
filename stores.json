@@ -17,6 +17,16 @@
    "type": "Book"
   },
   {
+   "id": "original-a6-jp-one-piece",
+   "label": "Original A6 book (Japanese) · One Piece Edition",
+   "type": "Book"
+  },
+  {
+   "id": "planner-a6-en",
+   "label": "Planner A6 book (English)",
+   "type": "Book"
+  },
+  {
    "id": "weeks-midnight-blue",
    "label": "Weeks · Colors: Midnight Blue",
    "type": "Weeks"
@@ -465,6 +475,14 @@
      "source_title": "Hobonichi Techo 2027 English Original Book"
     },
     {
+     "canonical": "planner-a6-en",
+     "label": "Planner A6 book (English)",
+     "type": "Book",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/pb27_jan/",
+     "source_key": "pb27_jan",
+     "source_title": "Hobonichi Techo 2027 English Planner Book"
+    },
+    {
      "canonical": "cousin-a5-en",
      "label": "Cousin A5 book (English)",
      "type": "Book",
@@ -479,6 +497,14 @@
      "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan/",
      "source_key": "ob27_jan",
      "source_title": "Hobonichi Techo 2027 Japanese Original Book"
+    },
+    {
+     "canonical": "original-a6-jp-one-piece",
+     "label": "Original A6 book (Japanese) · One Piece Edition",
+     "type": "Book",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_op/",
+     "source_key": "ob27_op",
+     "source_title": "Hobonichi Techo 2027 Japanese Original Book - One Piece Edition"
     },
     {
      "canonical": "weeks-midnight-blue",
@@ -1662,8 +1688,8 @@
      "source_title": "[Hobonichi 2027] Cousin (A5 / English)"
     },
     {
-     "canonical": null,
-     "label": "[Hobonichi 2027] Planner Book (A6 / English)",
+     "canonical": "planner-a6-en",
+     "label": "Planner A6 book (English)",
      "type": "Book",
      "url": "https://www.baum-kuchen.net/products/hobonichi-2027-planner-book-a6-english",
      "source_title": "[Hobonichi 2027] Planner Book (A6 / English)"
@@ -1876,8 +1902,8 @@
    ],
    "products": [
     {
-     "canonical": null,
-     "label": "Hobonichi 2027 - Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]",
+     "canonical": "original-a6-jp-one-piece",
+     "label": "Original A6 book (Japanese) · One Piece Edition",
      "type": "Book",
      "url": "https://wonderpens.ca/products/hobonichi-2027-japanese-original-book-one-piece-edition-a6-size-daily-jan-start-mon-start",
      "source_title": "Hobonichi 2027 - Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]"
@@ -3296,8 +3322,8 @@
      "source_title": "Hobonichi Techo 2027 English Cousin Book [A5 size/Daily/Jan start/Mon start]"
     },
     {
-     "canonical": null,
-     "label": "Hobonichi Techo 2027 Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]",
+     "canonical": "original-a6-jp-one-piece",
+     "label": "Original A6 book (Japanese) · One Piece Edition",
      "type": "Book",
      "url": "https://usa.kinokuniya.com/products/4580812710374",
      "source_title": "Hobonichi Techo 2027 Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]"
@@ -5169,7 +5195,7 @@
   },
   {
    "id": "archerolive",
-   "name": "Archer and Olive",
+   "name": "Archer and Olive (official)",
    "url": "https://www.archerandolive.com/",
    "country": "US",
    "platform": "shopify",
@@ -6021,7 +6047,7 @@
   },
   {
    "id": "leuchtturm-us",
-   "name": "Leuchtturm1917 US",
+   "name": "Leuchtturm1917 US (official)",
    "url": "https://www.leuchtturm1917.us/",
    "country": "US",
    "platform": "shopify",
@@ -6081,7 +6107,7 @@
   },
   {
    "id": "scribbles",
-   "name": "Scribbles That Matter",
+   "name": "Scribbles That Matter (official)",
    "url": "https://scribblesthatmatter.com/",
    "country": "UK",
    "platform": "shopify",
@@ -6133,7 +6159,7 @@
   },
   {
    "id": "notebooktherapy",
-   "name": "Notebook Therapy",
+   "name": "Notebook Therapy (official)",
    "url": "https://notebooktherapy.com/",
    "country": "UK",
    "platform": "shopify",

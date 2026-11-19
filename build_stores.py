@@ -9,7 +9,9 @@ S=requests.Session(); S.headers["User-Agent"]=UA
 CANON=[ # (id, label, type, regex over "handle title")
  ("original-a6-en","Original A6 book (English)","Book", r"(original|a6[- ]planner|a6-size).*(english|eng)|english.*original.*book|english original"),
  ("cousin-a5-en","Cousin A5 book (English)","Book", r"cousin.*(english|eng).*book|english.*cousin.*book|cousin-a5-english|a5-cousin-english|a5-cousin-planner-book-only-english|english cousin book"),
+ ("original-a6-jp-one-piece","Original A6 book (Japanese) · One Piece Edition","Book", r"one.?piece edition"),
  ("original-a6-jp","Original A6 book (Japanese)","Book", r"japanese.*original.*a6|original.*a6.*japanese|a6-original-avec-japanese|original book .*japanese"),
+ ("planner-a6-en","Planner A6 book (English)","Book", r"planner book.*a6.*english|english planner book|hobonichi-2027-planner-book-a6-english"),
  ("weeks-midnight-blue","Weeks · Colors: Midnight Blue","Weeks", r"weeks(?!-mega)(?!.*mega).*midnight"),
  ("weeks-canaria-yellow","Weeks · Colors: Canaria Yellow","Weeks", r"weeks(?!.*mega).*canaria"),
  ("weeks-moomin-table","Weeks · Moomin: At the Table","Weeks", r"weeks.*moomin.*table"),
