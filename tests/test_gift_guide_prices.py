@@ -126,18 +126,62 @@ class GuidePriceColumn(unittest.TestCase):
         self.assertIn("Stock and prices checked " + site.time_tag(site.stock["run_finished"]), doc)
 
 
+def price_rows(doc):
+    """Visible text of each price-table row, from the prices heading to the next section."""
+    table = doc[doc.index('<h2 id="prices">'):doc.index('<h2 id="hobonichi">')]
+    return [text(r) for r in table.split("<tr>")[1:]]
+
+
 class EtsySaleLine(unittest.TestCase):
-    def doc(self, day, etsy_price=None):
+    def html(self, day, etsy_price=None, listings=None):
         with mock.patch.object(site, "gift_today", lambda: day), \
              mock.patch.object(site, "ETSY_PRICE", etsy_price or site.ETSY_PRICE):
-            return text(site.build_gift_guide()[1])
+            if listings is not None:
+                with mock.patch.object(site, "etsy_listings", lambda: listings):
+                    return site.build_gift_guide()[1]
+            return site.build_gift_guide()[1]
+
+    def doc(self, day, etsy_price=None, listings=None):
+        return text(self.html(day, etsy_price, listings))
 
     def test_shown_through_nov_30_and_gone_on_dec_1(self):
-        self.assertIn(site.ETSY_PRICE[1], self.doc(dt.date(2026, 11, 20)))
-        self.assertIn(site.ETSY_PRICE[1], self.doc(dt.date(2026, 11, 30)))
-        dec = self.doc(dt.date(2026, 12, 1))
+        shared = f"{site.ETSY_PRICE[0]} each on Etsy"
+        for day in (dt.date(2026, 11, 20), dt.date(2026, 11, 30)):
+            rows = price_rows(self.html(day))
+            printable = next(r for r in rows if "Our printables" in r)
+            self.assertIn(f"{shared}, {site.ETSY_PRICE[1]}", printable)
+            self.assertIn(site.ETSY_PRICE[1], printable)
+        dec_html = self.html(dt.date(2026, 12, 1))
+        dec_rows = price_rows(dec_html)
+        printable = next(r for r in dec_rows if "Our printables" in r)
+        self.assertIn(shared, printable)
+        self.assertNotIn("% off", text(dec_html))
+
+    def test_mixed_price_printables_keep_sale_on_shared_row_only(self):
+        """Happy Mail is $5.99 in shop data; that row has no sale claim. The $6.99 row still does."""
+        happy = next(e for e in site.etsy_listings() if e.get("id") == "happy-mail")
+        self.assertEqual(site.etsy_item_price(happy), "$5.99")
+        rows = price_rows(self.html(dt.date(2026, 11, 30)))
+        shared = next(r for r in rows if "Our printables" in r)
+        other = next(r for r in rows if happy["title"] in r)
+        self.assertIn(f"{site.ETSY_PRICE[0]} each on Etsy, {site.ETSY_PRICE[1]}", shared)
+        self.assertIn(f"{happy['price']} on Etsy", other)
+        self.assertNotIn("% off", other)
+        self.assertNotIn(site.ETSY_PRICE[1], other)
+        dec = next(r for r in price_rows(self.html(dt.date(2026, 12, 1))) if happy["title"] in r)
+        self.assertIn(f"{happy['price']} on Etsy", dec)
         self.assertNotIn("% off", dec)
-        self.assertIn(f"{site.ETSY_PRICE[0]} each on Etsy", dec)
+
+    def test_off_price_row_follows_the_listing_data(self):
+        items = [dict(e) for e in site.etsy_listings()]
+        happy = next(e for e in items if e.get("id") == "happy-mail")
+        happy["price"] = "$4.50"
+        rows = price_rows(self.html(dt.date(2026, 11, 30), listings=items))
+        other = next(r for r in rows if happy["title"] in r)
+        self.assertIn("$4.50 on Etsy", other)
+        self.assertNotIn("% off", other)
+        shared = next(r for r in rows if "Our printables" in r)
+        self.assertIn(f"{site.ETSY_PRICE[0]} each on Etsy, {site.ETSY_PRICE[1]}", shared)
 
     def test_follows_the_shop_sale_line(self):
         self.assertNotIn("% off", self.doc(dt.date(2026, 11, 20), ("$6.99", "Regular price")))

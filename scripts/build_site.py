@@ -3046,16 +3046,57 @@ GIFT_SALE_ENDS = dt.date(2026, 11, 30)  # last day of the Etsy launch sale named
 def gift_today():
     return dt.datetime.now(ET).date()
 
+def etsy_item_price(item):
+    """Regular price shown for an Etsy printable: the item's own price, or the shared ETSY_PRICE."""
+    return item.get("price", ETSY_PRICE[0])
+
+def gift_shared_price_listings():
+    """Etsy printables that use the shared ETSY_PRICE, not a different regular price."""
+    return [e for e in etsy_listings() if etsy_item_price(e) == ETSY_PRICE[0]]
+
 def gift_sale_note():
-    """The Etsy sale line, from the same ETSY_PRICE the /shop cards use. Empty once the sale has ended
+    """The Etsy sale line for printables on the shared ETSY_PRICE. Empty once the sale has ended
     (each checker run rebuilds the page, so it comes off on Dec 1 by itself), when /shop drops the
-    sale line, or when any listed printable isn't on the shared price and sale."""
-    items = etsy_listings()
+    sale line, or when a shared-price printable isn't on that sale. Printables at a different
+    regular price are listed on their own row and do not hide this line."""
+    items = gift_shared_price_listings()
     if not items or gift_today() > GIFT_SALE_ENDS or "% off" not in ETSY_PRICE[1]:
         return ""
-    if not all(e.get("sale_confirmed", True) and e.get("price", ETSY_PRICE[0]) == ETSY_PRICE[0] for e in items):
+    if not all(e.get("sale_confirmed", True) for e in items):
         return ""
     return ETSY_PRICE[1]
+
+def gift_printable_rows():
+    """Price-table rows for our Etsy printables, using each listing's data-source price.
+    Shared-price printables share one 'Our printables' row, with the sale line when it applies.
+    A printable at a different regular price gets its own row and no sale claim."""
+    items = etsy_listings()
+    if not items:
+        return []
+    rows = []
+    if gift_shared_price_listings():
+        sale = gift_sale_note()
+        rows.append(
+            '<tr><td><a href="shop/">Our printables</a></td>'
+            '<td><span class="muted small">Instant download</span></td>'
+            f'<td><strong>{E(ETSY_PRICE[0])}</strong> each on Etsy{", " + E(sale) if sale else ""}</td></tr>'
+        )
+    seen = set()
+    for e in items:
+        price = etsy_item_price(e)
+        if price == ETSY_PRICE[0]:
+            continue
+        key = (e.get("id") or e.get("title"), price)
+        if key in seen:
+            continue
+        seen.add(key)
+        href = f"shop/#{e['id']}" if e.get("id") else "shop/"
+        rows.append(
+            f'<tr><td><a href="{E(href)}">{E(e["title"])}</a></td>'
+            '<td><span class="muted small">Instant download</span></td>'
+            f'<td><strong>{E(price)}</strong> on Etsy</td></tr>'
+        )
+    return rows
 
 def gift_own(asin, label):
     """Our own Amazon book: plain link (data-own-product), no availability claim. Its list price is in the table."""
@@ -3085,10 +3126,7 @@ def build_gift_guide():
     own = [f'<tr><td><a href="shop/">{E(n)}</a></td><td><span class="muted small">Ours; not stock-checked</span></td><td>'
            + (f'<strong>{E(lp)}</strong> <span class="muted small">Amazon list price</span>' if lp else '<span class="muted">See price on Amazon</span>') + '</td></tr>'
            for n, lp in own_rows]
-    sale = gift_sale_note()
-    if etsy_listings():
-        own.append(f'<tr><td><a href="shop/">Our printables</a></td><td><span class="muted small">Instant download</span></td>'
-                   f'<td><strong>{E(ETSY_PRICE[0])}</strong> each on Etsy{", " + E(sale) if sale else ""}</td></tr>')
+    own.extend(gift_printable_rows())
     faq = [
         ("Will these still be in stock when I click?",
          f"Not guaranteed. Stock and prices are from our last check, which runs {CHECK_FREQ}; each pick's restock page shows every shop we track. "

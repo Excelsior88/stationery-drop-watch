@@ -91,11 +91,12 @@ class GiftGuideCopyTests(unittest.TestCase):
 
     def test_every_price_comes_from_data_and_no_dated_notes(self):
         # Shop prices are rendered from stock.json at build time; the only other prices are our own
-        # list prices (AMAZON_LIST_PRICES) and the shared Etsy price, the same ones /shop shows.
+        # list prices (AMAZON_LIST_PRICES) and each Etsy printable's data-source price, the same ones /shop shows.
         recorded = {site._usd(c) for p in site.stock["products"]
                     for c in (p.get("price_cents"), p.get("price_max_cents")) if isinstance(c, int)}
+        etsy = {site.etsy_item_price(e) for e in site.etsy_listings()} | {site.ETSY_PRICE[0]}
         prices = set(re.findall(r"\$\d+(?:,\d{3})*(?:\.\d\d)?", text(self.doc)))
-        self.assertLessEqual(prices, set(site.AMAZON_LIST_PRICES.values()) | {site.ETSY_PRICE[0]} | recorded)
+        self.assertLessEqual(prices, set(site.AMAZON_LIST_PRICES.values()) | etsy | recorded)
         low = text(self.doc).lower()
         for banned in ("black friday", "cyber monday", "ships within", "prices when we checked", "price seen",
                        "b0nem0ther", "bullet journal\u00a0", "#bulletjournal"):
