@@ -31,12 +31,11 @@ class ShareImageAltTests(unittest.TestCase):
     def test_default_alt_names_every_tracker_without_a_shop_count(self):
         self.assertIn("Hobonichi", site.OG_ALT)
         self.assertIn("dot grid journals", site.OG_ALT)
-        self.assertIn("Traveler's Company", site.OG_ALT)
-        self.assertIn("MIDORI", site.OG_ALT)
+        self.assertNotIn("Traveler", site.OG_ALT)
+        self.assertNotIn("MIDORI", site.OG_ALT)
         self.assertIn(site.CHECK_FREQ, site.OG_ALT)
-        title = site.seo_title("Hobonichi, dot grid, Traveler's Company, MIDORI")
+        title = site.seo_title("Hobonichi and dot grid journal restock tracker")
         self.assertLessEqual(len(title), 60)
-        self.assertIn("Traveler's Company", title)
         self.assertIn("dot grid", title)
         self.assertNotRegex(site.OG_ALT, SHOP_COUNT_RE)
         # The year 2027 contains the digits of a shop total. Match the count only as its own number.
@@ -75,8 +74,6 @@ class ShareImageAltTests(unittest.TestCase):
         oe = {}
         for key, expected_image in (
             ("dotgrid", site.OG_DOTGRID),
-            ("travelers", site.BASE + "assets/brand/og-travelers.png"),
-            ("midori", site.BASE + "assets/brand/og-midori.png"),
         ):
             group = next(g for g in site.GROUPS if g.get("section") == key)
             _fname, doc = site.build_group(group, oe)
@@ -114,15 +111,8 @@ class HeroAndScopeTests(unittest.TestCase):
         self.assertIn('href="/shop/"', site.build_index())
         self.assertNotIn(f"{len(site.NAV_TRACKERS) + len(site.NAV)} restock", doc)
         self.assertNotIn("refills and limited editions", doc)
-        card = re.search(
-            r'<li class="hub-card"><a href="/travelers-company-limited-edition/">(.*?)</a></li>',
-            site.build_index(), re.S)
-        self.assertIsNotNone(card)
-        card_text = plain(card.group(1))
-        self.assertIn("Regular size colors", card_text)
-        self.assertIn("limited editions", card_text)
-        self.assertNotIn("refill", card_text.lower())
-        self.assertNotIn("Passport", card_text)
+        self.assertNotIn("/travelers-company-limited-edition/", site.build_index())
+        self.assertNotIn("/midori-md-limited-edition/", site.build_index())
 
     def test_dot_grid_page_names_every_maker_and_keeps_the_legacy_url(self):
         group = next(g for g in site.GROUPS if g.get("section") == "dotgrid")
@@ -142,32 +132,7 @@ class HeroAndScopeTests(unittest.TestCase):
         self.assertNotIn("bullet journal", lede.lower())
         self.assertIn(site.OG_DOTGRID_ALT, alts(doc))
 
-    def test_travelers_page_names_regular_colors_and_keeps_the_legacy_url(self):
-        group = next(g for g in site.GROUPS if g.get("section") == "travelers")
-        self.assertEqual(group["slug"], "travelers-company-limited-edition")
-        self.assertEqual(site.REDIRECTS["travelers-notebook-regular-size"], group["slug"] + "/#tracker")
-        _fname, doc = site.build_group(group, {})
-        text = plain(doc)
-        self.assertIn("https://stationerydropwatch.com/travelers-company-limited-edition/", doc)
-        self.assertIn("<h1>Traveler's Notebook restock tracker: regular colors and limited editions</h1>", text)
-        self.assertNotIn("notebook and limited edition restock tracker", text)
-        self.assertIn("Regular size colors", group["og_alt"])
-        self.assertIn("limited editions", group["og_alt"])
-        self.assertIn("Black", text)
-        self.assertIn("Olive", text)
-        self.assertIn("For refills, check the shops directly.", text)
-        self.assertIn("Every Traveler's Notebook regular-color and limited-edition listing we track", text)
-        self.assertIn('href="/travelers-company-limited-edition/">Traveler\'s Company</a>', text)  # compact footer link
-        home = plain(site.build_index())
-        self.assertIn("Traveler's Notebook regular colors and limited editions", home)
-        self.assertNotIn("across 13 shops", doc)
-        before = json.loads((ROOT / "data/guide_dates.json").read_text())["build_tn_sizes"]["date"]
-        _gfname, guide = site.build_tn_sizes()
-        after = json.loads((ROOT / "data/guide_dates.json").read_text())["build_tn_sizes"]["date"]
-        self.assertEqual(before, after)
-        self.assertEqual(before, "2026-11-16")
-        self.assertTrue(all(a == site.OG_TRAVELERS_ALT for a in alts(guide)))
-        self.assertNotIn("limited edition tracker", plain(guide))
+
 
 
 class FollowIconTests(unittest.TestCase):

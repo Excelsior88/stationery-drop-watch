@@ -21,6 +21,7 @@ LEICESTER = "weeks-va-leicester"
 URLS = {
     PINK: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_colorspsapphire/",
+        "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-weeks-colors-pink-sapphire",  # added Nov 19, 2026
         "papermouse": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-colors-pink-sapphire-english",
         "atlas": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-pink-sapphire",
         "baum": "https://www.baum-kuchen.net/products/hobonichi-2027-weeks-colors-english?variant=43546059636803",
@@ -34,6 +35,7 @@ URLS = {
         "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-pink-sapphire-english-tall-slim-jan-start",
     },
     SEA: {
+        "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-weeks-colors-sea-glass",  # added Nov 19, 2026
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_colorssglass/",
         "papermouse": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-colors-sea-glass-english",
         "atlas": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-sea-glass",

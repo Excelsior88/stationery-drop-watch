@@ -143,9 +143,9 @@ class StatusPaletteTests(unittest.TestCase):
 
 class CountryFilterSourceTests(unittest.TestCase):
     def test_region_map_comes_from_stores_json(self):
-        self.assertEqual(set(site.REGION_NAME), {"US", "CA", "SG", "UK", "JP"})
-        self.assertEqual(set(site.REGION.values()), {"US", "CA", "SG", "UK", "JP"})
-        fixes = {"travelerscompanyusa": "US", "tokyopenshop": "US", "mdproductusa": "US"}
+        self.assertEqual(set(site.REGION_NAME), {"US", "CA", "SG", "UK", "AU", "JP"})
+        self.assertEqual(set(site.REGION.values()), {"US", "CA", "SG", "UK", "AU", "JP"})
+        fixes = {}
         for store in site.stores["stores"]:
             raw = (store.get("country") or "").split()[0] if (store.get("country") or "").split() else ""
             expected = fixes.get(store["id"], raw)
@@ -154,14 +154,14 @@ class CountryFilterSourceTests(unittest.TestCase):
 
     def test_countries_present_accepts_a_one_shot_iterable(self):
         ids = (p["store_id"] for p in site.hobo_products())
-        self.assertEqual(site.countries_present(ids), ["US", "CA", "SG", "UK", "JP"])
+        self.assertEqual(site.countries_present(ids), ["US", "CA", "SG", "UK", "AU", "JP"])
 
     def test_filter_omits_a_country_the_page_does_not_use(self):
-        midori = site.countries_present(p["store_id"] for p in site.section_products("midori"))
-        self.assertNotIn("SG", midori)
-        self.assertNotIn("JP", midori)
+        dot = site.countries_present(p["store_id"] for p in site.section_products("dotgrid"))
+        self.assertNotIn("SG", dot)
+        self.assertNotIn("JP", dot)
         hobo = site.countries_present(p["store_id"] for p in site.hobo_products())
-        self.assertEqual(hobo, ["US", "CA", "SG", "UK", "JP"])
+        self.assertEqual(hobo, ["US", "CA", "SG", "UK", "AU", "JP"])
 
 
 class NoTrackingTests(unittest.TestCase):
