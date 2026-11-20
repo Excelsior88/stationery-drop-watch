@@ -48,7 +48,7 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
         self.assertNotIn("/ja/2027/", joined)
 
     def test_checked_shops(self):
-        both = {"1101", "atlas", "wonder", "yoseka", "penboutique", "papermouse", "jennibick", "blesket", "journalshop", "buchan"}
+        both = {"1101", "atlas", "wonder", "yoseka", "penboutique", "papermouse", "jennibick", "blesket", "journalshop", "buchan", "dromgooles"}
         a6_only = {"mlovewell"}
         for sid in both:
             ids = {p["canonical"] for p in self.by_store[sid]["products"]}
@@ -80,7 +80,7 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
 
     def test_baseline_does_not_invent_a_restock(self):
         rows = [r for r in self.stock["products"] if r.get("canonical") in (A6, A5)]
-        self.assertEqual(len(rows), 21)
+        self.assertEqual(len(rows), 23)
         self.assertTrue(all(r["first_seen"] == r["status_since"] for r in rows))
         self.assertTrue(all(r["status"] != "unknown" for r in rows))
         urls = {r["url"] for r in rows}
@@ -114,7 +114,7 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
         """The first observation stays quiet. A later sold-out, preview, or preorder
         flip to in stock uses the same change and webhook path as every other listing."""
         rows = [r for r in self.stock["products"] if r.get("canonical") in (A6, A5, WEEKS)]
-        self.assertEqual(len(rows), 32)
+        self.assertEqual(len(rows), 34)
         pages = {
             A6: "hobonichi-techo-2027-covers/nothing-to-hide-green/",
             A5: "hobonichi-techo-2027-covers/nothing-to-hide-pink/",

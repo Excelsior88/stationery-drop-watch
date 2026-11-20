@@ -51,6 +51,7 @@ URLS = {
     },
     WELCOME: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_vawelcome/",
+        "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-weeks-v-a-series-welcome-to-the-v-a",  # added Nov 20, 2026
         "papermouse": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-v-a-series-welcome-to-the-v-a-english",
         "atlas": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-v-a-series-welcome-to-the-v-a",
         "bobo": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-v-a-series-welcome-to-the-v-a",
@@ -66,6 +67,7 @@ URLS = {
     },
     LEICESTER: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_valeicester/",
+        "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-weeks-v-a-series-leicester",  # added Nov 20, 2026
         "papermouse": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-v-a-series-leicester-english",
         "atlas": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-v-a-series-leicester",
         "bobo": "https://bobodesignstudio.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",

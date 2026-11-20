@@ -119,6 +119,10 @@ class RenderTests(unittest.TestCase):
                 if note:
                     p["official_note"] = note
                 hit = True
+            else:
+                # Live stock notes other sold-out official rows. These tests
+                # check one row, so the fixture starts without the rest.
+                p.pop("official_note", None)
         self.assertTrue(hit, "Starlight's official row is tracked")
         return data
 
