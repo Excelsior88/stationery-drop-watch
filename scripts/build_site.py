@@ -2892,7 +2892,10 @@ GIFT_NOTE = ("We planned to feature Traveler's Company and MIDORI here. On Novem
              "and MIDORI's parent company, Designphil, for permission to use their official product photos. On November 19, "
              "TRAVELER'S COMPANY USA didn't answer that request. Instead, they asked us to remove every Traveler's Company "
              "and MIDORI product, saying that a tracker telling everyone when something is back in stock "
-             "\"pushes that stock toward resellers.\" We complied. So here's what we'd pack instead.")
+             "\"pushes that stock toward resellers.\" We complied. "
+             "Bots don't wait for our email, they're already running auto-checkout. "
+             "Want to stop scalpers? Purchase limits. Real bot protection. Fair regional stock. Not shutting down the little guy. "
+             "So here's what we'd pack instead.")
 
 def gift_note_html():
     return (f'<aside class="gift-note"><p>{E(GIFT_NOTE)} '

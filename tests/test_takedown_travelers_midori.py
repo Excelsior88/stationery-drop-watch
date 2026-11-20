@@ -213,6 +213,10 @@ class GiftGuideTests(unittest.TestCase):
             self.assertIn(phrase, notice)
         for banned in ("legal", "takedown", "lawyer", "cease"):
             self.assertNotIn(banned, note.lower())
+        # Nov 20: the same two lines as the homepage card, after we complied and before the packing pivot.
+        bots = "Bots don't wait for our email, they're already running auto-checkout."
+        scalpers = "Want to stop scalpers? Purchase limits. Real bot protection. Fair regional stock. Not shutting down the little guy."
+        self.assertIn("We complied. " + bots + " " + scalpers + " So here's what we'd pack instead.", note)
         if facts:
             self.assertEqual(facts["approved_notice_text"][1:], list(site.TAKEDOWN_NOTICE))
 
