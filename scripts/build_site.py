@@ -2936,7 +2936,7 @@ def build_gift_guide():
          "If something sells out, sign up for restock emails and we'll tell you when it comes back."),
         ("Are the prices current?",
          "Stock is checked live at every shop we track. Tracked rows link you to the shop for the current price. "
-         "The Amazon and Etsy prices listed are the listed prices as of that check."),
+         "Amazon and Etsy prices are the listed prices for our own books and printables."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}"{"" if u == "shop/" else " rel=\"noopener\" target=\"_blank\""}>{E(t)}</a>, {E(b)}.</li>'
@@ -2957,7 +2957,7 @@ def build_gift_guide():
 {signup(label="Get restock emails for these gifts and more", note=LIST_LINE, kicker=TAGLINE)}
 
 <h2 id="prices">Every pick: stock and price</h2>
-<p class="small"><strong>Stock checked {asof}.</strong> We check stock live at every shop we track, and the counts are those shops. Each tracked row links you to the shop for the current price. Amazon and Etsy prices are the listed prices as of that check.</p>
+<p class="small"><strong>Stock checked {asof}.</strong> We check stock live at every shop we track, and the counts are those shops. Each tracked row links you to the shop for the current price. Amazon and Etsy prices are the listed prices for our own books and printables.</p>
 <div class="table-wrap"><table class="stock gift-table">
 <thead><tr><th>Gift</th><th>Stock</th><th>Price</th></tr></thead>
 <tbody>{"".join(glance)}{"".join(own)}</tbody></table></div>
