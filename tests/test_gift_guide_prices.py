@@ -123,7 +123,7 @@ class GuidePriceColumn(unittest.TestCase):
 
     def test_checked_time_is_shown(self):
         doc = render(fixture("weeks-moomin-table"))
-        self.assertIn("Stock and prices checked " + site.time_tag(site.stock["run_finished"]), doc)
+        self.assertIn("Stock checked " + site.time_tag(site.stock["run_finished"]), doc)
 
 
 def price_rows(doc):

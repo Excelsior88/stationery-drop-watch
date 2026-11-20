@@ -2935,9 +2935,8 @@ def build_gift_guide():
          f"Not guaranteed. Stock and prices are from our last check, which runs {CHECK_FREQ}; each pick's restock page shows every shop we track. "
          "If something sells out, sign up for restock emails and we'll tell you when it comes back."),
         ("Are the prices current?",
-         "They're the lowest US-dollar price at the shops we track that had the pick in stock or on preorder at our last check. "
-         "Shipping, tax and checkout discounts aren't included, so confirm at the shop. Shops that don't sell in US dollars, including Hobonichi's own store, aren't priced. "
-         "For our own books we show the Amazon list price."),
+         "Stock is checked live at every shop we track. Tracked rows link you to the shop for the current price. "
+         "The Amazon and Etsy prices listed are the listed prices as of that check."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}"{"" if u == "shop/" else " rel=\"noopener\" target=\"_blank\""}>{E(t)}</a>, {E(b)}.</li>'
@@ -2958,7 +2957,7 @@ def build_gift_guide():
 {signup(label="Get restock emails for these gifts and more", note=LIST_LINE, kicker=TAGLINE)}
 
 <h2 id="prices">Every pick: stock and price</h2>
-<p class="small"><strong>Stock and prices checked {asof}.</strong> Counts are shops we track; the price is the lowest US-dollar price at those with it in stock or on preorder, before shipping and tax.</p>
+<p class="small"><strong>Stock checked {asof}.</strong> We check stock live at every shop we track, and the counts are those shops. Each tracked row links you to the shop for the current price. Amazon and Etsy prices are the listed prices as of that check.</p>
 <div class="table-wrap"><table class="stock gift-table">
 <thead><tr><th>Gift</th><th>Stock</th><th>Price</th></tr></thead>
 <tbody>{"".join(glance)}{"".join(own)}</tbody></table></div>
@@ -2971,7 +2970,7 @@ def build_gift_guide():
   <li><strong>Weeks Mega, Bow &amp; Tie: Candy Dream (English),</strong> for someone who fills every page: candies woven in necktie fabric, 384 pages with 219 grid memo pages in the English edition. {s("h_candy")} {L("candy")}</li>
   <li><strong>English Cousin A5 book,</strong> for the most room: one page per day, 544 pages, thread-stitched so it opens flat. Book only; it takes a Cousin (A5) cover. {s("h_cousin")} {L("cousin")}</li>
   <li><strong>English Original A6 book,</strong> a page a day they can carry: 464 pages with English Daily Quotes and a 3.7 mm grid. Book only, so pair it with an A6 cover. {s("h_original")} {L("original")}</li>
-  <li><strong>A6 cover, Yumi Kitagishi: White Cat House.</strong> A dollhouse-themed illustration on polyester; the butterfly-stopper pen holders double as a clasp. {s("h_cathouse")} {L("cathouse")}</li>
+  <li><strong>A6 cover, Yumi Kitagishi: White Cat House.</strong> A dollhouse-themed illustration on polyester, with butterfly-stopper pen holders. {s("h_cathouse")} {L("cathouse")}</li>
   <li><strong>A6 cover, Moomin: My Yard (Pale Mint).</strong> Navy embroidery on pale mint cotton of Moominmamma asleep in her garden, with "We've time for that tomorrow." stitched in pink. {s("h_myyard", "as_myyard")} {L("myyard")}</li>
 </ul>
 <p class="small">Not sure which book suits them? See <a href="{VS_SLUG}/">Techo vs Cousin vs Weeks</a> or <a href="{JAN_APR_SLUG}/">January-start vs April-start</a>.</p>
