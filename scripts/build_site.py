@@ -1138,7 +1138,7 @@ def build_index():
   <p class="hub-count"><b>{st["in_stock"]}</b> of {len(ps)} listings in stock <span class="muted small">{E(" · ".join(bits))}</span></p>
   <span class="hub-go">View tracker</span></a></li>""")
     # Third card: the takedown notice. Same card and button as the trackers; no counts or stock badges.
-    # The line is two verbatim phrases from TAKEDOWN_NOTICE (test_home_notice_card checks that).
+    # The line is verbatim phrases from TAKEDOWN_NOTICE, including the Nov 20 lines.
     cards.append(f"""<li class="hub-card hub-notice"><a href="{TN_SLUG}/">
   <span class="hub-art">{hub_art("notice")}</span>
   <h3>{E(TAKEDOWN_HEADING)}</h3><p>{E(HOME_NOTICE_LINE)}</p>
@@ -3480,26 +3480,43 @@ def check_none_claim(fname, doc):
         raise SystemExit(f"{fname}: says none in stock but every listing is Couldn't check")
 
 # --- Traveler's Company and MIDORI takedown notice ----------------------------------------------------
-# Owner-approved wording (Nov 19, 2026). Do not edit a word of TAKEDOWN_NOTICE without the owner's yes.
+# Owner-approved wording (Nov 19, 2026, with two lines added Nov 20, 2026).
+# Do not edit a word of the earlier paragraphs. The Nov 20 lines are the owner's exact words.
+# On the notice pages the bot sentence closes the "why" paragraph. The scalpers
+# line is a card after that paragraph and before the newsletter sentence.
+# The homepage card is separate and keeps the line as one sentence.
 TAKEDOWN_DATE = "2026-11-19"
 TAKEDOWN_HEADING = "Why Traveler's Company and MIDORI are gone"
+TAKEDOWN_BOTS = "Bots don't wait for our email, they're already running auto-checkout."
+TAKEDOWN_SCALPERS_Q = "Want to stop scalpers?"
+TAKEDOWN_SCALPERS_ITEMS = ("Purchase limits.", "Real bot protection.", "Fair regional stock.")
+TAKEDOWN_SCALPERS_CLOSE = "Not shutting down the little guy."
+TAKEDOWN_PULL = "Want to stop scalpers? Purchase limits. Real bot protection. Fair regional stock. Not shutting down the little guy."
 TAKEDOWN_NOTICE = (
     "On November 17, 2026, we reached out to Traveler's Company and to MIDORI's parent company, Designphil, through their official contact forms. We asked politely for permission to use their official product photos on our tracker pages.",
     "Two days later, on November 19, TRAVELER'S COMPANY USA replied. They didn't answer our request. Instead they asked us to remove every Traveler's Company and MIDORI product from Stationery Drop Watch, saying Designphil would not approve of them being here. Their reason was that a tracker telling everyone when something is back in stock \"pushes that stock toward resellers,\" and they would rather announce restocks only to their own email list.",
     "We've complied. Every listing, alert and restock email for both brands has stopped.",
-    "We think you deserve to know why. Stationery Drop Watch is free, and it exists for regular people who are tired of refreshing shop pages, not for resellers. We never bought, resold or held a single item. We only pointed you to the official shops' own pages, the moment they had stock.",
+    "We think you deserve to know why. Stationery Drop Watch is free, and it exists for regular people who are tired of refreshing shop pages, not for resellers. We never bought, resold or held a single item. We only pointed you to the official shops' own pages, the moment they had stock. " + TAKEDOWN_BOTS,
     "If you'd like restock news for these brands, the only route they've left you is their newsletter.",
 )
-# Homepage card line: two verbatim phrases from TAKEDOWN_NOTICE, nothing added.
+# Homepage card: the original two phrases, then the Nov 20 lines, all verbatim from TAKEDOWN_NOTICE.
 HOME_NOTICE_LINE = ("We asked politely for permission to use their official product photos. "
-                    "Instead they asked us to remove every Traveler's Company and MIDORI product.")
+                    "Instead they asked us to remove every Traveler's Company and MIDORI product. "
+                    "Bots don't wait for our email, they're already running auto-checkout. "
+                    "Want to stop scalpers? Purchase limits. Real bot protection. Fair regional stock. Not shutting down the little guy.")
 TAKEDOWN_DESC = ("On November 19, 2026, TRAVELER'S COMPANY USA asked us to remove every Traveler's Company and MIDORI product. "
                  "We've complied. Here is why.")
 
 def build_takedown_notice(slug, noindex=False):
     """The notice that replaced the Traveler's Company page, the MIDORI page and the Traveler's size guide."""
     fname = slug + "/"
-    paras = "\n".join(f"<p>{E(x)}</p>" for x in TAKEDOWN_NOTICE)
+    items = "".join(f"<li>{E(x)}</li>" for x in TAKEDOWN_SCALPERS_ITEMS)
+    callout = f'''<aside class="notice-stand" aria-labelledby="stop-scalpers">
+  <h2 id="stop-scalpers">{E(TAKEDOWN_SCALPERS_Q)}</h2>
+  <ul>{items}</ul>
+  <p class="notice-stand-close">{E(TAKEDOWN_SCALPERS_CLOSE)}</p>
+</aside>'''
+    paras = "\n".join(f"<p>{E(x)}</p>" for x in TAKEDOWN_NOTICE[:4]) + "\n" + callout + "\n" + f"<p>{E(TAKEDOWN_NOTICE[4])}</p>"
     still = " · ".join([f'<a href="{HOBO_TRACKER}">Hobonichi tracker</a>']
                        + [f'<a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE])
     body = f"""
