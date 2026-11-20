@@ -1987,5 +1987,14 @@
   "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-mega-colors-poppy-red",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T21:48:09+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks · Moomin: At the Table",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-moomin-at-the-table",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
