@@ -119,6 +119,7 @@ table.stock{width:100%;border-collapse:collapse;font-size:.93rem}
 .stock td a{text-decoration:none;color:var(--ink);font-weight:500}
 .stock td a:hover{color:var(--accent)}
 .stock .sub{display:block;font-size:.8rem;color:var(--ink-2)}
+.stock .official-note{margin-top:3px;font-style:italic;line-height:1.3;overflow-wrap:anywhere}
 .badge{display:inline-block;white-space:nowrap;font-size:.76rem;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid}
 .badge.in_stock,.badge.preorder,.badge.coming_soon,.badge.sold_out,.badge.unknown{display:inline-flex;align-items:center;gap:.36em;line-height:1.2}
 .badge.in_stock::before,.badge.preorder::before,.badge.coming_soon::before,.badge.sold_out::before,.badge.unknown::before{content:"";width:.45em;height:.45em;border-radius:50%;background:currentColor;flex-shrink:0}
@@ -491,6 +492,7 @@ table.stock.compare thead th{vertical-align:top}
 .compare-shop a{overflow-wrap:anywhere}
 .compare-shop .region{margin-right:.4em}
 .compare-shops .badge{margin-left:auto;flex-shrink:0}
+.compare-shops .official-note{flex:1 1 100%;margin-top:-2px;font-size:.8rem;font-style:italic;line-height:1.3;color:var(--ink-2);text-align:right}
 @media (max-width:560px){
   .compare-shops li{align-items:flex-start}
   .compare-shop .sub{display:block;font-size:.8rem;color:var(--ink-2)}

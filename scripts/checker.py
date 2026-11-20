@@ -26,7 +26,12 @@ UA = "Mozilla/5.0 (compatible; StationeryDropWatch/0.1; restock tracker; +https:
 DELAY = 2.5          # seconds between requests to one host
 TIMEOUT = 25
 PREORDER_RX = re.compile(r"pre[- ]?order|preorder", re.I)
-COMING_RX = re.compile(r"\bpreview\b|coming soon|order starts", re.I)
+# "coming soon" / "order starts" mean the shop is not taking orders yet.
+# "preview" alone does not: Wonder Pens leaves PREVIEW in titles after launch,
+# including on in-stock books, and tags sold-out books out-of-stock.
+UNRELEASED_RX = re.compile(r"coming[\s_-]?soon|order starts", re.I)
+PREVIEW_RX = re.compile(r"\bpreview\b", re.I)
+_SOLD_OUT_TAGS = {"out-of-stock", "outofstock", "sold-out", "soldout"}
 
 def now(): return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
@@ -49,6 +54,25 @@ class Host:
         try: return self.s.get(url, timeout=TIMEOUT)
         finally: self.last = time.time()
 
+def _sold_out_tag(tag):
+    return re.sub(r"[\s_]+", "-", str(tag).strip().lower()) in _SOLD_OUT_TAGS
+
+def unavailable_status(text, tags):
+    """Status for a Shopify product or variant that cannot be bought.
+
+    An out-of-stock tag wins over a leftover PREVIEW in the title. Wording that
+    says the item is not released yet ("coming soon", "order starts") still
+    means coming_soon, and a PREVIEW title with no sold-out tag does too.
+    """
+    tags = [str(t) for t in (tags or [])]
+    if UNRELEASED_RX.search(text or "") or any(UNRELEASED_RX.search(t) for t in tags):
+        return "coming_soon"
+    if any(_sold_out_tag(t) for t in tags):
+        return "sold_out"
+    if PREVIEW_RX.search(text or "") or any(PREVIEW_RX.search(t) for t in tags):
+        return "coming_soon"
+    return "sold_out"
+
 def named_variants_disagree(js):
     """True when one Shopify product lists different designs and they are not all available or all unavailable."""
     flags = []
@@ -61,13 +85,14 @@ def named_variants_disagree(js):
 def classify_shopify(js):
     variants = js.get("variants") or []
     avail = [v for v in variants if v.get("available")]
-    text = " ".join([js.get("title", "")] + [v.get("title") or "" for v in variants] + list(js.get("tags") or []))
+    tags = list(js.get("tags") or [])
+    text = " ".join([js.get("title", "")] + [v.get("title") or "" for v in variants] + tags)
     if named_variants_disagree(js):
         return "unknown", len(avail), len(variants), re.sub(r"<[^>]+>", "", js.get("title", ""))
     if js.get("available") or avail:
         status = "preorder" if PREORDER_RX.search(text) else "in_stock"
     else:
-        status = "coming_soon" if COMING_RX.search(text) else "sold_out"
+        status = unavailable_status(text, tags)
     return status, len(avail), len(variants), re.sub(r"<[^>]+>", "", js.get("title", ""))
 
 def classify_shopify_variant(js, vid):
@@ -76,10 +101,11 @@ def classify_shopify_variant(js, vid):
     v = next((v for v in js.get("variants") or [] if v.get("id") == vid), None)
     if v is None: return None
     title = re.sub(r"<[^>]+>", "", js.get("title", "")) + " · " + (v.get("public_title") or v.get("title") or "")
+    tags = list(js.get("tags") or [])
     if v.get("available"):
         status = "preorder" if PREORDER_RX.search(title) else "in_stock"
     else:
-        status = "coming_soon" if COMING_RX.search(title) else "sold_out"
+        status = unavailable_status(title + " " + " ".join(tags), tags)
     return status, int(bool(v.get("available"))), 1, title
 
 def shopify_price(js, vid=None):
@@ -148,6 +174,29 @@ def check_shopify_store(store):
         out.append(rec)
     return out
 
+# Short notes from Hobonichi's own items.json, shown on sold-out official rows. Our wording, not theirs.
+# Real feed values (Nov 19, 2026, all 745 items): message_lineup.en is 0 (no message), "Restock Coming",
+# "Restock Undecided", "No Restock Planned", or an edition-only variant such as "Restock coming for the
+# English edition" (seen only on items that are still partly on sale). sales_termination was 0 on every item;
+# 1 is treated as ended in case Hobonichi starts using it. Edition-only messages get no note.
+HOBO_NOTE_RESTOCK = "Official store notes a restock is planned"
+HOBO_NOTE_UNDECIDED = "Restock undecided at official store"
+HOBO_NOTE_ENDED = "Sales ended at official store"
+
+def hobonichi_note(item, status):
+    """The optional official_note for one 1101.com row, or None. Only for sold-out rows; never changes status."""
+    if status != "sold_out" or not item:
+        return None
+    lineup = item.get("message_lineup")
+    lineup = (lineup.get("en") or "") if isinstance(lineup, dict) else ""
+    if item.get("sales_termination") == 1 or lineup.strip().lower() == "no restock planned":
+        return HOBO_NOTE_ENDED
+    if item.get("sales_termination") == 0 and lineup.strip().lower() == "restock coming":
+        return HOBO_NOTE_RESTOCK
+    if item.get("sales_termination") == 0 and lineup.strip().lower() == "restock undecided":
+        return HOBO_NOTE_UNDECIDED
+    return None
+
 def check_hobonichi(store):
     """Official 1101.com store: one public JSON feed covers every 2027 item."""
     h = Host("https://www.1101.com"); out = []
@@ -168,6 +217,8 @@ def check_hobonichi(store):
             if it.get("soldout") or (sales and all(s.get("soldout") for s in sales)): rec["status"] = "sold_out"
             elif sales and all(s.get("unreleased") for s in sales): rec["status"] = "coming_soon"
             elif live: rec["status"] = "in_stock"
+            note = hobonichi_note(it, rec["status"])
+            if note: rec["official_note"] = note
         elif not err:
             rec["error"] = "item key not in feed"
         out.append(rec)
@@ -182,6 +233,10 @@ def note_transition(old, rec, changes):
     rec["first_seen"] = old.get("first_seen", rec["checked_at"]) if old else rec["checked_at"]
     rec["status_since"] = old.get("status_since") if old and old["status"] == rec["status"] else rec["checked_at"]
     if old and rec["status"] != "unknown" and old["status"] not in ("unknown", rec["status"]):
+        # Every real status change is logged. coming_soon -> sold_out is one of
+        # those changes. It is not a restock: alerts and the restock feed only
+        # take a flip to in_stock or preorder (see new_in_stock.fresh_in_stock
+        # and build_site.is_restock_event).
         changes.append(dict(at=rec["checked_at"], store_id=rec["store_id"], store=rec["store"], label=rec["label"],
                             url=rec["url"], **({"section": rec["section"]} if rec.get("section") else {}),
                             **{"from": old["status"], "to": rec["status"]}))

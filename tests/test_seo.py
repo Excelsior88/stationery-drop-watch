@@ -169,6 +169,9 @@ class SeoHeadTests(unittest.TestCase):
         self.assertIn("<h1>Hobonichi Techo January-start vs April-start</h1>", doc)
         self.assertIn("goes on sale every year on February 1st", doc)
         self.assertIn("9:00 PM Eastern on January 31", doc)
+        self.assertIn("February 1, 2027 at 11:00 AM Japan time (January 31, 2027 at 9:00 PM ET)", doc)
+        self.assertIn("has not published the Spring 2027 cover and book lineup yet", doc)
+        self.assertNotIn("not a separately confirmed Spring 2027 announcement", doc)
         self.assertIn("it may be restocked for the April-start release.", doc)
         self.assertIn("<h2>Questions</h2>", doc)
         self.assertNotIn("<h2>FAQ</h2>", doc)
@@ -182,7 +185,7 @@ class SeoHeadTests(unittest.TestCase):
         art = next(b for b in blocks if b.get("@type") == "Article")
         faq = next(b for b in blocks if b.get("@type") == "FAQPage")
         self.assertEqual(art["datePublished"], "2026-11-12")
-        self.assertEqual(art["dateModified"], "2026-11-12")
+        self.assertEqual(art["dateModified"], "2026-11-19")
         visible = [(html.unescape(q), html.unescape(a)) for q, a in questions]
         schema = [(q["name"], q["acceptedAnswer"]["text"]) for q in faq["mainEntity"]]
         self.assertEqual(visible, schema)

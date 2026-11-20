@@ -16,6 +16,7 @@ import scripts.build_site as site
 ROOT = Path(__file__).resolve().parents[1]
 URLS = {
     "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_tdaisuke/",
+    "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-weeks-tanakadaisuke-starlight",  # added Nov 20, 2026
     "papermouse": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-tanakadaisuke-starlight-english",
     "atlas": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-tanakadaisuke-starlight",
     "wonder": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-tanakadaisuke-starlight",
