@@ -1175,29 +1175,63 @@ def build_hobonichi():
 <h2 class="sr">2027 timeline</h2>
 <ol class="timeline">
   <li><time>Aug 25, 2026</time><div><h3 class="tl">Previews go up</h3><p>Shops post the 2027 lineup as "out of stock" or "coming soon" pages. They aren't sold out; they're just not on sale yet. <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
-  <li><time>Aug 31, 2026 · 10 PM ET</time><div><h3 class="tl">Worldwide launch (January-start planners)</h3><p>Everything goes live at the same moment worldwide: 11 AM on September 1 in Japan, 10 PM ET / 9 PM CT the night before in the US. Atlas Stationers warned that popular styles and collaborations "often sell out within minutes." <a href="#s-papermouse">[Paper Mouse]</a> <a href="#s-atlas">[Atlas]</a></p></div></li>
-  <li><time>Sep 30 – Oct 1, 2026</time><div><h3 class="tl">Second fall wave</h3><p>Hobonichi notes that some products begin sales on October 1. At US shops that meant the ONE PIECE magazine collection and the Weeksdays 2027 desk calendar, plus a large restock of earlier sell-outs (as preorders at some shops). <a href="#s-1101">[Hobonichi]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
+  <li><time>Aug 31, 2026 · 10 PM ET</time><div><h3 class="tl">Official online launch (January-start planners)</h3><p>September 1, 2026 at 11:00 AM Japan time (August 31, 2026 at 10:00 PM ET / 9:00 PM CT) is the official Hobonichi Store's online launch time <a href="#s-1101">[Hobonichi]</a>. Indie shops split online and in-store times. Hobonichi's FAQ says each retail store opens at its own store hours <a href="#s-faq-retail">[Hobonichi, retail hours]</a> <a href="#s-faq-schedule">[Hobonichi, sale schedule]</a>.<br>Paper Mouse opened online Aug 31 at 10 PM ET and in-store Sep 1 at 11 AM ET <a href="#s-papermouse">[Paper Mouse]</a>.<br>Atlas opened online Aug 31 at 9 PM CT, with retail expected the week of September 7. Atlas warned that popular styles and collaborations "often sell out within minutes." <a href="#s-atlas">[Atlas]</a></p></div></li>
+  <li><time>Sep 30 – Oct 1, 2026</time><div><h3 class="tl">Second fall wave</h3><p>Hobonichi notes that some products begin sales on October 1 <a href="#s-1101">[Hobonichi]</a>.<br>One Piece sales began October 1, 2026 at 11:00 AM Japan time (September 30, 2026 at 10:00 PM ET). That book is January-start and Monday-start only <a href="#s-hon">[Hobonichi]</a>.<br>Paper Mouse, a US shop, listed the Weeksdays 2027 desk calendar in this wave, plus a large restock of earlier sell-outs (as preorders at some shops) <a href="#s-papermouse">[Paper Mouse]</a>.</p></div></li>
   <li><time>Early–mid Oct 2026</time><div><h3 class="tl">First restocks land at indie shops</h3><p>Atlas expected its first restock in early October. Paper Mouse's shipment arrived October 15 and preorders began shipping. <a href="#s-atlas">[Atlas]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
-  <li><time>February 2027</time><div><h3 class="tl">Spring launch (April-start planners)</h3><p>Paper Mouse describes a second release in February for planners that start on April 1, the beginning of Japan's academic and fiscal year. <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
+  <li><time>Feb 1, 2027</time><div><h3 class="tl">Spring launch (April-start planners)</h3><p>The official Hobonichi Store launches April-start planners on February 1, 2027 at 11:00 AM Japan time (January 31, 2027 at 9:00 PM ET) <a href="#s-1101">[Hobonichi]</a>. Other shops start at their own opening hours. Hobonichi has not published the Spring 2027 cover and book lineup yet.</p></div></li>
 </ol>
 
+<h2>Which 2027 books have an April-start</h2>
+<p>April-start is only available for the Japanese Original (A6), the Japanese Cousin (A5), and the Japanese Weeks <a href="#s-faq-april">[Hobonichi]</a> <a href="#s-hon">[Hobonichi]</a>.</p>
+<p>These do not come in an April-start edition:</p>
+<ul>
+  <li>English Original, Cousin, and Weeks</li>
+  <li>the Planner</li>
+  <li>Avec</li>
+  <li>Weeks Mega (English and Japanese)</li>
+  <li>HON (Japanese and English, A6 and A5)</li>
+  <li>One Piece Original</li>
+  <li>Moomin Weeks Japanese Special Edition</li>
+  <li>Day-Free</li>
+  <li>5-Year and Large 5-Year</li>
+</ul>
+<p>Many January-start products return for April-start. Sold-out January-start items may be restocked for the April-start launch, some items are April-only, and fabric availability can change the lineup <a href="#s-faq-spring">[Hobonichi]</a>. Choosing between the two: <a href="hobonichi-january-start-vs-april-start/">January-start vs April-start</a>.</p>
+
 <h2>Will it come back?</h2>
-<p>Usually, but not always. Standard planner books and core colors tend to be restocked. Special collaborations may only be sold at launch <a href="#s-atlas">[Atlas]</a>. Paper Mouse says almost every item has been restocked at least once after launch in past years <a href="#s-papermouse">[Paper Mouse]</a>. Hobonichi's own restock emails are only for the Techo books and the Drawer Pouch, not accessories, and they don't promise you'll get one <a href="#s-1101">[Hobonichi]</a>.</p>
+<p>Usually, but not always. Standard planner books and core colors tend to be restocked. Special collaborations may only be sold at launch <a href="#s-atlas">[Atlas]</a>. Paper Mouse says almost every item has been restocked at least once after launch in past years <a href="#s-papermouse">[Paper Mouse]</a>.</p>
+<p>Hobonichi posts restock decisions on each product page. "If there is no notice, a restock has not been decided or is under consideration" <a href="#s-faq-restock">[Hobonichi]</a>. Restock notification emails apply only to Techo books and Drawer Pouches, not accessories or stationery, and they do not guarantee a purchase <a href="#s-faq-restock">[Hobonichi]</a>.</p>
+<p>Sold-out official Hobonichi Store rows on our <a href=\"""" + HOBO_TRACKER + """#tracker">tracker</a> show that product-page note directly: "Official store notes a restock is planned," "Restock undecided at official store," or "Sales ended at official store."</p>
+
+<section class="card" id="ordering-direct">
+  <h2>Ordering direct from Hobonichi (1101.com)</h2>
+  <ul>
+    <li>Normal dispatch is 1–3 business days, and up to 10 business days after a new release. Restocked items may take longer. Check the product page <a href="#s-1101">[Hobonichi]</a>.</li>
+    <li>Combined orders ship together once the latest item is ready <a href="#s-1101">[Hobonichi]</a>.</li>
+    <li>International orders ship from Japan via FedEx. Customs and import fees vary by country, and Hobonichi cannot estimate them in advance <a href="#s-1101">[Hobonichi]</a>.</li>
+    <li>The 2027 store-exclusive bonus is a Plain Old Acorn Charm and a 3-Color Jetstream Ballpoint Pen. It comes with an eligible Techo book bought from the official Hobonichi Store website or an official Hobonichi physical store (Tokyo Station Branch, Tobichi Tokyo/Kyoto, Hobono Eki AKAGI), while supplies last. Cover-only purchases and Avec Book 2 alone do not qualify <a href="#s-hon">[Hobonichi]</a>.</li>
+  </ul>
+</section>
 
 <h2>How to not miss it</h2>
 <ul>
   <li>Check several shops. When one store sells out, another often still has stock. That's the whole point of the <a href=\"""" + HOBO_TRACKER + """#tracker">tracker</a>.</li>
   <li>Live stock by product: """ + " · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS) + """.</li>
-  <li>Buying direct from Hobonichi is the only way to get store-exclusive extras, but it ships from Japan and tariffs may apply in the US <a href="#s-papermouse">[Paper Mouse]</a>.</li>
+  <li>The 2027 store-exclusive bonus (Plain Old Acorn Charm and 3-Color Jetstream Ballpoint Pen) comes with an eligible Techo book from the official Hobonichi Store website or an official Hobonichi store (Tokyo Station Branch, Tobichi Tokyo/Kyoto, Hobono Eki AKAGI), while supplies last. Cover-only purchases and Avec Book 2 alone do not qualify. Shipping and the bonus rules are in <a href="#ordering-direct">Ordering direct from Hobonichi</a>.</li>
   <li>Which shops have it right now: <a href="where-to-buy-hobonichi-2027/">where to buy the Hobonichi Techo 2027</a>. Choosing a size: <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a>.</li>
   <li><a href="#alerts">Sign up for alerts</a> (above) for free restock emails from every shop we track. You can unsubscribe anytime.</li>
 </ul>
 
 <h2>Sources</h2>
 <ol class="sources">
-  <li id="s-1101"><a href="https://www.1101.com/store/techo/en/2027/pc/shopping_guide/" rel="noopener" target="_blank">Hobonichi Techo 2027 shopping guide</a>, Hobonichi (official). Release dates, shipping, and restock notification rules.</li>
-  <li id="s-papermouse"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Launch times, the Sept 30 preorder, the Oct 15 arrival, and restock history.</li>
-  <li id="s-atlas"><a href="https://www.atlasstationers.com/blogs/news/hobonichi-faq-2027" rel="noopener" target="_blank">Hobonichi FAQ – 2027</a>, Atlas Stationers. Launch time, sell-out warning, and the early-October restock.</li>
+  <li id="s-1101"><a href="https://www.1101.com/store/techo/en/2027/pc/shopping_guide/" rel="noopener" target="_blank">Hobonichi Techo 2027 shopping guide</a>, Hobonichi (official). Official online launch time, the February 1, 2027 Spring launch, and shipping.</li>
+  <li id="s-hon"><a href="https://www.1101.com/store/techo/en/magazine/hon/" rel="noopener" target="_blank">Hobonichi 2027 lineup page</a>, Hobonichi (official). One Piece sale time, which books have an April-start, and the store-exclusive bonus.</li>
+  <li id="s-faq-april"><a href="https://www.1101.com/store/techo/en/faq/articles/4889929315230.html" rel="noopener" target="_blank">April-start editions</a>, Hobonichi FAQ (official). Which 2027 books come in April-start.</li>
+  <li id="s-faq-spring"><a href="https://www.1101.com/store/techo/en/faq/articles/4889951964190.html" rel="noopener" target="_blank">Spring lineup guidance</a>, Hobonichi FAQ (official). How April-start overlaps with sold-out January-start items.</li>
+  <li id="s-faq-restock"><a href="https://www.1101.com/store/techo/en/faq/articles/4889935437854.html" rel="noopener" target="_blank">Restock notices</a>, Hobonichi FAQ (official). Product-page restock decisions, and which items restock emails cover.</li>
+  <li id="s-faq-retail"><a href="https://www.1101.com/store/techo/en/faq/articles/4889938317854.html" rel="noopener" target="_blank">Retail store hours</a>, Hobonichi FAQ (official). Each retail store opens at its own store hours.</li>
+  <li id="s-faq-schedule"><a href="https://www.1101.com/store/techo/en/faq/articles/4889935445534.html" rel="noopener" target="_blank">Sale schedule</a>, Hobonichi FAQ (official). Each retail store opens at its own store hours.</li>
+  <li id="s-papermouse"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Online and in-store launch times, the Weeksdays 2027 desk calendar, the October 15 arrival, and restock history.</li>
+  <li id="s-atlas"><a href="https://www.atlasstationers.com/blogs/news/hobonichi-faq-2027" rel="noopener" target="_blank">Hobonichi FAQ – 2027</a>, Atlas Stationers. Online launch time, retail expected the week of September 7, sell-out warning, and the early-October restock.</li>
 </ol>
 """ + design_links_block() + related_block("hobonichi-2027.html") + """
 </article>"""
@@ -1965,7 +1999,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-12", "about.html": "2026-11-17", "privacy.html": "2026-11-18"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-19", "about.html": "2026-11-17", "privacy.html": "2026-11-18"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -1975,7 +2009,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG, MIDORI_SLUG)]  # the indexed takedown notices
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_PUBLISHED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-17"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_MODIFIED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-17"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2032,6 +2066,7 @@ WTB_SLUG = "where-to-buy-hobonichi-2027"
 VS_SLUG = "hobonichi-techo-vs-cousin-vs-weeks"
 JAN_APR_SLUG = "hobonichi-january-start-vs-april-start"
 JAN_APR_PUBLISHED = "2026-11-12"  # owner-approved publication date
+JAN_APR_MODIFIED = "2026-11-19"  # official 2027 Spring launch date added from the shopping guide
 DG_GUIDE_SLUG = "best-dot-grid-journals"
 HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), (JAN_APR_SLUG + "/", "January-start vs April-start"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
 GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
@@ -2347,7 +2382,7 @@ def build_january_april():
             "and goes on sale on February 1. Here's how the two differ and how to choose.")
     faq = [
         ("When does the April-start Hobonichi go on sale?",
-         "Hobonichi says February 1 every year at 11 AM Japan time. Check the official site for the 2027 date."),
+         "February 1, 2027 at 11:00 AM Japan time on the official Hobonichi Store (9:00 PM ET on January 31). Other shops start at their own opening hours. Hobonichi has not published the Spring 2027 cover and book lineup yet."),
         ("Is there an English April-start Hobonichi?",
          "No. April-start editions are Japanese only."),
         ("Is there an April-start Weeks Mega or Day-Free?",
@@ -2359,6 +2394,7 @@ def build_january_april():
         ("https://help.1101.com/hc/en-us/articles/4889951964190", "Spring lineup guidance"),
         ("https://help.1101.com/hc/en-us/articles/4889935445534", "sale schedule"),
         ("https://help.1101.com/hc/en-us/articles/4889951953566", "Sunday-start editions"),
+        ("https://www.1101.com/store/techo/en/2027/pc/shopping_guide/", "Hobonichi Techo 2027 shopping guide"),
     ]
     src_items = "".join(
         f'<li><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, Hobonichi (official).</li>' for u, t in sources)
@@ -2392,7 +2428,7 @@ def build_january_april():
 
 <h2>"April-start" doesn't mean it goes on sale in April</h2>
 <p>Hobonichi's help center says the April-start Spring edition <strong>"goes on sale every year on February 1st"</strong>, starting at <strong>11:00 AM Japan time</strong> on the Hobonichi Store (9:00 PM Eastern on January 31). Other shops start selling when they open.</p>
-<p>Treat this as Hobonichi's usual sale schedule, not a separately confirmed Spring 2027 announcement. Check the official Spring announcements before planning a purchase.</p>
+<p>The <a href="https://www.1101.com/store/techo/en/2027/pc/shopping_guide/" rel="noopener" target="_blank">2027 shopping guide</a> confirms this year's official Hobonichi Store launch: February 1, 2027 at 11:00 AM Japan time (January 31, 2027 at 9:00 PM ET). Hobonichi has not published the Spring 2027 cover and book lineup yet. See the <a href="hobonichi-2027.html">2027 calendar</a>.</p>
 
 <h2>Is the Spring lineup the same as January's?</h2>
 <p>Not exactly. Hobonichi says many January-start products are offered again in April-start, and <strong>"even if an item sells out in the January-start edition, it may be restocked for the April-start release."</strong> Some products are Spring-only, and the lineup can change depending on fabric availability.</p>
@@ -2420,14 +2456,14 @@ def build_january_april():
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
 <h2>Sources</h2>
-<p class="muted small">Read Nov 7, 2026.</p>
+<p class="muted small">Help-center pages read Nov 7, 2026. The 2027 shopping guide is the source for this year's February 1 launch.</p>
 <ol class="sources">{src_items}</ol>
 {design_links_block()}
 {related_block(fname)}
 </article>"""
     headline = "Hobonichi Techo January-start vs April-start"
     art = {"@context": "https://schema.org", "@type": "Article", "headline": headline,
-           "datePublished": JAN_APR_PUBLISHED, "dateModified": JAN_APR_PUBLISHED, "url": url_for(fname), "image": OG_IMAGE,
+           "datePublished": JAN_APR_PUBLISHED, "dateModified": JAN_APR_MODIFIED, "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [

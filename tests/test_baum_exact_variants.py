@@ -138,17 +138,66 @@ class BaumExactVariantTests(unittest.TestCase):
         self.assertIn("not the Weeks White Cat Wallpaper", site.design_about(cover))
         cal = site.build_hobonichi()
         self.assertIn("<time>Aug 25, 2026</time>", cal)
-        feb = cal.split("February 2027", 1)[1].split("</li>", 1)[0]
-        self.assertIn("second release in February", feb)
-        self.assertIn("April 1", feb)
-        self.assertIn("#s-papermouse", feb)
-        self.assertNotIn("#s-1101", feb)
-        self.assertIn("10 PM ET / 9 PM CT", cal)
-        self.assertIn("October 1", cal)
+        self.assertIn("updated Nov 19, 2026", cal)
+        self.assertNotIn("Everything goes live at the same moment worldwide", cal)
+        self.assertIn("September 1, 2026 at 11:00 AM Japan time (August 31, 2026 at 10:00 PM ET / 9:00 PM CT)", cal)
+        self.assertIn("official Hobonichi Store's online launch time", cal)
+        self.assertIn("opened online Aug 31 at 10 PM ET and in-store Sep 1 at 11 AM ET", cal)
+        self.assertIn("opened online Aug 31 at 9 PM CT", cal)
+        self.assertIn("week of September 7", cal)
+        self.assertIn("each retail store opens at its own store hours", cal)
+        wave = cal.split("Second fall wave", 1)[1].split("First restocks", 1)[0]
+        self.assertIn("October 1, 2026 at 11:00 AM Japan time (September 30, 2026 at 10:00 PM ET)", wave)
+        self.assertIn("January-start and Monday-start only", wave)
+        self.assertIn("#s-hon", wave)
+        self.assertIn("Weeksdays 2027 desk calendar", wave)
+        self.assertIn("#s-papermouse", wave)
+        self.assertLess(wave.index("#s-hon"), wave.index("Weeksdays 2027"))
+        spring = cal.split("Spring launch", 1)[1].split("</ol>", 1)[0]
+        self.assertIn("February 1, 2027 at 11:00 AM Japan time (January 31, 2027 at 9:00 PM ET)", spring)
+        self.assertIn("own opening hours", spring)
+        self.assertIn("has not published the Spring 2027 cover and book lineup yet", spring)
+        self.assertIn("#s-1101", spring)
+        self.assertNotIn("second release in February", cal)
         self.assertIn("October 15", cal)
-        self.assertIn("Techo books and the Drawer Pouch", cal)
-        self.assertEqual(site.STATIC_LASTMOD["hobonichi-2027.html"], "2026-11-12")
-        self.assertIn("https://stationerydropwatch.com/hobonichi-2027</loc><lastmod>2026-11-12T00:00:00+00:00</lastmod>", site.build_sitemap())
+        self.assertIn("Japanese Original (A6)", cal)
+        self.assertIn("Japanese Cousin (A5)", cal)
+        self.assertIn("Japanese Weeks", cal)
+        for missing in ("English Original, Cousin, and Weeks", "Weeks Mega (English and Japanese)",
+                        "HON (Japanese and English, A6 and A5)", "One Piece Original",
+                        "Moomin Weeks Japanese Special Edition", "Day-Free", "Large 5-Year"):
+            self.assertIn(missing, cal)
+        self.assertIn("may be restocked for the April-start launch", cal)
+        self.assertIn("some items are April-only", cal)
+        self.assertIn("fabric availability can change the lineup", cal)
+        self.assertIn('"If there is no notice, a restock has not been decided or is under consideration"', cal)
+        self.assertIn("Techo books and Drawer Pouches", cal)
+        self.assertIn("do not guarantee a purchase", cal)
+        for note in ("Official store notes a restock is planned", "Restock undecided at official store", "Sales ended at official store"):
+            self.assertIn(note, cal)
+        self.assertIn("Plain Old Acorn Charm", cal)
+        self.assertIn("3-Color Jetstream Ballpoint Pen", cal)
+        self.assertIn("Tokyo Station Branch, Tobichi Tokyo/Kyoto, Hobono Eki AKAGI", cal)
+        self.assertIn("Avec Book 2 alone do not qualify", cal)
+        self.assertIn("1–3 business days", cal)
+        self.assertIn("up to 10 business days after a new release", cal)
+        self.assertIn("ship together once the latest item is ready", cal)
+        self.assertIn("via FedEx", cal)
+        self.assertIn("cannot estimate them in advance", cal)
+        for url in (
+            "https://www.1101.com/store/techo/en/2027/pc/shopping_guide/",
+            "https://www.1101.com/store/techo/en/magazine/hon/",
+            "https://www.1101.com/store/techo/en/faq/articles/4889929315230.html",
+            "https://www.1101.com/store/techo/en/faq/articles/4889951964190.html",
+            "https://www.1101.com/store/techo/en/faq/articles/4889935437854.html",
+            "https://www.1101.com/store/techo/en/faq/articles/4889938317854.html",
+            "https://www.1101.com/store/techo/en/faq/articles/4889935445534.html",
+        ):
+            self.assertIn(url, cal)
+        self.assertNotIn("Traveler", cal)
+        self.assertNotIn("MIDORI", cal)
+        self.assertEqual(site.STATIC_LASTMOD["hobonichi-2027.html"], "2026-11-19")
+        self.assertIn("https://stationerydropwatch.com/hobonichi-2027</loc><lastmod>2026-11-19T00:00:00+00:00</lastmod>", site.build_sitemap())
         about = site.design_about(canaria)
         self.assertIn("includes the English and Japanese books", about)
         self.assertNotIn("English book is in stock", about)
