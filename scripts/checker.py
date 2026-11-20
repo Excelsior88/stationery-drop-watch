@@ -15,16 +15,26 @@ price_max_cents when the product's variants differ), but only when the shop's ow
 says it sells in USD (currency). Any other shop, a failed /meta.json, or a non-Shopify check
 records no price, so pages can say "see price at the shop" instead of guessing.
 """
-import json, re, time, threading, urllib.robotparser, datetime as dt
+import json, re, time, threading, datetime as dt
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 import requests
 
 ROOT = Path(__file__).resolve().parent.parent
-UA = "Mozilla/5.0 (compatible; StationeryDropWatch/0.1; restock tracker; +https://stationerydropwatch.com/; contact: stationerydropwatch@gmail.com)"
+UA = "Mozilla/5.0 (compatible; StationeryDropWatch/0.1; restock tracker; +https://stationerydropwatch.com/; contact: admin@stationerydropwatch.com)"
 DELAY = 2.5          # seconds between requests to one host
 TIMEOUT = 25
+# Product token in the User-Agent. A robots.txt group with this name is used
+# before the "*" group. Matching is case-insensitive and ignores a /version suffix.
+ROBOTS_TOKEN = "stationerydropwatch"
+# These three hosts 301 www to the apex. Stock history is keyed by URL, so a
+# www row and the apex row are the same listing.
+APEX_HOSTS = {
+    "www.milligram.com": "milligram.com",
+    "www.cultpens.com": "cultpens.com",
+    "www.goldspot.com": "goldspot.com",
+}
 PREORDER_RX = re.compile(r"pre[- ]?order|preorder", re.I)
 # "coming soon" / "order starts" mean the shop is not taking orders yet.
 # "preview" alone does not: Wonder Pens leaves PREVIEW in titles after launch,
@@ -35,24 +45,153 @@ _SOLD_OUT_TAGS = {"out-of-stock", "outofstock", "sold-out", "soldout"}
 
 def now(): return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
+def canonical_stock_url(url):
+    """Rewrite a redundant www host to the apex. Every other URL is unchanged.
+
+    The checker looks up the previous stock row by this key, so a www to apex
+    move keeps first_seen and status_since and does not open a new listing.
+    """
+    if not url:
+        return url
+    parts = urlparse(url)
+    host = APEX_HOSTS.get(parts.netloc.lower())
+    if not host:
+        return url
+    return urlunparse(parts._replace(netloc=host))
+
+def normalize_fetch_url(url):
+    """Cache key for one HTTP fetch: lowercased scheme and host, no fragment."""
+    parts = urlparse(url)
+    path = parts.path or "/"
+    query = f"?{parts.query}" if parts.query else ""
+    return f"{parts.scheme.lower()}://{parts.netloc.lower()}{path}{query}"
+
+def _robots_path(url):
+    """Path plus query, the part Google matches. The fragment is left out."""
+    parts = urlparse(url)
+    path = parts.path or "/"
+    if parts.query:
+        path += "?" + parts.query
+    return path
+
+def _robots_pattern_matches(pattern, path):
+    """Google-style match: anchored at the start, * is any sequence, $ ends the path.
+
+    Without a trailing $, the pattern matches a prefix of the path.
+    """
+    end = pattern.endswith("$")
+    body = pattern[:-1] if end else pattern
+    pieces = ["^"]
+    for ch in body:
+        pieces.append(".*" if ch == "*" else re.escape(ch))
+    if end:
+        pieces.append("$")
+    return re.match("".join(pieces), path) is not None
+
+class Robots:
+    """RFC 9309 / Google robots.txt rules.
+
+    * and $ are wildcards. The longest matching pattern wins. An Allow and a
+    Disallow of the same length: Allow wins. A StationeryDropWatch group is
+    used when one is present; otherwise the * group. An empty file allows all.
+    """
+    def __init__(self, lines):
+        self.groups = []
+        agents, rules, started = [], [], False
+
+        def flush():
+            nonlocal agents, rules, started
+            if agents:
+                self.groups.append((agents, rules))
+            agents, rules, started = [], [], False
+
+        for raw in lines:
+            line = raw.split("#", 1)[0].strip()
+            if not line or ":" not in line:
+                continue
+            key, val = line.split(":", 1)
+            key, val = key.strip().lower(), val.strip()
+            if key == "user-agent":
+                if started:
+                    flush()
+                agents.append(val)
+                continue
+            if not agents:
+                continue
+            started = True
+            if key not in ("allow", "disallow") or not val:
+                continue
+            rules.append((key == "allow", val))
+        flush()
+
+    def _rules_for(self, user_agent):
+        specific = "stationerydropwatch" in (user_agent or "").lower()
+        named, star, saw_named = [], [], False
+        for agents, rules in self.groups:
+            tokens = [a.split("/")[0].strip().lower() for a in agents]
+            if specific and ROBOTS_TOKEN in tokens:
+                saw_named = True
+                named.extend(rules)
+            if "*" in tokens:
+                star.extend(rules)
+        # A named group is used on its own, even when it has no rules.
+        return named if saw_named else star
+
+    def allowed(self, user_agent, url):
+        path = _robots_path(url)
+        best_len, best_allow = -1, True
+        for allow, pattern in self._rules_for(user_agent):
+            if not _robots_pattern_matches(pattern, path):
+                continue
+            length = len(pattern)
+            if length > best_len or (length == best_len and allow):
+                best_len, best_allow = length, allow
+        return best_allow
+
 class Host:
-    """Per-host session + robots.txt + rate limit."""
+    """Per-host session, robots.txt, rate limit, and a per-run fetch cache.
+
+    The cache is keyed by the normalized URL. Two listings that share a
+    Shopify .js endpoint (or any other exact fetch URL) hit the network once.
+    A cache hit does not wait out the host delay and does not retry an error.
+    """
     def __init__(self, base):
-        self.base = base; self.s = requests.Session(); self.s.headers["User-Agent"] = UA
-        self.last = 0.0; self.rp = urllib.robotparser.RobotFileParser()
+        self.base = base
+        self.s = requests.Session()
+        self.s.headers["User-Agent"] = UA
+        self.last = 0.0
+        self.cache = {}
         try:
             r = self.get(f"{base}/robots.txt", check_robots=False)
-            self.rp.parse(r.text.splitlines() if r.ok else [])
+            lines = r.text.splitlines() if r.ok else []
         except Exception:
-            self.rp.parse([])
-    def allowed(self, url): return self.rp.can_fetch(UA, url)
+            lines = []
+        self.robots = Robots(lines)
+
+    def allowed(self, url):
+        return self.robots.allowed(UA, url)
+
     def get(self, url, check_robots=True):
+        key = normalize_fetch_url(url)
+        if key in self.cache:
+            hit = self.cache[key]
+            if isinstance(hit, BaseException):
+                raise hit
+            return hit
         if check_robots and not self.allowed(url):
             raise PermissionError("disallowed by robots.txt")
         wait = self.last + DELAY - time.time()
-        if wait > 0: time.sleep(wait)
-        try: return self.s.get(url, timeout=TIMEOUT)
-        finally: self.last = time.time()
+        if wait > 0:
+            time.sleep(wait)
+        try:
+            resp = self.s.get(url, timeout=TIMEOUT)
+        except Exception as exc:
+            self.cache[key] = exc
+            self.last = time.time()
+            raise
+        self.cache[key] = resp
+        self.last = time.time()
+        return resp
 
 def _sold_out_tag(tag):
     return re.sub(r"[\s_]+", "-", str(tag).strip().lower()) in _SOLD_OUT_TAGS
@@ -257,10 +396,13 @@ def main():
         results = [r for rs in ex.map(check_store, cfg["stores"]) for r in rs]
     data_dir = ROOT / "data"; data_dir.mkdir(exist_ok=True)
     stock_f, changes_f = data_dir / "stock.json", data_dir / "changes.json"
-    prev = {r["url"]: r for r in json.loads(stock_f.read_text())["products"]} if stock_f.exists() else {}
+    prev = {}
+    if stock_f.exists():
+        for old in json.loads(stock_f.read_text())["products"]:
+            prev[canonical_stock_url(old["url"])] = old
     changes = json.loads(changes_f.read_text()) if changes_f.exists() else []
     for r in results:
-        note_transition(prev.get(r["url"]), r, changes)
+        note_transition(prev.get(canonical_stock_url(r["url"])), r, changes)
     summary = {k: sum(1 for r in results if r["status"] == k) for k in ("in_stock", "preorder", "coming_soon", "sold_out", "unknown")}
     blocked = [dict(id=s["id"], name=s["name"], url=s["url"], reason=s.get("note")) for s in cfg["stores"] if s["platform"] not in ("shopify", "hobonichi")]
     stock_f.write_text(json.dumps(dict(run_started=started, run_finished=now(), summary=summary,

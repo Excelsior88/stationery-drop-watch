@@ -1844,8 +1844,8 @@
    ],
    "products": [
     {
-     "canonical": "original-a6-en",
-     "label": "Original A6 book (English)",
+     "canonical": "planner-a6-en",
+     "label": "Planner A6 book (English)",
      "type": "Book",
      "url": "https://laywines.com/products/hobonichi-a6-planner-english-book-2027",
      "source_title": "Hobonichi A6 Planner English Book 2027"
@@ -2084,14 +2084,14 @@
     },
     {
      "canonical": "hon-a6-slash-navy",
-     "label": "HON A6 · Slash (Navy)",
+     "label": "HON A6 · Slash (Navy) (English)",
      "type": "HON",
      "url": "https://www.penboutique.com/products/hobonichi-hon-a6-2027-english-slash-navy",
      "source_title": "Hobonichi 2027 Light Hard Cover English Book - Slash (Navy) & HON Stamped - A6 (January Start)"
     },
     {
      "canonical": "hon-a6-slash-navy",
-     "label": "HON A6 · Slash (Navy)",
+     "label": "HON A6 · Slash (Navy) (Japanese)",
      "type": "HON",
      "url": "https://www.penboutique.com/products/hobonichi-hon-light-hardcover-japanese-book-slash-navy-a6-january-start",
      "source_title": "Hobonichi HON Light Hardcover Japanese Book - Slash Navy - A6 (January Start)"
@@ -2105,14 +2105,14 @@
     },
     {
      "canonical": "hon-a6-sheep",
-     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep (Japanese)",
      "type": "HON",
      "url": "https://www.penboutique.com/products/hobonichi-hon-light-hardcover-japanese-book-bow-tie-sheep-sheep-sheep-a6-january-start",
      "source_title": "Hobonichi HON Light Hardcover Japanese Book - Bow & Tie: Sheep Sheep Sheep - A6 (January Start)"
     },
     {
      "canonical": "hon-a6-sheep",
-     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep (English)",
      "type": "HON",
      "url": "https://www.penboutique.com/products/hobonichi-hon-a6-2027-bow-tie-sheep-sheep-sheep",
      "source_title": "Hobonichi 2027 HON Light Hard Cover English Book - Bow & Tie: Sheep Sheep Sheep - A6 (January Start)"
@@ -4270,7 +4270,7 @@
   {
    "id": "milligram",
    "name": "Milligram",
-   "url": "https://www.milligram.com/",
+   "url": "https://milligram.com/",
    "country": "AU",
    "platform": "shopify",
    "indie": true,
@@ -4279,35 +4279,35 @@
      "canonical": "original-a6-jp",
      "label": "Original A6 book (Japanese)",
      "type": "Book",
-     "url": "https://www.milligram.com/products/hobonichi-2027-techo-original-book-a6-japanese",
+     "url": "https://milligram.com/products/hobonichi-2027-techo-original-book-a6-japanese",
      "source_title": "2027 Techo Original Book A6 Japanese"
     },
     {
      "canonical": "planner-a6-en",
      "label": "Planner A6 book (English)",
      "type": "Book",
-     "url": "https://www.milligram.com/products/hobonichi-2027-techo-original-planner-book",
+     "url": "https://milligram.com/products/hobonichi-2027-techo-original-planner-book",
      "source_title": "2027 Techo Original Planner Book"
     },
     {
      "canonical": "weeks-canaria-yellow",
      "label": "Weeks · Colors: Canaria Yellow",
      "type": "Weeks",
-     "url": "https://www.milligram.com/products/hobonichi-2027-techo-weeks-planner-canaria-yellow",
+     "url": "https://milligram.com/products/hobonichi-2027-techo-weeks-planner-canaria-yellow",
      "source_title": "2027 Techo Week Planner Canaria Yellow"
     },
     {
      "canonical": "weeks-mega-candy-dream",
      "label": "Weeks Mega · Bow & Tie: Candy Dream",
      "type": "Weeks Mega",
-     "url": "https://www.milligram.com/products/hobonichi-2027-techo-weeks-mega-planner-candy-dream",
+     "url": "https://milligram.com/products/hobonichi-2027-techo-weeks-mega-planner-candy-dream",
      "source_title": "2027 Techo Weeks Mega Planner Candy Dream"
     },
     {
      "canonical": "cover-a6-moomin",
      "label": "A6 cover · Moomin: My Yard (Pale Mint)",
      "type": "Cover",
-     "url": "https://www.milligram.com/products/hobonichi-techo-original-a6-cover-my-yard-pale-mint",
+     "url": "https://milligram.com/products/hobonichi-techo-original-a6-cover-my-yard-pale-mint",
      "source_title": "Techo Original A6 Cover My Yard Pale Mint"
     }
    ]
@@ -4348,7 +4348,7 @@
   {
    "id": "cultpens",
    "name": "Cult Pens",
-   "url": "https://www.cultpens.com/",
+   "url": "https://cultpens.com/",
    "country": "UK",
    "platform": "shopify",
    "indie": true,
@@ -4357,7 +4357,7 @@
      "canonical": "lt-hardcover-a5",
      "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
      "type": "Dot grid notebook",
-     "url": "https://www.cultpens.com/products/leuchtturm1917-hardcover-notebook-medium-black?variant=43642562543859",
+     "url": "https://cultpens.com/products/leuchtturm1917-hardcover-notebook-medium-black?variant=43642562543859",
      "source_title": "LEUCHTTURM1917 Hardcover Notebook Medium Black · Dotted",
      "variant_id": 43642562543859
     },
@@ -4365,7 +4365,7 @@
      "canonical": "lt-hardcover-a5",
      "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
      "type": "Dot grid notebook",
-     "url": "https://www.cultpens.com/products/leuchtturm1917-hardcover-notebook-medium-navy?variant=43642563789043",
+     "url": "https://cultpens.com/products/leuchtturm1917-hardcover-notebook-medium-navy?variant=43642563789043",
      "source_title": "LEUCHTTURM1917 Hardcover Notebook Medium Navy · Dotted",
      "variant_id": 43642563789043
     },
@@ -4373,7 +4373,7 @@
      "canonical": "lt-hardcover-a5",
      "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
      "type": "Dot grid notebook",
-     "url": "https://www.cultpens.com/products/leuchtturm1917-hardcover-notebook-medium-sage?variant=43643126448371",
+     "url": "https://cultpens.com/products/leuchtturm1917-hardcover-notebook-medium-sage?variant=43643126448371",
      "source_title": "LEUCHTTURM1917 Hardcover Notebook Medium Sage · Dotgrid",
      "variant_id": 43643126448371
     },
@@ -4381,7 +4381,7 @@
      "canonical": "lt-120g-a5",
      "label": "Leuchtturm1917 · Medium (A5) 120G dotted notebook",
      "type": "Dot grid notebook",
-     "url": "https://www.cultpens.com/products/leuchtturm1917-120g-edition-notebook-medium-black?variant=43643130478835",
+     "url": "https://cultpens.com/products/leuchtturm1917-120g-edition-notebook-medium-black?variant=43643130478835",
      "source_title": "LEUCHTTURM1917 120g Edition Notebook Medium Black · Dotted",
      "variant_id": 43643130478835
     },
@@ -4389,7 +4389,7 @@
      "canonical": "lt-bullet-journal-ed2",
      "label": "Leuchtturm1917 · Bullet Journal Edition 2",
      "type": "Dot grid notebook",
-     "url": "https://www.cultpens.com/products/leuchtturm1917-bullet-journal-edition-2-black",
+     "url": "https://cultpens.com/products/leuchtturm1917-bullet-journal-edition-2-black",
      "source_title": "LEUCHTTURM1917 Bullet Journal Edition 2 Black"
     }
    ]
@@ -4397,7 +4397,7 @@
   {
    "id": "goldspot",
    "name": "Goldspot Pens",
-   "url": "https://www.goldspot.com/",
+   "url": "https://goldspot.com/",
    "country": "US",
    "platform": "shopify",
    "indie": true,
@@ -4406,28 +4406,28 @@
      "canonical": "lt-hardcover-a5",
      "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
      "type": "Dot grid notebook",
-     "url": "https://www.goldspot.com/products/leuchtturm-1917-hardcover-dot-grid-notebook-in-sage-a5",
+     "url": "https://goldspot.com/products/leuchtturm-1917-hardcover-dot-grid-notebook-in-sage-a5",
      "source_title": "Leuchtturm 1917 Hardcover Dot Grid Notebook in Sage - A5"
     },
     {
      "canonical": "lt-hardcover-a5",
      "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
      "type": "Dot grid notebook",
-     "url": "https://www.goldspot.com/products/leuchtturm-1917-black-hardcover-medium-dotted",
+     "url": "https://goldspot.com/products/leuchtturm-1917-black-hardcover-medium-dotted",
      "source_title": "Leuchtturm 1917 Hardcover Dot Grid Notebook in Black - A5"
     },
     {
      "canonical": "lt-hardcover-a5",
      "label": "Leuchtturm1917 · Hardcover Medium (A5) dotted notebook",
      "type": "Dot grid notebook",
-     "url": "https://www.goldspot.com/products/leuchtturm-1917-navy-blue-hardcover-medium-dotted",
+     "url": "https://goldspot.com/products/leuchtturm-1917-navy-blue-hardcover-medium-dotted",
      "source_title": "Leuchtturm 1917 Hardcover Dot Grid Notebook in Navy Blue - A5"
     },
     {
      "canonical": "lt-bullet-journal-ed2",
      "label": "Leuchtturm1917 · Bullet Journal Edition 2",
      "type": "Dot grid notebook",
-     "url": "https://www.goldspot.com/products/leuchtturm-1917-hardcover-bullet-journal-edition-2-in-black-a5",
+     "url": "https://goldspot.com/products/leuchtturm-1917-hardcover-bullet-journal-edition-2-in-black-a5",
      "source_title": "Leuchtturm 1917 Hardcover Bullet Journal Edition 2 in Black - A5"
     }
    ]

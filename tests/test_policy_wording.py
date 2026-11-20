@@ -110,8 +110,11 @@ class PolicyWordingTests(unittest.TestCase):
     def test_privacy_discloses_confirmation_tpt_and_github(self):
         doc = html_of(site.build_privacy())
         text = html.unescape(re.sub(r"<[^>]+>", " ", doc))
-        self.assertIn("updated Nov 18, 2026", text)
-        self.assertEqual(site.STATIC_LASTMOD["privacy.html"], "2026-11-18")
+        self.assertIn("updated Nov 20, 2026", text)
+        self.assertEqual(site.STATIC_LASTMOD["privacy.html"], "2026-11-20")
+        self.assertNotIn("Cloudflare Web Analytics", text)
+        self.assertIn("does not currently run analytics beacons, cookies, or third-party tracking scripts", text)
+        self.assertIn("The site is hosted on Cloudflare Pages.", text)
         self.assertIn("Buttondown sends a confirmation email first", text)
         self.assertIn("we only add the address to the list after you click the link", text)
         self.assertIn("We use it only to send restock alerts and occasional site updates.", text)
