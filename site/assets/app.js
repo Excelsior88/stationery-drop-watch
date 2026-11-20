@@ -121,7 +121,7 @@
       const shops = new Set(ls.map(r => r.sid)).size;
       const bits = [esc(h.t), shops + " " + (shops === 1 ? "shop" : "shops")];
       if (h.dp) bits.push(`<a href="${esc(h.dp)}">Design page</a>`);
-      const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span> ` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}</span><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span></li>`).join("");
+      const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span> ` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}</span><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span>${r.on && r.st === "sold_out" ? `<span class="official-note">${esc(r.on)}</span>` : ""}</li>`).join("");
       return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${soldEverywhereNote(ls)}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
     }
     let honorHash = true;
