@@ -1798,5 +1798,41 @@
   "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-mega-weeks-bow-tie-sheep-sheep-sheep",
   "from": "coming_soon",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T15:19:02+00:00",
+  "store_id": "atlas",
+  "store": "Atlas Stationers",
+  "label": "Weeks Mega · Colors: Sea Glass",
+  "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-mega-colors-sea-glass",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T15:17:45+00:00",
+  "store_id": "laywines",
+  "store": "Laywine's",
+  "label": "Cousin A5 book (English)",
+  "url": "https://laywines.com/products/hobonichi-a5-cousin-english-book-2027",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T15:19:47+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Storybook in Navy · B5 white dot grid",
+  "url": "https://www.archerandolive.com/products/storybook-in-navy-books?variant=48885118501019",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T15:20:16+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Storybook in Plum · pocket dot grid",
+  "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636147044507",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
