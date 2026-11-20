@@ -139,6 +139,14 @@ class HomeNoticeCardTests(unittest.TestCase):
         for sentence in line.split(". "):
             self.assertIn(sentence.rstrip("."), notice)
 
+    def test_phones_keep_every_card_icon_at_a_two_column_size(self):
+        css = (ROOT / "site/assets/style.css").read_text()
+        self.assertNotRegex(css, r"\.hub-art\{display:none\}")
+        self.assertIn("  .hub-art svg{width:96px;max-width:96px}\n", css)
+        self.assertIn('<span class="hub-art"><svg', self.cards[2])
+        for card in self.cards:
+            self.assertIn('<span class="hub-art"><svg', card)
+
     def test_grid_is_three_wide_and_the_card_spans_the_row_when_it_wraps(self):
         css = (ROOT / "site/assets/style.css").read_text()
         self.assertIn("grid-template-columns:repeat(3,minmax(0,1fr))", css)

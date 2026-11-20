@@ -525,7 +525,8 @@ table.stock.compare thead th{vertical-align:top}
   .trust .trust-miss{display:block;margin-top:4px;font-size:.68rem;font-weight:500;color:var(--ink-2)}
   .hero .section-switch{margin-top:6px}
   .hub-grid{grid-template-columns:1fr 1fr;gap:10px}
-  .hub-art{display:none}
+  .hub-art{margin:-2px 0 4px}
+  .hub-art svg{width:96px;max-width:96px}
   .hub-card p:not(.hub-count){font-size:.82rem;line-height:1.4;margin:0 0 8px}
   .hub-card a{padding:12px}
   .hub-card h3{font-size:1.05rem;margin-bottom:4px}
