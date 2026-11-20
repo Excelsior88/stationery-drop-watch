@@ -1951,5 +1951,23 @@
   "url": "https://www.archerandolive.com/products/apothecary-shelf-notebook?variant=49143523868827",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T20:19:19+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "Weeks Mega · Bow & Tie: Candy Dream",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-bow-tie-candy-dream-1",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-20T20:19:57+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Songbird in Blue · letter dot grid",
+  "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128957059227",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
