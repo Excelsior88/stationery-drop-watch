@@ -63,14 +63,26 @@ class CheckerNoteTests(unittest.TestCase):
         rec = run(item(1, 0, 1))
         self.assertEqual(rec["official_note"], "Sales ended at official store")
 
-    def test_sold_out_with_no_signal_or_restock_undecided_has_no_note(self):
-        for lineup in (0, "", "Restock Undecided"):
+    def test_restock_undecided_on_a_sold_out_item_gets_the_undecided_note(self):
+        rec = run(item(1, "Restock Undecided", 0, ((1, 0), (1, 0))))
+        self.assertEqual(rec["status"], "sold_out")
+        self.assertEqual(rec["official_note"], "Restock undecided at official store")
+
+    def test_restock_undecided_on_an_in_stock_item_has_no_note(self):
+        rec = run(item(0, "Restock Undecided", 0, ((0, 0),)))
+        self.assertEqual(rec["status"], "in_stock")
+        self.assertNotIn("official_note", rec)
+        rec = run(item(0, "Restock undecided for the English edition", 0, ((0, 0), (1, 0))))
+        self.assertNotIn("official_note", rec)
+
+    def test_sold_out_with_no_signal_has_no_note(self):
+        for lineup in (0, ""):
             rec = run(item(1, lineup))
             self.assertEqual(rec["status"], "sold_out")
             self.assertNotIn("official_note", rec, lineup)
 
     def test_in_stock_has_no_note_even_with_a_stale_message(self):
-        for lineup in ("Restock Coming", "No Restock Planned"):
+        for lineup in ("Restock Coming", "Restock Undecided", "No Restock Planned"):
             rec = run(item(0, lineup, 0, ((0, 0),)))
             self.assertEqual(rec["status"], "in_stock")
             self.assertNotIn("official_note", rec)
@@ -117,7 +129,7 @@ class RenderTests(unittest.TestCase):
             return site.build_design(d)[1], site.build_group(g, {})[1]
 
     def test_note_renders_on_the_official_row_of_tracker_and_design_page(self):
-        for note in ("Official store notes a restock is planned", "Sales ended at official store"):
+        for note in ("Official store notes a restock is planned", "Restock undecided at official store", "Sales ended at official store"):
             for doc in self.pages(self.stock_with(note)):
                 row = next(r for r in doc.split("<tr ")[1:] if f'href="{STARLIGHT_URL}"' in r.split("</tr>")[0])
                 row = row.split("</tr>")[0]

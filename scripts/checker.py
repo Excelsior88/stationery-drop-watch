@@ -121,8 +121,9 @@ def check_shopify_store(store):
 # Real feed values (Nov 19, 2026, all 745 items): message_lineup.en is 0 (no message), "Restock Coming",
 # "Restock Undecided", "No Restock Planned", or an edition-only variant such as "Restock coming for the
 # English edition" (seen only on items that are still partly on sale). sales_termination was 0 on every item;
-# 1 is treated as ended in case Hobonichi starts using it. Undecided and edition-only messages get no note.
+# 1 is treated as ended in case Hobonichi starts using it. Edition-only messages get no note.
 HOBO_NOTE_RESTOCK = "Official store notes a restock is planned"
+HOBO_NOTE_UNDECIDED = "Restock undecided at official store"
 HOBO_NOTE_ENDED = "Sales ended at official store"
 
 def hobonichi_note(item, status):
@@ -135,6 +136,8 @@ def hobonichi_note(item, status):
         return HOBO_NOTE_ENDED
     if item.get("sales_termination") == 0 and lineup.strip().lower() == "restock coming":
         return HOBO_NOTE_RESTOCK
+    if item.get("sales_termination") == 0 and lineup.strip().lower() == "restock undecided":
+        return HOBO_NOTE_UNDECIDED
     return None
 
 def check_hobonichi(store):
