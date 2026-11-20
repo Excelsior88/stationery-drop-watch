@@ -681,6 +681,12 @@ def shop_tally(ls):
     word = "shop" if shops == 1 else "shops"
     return f"{in_stock_tally([r['st'] for r in ls])} · {in_shops} of {shops} {word} in stock"
 
+def official_note(l):
+    """Optional note from Hobonichi's own feed (checker.hobonichi_note), only on sold-out official rows.
+    Older stock.json rows don't have the field, so they render as before."""
+    note = l.get("official_note")
+    return note if note and l.get("store_id") == "1101" and l.get("status") == "sold_out" else None
+
 def compare_product(ls):
     """One product, every shop that lists it, so the statuses sit next to each other."""
     order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
@@ -699,7 +705,8 @@ def compare_product(ls):
         title = f'<span class="sub">{E(r["title"])}</span>' if r.get("title") and r["title"] not in (r.get("gn"), r.get("p")) else ""
         items.append(
             f'<li><span class="compare-shop"><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region}{variant}{title}</span>'
-            f'<span class="badge {E(r["st"])}">{STATUS[r["st"]]}</span></li>')
+            f'<span class="badge {E(r["st"])}">{STATUS[r["st"]]}</span>'
+            + (f'<span class="official-note">{E(r["on"])}</span>' if r.get("on") and r.get("st") == "sold_out" else "") + '</li>')
     anchor = f' id="{E(h["g"])}"' if re.fullmatch(r"[A-Za-z][\w-]*", h.get("g") or "") else ""
     return f'''<article class="compare"{anchor}>
   <header class="compare-head"><h3>{name}</h3><p class="compare-tally">{E(shop_tally(ls))}</p><p class="sub">{" · ".join(b for b in bits if b)}</p>{note}</header>
@@ -791,6 +798,9 @@ def tracker_rows(prods, out_everywhere=None):
                  u=p["url"], at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
                  va=p.get("available_variants"), tv=p.get("total_variants"),
                  sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99)))
+        note = official_note(p)
+        if note:
+            rows[-1]["on"] = note  # app.js shows it under the shop, like compare_product does
     for r, p in zip(rows, prods):  # design page link (FIX-09), shown on the product's group header
         dp = design_page_for([p])
         if dp:
@@ -1240,7 +1250,7 @@ def build_about():
 <p>Drop Watch is run by Andrew Robinson. He built the tracker after seeing how frustrating it was for his partner, Arden, to keep up with planner restocks, and now they run it together. Stationery Drop Watch is built in Hamtramck, Michigan.</p>
 </section>
 <h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
+<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email {plain_email()} for rates and dates.</p>
@@ -1375,6 +1385,9 @@ def status_rows(ls, oe=None):
     for l in sorted(ls, key=lambda l: (order.get(l["status"], 9), l["store"])):
         since = l.get("status_since")
         since_html = f'<span class="sub">since {time_tag(since)}</span>' if since and l["status"] != "unknown" else ""
+        note = official_note(l)
+        if note:
+            since_html += f'<span class="sub official-note">{E(note)}</span>'
         rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
   <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}</td></tr>""")
     return "".join(rows)

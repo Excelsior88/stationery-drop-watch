@@ -117,6 +117,29 @@ def check_shopify_store(store):
         out.append(rec)
     return out
 
+# Short notes from Hobonichi's own items.json, shown on sold-out official rows. Our wording, not theirs.
+# Real feed values (Nov 19, 2026, all 745 items): message_lineup.en is 0 (no message), "Restock Coming",
+# "Restock Undecided", "No Restock Planned", or an edition-only variant such as "Restock coming for the
+# English edition" (seen only on items that are still partly on sale). sales_termination was 0 on every item;
+# 1 is treated as ended in case Hobonichi starts using it. Edition-only messages get no note.
+HOBO_NOTE_RESTOCK = "Official store notes a restock is planned"
+HOBO_NOTE_UNDECIDED = "Restock undecided at official store"
+HOBO_NOTE_ENDED = "Sales ended at official store"
+
+def hobonichi_note(item, status):
+    """The optional official_note for one 1101.com row, or None. Only for sold-out rows; never changes status."""
+    if status != "sold_out" or not item:
+        return None
+    lineup = item.get("message_lineup")
+    lineup = (lineup.get("en") or "") if isinstance(lineup, dict) else ""
+    if item.get("sales_termination") == 1 or lineup.strip().lower() == "no restock planned":
+        return HOBO_NOTE_ENDED
+    if item.get("sales_termination") == 0 and lineup.strip().lower() == "restock coming":
+        return HOBO_NOTE_RESTOCK
+    if item.get("sales_termination") == 0 and lineup.strip().lower() == "restock undecided":
+        return HOBO_NOTE_UNDECIDED
+    return None
+
 def check_hobonichi(store):
     """Official 1101.com store: one public JSON feed covers every 2027 item."""
     h = Host("https://www.1101.com"); out = []
@@ -137,6 +160,8 @@ def check_hobonichi(store):
             if it.get("soldout") or (sales and all(s.get("soldout") for s in sales)): rec["status"] = "sold_out"
             elif sales and all(s.get("unreleased") for s in sales): rec["status"] = "coming_soon"
             elif live: rec["status"] = "in_stock"
+            note = hobonichi_note(it, rec["status"])
+            if note: rec["official_note"] = note
         elif not err:
             rec["error"] = "item key not in feed"
         out.append(rec)
