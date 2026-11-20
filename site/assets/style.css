@@ -56,6 +56,7 @@ nav a[aria-current]{background:var(--ink);color:var(--paper)}
 .hero{padding:44px 0 26px;max-width:760px}
 .lede{font-size:1.15rem;color:var(--ink-2);margin:0 0 1.2em}
 .suggest{font-family:var(--serif);font-style:italic;font-weight:500;font-size:1.12rem;line-height:1.45;color:var(--ink);margin:-.45em 0 1.15em}
+.takedown-notice .notice-pull{margin:1.15em 0;padding:2px 0 2px 14px;border-left:3px solid var(--accent);font-weight:700;color:var(--ink)}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 10px}
 .hero-compact .stats{margin:12px 0 8px}
 .stats div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;box-shadow:0 1px 0 var(--line)}

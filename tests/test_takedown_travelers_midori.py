@@ -81,14 +81,16 @@ class AlertTests(unittest.TestCase):
 class NoticeTests(unittest.TestCase):
     def test_notice_text_is_the_approved_wording(self):
         self.assertEqual(site.TAKEDOWN_HEADING, "Why Traveler's Company and MIDORI are gone")
-        self.assertEqual(len(site.TAKEDOWN_NOTICE), 7)
+        self.assertEqual(len(site.TAKEDOWN_NOTICE), 6)
         self.assertTrue(site.TAKEDOWN_NOTICE[0].startswith(APPROVED_FIRST))
-        self.assertEqual(site.TAKEDOWN_NOTICE[4], APPROVED_LAST)
-        self.assertEqual(site.TAKEDOWN_NOTICE[5], APPROVED_BOTS)
-        self.assertEqual(site.TAKEDOWN_NOTICE[6], APPROVED_SCALPERS)
+        self.assertTrue(site.TAKEDOWN_NOTICE[3].startswith("We think you deserve to know why."))
+        self.assertTrue(site.TAKEDOWN_NOTICE[3].endswith("the moment they had stock. " + APPROVED_BOTS))
+        self.assertEqual(site.TAKEDOWN_NOTICE[4], APPROVED_SCALPERS)
+        self.assertEqual(site.TAKEDOWN_NOTICE[5], APPROVED_LAST)
         self.assertIn('"pushes that stock toward resellers,"', site.TAKEDOWN_NOTICE[1])
         self.assertTrue(site.HOME_NOTICE_LINE.endswith(APPROVED_SCALPERS))
         self.assertIn(APPROVED_BOTS, site.HOME_NOTICE_LINE)
+        self.assertTrue(site.HOME_NOTICE_LINE.startswith("We asked politely for permission to use their official product photos."))
 
     def test_old_urls_show_the_notice(self):
         for slug, noindex in ((site.TN_SLUG, False), (site.MIDORI_SLUG, False), (site.TN_GUIDE_SLUG, True)):
@@ -97,7 +99,15 @@ class NoticeTests(unittest.TestCase):
             self.assertEqual(fname, slug + "/")
             self.assertIn(f"<h1>{site.TAKEDOWN_HEADING}</h1>", text)
             for para in site.TAKEDOWN_NOTICE:
-                self.assertIn(f"<p>{para}</p>", text)
+                if para == site.TAKEDOWN_PULL:
+                    self.assertIn(f'<p class="notice-pull">{para}</p>', text)
+                else:
+                    self.assertIn(f"<p>{para}</p>", text)
+            pull_at = text.index('<p class="notice-pull">')
+            newsletter_at = text.index(APPROVED_LAST)
+            why_at = text.index("the moment they had stock. " + APPROVED_BOTS)
+            self.assertLess(why_at, pull_at)
+            self.assertLess(pull_at, newsletter_at)
             self.assertEqual('<meta name="robots" content="noindex">' in doc, noindex)
             self.assertNotIn("og-travelers.png", doc)
             self.assertNotIn("og-midori.png", doc)
