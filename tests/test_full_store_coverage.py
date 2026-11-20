@@ -59,11 +59,10 @@ class FullStoreCoverageTests(unittest.TestCase):
         self.assertEqual(official["wb27_moominsnufkin"]["canonical"], "weeks-moomin-snufkin")
         self.assertEqual(official["wb27_m_colorspred"]["canonical"], "weeks-mega-poppy-red")
         jet = next(s for s in self.cfg["stores"] if s["id"] == "jetpens")
-        nanami = next(s for s in self.cfg["stores"] if s["id"] == "nanami")
         self.assertEqual(jet["products"], [])
         self.assertEqual(jet["platform"], "blocked")
-        self.assertEqual(nanami["products"], [])
-        self.assertEqual(nanami["platform"], "robots-disallow")
+        self.assertFalse(any(s["id"] == "nanami" or "nanami" in (s.get("url") or "") for s in self.cfg["stores"]))
+        self.assertEqual([n["id"] for n in self.stock["not_checked"]], ["jetpens"])
         felice = [p for s in self.cfg["stores"] for p in s["products"] if p.get("canonical") == "cover-a6-mina-felice"]
         tragen = [p for s in self.cfg["stores"] for p in s["products"] if p.get("canonical") == "cover-a6-tragen-black"]
         self.assertGreaterEqual(len(felice), 8)
