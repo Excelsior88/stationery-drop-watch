@@ -32,8 +32,8 @@ def badge(li):
 class RestockFeedTests(unittest.TestCase):
     def test_row_uses_latest_check_not_the_event_status(self):
         at = "2026-11-06T23:18:18+00:00"
-        event = {"url": "https://shop.example/card-black", "label": "Card Size 20th Anniversary Set",
-                 "store": "Traveler's Company USA (official)", "at": at, "from": "sold_out", "to": "in_stock"}
+        event = {"url": "https://shop.example/card-black", "label": "Fixture Notebook",
+                 "store": "Fixture Shop (official)", "at": at, "from": "sold_out", "to": "in_stock"}
         products = site.stock["products"]
         try:
             site.stock["products"] = [{"url": event["url"], "status": "sold_out"}]
@@ -65,7 +65,7 @@ class RestockFeedTests(unittest.TestCase):
             self.assertIn(f'datetime="{at}"', li)
             self.assertIn("Nov 6, 6:18 PM ET", li)
             self.assertIn('href="https://shop.example/card-black"', li)
-            self.assertIn("Traveler&#x27;s Company USA (official)", li)
+            self.assertIn("Fixture Shop (official)", li)
             self.assertIn("restocked", li)
             self.assertIn(">now <", li)
 
@@ -83,17 +83,17 @@ class RestockFeedTests(unittest.TestCase):
             ("https://example.test/preorder", "preorder", "Opened As Preorder"),
             ("https://example.test/old", "sold_out", "Too Old"),
         ]
-        products = [{"url": url, "status": status, "section": "travelers", "store_id": "fixture",
+        products = [{"url": url, "status": status, "section": "dotgrid", "store_id": "fixture",
                      "store": "Fixture", "label": label, "type": "Notebook"} for url, status, label in rows]
         events = [
             {"url": "https://example.test/sold", "to": "in_stock", "from": "sold_out", "at": sold_at,
-             "label": "Sold Later", "store": "Traveler's Company USA (official)"},
+             "label": "Sold Later", "store": "Fixture Shop (official)"},
             {"url": "https://example.test/sold", "to": "in_stock", "from": "sold_out", "at": again_at,
-             "label": "Sold Later", "store": "Traveler's Company USA (official)"},
+             "label": "Sold Later", "store": "Fixture Shop (official)"},
             {"url": "https://example.test/still", "to": "in_stock", "from": "sold_out", "at": still_at,
-             "label": "Still Here", "store": "Simple Paper"},
+             "label": "Still Here", "store": "Fixture Paper"},
             {"url": "https://example.test/failed", "to": "in_stock", "from": "coming_soon", "at": failed_at,
-             "label": "Check Failed", "store": "Omoi Zakka Shop"},
+             "label": "Check Failed", "store": "Fixture Zakka"},
             {"url": "https://example.test/preorder", "to": "in_stock", "from": "sold_out", "at": pre_at,
              "label": "Opened As Preorder", "store": "Atlas Stationers"},
             {"url": "https://example.test/old", "to": "in_stock", "from": "sold_out", "at": old_at,
@@ -136,8 +136,8 @@ class RestockFeedTests(unittest.TestCase):
             self.assertNotIn(">In stock<", li)
         self.assertIn('data-now="in_stock"', still)
         self.assertIn('href="https://example.test/sold"', sold)
-        self.assertIn("Traveler&#x27;s Company USA (official)", sold)
-        self.assertIn('href="/travelers-company-limited-edition/"', sold)
+        self.assertIn("Fixture Shop (official)", sold)
+        self.assertIn('href="/archer-and-olive-dot-grid-journal/"', sold)
         self.assertIn("restocked", sold)
         self.assertLess(doc.find("https://example.test/sold"), doc.find("https://example.test/still"))
         self.assertLess(doc.find("https://example.test/still"), doc.find("https://example.test/failed"))

@@ -61,8 +61,8 @@ class GiftGuideLiveStockTests(unittest.TestCase):
         self.assertNotEqual(sold, live)
 
     def test_glance_table_follows_the_same_data(self):
-        doc = self.render(with_status("tn-regular-black", "sold_out"))
-        self.assertIn("Sold out at all", text(glance_row(doc, "Traveler's notebook Regular, Black")))
+        doc = self.render(with_status("lt-hardcover-a5", "sold_out"))
+        self.assertIn("Sold out at all", text(glance_row(doc, "Leuchtturm1917 Hardcover Medium (A5), dotted")))
 
     def test_unchecked_listings_are_not_called_sold_out(self):
         sec = text(section(self.render(with_status("weeks-moomin-table", "unknown")), MOOMIN))
@@ -133,7 +133,7 @@ class GiftGuideCopyTests(unittest.TestCase):
 
     def test_every_live_link_exists(self):
         for key, (_, _, live, _) in site.GIFT_PICKS.items():
-            self.assertTrue((SITE / live / "index.html").is_file(), live)
+            self.assertTrue((SITE / live.split("#")[0] / "index.html").is_file(), live)  # a pick may link to its section on a tracker page
             self.assertIn(f'href="/{live}"', self.doc)
 
     def test_listed_in_guides_and_sitemap_and_matches_guide_design(self):

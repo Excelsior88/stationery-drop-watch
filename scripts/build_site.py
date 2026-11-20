@@ -25,6 +25,19 @@ stock = json.loads((ROOT / "data/stock.json").read_text())
 changes = json.loads((ROOT / "data/changes.json").read_text())
 picks = json.loads((ROOT / "content/editor_picks.json").read_text())
 
+# Traveler's Company and MIDORI were removed on Nov 19, 2026, at TRAVELER'S COMPANY USA's request (owner
+# approved). Their old URLs show TAKEDOWN_NOTICE instead. Rows left in data/ from before the removal, and any row
+# whose URL is no longer in stores.json, never reach a page, a restock feed or the site/data copies.
+TAKEDOWN_SECTIONS = ("travelers", "midori")
+TAKEDOWN_STORES = {"travelerscompanyusa", "mdproductusa"}  # the two brands' own stores
+_TRACKED_URLS = {p["url"] for s in stores["stores"] for p in s["products"]}
+
+def taken_down(r):
+    return r.get("section") in TAKEDOWN_SECTIONS or r.get("store_id") in TAKEDOWN_STORES or r.get("url") not in _TRACKED_URLS
+
+stock["products"] = [p for p in stock["products"] if not taken_down(p)]
+changes = [c for c in changes if not taken_down(c)]
+
 # Canonical products from other brands (e.g. Archer and Olive).
 OTHER_BRAND = {c["id"] for c in stores["canonical"] if c.get("brand")}
 CANON_SECTION = {c["id"]: c["section"] for c in stores["canonical"] if c.get("section")}
@@ -36,18 +49,10 @@ DOTGRID_SHOPS = [s for s in stores["stores"] if s.get("brand")]
 SECTIONS = {  # non-Hobonichi sections in nav/footer order; each has one page (the GROUPS entry with that section)
     # Slugs stay on the published URLs. Visible names describe what the page tracks.
     # /archer-and-olive-dot-grid-journal/ covers all four dot-grid makers, not Archer and Olive alone.
-    # /travelers-company-limited-edition/ covers Regular size colors and limited editions. Renaming either
-    # URL needs a planned redirect, not a silent slug change.
+    # Renaming it needs a planned redirect, not a silent slug change.
     "dotgrid": dict(slug="archer-and-olive-dot-grid-journal", nav="Dot grid journals", name="dot grid journals",
                     foot="Dot grid journaling", link="Dot grid journals", count="dot grid journals",
                     one="dot grid journal", amazon=None),
-    "travelers": dict(slug="travelers-company-limited-edition", nav="Traveler's Company",
-                      name="Traveler's Notebook regular colors and limited editions",
-                      foot="Traveler's Company", link="Regular colors and limited editions", count="Traveler's Company",
-                      one="Traveler's Notebook regular-color and limited-edition", amazon="travelers"),
-    "midori": dict(slug="midori-md-limited-edition", nav="MIDORI MD", name="MIDORI MD seasonal releases",
-                   foot="MIDORI MD", link="Seasonal releases", count="MIDORI MD",
-                   one="MIDORI MD seasonal release", amazon="midori"),
 }
 
 def g_sec(g):
@@ -83,9 +88,9 @@ def section_shops(sec):
     return [s for s in stores["stores"] if s["id"] in ids]
 
 # Shop's home country, from its own site or domain (stores.json "country", first word). Never a shipping claim.
-_REGION_FIX = {"travelerscompanyusa": "US", "tokyopenshop": "US", "mdproductusa": "US"}  # US company sites (Tokyo Pen Shop: Fairfield, Iowa)
+_REGION_FIX = {}  # id -> country tag, for a shop whose stores.json "country" is missing
 REGION = {x["id"]: _REGION_FIX.get(x["id"]) or (x.get("country") or "").split()[0] for x in stores["stores"]}
-REGION_NAME = {"US": "United States", "CA": "Canada", "SG": "Singapore", "UK": "United Kingdom", "JP": "Japan"}
+REGION_NAME = {"US": "United States", "CA": "Canada", "SG": "Singapore", "UK": "United Kingdom", "AU": "Australia", "JP": "Japan"}
 assert all(REGION[x["id"]] in REGION_NAME for x in stores["stores"]), "every shop needs a country tag"
 
 # A shop whose name ends with its country (e.g. "Leuchtturm1917 US") shows the plain name plus the
@@ -202,7 +207,7 @@ def shop_names(sec):
     return dotgrid_names() if sec == "dotgrid" else names_and([s["name"] for s in section_shops(sec)])
 
 def sections_phrase():
-    """'dot grid journals, Traveler's Company notebooks and limited editions and MIDORI MD seasonal releases' (live ones only)."""
+    """'dot grid journals' (live sections only, joined with commas and 'and')."""
     return names_and([SECTIONS[k]["name"] for k in LIVE])
 
 def organization():
@@ -247,11 +252,18 @@ def guide_updated(fn):
 STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not yet on sale",
           "sold_out": "Sold out", "unknown": "Couldn't check"}
 DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
-TN_GUIDE_SLUG = "travelers-notebook-regular-vs-passport-vs-card-size"
+TN_SLUG = "travelers-company-limited-edition"   # takedown notice since Nov 19, 2026
+MIDORI_SLUG = "midori-md-limited-edition"       # takedown notice since Nov 19, 2026
+TN_GUIDE_SLUG = "travelers-notebook-regular-vs-passport-vs-card-size"  # takedown notice (noindex) since Nov 19, 2026
+TAKEDOWN_ITEMS = {TN_SLUG: ("regular-black", "regular-blue", "regular-brown", "regular-camel", "regular-olive",
+                            "road-trip-brown", "card-size-20th-anniversary-black"),
+                  MIDORI_SLUG: ("md-diary-2027-a5", "md-diary-1-day-1-page-2027-a5")}
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": DOTGRID_SLUG + "/",
-             "travelers-notebook-regular-size": SECTIONS["travelers"]["slug"] + "/#tracker",  # Regular colors merged into the Traveler's Company page
+             "travelers-notebook-regular-size": TN_SLUG + "/",  # takedown notice
              "faq": "#good-to-know"}  # /faq -> the homepage FAQ ("Good to know")
+# Old Traveler's Company and MIDORI item pages point at their brand's takedown notice.
+REDIRECTS.update({f"{parent}/{slug}": parent + "/" for parent, slugs in TAKEDOWN_ITEMS.items() for slug in slugs})
 # Home is a hub; the Hobonichi tracker (the old homepage content) lives on its own page.
 HOBO_TRACKER = "hobonichi-restock-tracker/"
 # Header: one link per restock tracker, then the rest of the site. Wraps on narrow screens; nothing is hidden.
@@ -281,14 +293,11 @@ TITLE_OVERRIDES = {
     "Hobonichi Techo 2027 launch & restock calendar": "Hobonichi Techo 2027 calendar",
     "Hobonichi Techo vs Cousin vs Weeks (2027): sizes, layouts, who each suits": "Hobonichi Techo vs Cousin vs Weeks",
     "Best dot grid journals compared: Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy": "Best dot grid journals compared",
-    "Traveler's Notebook Regular vs Passport vs Card Size: Which Size Fits You?": "Traveler's Regular vs Passport vs Card Size",
     "Hobonichi Techo January-start vs April-start: which one should you buy?": "Hobonichi Techo January-start vs April-start",
 }
 DESC_OVERRIDES = {
     "Dot grid journals compared: paper weight (gsm), pages, size and features for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, from each maker's page, plus live stock.":
     "Dot grid journals compared: paper, pages, size and features for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, plus live stock.",
-    "Regular, Passport, or the limited Card Size set: leather cover and refill dimensions from TRAVELER'S COMPANY, which refills fit which cover, and which sizes this site tracks.":
-    "Regular, Passport, or the limited Card Size set: cover and refill sizes from TRAVELER'S COMPANY, which refills fit, and which sizes this site tracks.",
     # Approved sentence is 170 characters. The meta tag keeps that opening through a finished sentence.
     "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1. Here's how the two differ and how to choose.":
     "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1. Here's how the two differ.",
@@ -330,27 +339,9 @@ CNAME = "stationerydropwatch.com"
 OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (Hobonichi side)
 # The default card file is still the Hobonichi artwork. It is also the image on the hub and
 # the utility pages, so the alt names every tracker. It prints no shop count.
-OG_ALT = ("Stationery Drop Watch: restock tracker for Hobonichi, dot grid journals, "
-          f"Traveler's Company and MIDORI, checked {CHECK_FREQ}")
+OG_ALT = f"Stationery Drop Watch: restock tracker for Hobonichi and dot grid journals, checked {CHECK_FREQ}"
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
 OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked " + CHECK_FREQ
-OG_TRAVELERS = BASE + "assets/brand/og-travelers.png"
-# Matches the card: regular size colors, 2027 diary accessories, limited editions. No shop count on the artwork.
-OG_TRAVELERS_ALT = ("Stationery Drop Watch: Traveler's Notebook restock tracker. "
-                    "Regular size colors, 2027 diary accessories and limited editions, at official and independent shops, checked " + CHECK_FREQ)
-OG_MIDORI = BASE + "assets/brand/og-midori.png"
-# The approved 8 Nov 2026 card. It says these words and does not mention the check cadence.
-OG_MIDORI_ALT = ("Stationery Drop Watch: MIDORI restock tracker. "
-                 "Diaries, diary stickers and paper. stationerydropwatch.com")
-MIDORI_OG_SHA = "1aa303925736d8469c7aae3c8e84c745e057451f82e2d95765deed23862cccde"
-
-def _require_midori_card():
-    import hashlib
-    digest = hashlib.sha256((ROOT / "site/assets/brand/og-midori.png").read_bytes()).hexdigest()
-    if digest != MIDORI_OG_SHA:
-        raise SystemExit("og-midori.png is not the approved 8 Nov 2026 artwork")
-
-_require_midori_card()
 CONTENT_LASTMOD = "2026-11-12"  # floor for pages whose HTML changed in the Nov 12 refresh
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
@@ -387,7 +378,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     url = url_for(fname)
     title = seo_title(title)  # brand suffix only when the title still fits in a search result
     desc = seo_desc(desc)
-    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "hobonichi-january-start-vs-april-start/", "best-dot-grid-journals/", TN_GUIDE_SLUG + "/", GIFT_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
+    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "hobonichi-january-start-vs-april-start/", "best-dot-grid-journals/", GIFT_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
     # Hobonichi product pages sit under the tracker. The Techo vs Cousin vs Weeks guide
     # starts with hobonichi-techo-, but it is a guide, so only Guides is current.
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-")) and not guide_page
@@ -485,8 +476,6 @@ ONE_LIST_LABEL = "Get every restock alert by email"
 SIGNUP_LABELS = {
     "hobonichi": "Get an email when Hobonichi items restock",
     "dotgrid": "Get restock emails for dot grid journals and more",
-    "travelers": "Get restock emails for Traveler's notebook and more",
-    "midori": "Get restock emails for MIDORI MD and more",
 }
 
 def signup_for(subject=None, back=None, section=None, placement="top"):
@@ -1026,10 +1015,6 @@ def build_hobo_tracker():
 HUB_TRACKERS = {  # one line per tracker card on the hub homepage
     "hobonichi": ("Hobonichi Techo 2027", "Original A6, Cousin A5, the English Planner A6, HON, Weeks, Weeks Mega and covers, at the official store and independent shops."),
     "dotgrid": ("Dot grid journals", ""),  # short homepage blurb is filled in below; official-store detail stays on the hub
-    # Live listings are the five Regular colors, the ROAD TRIP exclusive, anniversary sets, and 2027 diary
-    # accessories. Refills and Passport size are not listings on this tracker (the size guide says so).
-    "travelers": ("Traveler's Company", "Regular size colors, plus limited editions: 2027 diary accessories, anniversary sets and shop exclusives."),
-    "midori": ("MIDORI MD", "MD Notebook diaries and MIDORI MD seasonal releases."),
 }
 HUB_FAQ = ("How often do you check the shops?", "What do you track?",
            'What do "Not yet on sale" and "Couldn\'t check" mean?',
@@ -1050,8 +1035,11 @@ def hub_art(kind):
         body = (f'<rect x="51" y="6" width="58" height="52" rx="3" fill="#f4ecdc" stroke="{ink}" stroke-width="2"/>'
                 f'<path d="M51 14 h58" stroke="{accent}" stroke-width="6"/>'
                 f'<path d="M75 6 v11 l5-3 5 3 V6" fill="{sage}"/>{dots}')
-    elif kind == "travelers":
-        body = f'<rect x="46" y="8" width="68" height="48" rx="2" fill="#f4ecdc" stroke="{ink}" stroke-width="2"/><path d="M46 14 h68 M58 8 v48" stroke="{accent}" stroke-width="2"/><path d="M100 18c8 6 8 22 0 28" fill="none" stroke="{sage}" stroke-width="2"/>'
+    elif kind == "notice":
+        # A letter on the same center (80, 32): envelope flap in terracotta, two sage lines.
+        body = (f'<rect x="50" y="12" width="60" height="42" rx="3" fill="{paper}" stroke="{ink}" stroke-width="2"/>'
+                f'<path d="M51 13 L80 36 L109 13" fill="none" stroke="{accent}" stroke-width="3" stroke-linejoin="round"/>'
+                f'<path d="M60 46 h18 M60 50 h12" stroke="{sage}" stroke-width="2" stroke-linecap="round"/>')
     else:
         body = f'<rect x="54" y="8" width="52" height="48" rx="2" fill="{paper}" stroke="{ink}" stroke-width="2"/><path d="M54 20 h52" stroke="{sage}" stroke-width="6"/><path d="M66 32 h28 M66 40 h28" stroke="{ink}" stroke-width="1.6" stroke-linecap="round"/>'
     return f'<svg {common}>{body}</svg>'
@@ -1102,6 +1090,12 @@ def build_index():
   <h3>{E(name)}</h3><p>{E(line)}</p>
   <p class="hub-count"><b>{st["in_stock"]}</b> of {len(ps)} listings in stock <span class="muted small">{E(" · ".join(bits))}</span></p>
   <span class="hub-go">View tracker</span></a></li>""")
+    # Third card: the takedown notice. Same card and button as the trackers; no counts or stock badges.
+    # The line is two verbatim phrases from TAKEDOWN_NOTICE (test_home_notice_card checks that).
+    cards.append(f"""<li class="hub-card hub-notice"><a href="{TN_SLUG}/">
+  <span class="hub-art">{hub_art("notice")}</span>
+  <h3>{E(TAKEDOWN_HEADING)}</h3><p>{E(HOME_NOTICE_LINE)}</p>
+  <span class="hub-go">Read the notice</span></a></li>""")
     sec_of_url = {p["url"]: section_of(p) for p in prods}
     restocks = [c for c in changes if c["url"] in sec_of_url and c["to"] in ("in_stock", "preorder") and c["from"] in ("sold_out", "coming_soon")]
     restocks.sort(key=lambda c: c["at"], reverse=True)
@@ -1127,7 +1121,7 @@ def build_index():
   <h1>Never miss a stationery restock.</h1>
   <p class="hero-shops">We check {N_STORES} shops for you</p>
   <p class="suggest">Know the moment your planner or journal is back.</p>
-  <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals, Traveler's Company notebooks and MIDORI MD releases, and tell you when they come back.</p>
+  <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners and dot grid journals, and tell you when they come back.</p>
   {signup()}
   {trust_strip(prods)}
   <p class="small section-switch">More on the site: <a href="hobonichi-2027.html">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a class="nobr" href="sold-out-everywhere/">Sold out everywhere</a>.</p>
@@ -1156,8 +1150,8 @@ def build_index():
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
                "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
                "publisher": organization()}
-    return page("index.html", "Hobonichi, dot grid, Traveler's Company, MIDORI",
-                f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, dot grid journals, Traveler's notebooks and MIDORI MD, plus free email alerts for every restock we track.",
+    return page("index.html", "Hobonichi and dot grid journal restock tracker",
+                f"Live stock at {N_STORES} shops: Hobonichi Techo 2027 planners and covers and flagship dot grid journals, plus free email alerts for every restock we track.",
                 body, ld=(site_ld, faq_ld))
 
 def build_hobonichi():
@@ -1254,7 +1248,7 @@ def build_about():
 <p>Questions, corrections, or a shop we should track? Email {plain_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
     org_ld = {"@context": "https://schema.org", **organization()}
-    return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi, dot grid, Traveler's and MIDORI restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about.html", "About")), org_ld))
+    return page("about.html", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi planner and dot grid journal restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about.html", "About")), org_ld))
 
 def build_contact():
     """Visible contact page. The address is plain text, wrapped so Cloudflare Email Obfuscation leaves it alone."""
@@ -1338,34 +1332,6 @@ GROUPS = [
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
                f"We track a focused set of flagship dot grid notebooks from {dotgrid_brand_names()}, size by size and color by color, plus Archer and Olive's dot grid refills. {dotgrid_where_checked()} "
                "This page covers those dot grid notebooks and refills, not pens or other paper, and Hobonichi and our other sections have their own pages."),
-    dict(slug=SECTIONS["travelers"]["slug"], short="Traveler's Company", product="Traveler's Notebook", section="travelers",
-         h1="Traveler's Notebook restock tracker: regular colors and limited editions",
-         match=lambda p: section_of(p) == "travelers", eyebrow="Traveler's Company", search_hint="Sticker set, Olive, 20th…",
-         guide_q="How do Traveler's Company allocations and Regular notebooks work?",
-         guide="Traveler's Company makes its limited editions in small runs, and each shop gets its own allocation, so one shop can sell out while another still has stock. "
-               "We also track the five standard Regular size notebooks: Black (No. 13714006), Brown (No. 13715006), Blue (No. 15239006), Camel (No. 15193006) and Olive (No. 15342006). "
-               "Traveler's Company warns that counterfeits are sold in the US, so we only list the official US shop and authorized retailers. For refills, check the shops directly. "
-               f'Choosing Regular, Passport, or the Card Size anniversary set: <a href="{TN_GUIDE_SLUG}/">Regular vs Passport vs Card Size</a>.',
-         # Published URL stays /travelers-company-limited-edition/. The heading names Regular colors and limited editions.
-         title="Traveler's Notebook restock tracker: regular colors and limited editions",
-         desc="Are Traveler's Notebook Regular colors, 2027 diary accessories and anniversary sets in stock? Live status at {shops} official and independent shops. See each row.",
-         og_image=OG_TRAVELERS,
-         og_alt=OG_TRAVELERS_ALT,
-         intro="We track the five Regular size Traveler's Notebook colors (Black, Brown, Blue, Camel and Olive) plus Traveler's Company limited editions: the yearly diary accessories, anniversary sets and shop exclusives. "
-               "We check the official Traveler's Company USA shop and independent shops, item by item. "
-               "Hobonichi and our other sections have their own pages."),
-    dict(slug=SECTIONS["midori"]["slug"], short="MIDORI MD", product="MIDORI MD seasonal release", section="midori",
-         match=lambda p: section_of(p) == "midori", eyebrow="MIDORI MD", search_hint="Diary 2027, 1 Day 1 Page, Stickers…",
-         guide_q="When do the dated MD diaries and stickers come back?",
-         guide="MIDORI makes the dated MD diaries and diary stickers once a year, so when a shop's allocation is gone it is usually gone until the next year's edition. "
-               "The plain MD notebooks stay in the catalog all year, so we don't track them here.",
-         title=f"MIDORI MD seasonal release restock tracker",
-         desc="Are the MIDORI MD Notebook Diary 2027, the 1 Day 1 Page diary and the 2027 diary stickers in stock? Live status at {shops} shops. Each row links to that shop.",
-         og_image=OG_MIDORI,
-         og_alt=OG_MIDORI_ALT,
-         intro="MIDORI's MD line is sold as MD PRODUCT in 2026. The dated 2027 diaries, diary stickers and online store limited editions come once a year, in set quantities. "
-               "We check the official MD PRODUCT USA store and independent shops, size by size. "
-               "This covers MIDORI MD seasonal releases only; Hobonichi and our other sections have their own pages."),
 ]
 for _g in GROUPS:  # one name per page: H1 is "<product> restock tracker" unless the group sets a wider h1
     _g.setdefault("h1", _g["product"] + " restock tracker")
@@ -1457,10 +1423,6 @@ def group_seo_title(g):
     sec = g_sec(g)
     if sec == "dotgrid":
         return "Dot grid journal tracker"
-    if sec == "travelers":
-        return "Traveler's Notebook tracker"
-    if sec == "midori":
-        return "MIDORI MD tracker"
     return f'Hobonichi {g["short"]} tracker'
 
 def design_family(parent_slug):
@@ -1472,8 +1434,6 @@ def design_family(parent_slug):
         "hobonichi-techo-2027-original-a6": "Original A6",
         "hobonichi-techo-2027-cousin-a5": "Cousin",
         DOTGRID_SLUG: "dot grid",
-        SECTIONS["travelers"]["slug"]: "Traveler's",
-        SECTIONS["midori"]["slug"]: "MIDORI",
     }.get(parent_slug, "stock")
 
 def design_seo_title(d):
@@ -1619,7 +1579,6 @@ def group_lastmod(g):
 # FIX-09: one indexable page per high-demand design, nested under its book-type restock page
 # (e.g. /hobonichi-weeks-2027/midnight-blue/). Same template pieces and SEO pattern as the restock pages.
 # Picked from data/stock.json on 2026-11-04; "why" records the reason each design got a page.
-TN_SLUG = SECTIONS["travelers"]["slug"]
 DESIGNS = [
     dict(parent="hobonichi-weeks-2027", slug="midnight-blue", name="Midnight Blue", full="Hobonichi Weeks 2027 Midnight Blue",
          match=lambda p: p.get("canonical") == "weeks-midnight-blue",
@@ -1648,12 +1607,6 @@ DESIGNS = [
     dict(parent="hobonichi-weeks-2027", slug="v-and-a", name="V&A series", full="Hobonichi Weeks 2027 V&A series",
          match=lambda p: p.get("canonical") in ("weeks-va-welcome", "weeks-va-leicester"),
          why="Welcome to the V&A and Leicester stay on one family page. They are separate regular 2027 Weeks books, not one mixed product."),
-    dict(parent=TN_SLUG, slug="regular-camel", name="Regular size Camel", full="Traveler's notebook Regular size Camel",
-         match=lambda p: p.get("canonical") == "tn-regular-camel",
-         why="Sold out at all 5 shops we track."),
-    dict(parent=TN_SLUG, slug="regular-olive", name="Regular size Olive", full="Traveler's notebook Regular size Olive",
-         match=lambda p: p.get("canonical") == "tn-regular-olive",
-         why="Sold out at all 5 shops we track."),
     # --- Round 3: one page per tracked planner or journal design. Facts come from the shops' own listing titles in data/stock.json.
     dict(parent="hobonichi-techo-2027-original-a6", slug="one-piece-edition", name="One Piece Edition", full="Hobonichi Techo 2027 One Piece Edition",
          match=lambda p: p.get("canonical") == "original-a6-jp-one-piece" or (p["type"] == "Book" and "one piece edition" in p["label"].lower())),
@@ -1742,20 +1695,6 @@ DESIGNS = [
          match=lambda p: p.get("canonical") == "nt-tsuki-violet-nocturne"),
     dict(parent=DOTGRID_SLUG, slug="notebook-therapy-tsuki-ravens-secret", name="Notebook Therapy Tsuki Raven's Secret", full="Notebook Therapy Tsuki Raven's Secret dot grid journal",
          match=lambda p: p.get("canonical") == "nt-tsuki-ravens-secret"),
-    dict(parent=TN_SLUG, slug="regular-black", name="Regular size Black", full="Traveler's notebook Regular size Black",
-         match=lambda p: p.get("canonical") == "tn-regular-black"),
-    dict(parent=TN_SLUG, slug="regular-blue", name="Regular size Blue", full="Traveler's notebook Regular size Blue",
-         match=lambda p: p.get("canonical") == "tn-regular-blue"),
-    dict(parent=TN_SLUG, slug="regular-brown", name="Regular size Brown", full="Traveler's notebook Regular size Brown",
-         match=lambda p: p.get("canonical") == "tn-regular-brown"),
-    dict(parent=TN_SLUG, slug="road-trip-brown", name="ROAD TRIP Brown", full="Traveler's notebook ROAD TRIP Brown (Regular size)",
-         match=lambda p: p.get("canonical") == "tn-road-trip-brown"),
-    dict(parent=TN_SLUG, slug="card-size-20th-anniversary-black", name="Card Size 20th Anniversary Set Black", full="Traveler's notebook Card Size 20th Anniversary Set Black",
-         match=lambda p: p.get("canonical") == "tn-20th-card-black"),
-    dict(parent=SECTIONS["midori"]["slug"], slug="md-diary-2027-a5", name="MD Notebook Diary 2027 A5", full="MIDORI MD Notebook Diary 2027 A5",
-         match=lambda p: p.get("canonical") == "md-diary-2027-a5"),
-    dict(parent=SECTIONS["midori"]["slug"], slug="md-diary-1-day-1-page-2027-a5", name="MD Notebook Diary 1 Day 1 Page 2027 A5", full="MIDORI MD Notebook Diary 1 Day 1 Page 2027 A5",
-         match=lambda p: p.get("canonical") == "md-diary-1day-2027-a5"),
 ]
 DESIGNS_LASTMOD = "2026-11-04"
 
@@ -1948,8 +1887,6 @@ FAQ = [
 
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
     "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color, plus Archer and Olive's dot grid refills.",
-    "travelers": "On the Traveler's Company page, we track the five Regular size notebook colors plus limited editions: the 2027 diary accessories, anniversary sets and shop exclusives. We don't track Passport size or refills there.",
-    "midori": "On the MIDORI MD page, we track seasonal and limited MD releases (MIDORI's MD line is now sold as MD PRODUCT).",
 }
 
 HOBO_NOTE_Q = "Where are launch dates and how restocks usually go?"
@@ -2022,9 +1959,9 @@ def build_sitemap():
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(design_fname(d)), design_lastmod(d)) for d in DESIGNS]
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
+    urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG, MIDORI_SLUG)]  # the indexed takedown notices
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    tn_mod = json.loads(GUIDE_DATES.read_text())["build_tn_sizes"]["date"]  # written when that guide is built, earlier in main()
-    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_PUBLISHED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(TN_GUIDE_SLUG + "/"), latest(tn_mod, CONTENT_LASTMOD)), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"])), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, tn_mod, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-17"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_PUBLISHED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"])), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-17"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2071,7 +2008,7 @@ def build_404():
 </section>
 </article>"""
     return page("404.html", "Page not found",
-                "This page doesn't exist. The link may be old or mistyped. The Hobonichi, dot grid, Traveler's Notebook and MIDORI MD trackers are linked here. Pick one below.", body, noindex=True)
+                "This page doesn't exist. The link may be old or mistyped. The Hobonichi planner and dot grid journal trackers are linked here. Pick one below.", body, noindex=True)
 
 # --- SEO guides (Hobonichi section) -------------------------------------------------------------
 # Editorial pages. Every stock status on them comes from data/stock.json (rebuilt about every 30 minutes by the
@@ -2084,7 +2021,6 @@ JAN_APR_PUBLISHED = "2026-11-12"  # owner-approved publication date
 DG_GUIDE_SLUG = "best-dot-grid-journals"
 HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), (JAN_APR_SLUG + "/", "January-start vs April-start"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
 GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared"),
-                        (TN_GUIDE_SLUG + "/", "Regular vs Passport vs Card Size"),
                         ("holiday-stationery-gift-guide-2026/", "Holiday gift guide 2026")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
 GUIDES_LASTMOD = "2026-10-29"
 DG_GUIDE_LASTMOD = "2026-11-04"  # last copy change on the dot grid guide
@@ -2093,8 +2029,7 @@ GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin 
                 JAN_APR_SLUG + "/": "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1.",
                 "hobonichi-2027.html": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources.",
                 DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock.",
-                TN_GUIDE_SLUG + "/": "Leather cover and refill dimensions for Regular, Passport, and the limited Card Size 20th anniversary set, from TRAVELER'S COMPANY's own pages, plus which refills fit and which sizes we track.",
-                "holiday-stationery-gift-guide-2026/": "Hobonichi, MIDORI MD, Traveler's notebook, Leuchtturm1917 and Archer and Olive gifts, each with live stock from our last check, plus planners and printables we make."}  # last copy change on the guide pages (sitemap lastmod floor)
+                "holiday-stationery-gift-guide-2026/": "Hobonichi, Leuchtturm1917, Archer and Olive and other dot grid gifts, each with live stock from our last check, plus planners and printables we make."}  # last copy change on the guide pages (sitemap lastmod floor)
 H_SRC = {  # official Hobonichi pages used for product facts
     "orig": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6 (2027), specifications"),
     "cousin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_jan_en/", "English Cousin Book A5 (2027), specifications"),
@@ -2115,7 +2050,7 @@ def design_links_block(sec="hobonichi", hx="h2"):
 
 def design_index_block():
     """Every design page, grouped by family: the design-pages index on /guides/."""
-    fam = [("hobonichi", "Hobonichi"), ("dotgrid", "Dot grid journals"), ("travelers", "Traveler's Company"), ("midori", "MIDORI MD")]
+    fam = [("hobonichi", "Hobonichi"), ("dotgrid", "Dot grid journals")]
     out = []
     for k, t in fam:
         ds = [d for d in DESIGNS if next(g_sec(g) for g in GROUPS if g["slug"] == d["parent"]) == k]
@@ -2164,11 +2099,10 @@ def guides_block():
             + "".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in HOBO_GUIDES) + "</ul></section>")
 
 def section_guides(sec):
-    """Guide links on a design page. Hobonichi keeps its guides; dot grid and Traveler's link their own."""
+    """Guide links on a design page. Hobonichi keeps its guides; dot grid links its own."""
     if sec == "hobonichi":
         return guides_block()
-    link = {"dotgrid": (DG_GUIDE_SLUG + "/", "Best dot grid journals compared"),
-            "travelers": (TN_GUIDE_SLUG + "/", "Regular vs Passport vs Card Size")}.get(sec)
+    link = {"dotgrid": (DG_GUIDE_SLUG + "/", "Best dot grid journals compared")}.get(sec)
     if not link:
         return ""
     h, t = link
@@ -2637,253 +2571,6 @@ def build_dotgrid_guide():
                        og_type="article", og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT)
 
 
-# Manufacturer package specs, read from the product pages linked in the guide's Sources.
-# Cover and refill are separate lines. The comparison uses those millimeters.
-def build_tn_sizes():
-    fname = TN_GUIDE_SLUG + "/"
-    title = "Traveler's Notebook Regular vs Passport vs Card Size: Which Size Fits You?"
-    desc = ("Regular, Passport, or the limited Card Size set: leather cover and refill dimensions from TRAVELER'S COMPANY, "
-            "which refills fit which cover, and which sizes this site tracks.")
-    updated = guide_updated(build_tn_sizes)
-    iso = json.loads(GUIDE_DATES.read_text())[build_tn_sizes.__name__]["date"]
-    ids = {c["id"] for c in stores["canonical"]}
-    need = {"tn-regular-black", "tn-regular-brown", "tn-regular-blue", "tn-regular-camel", "tn-regular-olive",
-            "tn-road-trip-brown", "tn-20th-card-black", "tn-2027-clear-folder-regular", "tn-2027-plastic-sheet-regular"}
-    if not need <= ids or any("passport" in i for i in ids) or {i for i in ids if "card" in i} != {"tn-20th-card-black"}:
-        raise SystemExit(f"Traveler's size guide tracking claims are out of date: {sorted(ids)}")
-    for slug in ("regular-black", "regular-brown", "regular-blue", "regular-camel", "regular-olive",
-                 "road-trip-brown", "card-size-20th-anniversary-black"):
-        if not any(d["parent"] == TN_SLUG and d["slug"] == slug for d in DESIGNS):
-            raise SystemExit(f"Traveler's size guide is missing a link target: {slug}")
-        if any("passport" in (d["slug"] + d["full"]).lower() for d in DESIGNS):
-            raise SystemExit("A Passport page exists; update the size guide before saying Passport is not tracked")
-
-    def dlink(slug):
-        d = next(x for x in DESIGNS if x["parent"] == TN_SLUG and x["slug"] == slug)
-        return f'<a href="{design_fname(d)}">{E(d["name"])}</a>'
-
-    src = [
-        ("journey", "https://travelerscompanyusa.com/write-your-lifes-journey-starting-with-the-travelers-notebook/",
-         "Write Your Life's Journey, starting with the TRAVELER'S notebook", "TRAVELER'S COMPANY USA, June 1, 2021. Two sizes, Regular and Passport, and how the maker describes carrying each."),
-        ("reg", "https://www.travelers-company.com/products/trnote/starter-kit-regular/black",
-         "Regular Size Black starter kit", "TRAVELER'S COMPANY. Leather cover H220 × W120 × D10 mm. Blank refill H210 × W110 × D4 mm, 64 pages, MD paper, saddle stitched. No. 13714006."),
-        ("pass", "https://www.travelers-company.com/products/trnote/starter-kit-passport/black",
-         "Passport Size Black starter kit", "TRAVELER'S COMPANY. Leather cover H134 × W98 × D10 mm. Blank refill H124 × W89 × D4 mm, 64 pages, MD paper, saddle stitched. No. 15026006."),
-        ("usreg", "https://shop.travelerscompanyusa.com/products/travelers-notebook-black",
-         "Black (Regular Size) starter kit", "TRAVELER'S COMPANY USA shop. The same Regular starter kit, No. 13714006."),
-        ("uspass", "https://shop.travelerscompanyusa.com/products/travelers-notebook-passport-size-black",
-         "Black (Passport Size) starter kit", "TRAVELER'S COMPANY USA shop. The same Passport starter kit, No. 15026006."),
-        ("r001", "https://www.travelers-company.com/products/trnote/refill-regular/refill-r-001",
-         "001 Lined Notebook, Regular Size", "TRAVELER'S COMPANY. Lined 6.5 mm, 64 pages, MD paper, H210 × W110 × D4 mm. No. 14245006."),
-        ("p001", "https://www.travelers-company.com/products/trnote/refill-passport/refill-p-001n",
-         "001 Lined Notebook, Passport Size (current MD specification)", "TRAVELER'S COMPANY. Lined 6.5 mm, 64 pages, MD paper, H124 × W89 × D4 mm. No. 14368006."),
-        ("p001old", "https://www.travelers-company.com/products/trnote/refill-passport/refill-p-001",
-         "001 Lined Notebook, Passport Size (old specification)", "TRAVELER'S COMPANY. Labeled old specification: DP paper, 80 pages, perforated, still H124 × W89 × D4 mm. The page says the current refill changed to MD paper and 64 pages in March 2016."),
-        ("p003", "https://www.travelers-company.com/products/trnote/refill-passport/refill-p-003n",
-         "003 Blank Notebook, Passport Size", "TRAVELER'S COMPANY. Blank, 64 pages, MD paper, H124 × W89 × D4 mm. No. 14370006."),
-        ("ridx", "https://www.travelers-company.com/products/trnote/refill-regular",
-         "Refills, Regular Size", "TRAVELER'S COMPANY. Refills made to set into a Regular cover, with that size's own item numbers."),
-        ("pidx", "https://www.travelers-company.com/products/trnote/refill-passport",
-         "Refills, Passport Size", "TRAVELER'S COMPANY. Refills made to set into a Passport cover. Lists repair kits 009 and 010, Pen Holder M (016), and brass clip 030 for both Regular and Passport."),
-        ("cardnews", "https://travelerscompanyusa.com/travelers-notebook-card-size-20th-anniversary-set/",
-         "TRAVELER'S notebook Card Size 20th Anniversary Set", "TRAVELER'S COMPANY USA, March 4, 2026. The set, the limited-quantity note, and Card Size refills after the set sales end."),
-        ("cardb", "https://www.travelers-company.com/products/20th/20th-black",
-         "Card Size 20th Anniversary Set Black", "TRAVELER'S COMPANY. Contents and package specs. Cover H110 × W75 × D10 mm. Refill H100 × W65 × D2 mm, 32 pages. No. 15411006."),
-        ("cardbr", "https://www.travelers-company.com/products/20th/20th-brown",
-         "Card Size 20th Anniversary Set Brown", "TRAVELER'S COMPANY. Same cover and refill measurements as the Black set. No. 15412006. Spare band orange; zipper case dark brown."),
-    ]
-    # Same millimeter lines confirmed on these Regular pages: Brown, Blue, Camel, Olive. Passport Blue matches the Passport Black lines.
-    extra = {
-        "reg": [("Brown", "https://www.travelers-company.com/products/trnote/starter-kit-regular/brown"),
-                ("Blue", "https://www.travelers-company.com/products/trnote/starter-kit-regular/blue"),
-                ("Camel", "https://www.travelers-company.com/products/trnote/starter-kit-regular/camel"),
-                ("Olive", "https://www.travelers-company.com/products/trnote/starter-kit-regular/olive")],
-        "pass": [("Blue, same measurements", "https://www.travelers-company.com/products/trnote/starter-kit-passport/blue")],
-    }
-    src_i = {k: i + 1 for i, (k, *_) in enumerate(src)}
-
-    def cite(*keys):
-        return " " + " ".join(f'<a href="#src-{k}">[{src_i[k]}]</a>' for k in keys)
-
-    def row(label, cells):
-        # cells: (html, source keys)
-        tds = "".join(f"<td>{html}{cite(*keys)}</td>" for html, keys in cells)
-        return f'<tr><th scope="row">{E(label)}</th>{tds}</tr>'
-
-    rows = [
-        row("Lineup", [
-            ("One of the two standard sizes.", ("journey",)),
-            ("The other standard size.", ("journey",)),
-            ("A limited 20th-anniversary set. A new size for that anniversary, not a third standard size in the lineup.", ("cardnews", "journey")),
-        ]),
-        row("Leather cover", [
-            ("H220 × W120 × D10 mm. Cowhide, made in Thailand. Height × width × depth.", ("reg",)),
-            ("H134 × W98 × D10 mm. Cowhide, made in Thailand.", ("pass",)),
-            ("H110 × W75 × D10 mm. The set page also says 110 mm tall and 75 mm wide without the fastener. A 20th-anniversary logo is engraved on the back.", ("cardb", "cardnews")),
-        ]),
-        row("Refill that comes with it", [
-            ("H210 × W110 × D4 mm. Blank, 64 pages, MD paper, saddle stitched. The starter-kit page identifies this refill as 003.", ("reg",)),
-            ("H124 × W89 × D4 mm. Blank, 64 pages, MD paper, saddle stitched. The current blank refill 003 is the same size.", ("pass", "p003")),
-            ("H100 × W65 × D2 mm. Blank, 32 pages, MD paper, saddle stitched. The set holds five of these notebooks.", ("cardb",)),
-        ]),
-        row("Carry, in the maker's words", [
-            ("Hold it in one hand. The 2021 article calls it about the height of an A5 notebook but slimmer, and says tickets, maps, and A4 paper folded in three fit. Two or three refills fit easily.", ("journey",)),
-            ("Fits a palm or a back pocket, and a smaller bag. With a zipper case or file, the maker says it can be a wallet, a card case, or a passport cover. The refill is described as the same size as a passport.", ("journey", "pidx")),
-            ("Fits the palm and a jeans pocket. With the pieces in the set, the maker says it can be a compact wallet, a business-card holder, a card case, or a mini pouch.", ("cardnews", "cardb")),
-        ]),
-        row("Notebook refills that fit", [
-            ("The Regular refill catalog only. A Regular 001 lined refill is H210 × W110 × D4 mm.", ("ridx", "r001")),
-            ("The Passport refill catalog only. A Passport 001 lined refill is H124 × W89 × D4 mm.", ("pidx", "p001")),
-            ("Card Size refills. Regular and Passport refills are a different height and width. The maker says Card Size refills are planned at TRAVELER'S FACTORY and TRAVELER'S COMPANY USA after the set sales end.", ("cardb", "cardnews")),
-        ]),
-        row("Tracked on this site", [
-            ("The five Regular colors, plus ROAD TRIP Brown. Open the color page for the shops we check.", ()),
-            ("Passport is not tracked.", ()),
-            ("The Black set only. The Brown set is not tracked.", ()),
-        ]),
-    ]
-    reg_links = " · ".join(
-        f'<a href="{u}" rel="noopener" target="_blank">{E(n)}</a>' for n, u in
-        [("Black", src[1][1]), *extra["reg"]])
-    pass_links = " · ".join(
-        f'<a href="{u}" rel="noopener" target="_blank">{E(n)}</a>' for n, u in
-        [("Black", src[2][1]), *extra["pass"]])
-    src_items = []
-    for k, u, t, note in src:
-        more = ""
-        if k == "reg":
-            more = " Same cover and refill lines on " + reg_links + "."
-        elif k == "pass":
-            more = " Same cover and refill lines on " + pass_links + "."
-        src_items.append(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>. {note}{more}</li>')
-    faq = [
-        ("What is the difference between Traveler's Notebook Regular and Passport?",
-         "They are different sizes, cover and refill both. On the Regular starter kit the leather cover is H220 × W120 × D10 mm and the blank refill is H210 × W110 × D4 mm. "
-         "On the Passport starter kit the leather cover is H134 × W98 × D10 mm and the blank refill is H124 × W89 × D4 mm. Both included refills are 64-page blank MD paper, saddle stitched. "
-         "TRAVELER'S COMPANY USA describes Regular and Passport as the two sizes, and says you choose by what you want to do with the notebook."),
-        ("Is Regular the same as A5, and Passport the same as A6?",
-         "No. A5 paper is 148 × 210 mm. The Regular refill is 210 mm tall and 110 mm wide, so the height matches A5 and the width does not. It does not take A5 paper. "
-         "A6 paper is 105 × 148 mm. The Passport refill is H124 × W89 mm, so it is not A6. The maker describes that refill as the same size as a passport you carry when traveling."),
-        ("Do Regular, Passport, and Card Size refills fit each other's covers?",
-         "No. Regular refills are made for a Regular cover (H210 × W110 mm for the notebook refills cited here). Passport refills are made for a Passport cover (H124 × W89 mm). "
-         "Card Size refills are H100 × W65 mm. The item number is not enough: Regular 004 is a pocket sticker and Passport 004 is a zipper case; Regular 014 is kraft paper and Passport 014 is dot grid. "
-         "The Passport refill index says four accessories fit both Regular and Passport: repair kits 009 and 010, Pen Holder M (016), and the brass clip (030). Connecting bands are separate items (Regular 021, Passport 011). "
-         "The Card Size set includes its own connecting bands, H85 × W3 × D3 mm. That shared-accessory sentence does not mention Card Size."),
-        ("Is Card Size a standard third Traveler's Notebook I can keep buying?",
-         "No. TRAVELER'S COMPANY USA's size article names two sizes, Regular and Passport. Card Size was introduced for the 20th anniversary as a limited-quantity set in Black and Brown, on sale outside Japan from April 23, 2026. "
-         "The maker says that after those set sales end, Card Size refills are planned for TRAVELER'S FACTORY and TRAVELER'S COMPANY USA. That note is about refills. It does not say the leather cover stays in the catalog."),
-        ("What is in the Card Size 20th anniversary set, and do you track it?",
-         "Cotton bag, a leather cover with one blank MD Paper White refill already in it, two more blank MD Paper White refills, two blank MD Paper Cream refills, a cotton zipper case, a kraft paper folder, two connecting rubber bands, and a spare rubber band. Five notebooks in total. "
-         "Black is No. 15411006 and comes with a navy zipper case and a red spare band. Brown is No. 15412006 and comes with a dark brown zipper case and an orange spare band. "
-         "We track the Black set. We do not track the Brown set, and we do not track Passport at all. Stock changes, so the listing pages are where to check the shops we follow."),
-    ]
-    faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
-    tracked = " · ".join(dlink(s) for s in ("regular-black", "regular-brown", "regular-blue", "regular-camel", "regular-olive", "road-trip-brown"))
-    body = f"""
-<article class="prose guide vs-page tn-size">
-{crumbs(("guides/", "Guides"), (fname, "Regular vs Passport vs Card Size"))}
-{eyebrow("Guide", "Traveler's Notebook", updated)}
-<h1>{E(title)}</h1>
-<p class="lede">Regular and Passport are the two standard sizes. Pick Regular for a larger page you can still hold, Passport for a pocket, or the Card Size set if you want the smaller 20th-anniversary notebook. Cover and refill are different sizes. The figures below are the manufacturer's package specs.</p>
-{signup()}
-
-<section class="card" id="quick">
-  <h2>Quick recommendation</h2>
-  <ul>
-    <li><strong>Regular</strong> if you want the larger page. The refill is H210 × W110 mm, and the 2021 article says the notebook is for one hand, with room for tickets, maps, or A4 paper folded in three.{cite("journey", "reg")}</li>
-    <li><strong>Passport</strong> if you want the cover that fits a palm or a back pocket (H134 × W98 × D10 mm) and a refill the maker compares to a passport (H124 × W89 mm).{cite("journey", "pass", "pidx")}</li>
-    <li><strong>Card Size</strong> only if you want that anniversary pocket set. The cover is 110 mm tall and 75 mm wide without the fastener. It is a limited set, sold in Black and Brown, not a third everyday size.{cite("cardnews", "cardb")}</li>
-  </ul>
-  <p class="muted small">The maker's own line is that there is no required way to choose between Regular and Passport. It depends on what you want the notebook to do.{cite("journey")}</p>
-</section>
-
-<h2 id="compare">Side by side</h2>
-<p class="muted small">Height × width × depth from the manufacturer's package specs. The leather cover and the paper refill are different sizes. Numbers in brackets point to the sources. On a small screen, scroll the table sideways. The row labels stay put.</p>
-<div class="table-scroll">
-<p class="table-scroll-hint" aria-hidden="true">Swipe to see all three sizes <span aria-hidden="true">→</span></p>
-<div class="table-wrap">
-<table class="stock compare">
-<caption class="sr">Regular, Passport, and Card Size: cover, refill, carry, refills, and what this site tracks</caption>
-<thead><tr><th></th><th>{_fmt_head(cover_icon("regular"), "Regular")}</th><th>{_fmt_head(cover_icon("passport"), "Passport")}</th><th>{_fmt_head(cover_icon("card"), "Card Size")}</th></tr></thead>
-<tbody>{"".join(rows)}</tbody>
-</table>
-</div>
-</div>
-<p class="muted small"><strong>Inches converted from those millimeters</strong> (25.4 mm = 1 in). This is arithmetic, not a published spec. Regular cover 8.66 × 4.72 × 0.39 in, refill 8.27 × 4.33 × 0.16 in. Passport cover 5.28 × 3.86 × 0.39 in, refill 4.88 × 3.50 × 0.16 in. Card Size cover 4.33 × 2.95 × 0.39 in, refill 3.94 × 2.56 × 0.08 in.</p>
-<p><strong>Shop dimensions.</strong> The US shop prints different dimensions for these same starter kits.{cite("usreg", "uspass")} This guide uses the manufacturer's package specs. Check those for fit.</p>
-<p>A5 paper is 148 × 210 mm. The Regular refill matches that height and is 38 mm narrower, so it does not take A5 sheets. The 2021 article calls Regular about the height of an A5 notebook but slimmer.{cite("journey", "reg")} A6 paper is 105 × 148 mm. Neither the Passport refill nor the Card Size refill is A6.</p>
-
-<h2 id="carry">Carry and what each size is built to do</h2>
-<h3>Regular: the larger page you can still hold</h3>
-<p>Choose Regular when the writing page matters more than the smallest possible cover. The page is H210 × W110 mm, against H124 × W89 mm in Passport and H100 × W65 mm in the Card Size set. The 2021 article says you hold the Regular notebook in one hand, and that tickets, maps, and three-folded A4 paper fit. It also says two or three refills fit, and that adding more is up to you.{cite("journey")} The cover's own depth on the package line is D10 mm, and one refill is D4 mm. The maker does not publish a thickness for a cover stuffed with several refills, so a heavy stack is a different carry from the starter kit.</p>
-<p>The same cover and refill measurements are printed on the Black, Brown, Blue, Camel, and Olive Regular starter kits. Color does not change the size.{cite("reg")}</p>
-<h3>Passport: pocket, small bag, or a passport cover</h3>
-<p>Choose Passport when the notebook has to live in a pocket or a small bag. The 2021 article says it fits a palm or the back pocket of your pants.{cite("journey")} The cover is H134 × W98 × D10 mm.{cite("pass")} The refill index says the paper is the same size as a passport, and that a zipper case or file lets this size work as a wallet, a card case, or a passport cover.{cite("pidx")} The writing page is H124 × W89 mm, 64 pages in the current blank and lined refills.{cite("pass", "p001", "p003")}</p>
-<h3>Card Size: the anniversary notebook that goes in a jeans pocket</h3>
-<p>Choose the Card Size set when you want something smaller than Passport and you are buying that specific anniversary kit. The maker describes it for a note you want down quickly, and says that once the zipper case, folder, and refills are in the cover it can be a compact wallet, a business-card holder, a card case, or a mini pouch.{cite("cardnews")} The cover is the one that "fits perfectly in the palm of your hand and slips easily into a jeans pocket."{cite("cardb")} Each notebook is 32 pages, half the page count of the Regular and Passport starter refills, on a smaller sheet.{cite("cardb", "reg", "pass")}</p>
-
-<h2 id="refills">Refills and what fits which cover</h2>
-<p>Each cover has its own refill list. Regular refills are "set in the regular sized TRAVELER'S notebook."{cite("ridx")} Passport refills are "set into your passport size TRAVELER'S notebook."{cite("pidx")} Card Size refills are the H100 × W65 mm notebooks in the anniversary set.{cite("cardb")} A refill from one list does not become the right size because the item number looks familiar.</p>
-<ul>
-  <li><strong>Regular notebooks</strong> use the Regular numbers. 001 lined is 6.5 mm ruling, 64 pages, MD paper, H210 × W110 × D4 mm (No. 14245006).{cite("r001")} The starter kit's blank 003 uses the same outer size.{cite("reg")} The Regular index also lists grid 002, dot grid 026, diaries 005, 017, 018, and 019, sketch 012, and a zipper case 008, among others. Full list on the Regular refill page.{cite("ridx")}</li>
-  <li><strong>Passport notebooks</strong> use a different set of numbers for the same kinds of paper. Current 001 lined is also 6.5 mm and 64 pages of MD paper, but H124 × W89 × D4 mm (No. 14368006).{cite("p001")} Current blank 003 is that same size (No. 14370006).{cite("p003")} An older Passport 001 page is still online and labeled old specification: DP paper, 80 pages, perforated. The page says the refill changed to MD paper and 64 pages in March 2016. Use the current page for the paper you would buy now.{cite("p001old", "p001")}</li>
-  <li><strong>Same number, different object.</strong> On the two indexes, Regular 004 is a pocket sticker and Passport 004 is a zipper case. Regular 014 is a kraft notebook and Passport 014 is dot grid. Match the size name on the package, then the number.{cite("ridx", "pidx")}</li>
-  <li><strong>Shared by Regular and Passport only.</strong> The Passport index says these fit both: repair kit 009 (standard colors), repair kit 010 (spare colors), Pen Holder M (016), and brass clip 030. Zipper cases, folders, notebook refills, and connecting bands are not on that list. Regular's connecting band is 021. Passport's is 011.{cite("pidx", "ridx")}</li>
-  <li><strong>Card Size accessories in the set</strong> are specified on their own: cotton zipper case H105 × W140 × D10 mm when open, kraft folder H100 × W130 × D1 mm when open, connecting bands H85 × W3 × D3 mm, two of them.{cite("cardb")} Nothing on the Regular or Passport "both sizes" line adds Card Size.</li>
-</ul>
-
-<h2 id="card-set">What the Card Size anniversary set includes</h2>
-<p>TRAVELER'S COMPANY made Card Size for the notebook's 20th anniversary and put it on sale outside Japan on April 23, 2026. The sets are limited in quantity. Shops can sell out, and release dates differ by shop.{cite("cardnews", "cardb")} Black and Brown are the two editions. This is the anniversary set, not a standing third size next to Regular and Passport.{cite("journey", "cardnews")}</p>
-<p>The maker's contents list:{cite("cardb", "cardbr")}</p>
-<ol>
-  <li>Cotton bag.</li>
-  <li>Leather cover, Black or Brown, with one blank MD Paper White refill already set in it.</li>
-  <li>Two more blank MD Paper White refills. The package line counts three white refills in total, including the one in the cover. Gray paper cover, letterpress logo.</li>
-  <li>Two blank MD Paper Cream refills. Brown paper cover, gold foil logo.</li>
-  <li>Cotton zipper case. Navy with the Black cover, dark brown with the Brown cover. A card pocket on the left, a zippered pocket on the right.</li>
-  <li>Kraft paper folder, for folded banknotes, shop cards, and tickets.</li>
-  <li>Two connecting rubber bands, for adding more than one refill.</li>
-  <li>A spare rubber band. Red with Black, orange with Brown.</li>
-</ol>
-<p>After the set sales end, the maker says Card Size refills are planned for TRAVELER'S FACTORY and TRAVELER'S COMPANY USA.{cite("cardnews", "cardb")} That sentence is about refills. It does not promise that the leather cover, or the set, stays on sale.</p>
-
-<h2 id="tracked">What this site tracks</h2>
-<p>Live stock stays on the tracker. This guide does not say what is in stock today.</p>
-<ul>
-  <li><strong>Regular covers we track:</strong> {tracked}. ROAD TRIP Brown is a Regular size US exclusive. The five standard colors are the starter-kit size above. All of them sit on the <a href="{TN_SLUG}/">Traveler's Company tracker</a>.</li>
-  <li><strong>Regular accessories we track:</strong> the <a href="{TN_SLUG}/#tn-2027-clear-folder-regular">2027 clear folder</a> and the <a href="{TN_SLUG}/#tn-2027-plastic-sheet-regular">2027 plastic sheet</a>, both labeled Regular size. We do not track Passport or Card Size accessories.</li>
-  <li><strong>Card Size:</strong> {dlink("card-size-20th-anniversary-black")} only. The <a href="https://www.travelers-company.com/products/20th/20th-brown" rel="noopener" target="_blank">Brown set (No. 15412006)</a> is part of the anniversary pair, and we do not have a listing page for it.</li>
-  <li><strong>Passport is not tracked.</strong> There is no Passport cover, refill, or accessory on the tracker. The <a href="https://www.travelers-company.com/products/trnote/starter-kit-passport/black" rel="noopener" target="_blank">Passport starter kit</a> and the <a href="https://www.travelers-company.com/products/trnote/refill-passport" rel="noopener" target="_blank">Passport refill list</a> are the manufacturer's pages. The <a href="https://shop.travelerscompanyusa.com/products/travelers-notebook-passport-size-black" rel="noopener" target="_blank">US shop</a> sells that same starter kit.</li>
-</ul>
-<p>The US shop warns that counterfeit notebooks using the TRAVELER'S COMPANY logo have been sold in the US, and says to buy from the official shop or an authorized reseller.{cite("usreg")}</p>
-
-<section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
-
-<h2>Sources</h2>
-<ol class="sources">{"".join(src_items)}</ol>
-<p class="muted small">TRAVELER'S COMPANY sells more refills than the examples named here. The index pages are the full lists. Prices are left off this guide because they change.</p>
-{related_block(fname)}
-</article>"""
-    for banned in ("$", "most popular", "best seller", "bestseller", "search volume", "in stock now", "always available",
-                    "5.7", "not interchangeable", "inches on the us shop"):
-        if banned in body.lower():
-            raise SystemExit(f"Traveler's size guide contains a banned claim: {banned}")
-    for needed in ("H220", "H134", "H110", "H210", "H124", "H100", "Passport is not tracked", "We do not track the Brown set"):
-        if needed not in body:
-            raise SystemExit(f"Traveler's size guide is missing {needed}")
-    art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
-           "datePublished": iso, "dateModified": iso, "url": url_for(fname),
-           "image": BASE + "assets/brand/og-travelers.png",
-           "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
-           "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
-                         "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
-    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
-    return fname, page(fname, title, desc, body,
-                       ld=(crumbs_ld(("guides/", "Guides"), (fname, "Regular vs Passport vs Card Size")), art, faq_ld),
-                       og_type="article", og_image=OG_TRAVELERS, og_alt=OG_TRAVELERS_ALT)
-
-
 # --- Holiday gift guide ------------------------------------------------------------------------
 # Every availability line on this page is rendered from data/stock.json at build time (each checker
 # run rebuilds it), the same way the Where to Buy guide counts shops. Prices come from the same run:
@@ -2903,12 +2590,10 @@ GIFT_PICKS = {
     "original": ("original-a6-en", None, "hobonichi-techo-2027-original-a6/", "English Original A6 book"),
     "cathouse": ("cover-a6-white-cat-house", None, "hobonichi-techo-2027-covers/white-cat-house/", "A6 cover, White Cat House"),
     "myyard": ("cover-a6-moomin", None, "hobonichi-techo-2027-covers/moomin-my-yard/", "A6 cover, Moomin: My Yard"),
-    "mddiary": ("md-diary-2027-a5", None, "midori-md-limited-edition/md-diary-2027-a5/", "MD Notebook Diary 2027, A5"),
-    "md1day": ("md-diary-1day-2027-a5", None, "midori-md-limited-edition/md-diary-1-day-1-page-2027-a5/", "MD Notebook Diary 1 Day 1 Page 2027, A5"),
-    "mdsticker": ("md-diary-sticker-2027-l", None, "midori-md-limited-edition/", "MD Diary Stickers 2027, Large"),
-    "tnblack": ("tn-regular-black", None, "travelers-company-limited-edition/regular-black/", "Traveler's notebook Regular, Black"),
-    "tnsticker": ("tn-2027-sticker-set", None, "travelers-company-limited-edition/", "Traveler's 2027 Customized Sticker Set"),
-    "tnfolder": ("tn-2027-clear-folder-regular", None, "travelers-company-limited-edition/", "Traveler's 2027 Clear Folder, Regular size"),
+    # For the traveler (reworked Nov 19, 2026, after the Traveler's Company and MIDORI removal).
+    "plannera6": ("planner-a6-en", None, "hobonichi-techo-2027-planner-a6/", "English Planner A6 book"),
+    "tragen": ("cover-a6-tragen-black", None, "hobonichi-techo-2027-covers/#cover-a6-tragen-black", "A6 cover, Tragen: Black"),
+    "aostag": ("ao-stag", "pocket dot grid · ships now", "archer-and-olive-dot-grid-journal/archer-and-olive-stag/", "Archer and Olive Stag, pocket size"),
     "lta5": ("lt-hardcover-a5", None, "archer-and-olive-dot-grid-journal/leuchtturm1917-hardcover-a5-dotted/", "Leuchtturm1917 Hardcover Medium (A5), dotted"),
     "lted2": ("lt-bullet-journal-ed2", None, "archer-and-olive-dot-grid-journal/leuchtturm1917-edition-2/", "Leuchtturm1917 Bullet Journal Edition 2"),
     "aonavy": ("ao-storybook-navy", "A5 ", "archer-and-olive-dot-grid-journal/archer-and-olive-storybook-navy/", "Archer and Olive Storybook in Navy, A5"),
@@ -2928,12 +2613,10 @@ GIFT_SRC = {  # (url, title, publisher)
     "pm_moomin": ("https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-moomin-at-the-table-english", "Hobonichi Techo 2027 Weeks Planner, Moomin: At the Table, English", "The Paper Mouse"),
     "as_whitecat": ("https://www.atlasstationers.com/products/hobonichi-techo-weeks-yumi-kitagishi-white-cat-wallpaper", "Hobonichi Techo Weeks, Yumi Kitagishi: White Cat Wallpaper", "Atlas Stationers"),
     "as_myyard": ("https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-moomin-my-yard-pale-mint", "Hobonichi Techo A6 Original cover, Moomin: My Yard (Pale Mint)", "Atlas Stationers"),
-    "md_diary": ("https://md-product-usa.com/products/md-notebook-diary-2027", "MD Notebook Diary 2027", "MD PRODUCT USA (official)"),
-    "md_1day": ("https://md-product-usa.com/products/md-notebook-diary-1day1page-2027", "MD Notebook Diary 1 Day 1 Page 2027", "MD PRODUCT USA (official)"),
-    "md_sticker": ("https://md-product-usa.com/products/md-diary-sticker", "MD Diary Stickers 2027", "MD PRODUCT USA (official)"),
-    "sp_tn": ("https://simplepaper.co/products/travelers-notebook-regular-black", "Traveler's notebook Regular, Black", "Simple Paper"),
-    "tc_sticker": ("https://shop.travelerscompanyusa.com/products/customized-sticker-set-for-diary-2027", "Customized Sticker Set for Diary 2027", "Traveler's Company USA (official)"),
-    "tc_folder": ("https://shop.travelerscompanyusa.com/products/clear-folder-2027-regular-size", "Clear Folder 2027 (Regular Size)", "Traveler's Company USA (official)"),
+    "h_planner": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/pb27_jan/", "English Planner Book A6", "Hobonichi (official)"),
+    "as_tragen": ("https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-tragen-black", "Hobonichi Techo A6 Original Planner Cover, Tragen: Black", "Atlas Stationers"),
+    "pm_tragen": ("https://www.thepapermouse.com/products/hobonichi-techo-a6-original-cover-tragen-black", "Hobonichi Techo A6 Original Cover, Tragen (Black)", "The Paper Mouse"),
+    "ao_stag": ("https://www.archerandolive.com/products/stag-notebook", "Stag | Notebook", "Archer and Olive (official)"),
     "lt_hc": ("https://www.leuchtturm1917.us/products/hardcover-notebook", "Hardcover Notebook", "Leuchtturm1917 US (official)"),
     "lt_ed2": ("https://www.leuchtturm1917.us/products/bullet-journal-edition-2", "Bullet Journal Edition 2", "Leuchtturm1917 US (official)"),
     "pm_lt": ("https://www.thepapermouse.com/products/leuchtturm1917-hardcover-dot-grid-a5-notebook-black", "Leuchtturm1917 Hardcover Dot Grid A5 Notebook, Black", "The Paper Mouse"),
@@ -3098,6 +2781,19 @@ def gift_printable_rows():
         )
     return rows
 
+# The one place this guide names Traveler's Company or MIDORI: the owner asked (Nov 19, 2026) that the
+# traveler section say we meant to feature them, and why we can't. Facts only from the approved notice
+# (takedown-2026-11-19/announcement-facts.json); the only quote is the one allowed from their email.
+GIFT_NOTE = ("We planned to feature Traveler's Company and MIDORI here. On November 17, we politely asked Traveler's Company "
+             "and MIDORI's parent company, Designphil, for permission to use their official product photos. On November 19, "
+             "TRAVELER'S COMPANY USA didn't answer that request. Instead, they asked us to remove every Traveler's Company "
+             "and MIDORI product, saying that a tracker telling everyone when something is back in stock "
+             "\"pushes that stock toward resellers.\" We complied. So here's what we'd pack instead.")
+
+def gift_note_html():
+    return (f'<aside class="gift-note"><p>{E(GIFT_NOTE)} '
+            f'<a href="{TN_SLUG}/">Read the full story</a>.</p></aside>')
+
 def gift_own(asin, label):
     """Our own Amazon book: plain link (data-own-product), no availability claim. Its list price is in the table."""
     return f'<a href="https://www.amazon.com/dp/{E(asin)}" data-own-product rel="noopener" target="_blank">{E(label)}</a>'
@@ -3105,8 +2801,8 @@ def gift_own(asin, label):
 def build_gift_guide():
     fname = GIFT_SLUG + "/"
     title = "Stationery gifts that are actually in stock: holiday gift guide 2026"
-    desc = ("Planner and journal gifts you can still buy: Hobonichi Weeks, MIDORI MD diaries, Traveler's notebooks, "
-            "Leuchtturm1917 and more, with live stock and prices.")
+    desc = ("Planner and journal gifts you can still buy: Hobonichi Weeks, Techo books and covers, Leuchtturm1917, "
+            "Archer and Olive and more, with live stock and prices.")
     missing = [k for k in GIFT_PICKS if not gift_listings(k)]
     if missing:
         print("gift guide: no tracked listings for", ", ".join(missing), "(rendered with no availability claim)")
@@ -3173,17 +2869,12 @@ def build_gift_guide():
 </ul>
 <p class="small">Not sure which book suits them? See <a href="{VS_SLUG}/">Techo vs Cousin vs Weeks</a> or <a href="{JAN_APR_SLUG}/">January-start vs April-start</a>.</p>
 
-<h2 id="new-to-planners">For someone new to planners</h2>
-<ul class="picks">
-  <li><strong>MIDORI MD Notebook Diary 2027, A5.</strong> A thin dated diary: 28 monthly schedule pages (December 2026 to January 2028) plus 113 lined and 32 blank pages of MD PAPER; the lined pages can be split so each spread covers a week. {s("md_diary")} {L("mddiary")}</li>
-  <li><strong>MD Notebook Diary 1 Day 1 Page 2027, A5.</strong> 385 undated pages, each spread with an 8:00 AM to midnight schedule on the left and an open right page, in a PVC cover. MD Notebook Covers do not fit it. {s("md_1day")} {L("md1day")}</li>
-</ul>
-
 <h2 id="traveler">For the traveler</h2>
+{gift_note_html()}
 <ul class="picks">
-  <li><strong>Traveler's notebook Regular size, Black.</strong> Similar to A5 but slightly slimmer, with room for maps, tickets and A4 paper folded in three. Other colors are on the <a href="{TN_SLUG}/">Traveler's Company tracker</a>; sizes in our <a href="{TN_GUIDE_SLUG}/">size guide</a>. {s("sp_tn")} {L("tnblack")}</li>
-  <li><strong>Customized Sticker Set for Diary 2027,</strong> if they already have one: six sheets of customization, index, schedule and pocket stickers, made in Japan. {s("tc_sticker")} {L("tnsticker", "Traveler's Company tracker")}</li>
-  <li><strong>Clear Folder 2027, Regular size.</strong> A PP folder for A4 paper folded in thirds and postcards, with a foil-stamped 2027 design. {s("tc_folder")} {L("tnfolder", "Traveler's Company tracker")}</li>
+  <li><strong>English Planner A6 book,</strong> a page a day in A6 size: 148 × 105 × 15 mm, about 190 g, 448 pages of Tomoe River paper, with The Ultimate Packing List and International Size Charts in the back. Book only, so pair it with an A6 cover. {s("h_planner")} {L("plannera6")}</li>
+  <li><strong>A6 cover, Tragen: Black.</strong> A black nylon cover with a zippered pocket for pens and a loop for a pen's clip; it holds an A6 Original or Planner book, sold separately. {s("as_tragen", "pm_tragen")} {L("tragen")}</li>
+  <li><strong>Archer and Olive Stag, pocket size.</strong> A midnight blue vegan leather hardcover with a gold-foil stag; 112 pages of 160 gsm dot grid paper, lay-flat binding, pen loop and elastic band. {s("ao_stag")} {L("aostag")}</li>
 </ul>
 
 <h2 id="dot-grid">For the dot grid journaler</h2>
@@ -3199,7 +2890,6 @@ def build_gift_guide():
 
 <h2 id="small-gifts">Small gifts and stocking stuffers</h2>
 <ul class="picks">
-  <li><strong>MD Diary Stickers 2027 [Dated Monthly], Large.</strong> 16 stickers (December 2026 to January 2028, plus 2 yearly) that turn an A5 or A4 Variant MD Notebook into a dated diary; they can't be removed once applied. {s("md_sticker")} {L("mdsticker", "MIDORI MD tracker")}</li>
   {hp_html}
 </ul>
 
@@ -3246,7 +2936,7 @@ def build_guides_index():
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": t, "url": url_for(h)} for i, (h, t) in enumerate(GUIDES)]}
     return fname, page(fname, "Stationery buying guides",
-                       "Guides from Stationery Drop Watch: where to buy Hobonichi 2027, Techo vs Cousin vs Weeks, the launch calendar, dot grid journals, Traveler's sizes, and a holiday gift guide.",
+                       "Guides from Stationery Drop Watch: where to buy Hobonichi 2027, Techo vs Cousin vs Weeks, the launch calendar, dot grid journals compared, and a holiday gift guide.",
                        body, ld=(crumbs_ld((fname, "Guides")), lst))
 
 # Soft Days listing confirmed by the owner on 2026-11-06.
@@ -4037,6 +3727,40 @@ def check_none_claim(fname, doc):
     if badges and all(b == "unknown" for b in badges) and _NONE_CLAIM.search(doc):
         raise SystemExit(f"{fname}: says none in stock but every listing is Couldn't check")
 
+# --- Traveler's Company and MIDORI takedown notice ----------------------------------------------------
+# Owner-approved wording (Nov 19, 2026). Do not edit a word of TAKEDOWN_NOTICE without the owner's yes.
+TAKEDOWN_DATE = "2026-11-19"
+TAKEDOWN_HEADING = "Why Traveler's Company and MIDORI are gone"
+TAKEDOWN_NOTICE = (
+    "On November 17, 2026, we reached out to Traveler's Company and to MIDORI's parent company, Designphil, through their official contact forms. We asked politely for permission to use their official product photos on our tracker pages.",
+    "Two days later, on November 19, TRAVELER'S COMPANY USA replied. They didn't answer our request. Instead they asked us to remove every Traveler's Company and MIDORI product from Stationery Drop Watch, saying Designphil would not approve of them being here. Their reason was that a tracker telling everyone when something is back in stock \"pushes that stock toward resellers,\" and they would rather announce restocks only to their own email list.",
+    "We've complied. Every listing, alert and restock email for both brands has stopped.",
+    "We think you deserve to know why. Stationery Drop Watch is free, and it exists for regular people who are tired of refreshing shop pages, not for resellers. We never bought, resold or held a single item. We only pointed you to the official shops' own pages, the moment they had stock.",
+    "If you'd like restock news for these brands, the only route they've left you is their newsletter.",
+)
+# Homepage card line: two verbatim phrases from TAKEDOWN_NOTICE, nothing added.
+HOME_NOTICE_LINE = ("We asked politely for permission to use their official product photos. "
+                    "Instead they asked us to remove every Traveler's Company and MIDORI product.")
+TAKEDOWN_DESC = ("On November 19, 2026, TRAVELER'S COMPANY USA asked us to remove every Traveler's Company and MIDORI product. "
+                 "We've complied. Here is why.")
+
+def build_takedown_notice(slug, noindex=False):
+    """The notice that replaced the Traveler's Company page, the MIDORI page and the Traveler's size guide."""
+    fname = slug + "/"
+    paras = "\n".join(f"<p>{E(x)}</p>" for x in TAKEDOWN_NOTICE)
+    still = " · ".join([f'<a href="{HOBO_TRACKER}">Hobonichi tracker</a>']
+                       + [f'<a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE])
+    body = f"""
+<article class="prose takedown-notice">
+{crumbs((fname, TAKEDOWN_HEADING))}
+{eyebrow("Notice", "Nov 19, 2026")}
+<h1>{E(TAKEDOWN_HEADING)}</h1>
+{paras}
+<p class="small section-switch">Still tracked here: {still}.</p>
+</article>"""
+    return fname, page(fname, TAKEDOWN_HEADING, TAKEDOWN_DESC, body,
+                       ld=(crumbs_ld((fname, TAKEDOWN_HEADING)),), og_type="article", noindex=noindex)
+
 def main():
     if shop_preview() and SITE.resolve() == (ROOT / "site").resolve():
         raise SystemExit("Refusing to write a shop preview into site/. Set DROPWATCH_SITE_OUT to another directory.")
@@ -4060,8 +3784,14 @@ def main():
         check_none_claim(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_january_april, build_dotgrid_guide, build_tn_sizes, build_gift_guide, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):
+    for build in (build_where_to_buy, build_vs, build_january_april, build_dotgrid_guide, build_gift_guide, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):
         fname, doc = build()
+        (SITE / fname).mkdir(parents=True, exist_ok=True)
+        (SITE / fname / "index.html").write_text(doc)
+    for slug, hide in ((TN_SLUG, False), (MIDORI_SLUG, False), (TN_GUIDE_SLUG, True)):
+        fname, doc = build_takedown_notice(slug, noindex=hide)
+        for old in SITE.joinpath(slug).glob("*/index.html"):  # old item pages; REDIRECTS rewrites the ones it knows
+            old.unlink()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for old, new in REDIRECTS.items():

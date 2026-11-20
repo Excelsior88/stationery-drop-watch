@@ -50,7 +50,7 @@ class BaumExactVariantTests(unittest.TestCase):
         urls = [p["url"] for s in self.cfg["stores"] for p in s["products"]]
         self.assertNotIn(AGG, urls)
         self.assertNotIn(MEGA, urls)
-        self.assertIn(OMOI, urls)
+        self.assertNotIn(OMOI, urls)  # MIDORI rows were removed on Nov 19, 2026
         baum = next(s for s in self.cfg["stores"] if s["id"] == "baum")
         weeks = [p for p in baum["products"] if "weeks-colors-english?variant=" in p["url"]]
         mega = [p for p in baum["products"] if "weeks-mega-english?variant=" in p["url"]]

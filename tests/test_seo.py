@@ -35,7 +35,7 @@ def pages():
     found.extend(site.build_group(g) for g in site.GROUPS)
     found.extend(site.build_design(d) for d in site.DESIGNS)
     for build in (site.build_where_to_buy, site.build_vs, site.build_january_april, site.build_dotgrid_guide,
-                  site.build_tn_sizes, site.build_guides_index, site.build_shop, site.build_follow,
+                  site.build_guides_index, site.build_shop, site.build_follow,
                   site.build_contact):
         found.append(build())
     return found
@@ -55,7 +55,7 @@ class SeoHeadTests(unittest.TestCase):
             self.assertNotIn("hourly", title.lower(), path)
             titles.append(title)
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 82)  # 77, plus 4 HON Sheep and Weeks design pages, plus Planner A6
+        self.assertEqual(len(titles), 70)  # 82, minus 12 Traveler's/MIDORI pages removed Nov 19, 2026
 
     def test_descriptions_match_social_tags_and_stay_under_160(self):
         descs = []
@@ -131,7 +131,7 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 83)  # 77, plus 4 HON Sheep and Weeks design pages, plus Planner A6, plus the holiday gift guide
+        self.assertEqual(len(mods), 73)  # 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):

@@ -1,4 +1,4 @@
-"""Small cleanups, Nov 16 2026: Traveler's table swipe hint and Actions Node 24 bumps."""
+"""Small cleanups, Nov 16 2026: Actions Node 24 bumps. (The Traveler's size guide and its swipe hint were removed Nov 19, 2026.)"""
 import re
 import unittest
 from pathlib import Path
@@ -9,36 +9,6 @@ import scripts.build_site as site
 
 ROOT = Path(__file__).resolve().parents[1]
 CSS = (ROOT / "site/assets/style.css").read_text()
-
-
-class TravelersSwipeHintTests(unittest.TestCase):
-    def setUp(self):
-        self.page = site.build_tn_sizes()[1]
-
-    def test_hint_sits_above_the_size_table(self):
-        hint = re.search(
-            r'<p class="table-scroll-hint"[^>]*>Swipe to see all three sizes.*?</p>',
-            self.page,
-            re.S,
-        )
-        self.assertIsNotNone(hint)
-        self.assertIn("table-scroll-hint", self.page)
-        self.assertLess(hint.start(), self.page.index('<div class="table-wrap">'))
-        self.assertIn('class="table-scroll"', self.page)
-        built = (ROOT / "site/travelers-notebook-regular-vs-passport-vs-card-size/index.html").read_text()
-        self.assertIn("table-scroll-hint", built)
-
-    def test_hint_is_css_only_and_hidden_on_desktop(self):
-        self.assertIn(".table-scroll-hint{display:none}", CSS)
-        self.assertRegex(
-            CSS,
-            r"@media \(max-width:760px\)\{[^@]*\.tn-size \.table-scroll-hint\{display:block",
-        )
-        # No script, storage, or tracking for the hint.
-        self.assertNotRegex(self.page, r"table-scroll-hint[^<]*<script")
-        self.assertNotIn("localStorage", self.page)
-        self.assertNotIn("sessionStorage", self.page)
-        self.assertNotIn("document.cookie", self.page)
 
 
 class WorkflowNode24Tests(unittest.TestCase):
