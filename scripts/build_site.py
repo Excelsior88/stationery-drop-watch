@@ -363,6 +363,15 @@ def url_for(fname):
     return BASE + pretty(fname)
 
 PUBLIC_EMAIL = "admin@stationerydropwatch.com"
+# One sentence, on every page footer and on About and Contact.
+INDEPENDENT_NOTE = (
+    "Stationery Drop Watch is an independent site. "
+    "It is not affiliated with or endorsed by any brand or shop we track. "
+    "Brands or shops can ask to be removed at {email}."
+)
+
+def independent_note():
+    return INDEPENDENT_NOTE.format(email=plain_email())
 
 def plain_email():
     """Visible address, not a mailto link. The comments keep Cloudflare from obfuscating it."""
@@ -439,6 +448,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <p class="foot-brand"><strong>Stationery Drop Watch</strong> checks {N_STORES} shops {CHECK_FREQ}.</p>
   <nav class="foot-nav" aria-label="Footer">{foot_nav}</nav>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
+  <p class="muted">{independent_note()}</p>
   <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="63" loading="lazy"></a> <a href="/privacy"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></a> <img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="63" loading="lazy"></p>
 </div></footer>
 <script src="assets/local-time.js?v={ASSET_V['local-time.js']}" defer></script>
@@ -1281,13 +1291,13 @@ def build_privacy():
     body = f"""
 <article class="prose">
 {crumbs((fname, "Privacy"))}
-{eyebrow("Privacy", "updated Nov 18, 2026")}
+{eyebrow("Privacy", "updated Nov 20, 2026")}
 <h1>Privacy</h1>
-<p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, and cookie-free page view counts.</p>
+<p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts. The site does not currently run analytics beacons, cookies, or third-party tracking scripts.</p>
 <h2>Email alerts (Buttondown)</h2>
 <p>If you sign up for restock alerts, your email address goes to <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>, the service that stores the list and sends the emails. Buttondown sends a confirmation email first; we only add the address to the list after you click the link. We use it only to send restock alerts and occasional site updates. Every email has an unsubscribe link, and you can also email us to be removed. Buttondown's own privacy policy is at <a href="https://buttondown.com/legal/privacy" target="_blank" rel="noopener">buttondown.com/legal/privacy</a>.</p>
-<h2>Page view counts (Cloudflare Web Analytics)</h2>
-<p>The site is hosted on Cloudflare Pages and uses Cloudflare Web Analytics to count visits. It doesn't use cookies or local storage and doesn't follow you across other sites. Cloudflare also handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
+<h2>Hosting</h2>
+<p>The site is hosted on Cloudflare Pages. It does not currently run analytics beacons, cookies, or third-party tracking scripts. Cloudflare handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
 <p>The source code, the checker, and a backup copy of the site are hosted on GitHub (GitHub Pages).</p>
 <p>This site doesn't set its own cookies and doesn't run ad trackers.</p>
 <h2>Links to other sites</h2>
@@ -1295,7 +1305,7 @@ def build_privacy():
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email {plain_email()}.</p>
 </article>"""
-    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown) and cookie-free Cloudflare Web Analytics. We don't set our own cookies or track you off this site.", body, ld=(crumbs_ld((fname, "Privacy")),))
+    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown). The site does not currently run analytics beacons, cookies, or third-party tracking scripts.", body, ld=(crumbs_ld((fname, "Privacy")),))
 
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
@@ -1305,6 +1315,7 @@ def build_about():
 {eyebrow("About", "how we check stock")}
 <h1>About Stationery Drop Watch</h1>
 <p class="lede">Limited planners sell out fast, and every shop only posts its own restocks. This site checks them all in one place.</p>
+<p>{independent_note()}</p>
 {signup()}
 <section class="couple" aria-labelledby="couple-h">
 <h2 id="couple-h">The couple behind Drop Watch</h2>
@@ -1331,6 +1342,7 @@ def build_contact():
 {eyebrow("Contact", "Stationery Drop Watch")}
 <h1>Contact</h1>
 <p class="lede">Stationery Drop Watch checks planner and journal stock at official stores and independent shops, and writes down what each shop last reported.</p>
+<p>{independent_note()}</p>
 <p>Andrew Robinson runs the site and can be reached at {shown}. Questions, corrections, a shop we should track, or a featured restock slot are welcome.</p>
 <p class="small"><a href="about.html">About</a> explains how the checks work. <a href="privacy.html">Privacy</a> explains the email list.</p>
 </article>"""
@@ -2027,7 +2039,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-20", "about.html": "2026-11-17", "privacy.html": "2026-11-18"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-20", "about.html": "2026-11-20", "privacy.html": "2026-11-20"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -2037,7 +2049,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG, MIDORI_SLUG)]  # the indexed takedown notices
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_MODIFIED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-17"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_MODIFIED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-20"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2058,7 +2070,10 @@ def redirect_page(target):
 <meta name="robots" content="noindex">
 <link rel="canonical" href="{E(c)}">
 <meta http-equiv="refresh" content="0; url={E(u)}">
-</head><body><p>This page moved to <a href="{E(u)}">{E(u)}</a>.</p></body></html>
+</head><body>
+<p>This page moved to <a href="{E(u)}">{E(u)}</a>.</p>
+<footer class="foot"><p class="muted">{independent_note()}</p></footer>
+</body></html>
 """
 
 ROBOTS = f"""User-agent: *
