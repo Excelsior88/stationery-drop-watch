@@ -81,12 +81,15 @@ class AlertTests(unittest.TestCase):
 class NoticeTests(unittest.TestCase):
     def test_notice_text_is_the_approved_wording(self):
         self.assertEqual(site.TAKEDOWN_HEADING, "Why Traveler's Company and MIDORI are gone")
-        self.assertEqual(len(site.TAKEDOWN_NOTICE), 6)
+        self.assertEqual(len(site.TAKEDOWN_NOTICE), 5)
         self.assertTrue(site.TAKEDOWN_NOTICE[0].startswith(APPROVED_FIRST))
         self.assertTrue(site.TAKEDOWN_NOTICE[3].startswith("We think you deserve to know why."))
         self.assertTrue(site.TAKEDOWN_NOTICE[3].endswith("the moment they had stock. " + APPROVED_BOTS))
-        self.assertEqual(site.TAKEDOWN_NOTICE[4], APPROVED_SCALPERS)
-        self.assertEqual(site.TAKEDOWN_NOTICE[5], APPROVED_LAST)
+        self.assertEqual(site.TAKEDOWN_NOTICE[4], APPROVED_LAST)
+        self.assertEqual(site.TAKEDOWN_SCALPERS_Q, "Want to stop scalpers?")
+        self.assertEqual(site.TAKEDOWN_SCALPERS_ITEMS, ("Purchase limits.", "Real bot protection.", "Fair regional stock."))
+        self.assertEqual(site.TAKEDOWN_SCALPERS_CLOSE, "Not shutting down the little guy.")
+        self.assertEqual(site.TAKEDOWN_PULL, APPROVED_SCALPERS)
         self.assertIn('"pushes that stock toward resellers,"', site.TAKEDOWN_NOTICE[1])
         self.assertTrue(site.HOME_NOTICE_LINE.endswith(APPROVED_SCALPERS))
         self.assertIn(APPROVED_BOTS, site.HOME_NOTICE_LINE)
@@ -99,15 +102,18 @@ class NoticeTests(unittest.TestCase):
             self.assertEqual(fname, slug + "/")
             self.assertIn(f"<h1>{site.TAKEDOWN_HEADING}</h1>", text)
             for para in site.TAKEDOWN_NOTICE:
-                if para == site.TAKEDOWN_PULL:
-                    self.assertIn(f'<p class="notice-pull">{para}</p>', text)
-                else:
-                    self.assertIn(f"<p>{para}</p>", text)
-            pull_at = text.index('<p class="notice-pull">')
-            newsletter_at = text.index(APPROVED_LAST)
+                self.assertIn(f"<p>{para}</p>", text)
+            self.assertIn('<aside class="notice-stand" aria-labelledby="stop-scalpers">', text)
+            self.assertIn(f'<h2 id="stop-scalpers">{site.TAKEDOWN_SCALPERS_Q}</h2>', text)
+            for item in site.TAKEDOWN_SCALPERS_ITEMS:
+                self.assertIn(f"<li>{item}</li>", text)
+            self.assertIn(f'<p class="notice-stand-close">{site.TAKEDOWN_SCALPERS_CLOSE}</p>', text)
+            self.assertNotIn("notice-pull", text)
             why_at = text.index("the moment they had stock. " + APPROVED_BOTS)
-            self.assertLess(why_at, pull_at)
-            self.assertLess(pull_at, newsletter_at)
+            stand_at = text.index('<aside class="notice-stand"')
+            newsletter_at = text.index(APPROVED_LAST)
+            self.assertLess(why_at, stand_at)
+            self.assertLess(stand_at, newsletter_at)
             self.assertEqual('<meta name="robots" content="noindex">' in doc, noindex)
             self.assertNotIn("og-travelers.png", doc)
             self.assertNotIn("og-midori.png", doc)
@@ -151,7 +157,7 @@ class HomeNoticeCardTests(unittest.TestCase):
         self.assertNotIn("shops", html.unescape(card).lower())
         line = html.unescape(re.search(r"</h3><p>(.*?)</p>", card).group(1))
         self.assertEqual(line, site.HOME_NOTICE_LINE)
-        notice = " ".join(site.TAKEDOWN_NOTICE)
+        notice = " ".join(site.TAKEDOWN_NOTICE + (site.TAKEDOWN_SCALPERS_Q,) + site.TAKEDOWN_SCALPERS_ITEMS + (site.TAKEDOWN_SCALPERS_CLOSE,))
         for sentence in line.split(". "):
             self.assertIn(sentence.rstrip("."), notice)
 
