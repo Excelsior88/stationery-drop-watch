@@ -1852,5 +1852,23 @@
   "url": "https://www.archerandolive.com/products/songbird-in-warm-gray-dot-grid?variant=47271031406747",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T17:17:45+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks · Shirt Fabric: Graph Plaid",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T17:18:32+00:00",
+  "store_id": "kinousa",
+  "store": "Kinokuniya USA",
+  "label": "Weeks · Colors: Sea Glass",
+  "url": "https://usa.kinokuniya.com/products/4580812709743",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
