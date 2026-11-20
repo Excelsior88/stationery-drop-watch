@@ -131,7 +131,7 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 72)  # 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026)
+        self.assertEqual(len(mods), 73)  # 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):

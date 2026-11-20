@@ -175,6 +175,74 @@ class HomeNoticeCardTests(unittest.TestCase):
         self.assertIn("@media (max-width:1000px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-notice{grid-column:1/-1}}", css)
 
 
+GIFT_NOTE = re.compile(r'<aside class="gift-note">.*?</aside>', re.S)
+GONE_SHOP_URLS = re.compile(r"simplepaper|travelerscompanyusa|md-product-usa|tokyopenshop|omoionline", re.I)
+
+
+class GiftGuideTests(unittest.TestCase):
+    """Owner, Nov 19: the gift guide drops both brands but its traveler section says we meant to feature them, and why."""
+
+    def setUp(self):
+        self.doc = site.build_gift_guide()[1]
+
+    def test_only_the_traveler_note_names_either_brand(self):
+        notes = GIFT_NOTE.findall(self.doc)
+        self.assertEqual(len(notes), 1)
+        rest = GIFT_NOTE.sub("", self.doc)
+        self.assertIsNone(BRAND_WORDS.search(html.unescape(rest)))
+        self.assertNotRegex(html.unescape(rest), re.compile(r"traveler'?s|midori", re.I))
+        self.assertIsNone(GONE_SHOP_URLS.search(self.doc))
+        self.assertNotIn(site.MIDORI_SLUG, self.doc)
+        self.assertNotIn(site.TN_GUIDE_SLUG, self.doc)
+        self.assertEqual(self.doc.count("/travelers-company-limited-edition/"), 1)
+        self.assertIn('href="/travelers-company-limited-edition/">Read the full story</a>', notes[0])
+        trav = self.doc[self.doc.index('<h2 id="traveler">'):self.doc.index('<h2 id="dot-grid">')]
+        self.assertIn(notes[0], trav)
+
+    def test_note_uses_only_approved_facts_and_the_one_allowed_quote(self):
+        note = site.GIFT_NOTE
+        facts = json.loads((ROOT / "takedown-2026-11-19/announcement-facts.json").read_text()) \
+            if (ROOT / "takedown-2026-11-19/announcement-facts.json").exists() else None
+        self.assertEqual(re.findall(r'"([^"]+)"', note), ["pushes that stock toward resellers."])
+        notice = " ".join(site.TAKEDOWN_NOTICE)
+        self.assertIn('"pushes that stock toward resellers,"', notice)
+        for phrase in ("November 17", "November 19", "TRAVELER'S COMPANY USA", "Designphil",
+                       "permission to use their official product photos", "remove every Traveler's Company and MIDORI product",
+                       "a tracker telling everyone when something is back in stock"):
+            self.assertIn(phrase, note)
+            self.assertIn(phrase, notice)
+        for banned in ("legal", "takedown", "lawyer", "cease"):
+            self.assertNotIn(banned, note.lower())
+        # Nov 20: the same two lines as the homepage card, after we complied and before the packing pivot.
+        bots = "Bots don't wait for our email, they're already running auto-checkout."
+        scalpers = "Want to stop scalpers? Purchase limits. Real bot protection. Fair regional stock. Not shutting down the little guy."
+        self.assertIn("We complied. " + bots + " " + scalpers + " So here's what we'd pack instead.", note)
+        if facts:
+            self.assertEqual(facts["approved_notice_text"][1:], list(site.TAKEDOWN_NOTICE))
+
+    def test_new_to_journaling_has_cousin_avec_then_our_two_a5s(self):
+        sec = self.doc[self.doc.index('<h2 id="journaling">For someone new to journaling</h2>'):self.doc.index('<h2 id="traveler">')]
+        items = re.findall(r"<li>.*?</li>", sec, re.S)
+        self.assertEqual(len(items), 3)
+        self.assertIn("Cousin Avec (A5)", items[0])
+        self.assertIn('href="https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_avec/"', items[0])
+        self.assertIn("my partner and I both use", items[0])
+        self.assertIn('href="https://www.amazon.com/dp/B0HRTLMZ1M" data-own-product', items[1])
+        self.assertIn('href="https://www.amazon.com/dp/B0HRTTCH4D" data-own-product', items[2])
+        self.assertNotRegex(sec, r"tag=|arden|b0nem0ther|\bfan\b")
+        self.assertNotRegex(sec.lower(), r"arden|b0nem0ther|\bfan\b")
+        we_make = self.doc[self.doc.index('<h2 id="we-make">'):]
+        self.assertNotIn("amazon.com/dp/B0HRTLMZ1M", we_make)  # listed once, under new to journaling
+        self.assertNotIn("amazon.com/dp/B0HRTTCH4D", we_make)
+        self.assertIn('href="#journaling"', we_make)
+
+    def test_traveler_picks_are_tracked_listings(self):
+        for k in ("plannera6", "tragen", "aostag"):
+            self.assertTrue(site.gift_listings(k), k)
+        for k, (canon, *_rest) in site.GIFT_PICKS.items():
+            self.assertNotRegex(canon, r"^(tn-|md-)", k)
+
+
 class SiteCopyTests(unittest.TestCase):
     def test_no_tracker_page_nav_or_faq_mentions_either_brand(self):
         docs = [("index.html", NOTICE_CARD.sub("", site.build_index())), ("about.html", site.build_about()), ("404.html", site.build_404()),

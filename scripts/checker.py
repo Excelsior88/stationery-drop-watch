@@ -9,6 +9,11 @@ Politeness: identifies itself with a real User-Agent, obeys robots.txt,
 waits >= DELAY seconds between requests to the same host, one worker per host.
 
 Status values: in_stock | sold_out | preorder | coming_soon | unknown (+ error)
+
+Prices: Shopify listings also record the price from the same .js response (price_cents, and
+price_max_cents when the product's variants differ), but only when the shop's own /meta.json
+says it sells in USD (currency). Any other shop, a failed /meta.json, or a non-Shopify check
+records no price, so pages can say "see price at the shop" instead of guessing.
 """
 import json, re, time, threading, datetime as dt
 from concurrent.futures import ThreadPoolExecutor
@@ -242,6 +247,28 @@ def classify_shopify_variant(js, vid):
         status = unavailable_status(title + " " + " ".join(tags), tags)
     return status, int(bool(v.get("available"))), 1, title
 
+def shopify_price(js, vid=None):
+    """(price_cents, price_max_cents) from one product .js, or None. Prices are integer cents.
+    For one tracked variant, that variant's price. For a whole product, the available
+    variants' prices (all variants when none is available)."""
+    variants = js.get("variants") or []
+    if vid:
+        vs = [v for v in variants if v.get("id") == vid]
+    else:
+        vs = [v for v in variants if v.get("available")] or variants
+    cents = [v["price"] for v in vs if isinstance(v.get("price"), int) and v["price"] > 0]
+    if not cents: return None
+    return min(cents), max(cents)
+
+def shop_currency(h, base):
+    """The shop's selling currency from its public /meta.json, or None if it can't be read."""
+    try:
+        r = h.get(f"{base}/meta.json")
+        cur = r.json().get("currency") if r.ok else None
+        return cur if isinstance(cur, str) and re.fullmatch(r"[A-Z]{3}", cur) else None
+    except Exception:
+        return None
+
 def classify_html(html):
     """Fallback: schema.org availability in JSON-LD / microdata."""
     m = re.findall(r'schema\.org/(InStock|OutOfStock|SoldOut|PreOrder|BackOrder|LimitedAvailability)', html)
@@ -252,6 +279,7 @@ def classify_html(html):
 
 def check_shopify_store(store):
     base = store["url"].rstrip("/"); h = Host(base); out = []
+    currency = shop_currency(h, base)  # prices are recorded only for USD shops
     for p in store["products"]:
         rec = dict(store_id=store["id"], store=store["name"], canonical=p.get("canonical"), label=p["label"],
                    type=p["type"], url=p["url"], checked_at=None, status="unknown", method=None,
@@ -266,6 +294,9 @@ def check_shopify_store(store):
                 if res:
                     st, a, t, title = res
                     rec.update(status=st, available_variants=a, total_variants=t, title=title, method="shopify .js variant" if vid else "shopify .js")
+                    pr = shopify_price(js, vid) if currency == "USD" else None
+                    if pr:
+                        rec.update(currency="USD", price_cents=pr[0], **({"price_max_cents": pr[1]} if pr[1] != pr[0] else {}))
                     if not vid and named_variants_disagree(js):
                         rec["error"] = "named variants do not share one availability"
                 else:

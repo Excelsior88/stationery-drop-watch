@@ -576,6 +576,10 @@ table.stock.compare thead th{vertical-align:top}
 .follow-card,.shop-card{border-radius:14px;box-shadow:0 2px 0 var(--line),0 12px 30px -24px rgba(60,40,20,.35)}
 .faq .faq-item{padding:12px 0}
 
+/* Gift guide sources: two columns on wide screens */
+@media (min-width:760px){.sources.two-col{columns:2;column-gap:2.5rem}.sources.two-col li{break-inside:avoid;margin:.25em 0;font-size:.86rem}}
+/* Gift guide table on phones: name on its own line, stock and price side by side below it */
+@media (max-width:600px){table.gift-table{table-layout:auto;font-size:.86rem}.gift-table .small{font-size:.8rem}.gift-table thead{display:none}.gift-table tr{display:grid;grid-template-columns:auto 1fr;column-gap:10px;border-top:1px solid var(--line);padding:6px 0}.gift-table td{border-top:0;padding:2px 8px}.gift-table td:first-child{grid-column:1/-1}}
 /* Small "Made by us" cards sit below tracker stock listings, never above them. */
 .made-by-us{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:start;margin:0 0 16px}
 .made-by-us .made-by-us-thumb{display:block;max-width:100%}
@@ -590,3 +594,7 @@ table.stock.compare thead th{vertical-align:top}
   .made-by-us .shop-img{width:160px;margin:0 auto}
   .made-by-us .btn{display:block;text-align:center}
 }
+/* Gift guide: the note in the traveler section about why Traveler's Company and MIDORI aren't in it */
+.gift-note{margin:0 0 16px;padding:14px 18px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px}
+.gift-note p{margin:0;color:var(--ink)}
+.gift-note a{font-weight:600}
