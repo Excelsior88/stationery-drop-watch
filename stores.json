@@ -4443,16 +4443,6 @@
    "products": []
   },
   {
-   "id": "nanami",
-   "name": "Nanami Paper",
-   "url": "https://www.nanamipaper.com/",
-   "country": "US",
-   "platform": "robots-disallow",
-   "indie": true,
-   "note": "robots.txt disallows all crawling (User-agent: * / Disallow: /). Listed as a link only; not checked.",
-   "products": []
-  },
-  {
    "id": "archerolive",
    "name": "Archer and Olive (official)",
    "url": "https://www.archerandolive.com/",

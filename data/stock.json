@@ -14,12 +14,6 @@
    "name": "JetPens",
    "url": "https://www.jetpens.com/",
    "reason": "Returns HTTP 403 to non-browser requests (bot protection). Listed as a link only; not checked."
-  },
-  {
-   "id": "nanami",
-   "name": "Nanami Paper",
-   "url": "https://www.nanamipaper.com/",
-   "reason": "robots.txt disallows all crawling (User-agent: * / Disallow: /). Listed as a link only; not checked."
   }
  ],
  "products": [

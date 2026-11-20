@@ -39,7 +39,6 @@ STORES=[
  dict(id="kinosg",name="Kinokuniya Singapore",url="https://kinokuniya.com.sg/",country="SG",platform="shopify",indie=False,cols=["hobonichi-techo"]),
  dict(id="omoi",name="Omoi Zakka Shop",url="https://omoionline.com/",country="US",platform="shopify",indie=True,cols=["hobonichi"]),
  dict(id="jetpens",name="JetPens",url="https://www.jetpens.com/",country="US",platform="blocked",indie=False,note="Returns HTTP 403 to non-browser requests (bot protection). Listed as a link only; not checked."),
- dict(id="nanami",name="Nanami Paper",url="https://www.nanamipaper.com/",country="US",platform="robots-disallow",indie=True,note="robots.txt disallows all crawling (User-agent: * / Disallow: /). Listed as a link only; not checked."),
 ]
 def pool_for(s):
     base=s["url"].rstrip("/"); P={}

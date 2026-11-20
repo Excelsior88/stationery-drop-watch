@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parent.parent
 SITE = Path(os.environ["DROPWATCH_SITE_OUT"]) if os.environ.get("DROPWATCH_SITE_OUT") else ROOT / "site"  # draft builds write elsewhere
 ET = ZoneInfo("America/New_York")
+DETROIT = ZoneInfo("America/Detroit")
 E = html.escape
 
 # Amazon links on this site are only for the owner's own planners and journals on /shop.
@@ -244,7 +245,7 @@ def guide_updated(fn):
     h = hashlib.sha256(inspect.getsource(fn).encode()).hexdigest()[:16]
     e = db.get(fn.__name__)
     if not e or e["hash"] != h:
-        e = db[fn.__name__] = {"hash": h, "date": dt.datetime.now(ET).date().isoformat()}
+        e = db[fn.__name__] = {"hash": h, "date": dt.datetime.now(DETROIT).date().isoformat()}
         GUIDE_DATES.write_text(_j.dumps(db, indent=1, sort_keys=True) + "\n")
     d = dt.date.fromisoformat(e["date"])
     return f"updated {d.strftime('%b')} {d.day}, {d.year}"
@@ -581,6 +582,30 @@ def editor_block(page="home"):
 
 BUYABLE = ("in_stock", "preorder")
 NOT_BUYABLE = ("sold_out", "coming_soon")  # coming_soon = preview page, no preorder
+
+def is_restock_event(c):
+    """A restock is a listing becoming buyable. coming_soon -> sold_out is not one, and it must not alert."""
+    return c.get("to") in BUYABLE and c.get("from") in NOT_BUYABLE
+
+def listed_unchecked():
+    """Link-only shops still configured in stores.json.
+
+    An older stock.json can name a shop that was removed (Nanami Paper). The
+    pages follow stores.json, which is the list the checker will write next.
+    """
+    allowed = {s["id"] for s in stores["stores"] if s.get("platform") not in ("shopify", "hobonichi")}
+    return [n for n in stock.get("not_checked", []) if n.get("id") in allowed]
+
+def link_only_clause():
+    """FAQ sentence. Singular when JetPens is the only shop we link and do not check."""
+    names = [n["name"] for n in listed_unchecked()]
+    if len(names) == 1:
+        return f"{names[0]} is listed as a link only, because its site blocks automated checks."
+    if len(names) == 2:
+        return f"{names[0]} and {names[1]} are listed as links only, because their sites block automated checks."
+    if not names:
+        return "Every shop we list is checked automatically."
+    return f"{', '.join(names[:-1])}, and {names[-1]} are listed as links only, because their sites block automated checks."
 
 def product_key(p):
     """Group listings of the same product across stores: canonical id, else a normalized title."""
@@ -968,7 +993,7 @@ def build_hobo_tracker():
     prods = hobo_products()  # Hobonichi section only; dot grid shops live on their own page
     s = {k: sum(p["status"] == k for p in prods) for k in STATUS}
     urls = {p["url"] for p in prods}
-    restocks = [c for c in changes if c["url"] in urls and c["to"] in ("in_stock", "preorder") and c["from"] in ("sold_out", "coming_soon")]
+    restocks = [c for c in changes if c["url"] in urls and is_restock_event(c)]
     restocks.sort(key=lambda c: c["at"], reverse=True)
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)
     recent = [c for c in restocks if dt.datetime.fromisoformat(c["at"]) >= cutoff]
@@ -983,12 +1008,14 @@ def build_hobo_tracker():
 
     # table data (embedded so the page works without fetch)
     rows = tracker_rows(prods)
-    not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a>: <span class="muted">{E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
+    unchecked = listed_unchecked()
+    not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a>: <span class="muted">{E(n["reason"] or "")}</span></li>' for n in unchecked)
+    unchecked_summary = "Store we list but don't check automatically" if len(unchecked) == 1 else "Stores we list but don't check automatically"
 
     faq_html, faq_ld = tracker_good_to_know(HOBO_NOTE_Q, HOBO_NOTE)
     more = "".join(f'<li><a href="{g["slug"]}/">{E(g["short"])}</a></li>' for g in GROUPS if g_sec(g) == "hobonichi")
     tracker_html = tracker_block(prods, rows, "Moomin, Cousin, Midnight Blue…", '<option value="__other">Other 2027 items</option>',
-        f'<details class="muted small"><summary>Stores we list but don\'t check automatically</summary><ul>{not_checked}</ul></details>',
+        f'<details class="muted small"><summary>{unchecked_summary}</summary><ul>{not_checked}</ul></details>',
         prefix=hobo_design_nav())
     body = f"""
 {crumbs((HOBO_TRACKER, "Hobonichi tracker"))}
@@ -1107,7 +1134,7 @@ def build_index():
   <h3>{E(TAKEDOWN_HEADING)}</h3><p>{E(HOME_NOTICE_LINE)}</p>
   <span class="hub-go">Read the notice</span></a></li>""")
     sec_of_url = {p["url"]: section_of(p) for p in prods}
-    restocks = [c for c in changes if c["url"] in sec_of_url and c["to"] in ("in_stock", "preorder") and c["from"] in ("sold_out", "coming_soon")]
+    restocks = [c for c in changes if c["url"] in sec_of_url and is_restock_event(c)]
     restocks.sort(key=lambda c: c["at"], reverse=True)
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)
     recent = [c for c in restocks if dt.datetime.fromisoformat(c["at"]) >= cutoff]
@@ -1175,7 +1202,7 @@ def build_hobonichi():
 <h2 class="sr">2027 timeline</h2>
 <ol class="timeline">
   <li><time>Aug 25, 2026</time><div><h3 class="tl">Previews go up</h3><p>Shops post the 2027 lineup as "out of stock" or "coming soon" pages. They aren't sold out; they're just not on sale yet. <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
-  <li><time>Aug 31, 2026 · 10 PM ET</time><div><h3 class="tl">Official online launch (January-start planners)</h3><p>September 1, 2026 at 11:00 AM Japan time (August 31, 2026 at 10:00 PM ET / 9:00 PM CT) is the official Hobonichi Store's online launch time <a href="#s-1101">[Hobonichi]</a>. Indie shops split online and in-store times. Hobonichi's FAQ says each retail store opens at its own store hours <a href="#s-faq-retail">[Hobonichi, retail hours]</a> <a href="#s-faq-schedule">[Hobonichi, sale schedule]</a>.<br>Paper Mouse opened online Aug 31 at 10 PM ET and in-store Sep 1 at 11 AM ET <a href="#s-papermouse">[Paper Mouse]</a>.<br>Atlas opened online Aug 31 at 9 PM CT, with retail expected the week of September 7. Atlas warned that popular styles and collaborations "often sell out within minutes." <a href="#s-atlas">[Atlas]</a></p></div></li>
+  <li><time>Aug 31, 2026 · 10 PM ET</time><div><h3 class="tl">Official online launch (January-start planners)</h3><p>September 1, 2026 at 11:00 AM Japan time (August 31, 2026 at 10:00 PM ET / 9:00 PM CT) is the official Hobonichi Store's online launch time <a href="#s-1101">[Hobonichi]</a> <a href="#s-faq-release">[Hobonichi, release time]</a>. Indie shops split online and in-store times. Hobonichi's FAQ says each retail store opens at its own store hours <a href="#s-faq-schedule">[Hobonichi, sale schedule]</a>.<br>Paper Mouse opened online Aug 31 at 10 PM ET and in-store Sep 1 at 11 AM ET <a href="#s-papermouse">[Paper Mouse]</a>.<br>Atlas opened online Aug 31 at 9 PM CT, with retail expected the week of September 7. Atlas warned that popular styles and collaborations "often sell out within minutes." <a href="#s-atlas">[Atlas]</a></p></div></li>
   <li><time>Sep 30 – Oct 1, 2026</time><div><h3 class="tl">Second fall wave</h3><p>Hobonichi notes that some products begin sales on October 1 <a href="#s-1101">[Hobonichi]</a>.<br>One Piece sales began October 1, 2026 at 11:00 AM Japan time (September 30, 2026 at 10:00 PM ET). One Piece 2027 editions are January-start and Monday-start only <a href="#s-hon">[Hobonichi]</a>.<br>Paper Mouse, a US shop, listed the Weeksdays 2027 desk calendar in this wave, plus a large restock of earlier sell-outs (as preorders at some shops) <a href="#s-papermouse">[Paper Mouse]</a>.</p></div></li>
   <li><time>Early–mid Oct 2026</time><div><h3 class="tl">First restocks land at indie shops</h3><p>Atlas expected its first restock in early October. Paper Mouse's shipment arrived October 15 and preorders began shipping. <a href="#s-atlas">[Atlas]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
   <li><time>Feb 1, 2027</time><div><h3 class="tl">Spring launch (April-start planners)</h3><p>The official Hobonichi Store launches April-start planners on February 1, 2027 at 11:00 AM Japan time (January 31, 2027 at 9:00 PM ET) <a href="#s-1101">[Hobonichi]</a>. Other shops start at their own opening hours. Hobonichi has not published the Spring 2027 cover and book lineup yet.</p></div></li>
@@ -1198,7 +1225,7 @@ def build_hobonichi():
 <p>Many January-start products return for April-start. Sold-out January-start items may be restocked for the April-start launch, some items are April-only, and fabric availability can change the lineup <a href="#s-faq-spring">[Hobonichi]</a>. Choosing between the two: <a href="hobonichi-january-start-vs-april-start/">January-start vs April-start</a>.</p>
 
 <h2>Will it come back?</h2>
-<p>Usually, but not always. Standard planner books and core colors tend to be restocked. Special collaborations may only be sold at launch <a href="#s-atlas">[Atlas]</a>. Paper Mouse says almost every item has been restocked at least once after launch in past years <a href="#s-papermouse">[Paper Mouse]</a>.</p>
+<p>Usually, but not always. While some standard planners and accessories may be replenished, special or limited collaborations may only be available during the initial launch <a href="#s-atlas">[Atlas]</a>. Paper Mouse says almost every item has been restocked at least once after launch in past years <a href="#s-papermouse">[Paper Mouse]</a>.</p>
 <p>Hobonichi posts restock decisions on each product page. "If there is no notice, a restock has not been decided or is under consideration" <a href="#s-faq-restock">[Hobonichi]</a>. Restock notification emails apply only to Techo books and Drawer Pouches, not accessories or stationery, and they do not guarantee a purchase <a href="#s-faq-restock">[Hobonichi]</a>.</p>
 <p>Sold-out official Hobonichi Store rows on our <a href=\"""" + HOBO_TRACKER + """#tracker">tracker</a> show that product-page note directly: "Official store notes a restock is planned," "Restock undecided at official store," or "Sales ended at official store."</p>
 
@@ -1228,10 +1255,10 @@ def build_hobonichi():
   <li id="s-faq-april"><a href="https://www.1101.com/store/techo/en/faq/articles/4889929315230.html" rel="noopener" target="_blank">April-start editions</a>, Hobonichi FAQ (official). Which 2027 books come in April-start.</li>
   <li id="s-faq-spring"><a href="https://www.1101.com/store/techo/en/faq/articles/4889951964190.html" rel="noopener" target="_blank">Spring lineup guidance</a>, Hobonichi FAQ (official). How April-start overlaps with sold-out January-start items.</li>
   <li id="s-faq-restock"><a href="https://www.1101.com/store/techo/en/faq/articles/4889935437854.html" rel="noopener" target="_blank">Restock notices</a>, Hobonichi FAQ (official). Product-page restock decisions, and which items restock emails cover.</li>
-  <li id="s-faq-retail"><a href="https://www.1101.com/store/techo/en/faq/articles/4889938317854.html" rel="noopener" target="_blank">Retail store hours</a>, Hobonichi FAQ (official). The 11:00 AM Japan time official-store release time, and each store's opening hours.</li>
-  <li id="s-faq-schedule"><a href="https://www.1101.com/store/techo/en/faq/articles/4889935445534.html" rel="noopener" target="_blank">Sale schedule</a>, Hobonichi FAQ (official). The annual February 1 April-start schedule, and each retail store's opening hours.</li>
+  <li id="s-faq-release"><a href="https://www.1101.com/store/techo/en/faq/articles/4889938317854.html" rel="noopener" target="_blank">Official store release time</a>, Hobonichi FAQ (official). The 11:00 AM Japan time official Hobonichi Store online release time.</li>
+  <li id="s-faq-schedule"><a href="https://www.1101.com/store/techo/en/faq/articles/4889935445534.html" rel="noopener" target="_blank">Sale schedule</a>, Hobonichi FAQ (official). The annual February 1 April-start schedule, and each retail store opening at its own hours.</li>
   <li id="s-papermouse"><a href="https://www.thepapermouse.com/pages/hobonichi-faq" rel="noopener" target="_blank">Hobonichi FAQ</a>, The Paper Mouse. Online and in-store launch times, the Weeksdays 2027 desk calendar, the October 15 arrival, and restock history.</li>
-  <li id="s-atlas"><a href="https://www.atlasstationers.com/blogs/news/hobonichi-faq-2027" rel="noopener" target="_blank">Hobonichi FAQ – 2027</a>, Atlas Stationers. Online launch time, retail expected the week of September 7, sell-out warning, and the early-October restock.</li>
+  <li id="s-atlas"><a href="https://www.atlasstationers.com/blogs/news/hobonichi-faq-2027" rel="noopener" target="_blank">Hobonichi FAQ – 2027</a>, Atlas Stationers. Online launch time, retail expected the week of September 7, sell-out warning, the early-October restock, and which standard planners and accessories may be replenished.</li>
 </ol>
 """ + design_links_block() + related_block("hobonichi-2027.html") + """
 </article>"""
@@ -1561,7 +1588,7 @@ def build_group(g, oe=None):
   {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
 </section></details>""")
     urls = {l["url"] for l in ls}
-    rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
+    rs = sorted([c for c in changes if c["url"] in urls and is_restock_event(c)],
                 key=lambda c: c["at"], reverse=True)[:10]
     if rs:
         restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs, feed_id=g["slug"] + "-restocks")
@@ -1815,7 +1842,7 @@ def build_design(d, oe=None):
   {region_legend(l["store_id"] for l in ls)}
 </section>""" if ls else f'<section class="card group-sec" id="stock"><h2>Stock by shop</h2><div class="empty"><p>No shop we check lists this design right now. See the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a> for everything we track.</p></div></section>')
     urls = {l["url"] for l in ls}
-    rs = sorted([c for c in changes if c["url"] in urls and c["to"] in BUYABLE and c["from"] in NOT_BUYABLE],
+    rs = sorted([c for c in changes if c["url"] in urls and is_restock_event(c)],
                 key=lambda c: c["at"], reverse=True)[:10]
     if rs:
         restock_html = f'<p class="muted small">{RESTOCK_NOW_NOTE}</p>' + restock_feed(rs, feed_id=d["parent"] + "-" + d["slug"] + "-restocks")
@@ -1918,7 +1945,7 @@ FAQ = [
      "Restock times and last-check times are written as Eastern Time. A browser that can read them shows your local time zone instead and names that zone. "
      "If it cannot, the Eastern Time label stays. Guide dates and the 2027 calendar dates stay as written."),
     ("Which shops do you check?",
-     "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. JetPens and Nanami Paper are listed as links only, because their sites block automated checks."),
+     "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. {unchecked}"),
     ("What do you track?",
      "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and a few A6 and A5 covers. {tracks} We don't track pens."),
     ('What do "Not yet on sale" and "Couldn\'t check" mean?',
@@ -1979,8 +2006,9 @@ def faq_block(only=None, sid="faq"):
     else:
         by_q = dict(answers)
         pairs = [(q, by_q[q]) for q in only]
-    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_brand_names()), shop=url_for("shop/")),
-           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_brand_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>')) for q, a in pairs]
+    unchecked = link_only_clause()
+    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_brand_names()), shop=url_for("shop/"), unchecked=unchecked),
+           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_brand_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>', unchecked=E(unchecked))) for q, a in pairs]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}
@@ -1999,7 +2027,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-19", "about.html": "2026-11-17", "privacy.html": "2026-11-18"}
+STATIC_LASTMOD = {"hobonichi-2027.html": "2026-11-20", "about.html": "2026-11-17", "privacy.html": "2026-11-18"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -2071,7 +2099,7 @@ DG_GUIDE_SLUG = "best-dot-grid-journals"
 HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), (JAN_APR_SLUG + "/", "January-start vs April-start"), ("hobonichi-2027.html", "2027 launch & restock calendar")]
 GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
 GUIDES_LASTMOD = "2026-10-29"
-DG_GUIDE_LASTMOD = "2026-11-04"  # last copy change on the dot grid guide
+DG_GUIDE_LASTMOD = "2026-11-20"  # STM Pro sizes, Leuchtturm formats, and TN wording (America/Detroit)
 GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin A5, Weeks and Weeks Mega in stock right now, checked about every 30 minutes, plus tips for catching a restock.",
                 VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits.",
                 JAN_APR_SLUG + "/": "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1.",
@@ -2204,7 +2232,12 @@ def build_where_to_buy():
   <p class="small"><a href="{g["slug"]}/">Full {E(g["short"])} restock page</a> <span class="muted">· every listing, when it last changed, and recent restocks</span></p>
   </div>
 </details>''')
-    not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a> <span class="muted">· {E(n["reason"] or "")}</span></li>' for n in stock["not_checked"])
+    unchecked = listed_unchecked()
+    not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a> <span class="muted">· {E(n["reason"] or "")}</span></li>' for n in unchecked)
+    if len(unchecked) == 1:
+        unchecked_head, unchecked_blurb = "Shop we list but can't check", "Its site blocks automated checks, so we link to it without a status."
+    else:
+        unchecked_head, unchecked_blurb = "Shops we list but can't check", "Their sites block automated checks, so we link to them without a status."
     # Live, data-driven tip: products sold out at one shop we track while another shop has them.
     split = {}
     for l in hobo:
@@ -2245,8 +2278,8 @@ def build_where_to_buy():
     </section>
     {region_legend(l["store_id"] for l in hobo)}
     {"".join(secs)}
-    <section class="card"><h2>Shops we list but can't check</h2>
-      <p class="muted small">Their sites block automated checks, so we link to them without a status.</p>
+    <section class="card"><h2>{unchecked_head}</h2>
+      <p class="muted small">{unchecked_blurb}</p>
       <ul>{not_checked}</ul></section>
     <section class="card" id="tips"><h2>Tips for catching a restock</h2>
       <ul>
@@ -2472,7 +2505,7 @@ def build_january_april():
                        ld=(crumbs_ld(("guides/", "Guides"), (fname, "January-start vs April-start")), art, faq_ld))
 
 
-DG_SRC = {  # each maker's own product page, read Nov 4, 2026; every spec on the guide cites one of these
+DG_SRC = {  # each maker's own product page; STM Pro sizes rechecked Nov 20, 2026. Every spec cites one of these.
     "ao": ("https://www.archerandolive.com/products/songbird-in-blue", "Songbird in Blue notebook", "Archer and Olive"),
     "ao2": ("https://www.archerandolive.com/products/storybook-in-navy-books", "Storybook in Navy notebook", "Archer and Olive"),
     "lt": ("https://www.leuchtturm1917.us/products/hardcover-notebook", "Hardcover Notebook", "Leuchtturm1917"),
@@ -2522,7 +2555,8 @@ def build_dotgrid_guide():
         ("Paper weight", ("160gsm (Storybook also comes in kraft dot grid, 150gsm)", "ao ao2"), ("80 g/m² (the 120G edition is 120 gsm)", "lt lt120"),
          ("160gsm or 120gsm, your choice", "stm"), ("160 GSM", "nt")),
         ("Pages", ("192 (A5)", "ao ao2"), ("251 numbered pages (120G edition: 203)", "lt lt120"), (na, "stm"), ("128, with gilded edges", "nt")),
-        ("Size", ('A5: 5.75 × 8.25 in', "ao"), ("Medium (A5): 5.71 × 8.27 in", "lt"), ("A5 or B5 (dimensions not listed)", "stm"), ("135 × 195 mm", "nt")),
+        ("Size", ('A5: 5.75 × 8.25 in', "ao"), ("Medium (A5): 5.71 × 8.27 in", "lt"),
+         ("A5: 5.75 × 8.5 in (14.5 × 21 cm); B5: 7 × 10 in; B6: 5 × 7 in (from STM's size chart)", "stm"), ("135 × 195 mm", "nt")),
         ("Dot grid", ("Dot grid (spacing not listed)", "ao"), ("Dots 5 mm apart", "lt"), ("5 mm dot grid", "stm"), ("5 mm, light grey dots", "nt")),
         ("Paper color", ("White, kraft or ivory dot grid (Storybook)", "ao2"), ("Slightly chamois-colored", "lt"), ("Bright white", "stm"), ("Bright white", "nt")),
         ("Cover", ("Vegan leather (hard or soft not listed)", "ao"), ("Hardcover; softcover also sold", "lt"), ("Vegan leather hardcover", "stm"), ("Vegan leather (hard or soft not listed)", "nt")),
@@ -2531,7 +2565,9 @@ def build_dotgrid_guide():
         ("Bookmarks", (na, "ao"), ("Two page markers", "lt"), ("Two ribbon bookmarks", "stm"), (na, "nt")),
         ("Extras", (na, "ao"), ("Gusseted pocket, elastic band, 8 perforated sheets, stickers", "lt"),
          ("Back pocket, elastic, pen loop; comes with a 0.7 mm fineliner, layout guide and box", "stm"), ("Back pocket with a sticker sheet, elastic band", "nt")),
-        ("Other sizes", ("B5, 8x8 square, B6, TN, Pocket and Letter (Songbird)", "ao"), ("Pocket (A6), Composition (B5) and Master (A4+)", "lt"), ("B5", "stm"), ("None listed on this page", "nt")),
+        ("Other sizes", ("B5, 8x8 square, B6, TN, Pocket and Letter (Songbird)", "ao"),
+         ("Pocket (A6), Paperback (B6+), Medium (A5), Composition (B5), Master Slim (A4+) and Master (A4+)", "lt"),
+         ("B5 (160gsm or 120gsm) and B6 (120gsm only)", "stm"), ("None listed on this page", "nt")),
     ]
     def n(k):  # numbered citation, matching the Sources list order
         return f'<a href="#src-{k}">[{list(DG_SRC).index(k) + 1}]</a>'
@@ -2560,6 +2596,8 @@ def build_dotgrid_guide():
     src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, {E(b)} (official product page).</li>'
                         for k, (u, t, b) in DG_SRC.items())
     asof = time_tag(stock["run_finished"])
+    revised = dt.date.fromisoformat(DG_GUIDE_LASTMOD)
+    specs_asof = f"{revised.strftime('%b')} {revised.day}, {revised.year}"
     body = f"""
 <article class="prose guide vs-page">
 {crumbs(("guides/", "Guides"), (fname, "Dot grid journals compared"))}
@@ -2577,7 +2615,7 @@ def build_dotgrid_guide():
 </ul>
 
 <h2>Side by side</h2>
-<p class="muted small">A5 dot grid versions (the Tsuki comes in one size), from each maker's US product page as of Nov 4, 2026. Numbers in brackets point to the sources below. Where a page doesn't list something, we say so instead of guessing. We don't show prices, because they change and differ by edition.</p>
+<p class="muted small">A5 dot grid versions (the Tsuki comes in one size), from each maker's US product page as of {specs_asof}. Numbers in brackets point to the sources below. Where a page doesn't list something, we say so instead of guessing. We don't show prices, because they change and differ by edition.</p>
 <div class="table-wrap"><table class="stock compare">
 <thead><tr><th></th>{"".join(f"<th>{E(h)}</th>" for h, _, _ in DG_COLS)}</tr></thead>
 <tbody>{rows_html}</tbody></table></div>
@@ -2585,13 +2623,13 @@ def build_dotgrid_guide():
 
 <h2>Who each one suits</h2>
 <h3>Archer and Olive: for markers, paint and lots of size choices</h3>
-<p>Pick Archer and Olive if you want thick paper and a specific size. Its notebooks use 160gsm paper, and the A5 has 192 pages {s("ao")}. Sizes run from Pocket to Letter, including B5, B6, square and a traveler's notebook size {s("ao")}. Some designs also offer kraft (150gsm) or ivory dot grid paper {s("ao2")}. The product page doesn't mention page numbers, an index or bookmarks, so plan to set those up yourself.</p>
+<p>Pick Archer and Olive if you want thick paper and a specific size. Its notebooks use 160gsm paper, and the A5 has 192 pages {s("ao")}. Sizes run from Pocket to Letter, including B5, B6, square and a TN size {s("ao")}. Some designs also offer kraft (150gsm) or ivory dot grid paper {s("ao2")}. The product page doesn't mention page numbers, an index or bookmarks, so plan to set those up yourself.</p>
 <p><a href="{DOTGRID_SLUG}/#shop-archerolive">Live Archer and Olive stock</a></p>
 <h3>Leuchtturm1917: for writing, and the most pages</h3>
 <p>Pick the Leuchtturm1917 Hardcover Medium (A5) if you mostly write and want room. It has 251 numbered pages, a blank table of contents, two page markers, a gusseted pocket and 8 perforated sheets {s("lt")}. The paper is 80 g/m² and slightly chamois-colored, the thinnest here {s("lt")}. If you want thicker paper with the same setup, the 120G edition has 120 gsm paper and 203 numbered pages {s("lt120")}.</p>
 <p><a href="{DOTGRID_SLUG}/#shop-leuchtturm-us">Live Leuchtturm1917 stock</a></p>
 <h3>Scribbles That Matter: for starting right away</h3>
-<p>Pick the Scribbles That Matter Dotted Journal Pro if you want the setup done. It comes with numbered pages, an index, a key page and a pen test page, two ribbon bookmarks, a pen loop and a 0.7 mm fineliner in the box {s("stm")}. You choose 160gsm or 120gsm paper, in A5 or B5 {s("stm")}. The Pro has a plain matte cover; the Iconic is the same idea with an embossed cover {s("stm2")}. The page doesn't list a page count.</p>
+<p>Pick the Scribbles That Matter Dotted Journal Pro if you want the setup done. It comes with numbered pages, an index, a key page and a pen test page, two ribbon bookmarks, a pen loop and a 0.7 mm fineliner in the box {s("stm")}. A5 and B5 come in 160gsm or 120gsm, and B6 comes in 120gsm only {s("stm")}. The Pro has a plain matte cover; the Iconic is the same idea with an embossed cover {s("stm2")}. The page doesn't list a page count.</p>
 <p><a href="{DOTGRID_SLUG}/#shop-scribbles">Live Scribbles That Matter stock</a></p>
 <h3>Notebook Therapy Tsuki: for a smaller book</h3>
 <p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we track too.</p>
@@ -2609,7 +2647,7 @@ def build_dotgrid_guide():
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
-           "datePublished": DG_GUIDE_LASTMOD, "dateModified": DG_GUIDE_LASTMOD, "url": url_for(fname), "image": OG_DOTGRID,
+           "datePublished": "2026-11-04", "dateModified": DG_GUIDE_LASTMOD, "url": url_for(fname), "image": OG_DOTGRID,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
