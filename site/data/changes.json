@@ -1870,5 +1870,32 @@
   "url": "https://usa.kinokuniya.com/products/4580812709743",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T17:49:22+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "Weeks Mega · Bow & Tie: Candy Dream",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-bow-tie-candy-dream-1",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T17:49:54+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Majestic Skies · A5 dot grid",
+  "url": "https://www.archerandolive.com/products/majestic-skies-dot-grid-notebook?variant=47314844123291",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T17:50:18+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Storybook in Plum · B5 dot grid",
+  "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146782363",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
