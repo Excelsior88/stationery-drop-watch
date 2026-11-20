@@ -18,6 +18,7 @@ PEN_JP_A6 = "https://www.penboutique.com/products/hobonichi-hon-light-hardcover-
 
 A5_SHOPS = {
     "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_hon_tiesheep/",
+    "dromgooles": "https://www.dromgooles.com/products/hobonichi-2026-a5-techo-hon-bow-tie-sheep-sheep-sheep",  # added Nov 20, 2026; handle says 2026, live title is 2027
     "papermouse": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a5-hon-planner-bow-tie-sheep-sheep-sheep-english",
     "atlas": "https://www.atlasstationers.com/products/hobonichi-a5-hon-bow-tie-sheep-sheep-sheep",
     "wonder": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-hon-english-bow-tie-sheep-sheep-sheep",
@@ -32,6 +33,7 @@ A5_SHOPS = {
 
 A6_EN_SHOPS = {
     "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_hon_tiesheep/",
+    "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-a6-techo-hon-bow-tie-sheep-sheep-sheep",  # added Nov 20, 2026
     "papermouse": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a6-hon-planner-bow-tie-sheep-sheep-sheep-english",
     "atlas": "https://www.atlasstationers.com/products/hobonichi-a6-hon-bow-tie-sheep-sheep-sheep",
     "wonder": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-hon-english-vbow-tie-sheep-sheep-sheep",
@@ -45,6 +47,7 @@ A6_EN_SHOPS = {
 
 ONCE_SHOPS = {
     "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_miyakoshi/",
+    "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-weeks-akiko-miyakoshi-once-in-spring",  # added Nov 20, 2026
     "papermouse": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-akiko-miyakoshi-once-in-spring-english",
     "atlas": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-akiko-miyakoshi-once-in-spring",
     "wonder": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-weeks-akiko-miyakoshi-once-in-spring",

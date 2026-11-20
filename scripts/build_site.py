@@ -1460,7 +1460,8 @@ def design_seo_desc(d, shops):
     # Longer pages of true detail are used only while the description stays within 160 characters.
     for extra in (" Open the shop's page to confirm before you buy. Stock can change.",
                   " Open the shop page to confirm this exact listing now.",
-                  " Confirm it on the shop's own page."):
+                  " Confirm it on the shop's own page.",
+                  " Confirm before you buy."):
         if len(core + extra) <= DESC_LIMIT:
             return core + extra
     return core
