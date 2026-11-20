@@ -194,6 +194,22 @@ class GiftGuideTests(unittest.TestCase):
         if facts:
             self.assertEqual(facts["approved_notice_text"][1:], list(site.TAKEDOWN_NOTICE))
 
+    def test_new_to_journaling_has_cousin_avec_then_our_two_a5s(self):
+        sec = self.doc[self.doc.index('<h2 id="journaling">For someone new to journaling</h2>'):self.doc.index('<h2 id="traveler">')]
+        items = re.findall(r"<li>.*?</li>", sec, re.S)
+        self.assertEqual(len(items), 3)
+        self.assertIn("Cousin Avec (A5)", items[0])
+        self.assertIn('href="https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_avec/"', items[0])
+        self.assertIn("my partner and I both use", items[0])
+        self.assertIn('href="https://www.amazon.com/dp/B0HRTLMZ1M" data-own-product', items[1])
+        self.assertIn('href="https://www.amazon.com/dp/B0HRTTCH4D" data-own-product', items[2])
+        self.assertNotRegex(sec, r"tag=|arden|b0nem0ther|\bfan\b")
+        self.assertNotRegex(sec.lower(), r"arden|b0nem0ther|\bfan\b")
+        we_make = self.doc[self.doc.index('<h2 id="we-make">'):]
+        self.assertNotIn("amazon.com/dp/B0HRTLMZ1M", we_make)  # listed once, under new to journaling
+        self.assertNotIn("amazon.com/dp/B0HRTTCH4D", we_make)
+        self.assertIn('href="#journaling"', we_make)
+
     def test_traveler_picks_are_tracked_listings(self):
         for k in ("plannera6", "tragen", "aostag"):
             self.assertTrue(site.gift_listings(k), k)

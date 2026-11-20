@@ -2613,6 +2613,7 @@ GIFT_SRC = {  # (url, title, publisher)
     "pm_moomin": ("https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-planner-moomin-at-the-table-english", "Hobonichi Techo 2027 Weeks Planner, Moomin: At the Table, English", "The Paper Mouse"),
     "as_whitecat": ("https://www.atlasstationers.com/products/hobonichi-techo-weeks-yumi-kitagishi-white-cat-wallpaper", "Hobonichi Techo Weeks, Yumi Kitagishi: White Cat Wallpaper", "Atlas Stationers"),
     "as_myyard": ("https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-moomin-my-yard-pale-mint", "Hobonichi Techo A6 Original cover, Moomin: My Yard (Pale Mint)", "Atlas Stationers"),
+    "h_avec": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_avec/", "Japanese Cousin Avec Books A5, 6-month x 2 book set", "Hobonichi (official)"),
     "h_planner": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/pb27_jan/", "English Planner Book A6", "Hobonichi (official)"),
     "as_tragen": ("https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-tragen-black", "Hobonichi Techo A6 Original Planner Cover, Tragen: Black", "Atlas Stationers"),
     "pm_tragen": ("https://www.thepapermouse.com/products/hobonichi-techo-a6-original-cover-tragen-black", "Hobonichi Techo A6 Original Cover, Tragen (Black)", "The Paper Mouse"),
@@ -2869,6 +2870,13 @@ def build_gift_guide():
 </ul>
 <p class="small">Not sure which book suits them? See <a href="{VS_SLUG}/">Techo vs Cousin vs Weeks</a> or <a href="{JAN_APR_SLUG}/">January-start vs April-start</a>.</p>
 
+<h2 id="journaling">For someone new to journaling</h2>
+<ul class="picks">
+  <li><strong>Hobonichi Techo 2027 Cousin Avec (A5),</strong> the one my partner and I both use: the A5 Cousin's page a day split into two slim books, January to June and July to December, each 210 × 148 × 10 mm, about 260 g, with 288 pages of Tomoe River paper. The 2027 set is the Japanese edition (Japanese daily quotes and holidays), January start, Monday start, and it takes a Cousin (A5) cover. <a href="{GIFT_SRC["h_avec"][0]}" rel="noopener" target="_blank">See it at the Hobonichi Store</a> {s("h_avec")}</li>
+  <li><strong>Our 2027 Planner, Blush (A5).</strong> A calm, blush-toned planner dated January 1 to December 31, 2027, Monday start, with every week across two facing pages and dot grid space for each day; 5.83 × 8.27 in paperback, 174 pages, color interior. {gift_own("B0HRTLMZ1M", "See it on Amazon")}</li>
+  <li><strong>Our 2027 Planner for Men (A5).</strong> A clean, no-nonsense planner with a charcoal and navy cover, dated January 1 to December 31, 2027, Monday start, with every week across two facing pages and dot grid space for each day; 5.83 × 8.27 in paperback, 174 pages, color interior. {gift_own("B0HRTTCH4D", "See it on Amazon")}</li>
+</ul>
+
 <h2 id="traveler">For the traveler</h2>
 {gift_note_html()}
 <ul class="picks">
@@ -2896,7 +2904,7 @@ def build_gift_guide():
 <h2 id="we-make">Planners and journals we make</h2>
 <p class="small">List prices for our books are in the table above. {s("shop")}</p>
 <ul class="picks">
-  <li><strong>2027 Planners, Blush and for Men:</strong> A5 paperback, 174 pages, Monday start, January 1 to December 31, 2027. Blush: {gift_own("B0HRTLMZ1M", "A5 paperback")}. For Men: {gift_own("B0HRTTCH4D", "A5 paperback")} · {gift_own("B0HP9PXSR1", "8.5 × 11 Sunday-start paperback")}.</li>
+  <li><strong>2027 Planners, Blush and for Men:</strong> the A5 editions are under <a href="#journaling">For someone new to journaling</a>. For Men also comes as an {gift_own("B0HP9PXSR1", "8.5 × 11 Sunday-start paperback")}.</li>
   <li><strong>Level Up! My 2027 Planner,</strong> for a child aged 7 to 11: a kids planner that plays like a video game, with a Reading Quest Log, Trophy Room and Coin Bank; 8.5 × 11 in. {gift_own("B0HQW8273V", "Paperback on Amazon")}{lu_etsy}</li>
   <li><strong>Undated journals:</strong> {gift_own("B0HQ5TLDK3", "Habit & Mood Tracker Journal")} (6 × 9 in, 166 pages) · {gift_own("B0HQ5X3C7D", "Reading Journal")} (7 × 10 in, 152 pages).</li>
 </ul>
