@@ -111,7 +111,8 @@ class HeroAndScopeTests(unittest.TestCase):
         self.assertIn('href="/shop/"', site.build_index())
         self.assertNotIn(f"{len(site.NAV_TRACKERS) + len(site.NAV)} restock", doc)
         self.assertNotIn("refills and limited editions", doc)
-        self.assertNotIn("/travelers-company-limited-edition/", site.build_index())
+        # The only Traveler's Company link on the homepage is the takedown notice card.
+        self.assertEqual(site.build_index().count("/travelers-company-limited-edition/"), 1)
         self.assertNotIn("/midori-md-limited-edition/", site.build_index())
 
     def test_dot_grid_page_names_every_maker_and_keeps_the_legacy_url(self):

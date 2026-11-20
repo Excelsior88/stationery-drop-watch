@@ -108,9 +108,54 @@ class NoticeTests(unittest.TestCase):
         self.assertNotIn("#tracker", cf)
 
 
+NOTICE_CARD = re.compile(r'<li class="hub-card hub-notice">.*?</li>', re.S)
+
+
+class HomeNoticeCardTests(unittest.TestCase):
+    """Owner, Nov 19: the announcement stays on the homepage as a third card beside the two tracker cards."""
+
+    def setUp(self):
+        self.doc = site.build_index()
+        grid = re.search(r'<ul class="hub-grid">(.*?)</ul>', self.doc, re.S).group(1)
+        self.cards = re.findall(r'<li class="hub-card[^"]*">.*?</li>', grid, re.S)
+
+    def test_notice_is_the_third_card_after_the_two_trackers(self):
+        self.assertEqual(len(self.cards), 3)
+        self.assertNotIn("hub-notice", self.cards[0] + self.cards[1])
+        self.assertTrue(self.cards[2].startswith('<li class="hub-card hub-notice">'))
+        self.assertEqual(len(NOTICE_CARD.findall(self.doc)), 1)
+
+    def test_card_has_heading_verbatim_line_and_button_only(self):
+        card = self.cards[2]
+        self.assertIn('href="/travelers-company-limited-edition/"', card)
+        self.assertIn("<h3>Why Traveler&#x27;s Company and MIDORI are gone</h3>", card)
+        self.assertIn('<span class="hub-go">Read the notice</span>', card)
+        self.assertNotIn("hub-count", card)
+        self.assertNotIn("in stock", html.unescape(card).lower())
+        self.assertNotIn("shops", html.unescape(card).lower())
+        line = html.unescape(re.search(r"</h3><p>(.*?)</p>", card).group(1))
+        self.assertEqual(line, site.HOME_NOTICE_LINE)
+        notice = " ".join(site.TAKEDOWN_NOTICE)
+        for sentence in line.split(". "):
+            self.assertIn(sentence.rstrip("."), notice)
+
+    def test_phones_keep_every_card_icon_at_a_two_column_size(self):
+        css = (ROOT / "site/assets/style.css").read_text()
+        self.assertNotRegex(css, r"\.hub-art\{display:none\}")
+        self.assertIn("  .hub-art svg{width:96px;max-width:96px}\n", css)
+        self.assertIn('<span class="hub-art"><svg', self.cards[2])
+        for card in self.cards:
+            self.assertIn('<span class="hub-art"><svg', card)
+
+    def test_grid_is_three_wide_and_the_card_spans_the_row_when_it_wraps(self):
+        css = (ROOT / "site/assets/style.css").read_text()
+        self.assertIn("grid-template-columns:repeat(3,minmax(0,1fr))", css)
+        self.assertIn("@media (max-width:1000px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-notice{grid-column:1/-1}}", css)
+
+
 class SiteCopyTests(unittest.TestCase):
     def test_no_tracker_page_nav_or_faq_mentions_either_brand(self):
-        docs = [("index.html", site.build_index()), ("about.html", site.build_about()), ("404.html", site.build_404()),
+        docs = [("index.html", NOTICE_CARD.sub("", site.build_index())), ("about.html", site.build_about()), ("404.html", site.build_404()),
                 (site.HOBO_TRACKER, site.build_hobo_tracker())]
         docs += [site.build_group(g, {}) for g in site.GROUPS]
         docs += [site.build_guides_index(), site.build_sold_out(), site.build_follow(), site.build_contact()]

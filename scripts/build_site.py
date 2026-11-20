@@ -1035,6 +1035,11 @@ def hub_art(kind):
         body = (f'<rect x="51" y="6" width="58" height="52" rx="3" fill="#f4ecdc" stroke="{ink}" stroke-width="2"/>'
                 f'<path d="M51 14 h58" stroke="{accent}" stroke-width="6"/>'
                 f'<path d="M75 6 v11 l5-3 5 3 V6" fill="{sage}"/>{dots}')
+    elif kind == "notice":
+        # A letter on the same center (80, 32): envelope flap in terracotta, two sage lines.
+        body = (f'<rect x="50" y="12" width="60" height="42" rx="3" fill="{paper}" stroke="{ink}" stroke-width="2"/>'
+                f'<path d="M51 13 L80 36 L109 13" fill="none" stroke="{accent}" stroke-width="3" stroke-linejoin="round"/>'
+                f'<path d="M60 46 h18 M60 50 h12" stroke="{sage}" stroke-width="2" stroke-linecap="round"/>')
     else:
         body = f'<rect x="54" y="8" width="52" height="48" rx="2" fill="{paper}" stroke="{ink}" stroke-width="2"/><path d="M54 20 h52" stroke="{sage}" stroke-width="6"/><path d="M66 32 h28 M66 40 h28" stroke="{ink}" stroke-width="1.6" stroke-linecap="round"/>'
     return f'<svg {common}>{body}</svg>'
@@ -1085,6 +1090,12 @@ def build_index():
   <h3>{E(name)}</h3><p>{E(line)}</p>
   <p class="hub-count"><b>{st["in_stock"]}</b> of {len(ps)} listings in stock <span class="muted small">{E(" · ".join(bits))}</span></p>
   <span class="hub-go">View tracker</span></a></li>""")
+    # Third card: the takedown notice. Same card and button as the trackers; no counts or stock badges.
+    # The line is two verbatim phrases from TAKEDOWN_NOTICE (test_home_notice_card checks that).
+    cards.append(f"""<li class="hub-card hub-notice"><a href="{TN_SLUG}/">
+  <span class="hub-art">{hub_art("notice")}</span>
+  <h3>{E(TAKEDOWN_HEADING)}</h3><p>{E(HOME_NOTICE_LINE)}</p>
+  <span class="hub-go">Read the notice</span></a></li>""")
     sec_of_url = {p["url"]: section_of(p) for p in prods}
     restocks = [c for c in changes if c["url"] in sec_of_url and c["to"] in ("in_stock", "preorder") and c["from"] in ("sold_out", "coming_soon")]
     restocks.sort(key=lambda c: c["at"], reverse=True)
@@ -3376,6 +3387,9 @@ TAKEDOWN_NOTICE = (
     "We think you deserve to know why. Stationery Drop Watch is free, and it exists for regular people who are tired of refreshing shop pages, not for resellers. We never bought, resold or held a single item. We only pointed you to the official shops' own pages, the moment they had stock.",
     "If you'd like restock news for these brands, the only route they've left you is their newsletter.",
 )
+# Homepage card line: two verbatim phrases from TAKEDOWN_NOTICE, nothing added.
+HOME_NOTICE_LINE = ("We asked politely for permission to use their official product photos. "
+                    "Instead they asked us to remove every Traveler's Company and MIDORI product.")
 TAKEDOWN_DESC = ("On November 19, 2026, TRAVELER'S COMPANY USA asked us to remove every Traveler's Company and MIDORI product. "
                  "We've complied. Here is why.")
 
