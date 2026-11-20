@@ -1897,5 +1897,41 @@
   "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146782363",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T18:17:40+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks · Shirt Fabric: Graph Plaid",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-20T18:19:47+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Songbird in Blue · B5 dot grid",
+  "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128956862619",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T18:19:57+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Songbird in Blue · square dot grid",
+  "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128956895387",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T18:20:07+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Winter Train · B6 dot grid · ships now",
+  "url": "https://www.archerandolive.com/products/winter-train-notebook?variant=49699372499099",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
