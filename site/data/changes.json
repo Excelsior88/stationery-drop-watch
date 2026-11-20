@@ -1465,5 +1465,32 @@
   "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-liberty-fabrics-floral-remedy",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T00:22:18+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Majestic Skies · A5 dot grid",
+  "url": "https://www.archerandolive.com/products/majestic-skies-dot-grid-notebook?variant=47314844123291",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-20T00:22:49+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Majestic Skies · B5 dot grid",
+  "url": "https://www.archerandolive.com/products/majestic-skies-dot-grid-notebook?variant=47314844057755",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-20T00:22:52+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Majestic Skies · square dot grid",
+  "url": "https://www.archerandolive.com/products/majestic-skies-dot-grid-notebook?variant=47314844090523",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
