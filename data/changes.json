@@ -1942,5 +1942,14 @@
   "url": "https://usa.kinokuniya.com/products/4580812710084",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-20T19:20:03+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Apothecary Shelf (Halloween 2026) · 8x8 white dot grid",
+  "url": "https://www.archerandolive.com/products/apothecary-shelf-notebook?variant=49143523868827",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
