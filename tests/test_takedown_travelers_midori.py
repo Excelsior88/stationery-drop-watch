@@ -22,6 +22,8 @@ BRAND_WORDS = re.compile(r"traveler'?s (company|notebook)|midori|md product|md n
 APPROVED_FIRST = ("On November 17, 2026, we reached out to Traveler's Company and to MIDORI's parent company, Designphil, "
                   "through their official contact forms.")
 APPROVED_LAST = "If you'd like restock news for these brands, the only route they've left you is their newsletter."
+APPROVED_BOTS = "Bots don't wait for our email, they're already running auto-checkout."
+APPROVED_SCALPERS = "Want to stop scalpers? Purchase limits. Real bot protection. Fair regional stock. Not shutting down the little guy."
 
 
 class CatalogTests(unittest.TestCase):
@@ -79,10 +81,14 @@ class AlertTests(unittest.TestCase):
 class NoticeTests(unittest.TestCase):
     def test_notice_text_is_the_approved_wording(self):
         self.assertEqual(site.TAKEDOWN_HEADING, "Why Traveler's Company and MIDORI are gone")
-        self.assertEqual(len(site.TAKEDOWN_NOTICE), 5)
+        self.assertEqual(len(site.TAKEDOWN_NOTICE), 7)
         self.assertTrue(site.TAKEDOWN_NOTICE[0].startswith(APPROVED_FIRST))
-        self.assertEqual(site.TAKEDOWN_NOTICE[-1], APPROVED_LAST)
+        self.assertEqual(site.TAKEDOWN_NOTICE[4], APPROVED_LAST)
+        self.assertEqual(site.TAKEDOWN_NOTICE[5], APPROVED_BOTS)
+        self.assertEqual(site.TAKEDOWN_NOTICE[6], APPROVED_SCALPERS)
         self.assertIn('"pushes that stock toward resellers,"', site.TAKEDOWN_NOTICE[1])
+        self.assertTrue(site.HOME_NOTICE_LINE.endswith(APPROVED_SCALPERS))
+        self.assertIn(APPROVED_BOTS, site.HOME_NOTICE_LINE)
 
     def test_old_urls_show_the_notice(self):
         for slug, noindex in ((site.TN_SLUG, False), (site.MIDORI_SLUG, False), (site.TN_GUIDE_SLUG, True)):

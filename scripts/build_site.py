@@ -1138,7 +1138,7 @@ def build_index():
   <p class="hub-count"><b>{st["in_stock"]}</b> of {len(ps)} listings in stock <span class="muted small">{E(" · ".join(bits))}</span></p>
   <span class="hub-go">View tracker</span></a></li>""")
     # Third card: the takedown notice. Same card and button as the trackers; no counts or stock badges.
-    # The line is two verbatim phrases from TAKEDOWN_NOTICE (test_home_notice_card checks that).
+    # The line is verbatim phrases from TAKEDOWN_NOTICE, including the Nov 20 lines.
     cards.append(f"""<li class="hub-card hub-notice"><a href="{TN_SLUG}/">
   <span class="hub-art">{hub_art("notice")}</span>
   <h3>{E(TAKEDOWN_HEADING)}</h3><p>{E(HOME_NOTICE_LINE)}</p>
@@ -3480,7 +3480,8 @@ def check_none_claim(fname, doc):
         raise SystemExit(f"{fname}: says none in stock but every listing is Couldn't check")
 
 # --- Traveler's Company and MIDORI takedown notice ----------------------------------------------------
-# Owner-approved wording (Nov 19, 2026). Do not edit a word of TAKEDOWN_NOTICE without the owner's yes.
+# Owner-approved wording (Nov 19, 2026, with two lines added Nov 20, 2026).
+# Do not edit a word of the earlier paragraphs. The Nov 20 lines are the owner's exact words.
 TAKEDOWN_DATE = "2026-11-19"
 TAKEDOWN_HEADING = "Why Traveler's Company and MIDORI are gone"
 TAKEDOWN_NOTICE = (
@@ -3489,10 +3490,14 @@ TAKEDOWN_NOTICE = (
     "We've complied. Every listing, alert and restock email for both brands has stopped.",
     "We think you deserve to know why. Stationery Drop Watch is free, and it exists for regular people who are tired of refreshing shop pages, not for resellers. We never bought, resold or held a single item. We only pointed you to the official shops' own pages, the moment they had stock.",
     "If you'd like restock news for these brands, the only route they've left you is their newsletter.",
+    "Bots don't wait for our email, they're already running auto-checkout.",
+    "Want to stop scalpers? Purchase limits. Real bot protection. Fair regional stock. Not shutting down the little guy.",
 )
-# Homepage card line: two verbatim phrases from TAKEDOWN_NOTICE, nothing added.
+# Homepage card: the original two phrases, then the Nov 20 lines, all verbatim from TAKEDOWN_NOTICE.
 HOME_NOTICE_LINE = ("We asked politely for permission to use their official product photos. "
-                    "Instead they asked us to remove every Traveler's Company and MIDORI product.")
+                    "Instead they asked us to remove every Traveler's Company and MIDORI product. "
+                    "Bots don't wait for our email, they're already running auto-checkout. "
+                    "Want to stop scalpers? Purchase limits. Real bot protection. Fair regional stock. Not shutting down the little guy.")
 TAKEDOWN_DESC = ("On November 19, 2026, TRAVELER'S COMPANY USA asked us to remove every Traveler's Company and MIDORI product. "
                  "We've complied. Here is why.")
 
