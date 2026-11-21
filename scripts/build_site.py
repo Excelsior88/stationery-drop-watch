@@ -3337,13 +3337,13 @@ SHOP_SAMPLES = {
     ]},
     "soft-days": {"class": " samples inserts", "items": [
         _sample("/assets/shop/inside/softdays-weekly-color.webp",
-                "Soft Days soft colour: Weekly Plan, Monday start. Authentic final PDF interior extracted at full insert boundary.",
+                "Soft Days printable insert sample, soft colour: Weekly Plan, Monday start.",
                 "Weekly Plan, Monday start. Sample of a colour insert.", 511, 1051),
         _sample("/assets/shop/inside/softdays-habit-gray.webp",
-                "Soft Days grayscale: Habit Tracker with six-habit key. Authentic final PDF interior extracted at full insert boundary.",
+                "Soft Days printable insert sample, grayscale: Habit Tracker with six-habit key.",
                 "Habit Tracker. Sample of a grayscale insert.", 511, 1051),
         _sample("/assets/shop/inside/softdays-swatches-color.webp",
-                "Soft Days soft colour: Pen & Ink Swatches. Authentic final PDF interior extracted at full insert boundary.",
+                "Soft Days printable insert sample, soft colour: Pen & Ink Swatches.",
                 "Pen & Ink Swatches. One Soft Days insert, not a separate swatch product.", 511, 1051),
     ]},
     "lines-grid": {"class": " samples inserts", "note": "Layouts from the print file, not a photograph of a printed copy.", "items": [
