@@ -87,6 +87,8 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertNotIn("print-ready", visible)
         self.assertNotIn("local print master", visible)
         self.assertNotIn("local print master", self.shop)
+        self.assertNotIn("Authentic final PDF", self.shop)
+        self.assertEqual(self.shop.count("Level Up! printable planner sample page: "), 3)
         self.assertNotIn("extracted at full insert boundary", self.shop)
         for alt in ("Soft Days printable insert sample, soft colour: Weekly Plan, Monday start.",
                     "Soft Days printable insert sample, grayscale: Habit Tracker with six-habit key.",

@@ -3312,13 +3312,13 @@ def _sample(src, alt, caption, w, h):
 SHOP_SAMPLES = {
     "levelup-etsy": {"class": " samples", "items": [
         _sample("/assets/shop/inside/levelup-etsy-p009.webp",
-                "Level Up Etsy digital: January 2027 Monday-start World Map calendar. Authentic final PDF interior, complete page.",
+                "Level Up! printable planner sample page: January 2027 Monday-start World Map calendar.",
                 "January 2027 calendar, page 9. Sample from the printable PDF.", 812, 1050),
         _sample("/assets/shop/inside/levelup-etsy-p012.webp",
-                "Level Up Etsy digital: Week 2 dated Monday-start Week Plan. Authentic final PDF interior, complete page.",
+                "Level Up! printable planner sample page: Week 2 dated Monday-start Week Plan.",
                 "Week 2 plan, January 4 to 10, page 12. Sample from the printable PDF.", 812, 1050),
         _sample("/assets/shop/inside/levelup-etsy-p013.webp",
-                "Level Up Etsy digital: Week 2 Save Point with habit tracker, mood and XP. Authentic final PDF interior, complete page.",
+                "Level Up! printable planner sample page: Week 2 Save Point with habit tracker, mood and XP.",
                 "Week 2 save point, page 13. Sample from the printable PDF.", 812, 1050),
     ]},
     "B0HQW8273V": {
