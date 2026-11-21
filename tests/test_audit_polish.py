@@ -101,12 +101,14 @@ class AuditPolishTests(unittest.TestCase):
         self.assertIn('--sans:"Liberation Sans"', CSS)
         self.assertIn('--serif:"Newsreader"', CSS)
         self.assertIn("Zero cookies: this site sets no cookies", HOME)
-        self.assertNotIn("Cloudflare Web Analytics", PRIVACY)
-        self.assertNotIn("cloudflareinsights", PRIVACY)
+        self.assertIn("Cloudflare Web Analytics", PRIVACY)
+        self.assertIn("static.cloudflareinsights.com", PRIVACY)
         self.assertNotIn("data-cf-beacon", PRIVACY)
-        self.assertIn("does not currently run analytics beacons, cookies, or third-party tracking scripts", PRIVACY)
+        self.assertIn("https://www.cloudflare.com/web-analytics/", PRIVACY)
+        self.assertIn("sets no cookies and runs no ad trackers", PRIVACY)
+        self.assertNotIn("does not currently run analytics beacons", PRIVACY)
         self.assertIn("hosted on Cloudflare Pages", PRIVACY)
-        # The cookieless beacon is off. These older blanket phrases stay out of the page.
+        # Cloudflare Web Analytics is disclosed. These older blanket phrases stay out of the page.
         for doc, label in ((HOME, "home"), (PRIVACY, "privacy"), (ABOUT, "about"), (CSS, "css")):
             low = doc.lower()
             self.assertNotIn("no analytics", low, label)

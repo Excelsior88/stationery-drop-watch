@@ -1293,11 +1293,12 @@ def build_privacy():
 {crumbs((fname, "Privacy"))}
 {eyebrow("Privacy", "updated Nov 20, 2026")}
 <h1>Privacy</h1>
-<p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts. The site does not currently run analytics beacons, cookies, or third-party tracking scripts.</p>
+<p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, plus page-view and performance statistics from Cloudflare Web Analytics. The site sets no cookies and runs no ad trackers.</p>
 <h2>Email alerts (Buttondown)</h2>
 <p>If you sign up for restock alerts, your email address goes to <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>, the service that stores the list and sends the emails. Buttondown sends a confirmation email first; we only add the address to the list after you click the link. We use it only to send restock alerts and occasional site updates. Every email has an unsubscribe link, and you can also email us to be removed. Buttondown's own privacy policy is at <a href="https://buttondown.com/legal/privacy" target="_blank" rel="noopener">buttondown.com/legal/privacy</a>.</p>
 <h2>Hosting</h2>
-<p>The site is hosted on Cloudflare Pages. It does not currently run analytics beacons, cookies, or third-party tracking scripts. Cloudflare handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
+<p>The site is hosted on Cloudflare Pages. Cloudflare handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
+<p>The site uses <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener">Cloudflare Web Analytics</a>, a privacy-focused analytics service from our host, Cloudflare. It loads a small script (beacon.min.js from static.cloudflareinsights.com) that counts page views and measures how pages perform. The statistics we can see include pages visited, referrer, browser and device type, country, and load times. Cloudflare says Web Analytics collects the minimum information needed to show how a site performs and does not track individual end users across its customers' Internet properties.</p>
 <p>The source code, the checker, and a backup copy of the site are hosted on GitHub (GitHub Pages).</p>
 <p>This site doesn't set its own cookies and doesn't run ad trackers.</p>
 <h2>Links to other sites</h2>
@@ -1305,7 +1306,7 @@ def build_privacy():
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email {plain_email()}.</p>
 </article>"""
-    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown). The site does not currently run analytics beacons, cookies, or third-party tracking scripts.", body, ld=(crumbs_ld((fname, "Privacy")),))
+    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown). The site uses Cloudflare Web Analytics for page-view and performance statistics, sets no cookies, and runs no ad trackers.", body, ld=(crumbs_ld((fname, "Privacy")),))
 
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
