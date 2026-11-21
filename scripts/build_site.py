@@ -1306,7 +1306,7 @@ def build_privacy():
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email {plain_email()}.</p>
 </article>"""
-    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown). The site uses Cloudflare Web Analytics for page-view and performance statistics, sets no cookies, and runs no ad trackers.", body, ld=(crumbs_ld((fname, "Privacy")),))
+    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups, plus page-view stats from Cloudflare Web Analytics. No cookies set by the site, no ad trackers.", body, ld=(crumbs_ld((fname, "Privacy")),))
 
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
@@ -3326,13 +3326,13 @@ SHOP_SAMPLES = {
         "note": "Sample pages from the print-ready file, not photographs of a printed copy.",
         "items": [
         _sample("/assets/shop/inside/levelup-print-p009.webp",
-                "Level Up local print master: January 2027 Monday-start World Map calendar. Authentic final PDF interior, complete page.",
+                "Level Up! paperback planner sample page: January 2027 Monday-start World Map calendar.",
                 "January 2027 calendar, page 9.", 812, 1050),
         _sample("/assets/shop/inside/levelup-print-p012.webp",
-                "Level Up local print master: Week 2 dated Monday-start Week Plan. Authentic final PDF interior, complete page.",
+                "Level Up! paperback planner sample page: Week 2 dated Monday-start Week Plan.",
                 "Week 2 plan, January 4 to 10, page 12.", 812, 1050),
         _sample("/assets/shop/inside/levelup-print-p013.webp",
-                "Level Up local print master: Week 2 Save Point with habit tracker, mood and XP. Authentic final PDF interior, complete page.",
+                "Level Up! paperback planner sample page: Week 2 Save Point with habit tracker, mood and XP.",
                 "Week 2 save point, page 13.", 812, 1050),
     ]},
     "soft-days": {"class": " samples inserts", "items": [
