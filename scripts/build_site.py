@@ -1306,7 +1306,7 @@ def build_privacy():
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email {plain_email()}.</p>
 </article>"""
-    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups (Buttondown). The site uses Cloudflare Web Analytics for page-view and performance statistics, sets no cookies, and runs no ad trackers.", body, ld=(crumbs_ld((fname, "Privacy")),))
+    return page(fname, "Privacy", "How Stationery Drop Watch handles email signups, plus page-view stats from Cloudflare Web Analytics. No cookies set by the site, no ad trackers.", body, ld=(crumbs_ld((fname, "Privacy")),))
 
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
@@ -3312,13 +3312,13 @@ def _sample(src, alt, caption, w, h):
 SHOP_SAMPLES = {
     "levelup-etsy": {"class": " samples", "items": [
         _sample("/assets/shop/inside/levelup-etsy-p009.webp",
-                "Level Up Etsy digital: January 2027 Monday-start World Map calendar. Authentic final PDF interior, complete page.",
+                "Level Up! printable planner sample page: January 2027 Monday-start World Map calendar.",
                 "January 2027 calendar, page 9. Sample from the printable PDF.", 812, 1050),
         _sample("/assets/shop/inside/levelup-etsy-p012.webp",
-                "Level Up Etsy digital: Week 2 dated Monday-start Week Plan. Authentic final PDF interior, complete page.",
+                "Level Up! printable planner sample page: Week 2 dated Monday-start Week Plan.",
                 "Week 2 plan, January 4 to 10, page 12. Sample from the printable PDF.", 812, 1050),
         _sample("/assets/shop/inside/levelup-etsy-p013.webp",
-                "Level Up Etsy digital: Week 2 Save Point with habit tracker, mood and XP. Authentic final PDF interior, complete page.",
+                "Level Up! printable planner sample page: Week 2 Save Point with habit tracker, mood and XP.",
                 "Week 2 save point, page 13. Sample from the printable PDF.", 812, 1050),
     ]},
     "B0HQW8273V": {
@@ -3326,24 +3326,24 @@ SHOP_SAMPLES = {
         "note": "Sample pages from the print-ready file, not photographs of a printed copy.",
         "items": [
         _sample("/assets/shop/inside/levelup-print-p009.webp",
-                "Level Up local print master: January 2027 Monday-start World Map calendar. Authentic final PDF interior, complete page.",
+                "Level Up! paperback planner sample page: January 2027 Monday-start World Map calendar.",
                 "January 2027 calendar, page 9.", 812, 1050),
         _sample("/assets/shop/inside/levelup-print-p012.webp",
-                "Level Up local print master: Week 2 dated Monday-start Week Plan. Authentic final PDF interior, complete page.",
+                "Level Up! paperback planner sample page: Week 2 dated Monday-start Week Plan.",
                 "Week 2 plan, January 4 to 10, page 12.", 812, 1050),
         _sample("/assets/shop/inside/levelup-print-p013.webp",
-                "Level Up local print master: Week 2 Save Point with habit tracker, mood and XP. Authentic final PDF interior, complete page.",
+                "Level Up! paperback planner sample page: Week 2 Save Point with habit tracker, mood and XP.",
                 "Week 2 save point, page 13.", 812, 1050),
     ]},
     "soft-days": {"class": " samples inserts", "items": [
         _sample("/assets/shop/inside/softdays-weekly-color.webp",
-                "Soft Days soft colour: Weekly Plan, Monday start. Authentic final PDF interior extracted at full insert boundary.",
+                "Soft Days printable insert sample, soft colour: Weekly Plan, Monday start.",
                 "Weekly Plan, Monday start. Sample of a colour insert.", 511, 1051),
         _sample("/assets/shop/inside/softdays-habit-gray.webp",
-                "Soft Days grayscale: Habit Tracker with six-habit key. Authentic final PDF interior extracted at full insert boundary.",
+                "Soft Days printable insert sample, grayscale: Habit Tracker with six-habit key.",
                 "Habit Tracker. Sample of a grayscale insert.", 511, 1051),
         _sample("/assets/shop/inside/softdays-swatches-color.webp",
-                "Soft Days soft colour: Pen & Ink Swatches. Authentic final PDF interior extracted at full insert boundary.",
+                "Soft Days printable insert sample, soft colour: Pen & Ink Swatches.",
                 "Pen & Ink Swatches. One Soft Days insert, not a separate swatch product.", 511, 1051),
     ]},
     "lines-grid": {"class": " samples inserts", "note": "Layouts from the print file, not a photograph of a printed copy.", "items": [

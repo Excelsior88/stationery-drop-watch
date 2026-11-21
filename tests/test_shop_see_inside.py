@@ -86,6 +86,16 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertIn("168 pages", hidden)
         self.assertNotIn("print-ready", visible)
         self.assertNotIn("local print master", visible)
+        self.assertNotIn("local print master", self.shop)
+        self.assertNotIn("Authentic final PDF", self.shop)
+        self.assertEqual(self.shop.count("Level Up! printable planner sample page: "), 3)
+        self.assertNotIn("extracted at full insert boundary", self.shop)
+        for alt in ("Soft Days printable insert sample, soft colour: Weekly Plan, Monday start.",
+                    "Soft Days printable insert sample, grayscale: Habit Tracker with six-habit key.",
+                    "Soft Days printable insert sample, soft colour: Pen &amp; Ink Swatches."):
+            self.assertIn('alt="' + alt + '"', self.shop)
+        self.assertNotIn("Authentic final PDF interior", paper)
+        self.assertEqual(paper.count("Level Up! paperback planner sample page: "), 3)
         self.assertIn("Sample pages from the print-ready file, not photographs of a printed copy.", hidden)
         self.assertEqual(paper.count("Sample pages from the print-ready file"), 1)
         self.assertNotIn("Sample pages from the print-ready file", etsy)
