@@ -1429,7 +1429,7 @@ def build_contact():
 {crumbs((fname, "Contact"))}
 {eyebrow("Contact", "Stationery Drop Watch")}
 <h1>Contact</h1>
-<p class="lede">Stationery Drop Watch checks planner and journal stock at official stores and independent shops, and writes down what each shop last reported.</p>
+<p class="lede">Stationery Drop Watch checks planner, journal and limited-edition ink stock at official stores and independent shops, and writes down what each shop last reported.</p>
 <p>{independent_note()}</p>
 <p>Andrew Robinson runs the site and can be reached at {shown}. Questions, corrections, or a shop we should track are welcome.</p>
 <p class="small"><a href="about/">About</a> explains how the checks work. <a href="privacy/">Privacy</a> explains the email list.</p>
