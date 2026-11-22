@@ -28,7 +28,7 @@ def plain(doc):
 
 
 class ShareImageAltTests(unittest.TestCase):
-    def test_default_alt_names_every_tracker_without_a_shop_count(self):
+    def test_default_alt_names_every_tracker_and_the_card_shop_count(self):
         self.assertIn("Hobonichi", site.OG_ALT)
         self.assertIn("dot grid journals", site.OG_ALT)
         self.assertNotIn("Traveler", site.OG_ALT)
@@ -37,10 +37,14 @@ class ShareImageAltTests(unittest.TestCase):
         title = site.seo_title("Hobonichi, dot grid and ink restock tracker")
         self.assertLessEqual(len(title), 60)
         self.assertIn("dot grid", title)
-        self.assertNotRegex(site.OG_ALT, SHOP_COUNT_RE)
-        # The year 2027 contains the digits of a shop total. Match the count only as its own number.
-        self.assertNotRegex(site.OG_ALT, rf"(?<!\d){site.N_HOBO}(?!\d)")
-        self.assertNotRegex(site.OG_ALT, rf"(?<!\d){site.N_STORES}(?!\d)")
+        # Since Nov 22, 2026 the default card prints "We check N shops for you" (owner request), so the alt says
+        # the same number the image shows, and that number must still be the site-wide total.
+        self.assertEqual(site.OG_SHOPS, site.N_STORES, "re-run scripts/brand/make_og.py")
+        self.assertIn(f"We check {site.OG_SHOPS} shops for you", site.OG_ALT)
+        self.assertIn("limited-edition inks", site.OG_ALT)
+        # The year 2027 contains the digits of a shop total. Match the Hobonichi count only as its own number.
+        if site.N_HOBO != site.N_STORES:
+            self.assertNotRegex(site.OG_ALT, rf"(?<!\d){site.N_HOBO}(?!\d)")
 
     def test_pages_that_share_the_default_card_use_that_alt(self):
         pages = {

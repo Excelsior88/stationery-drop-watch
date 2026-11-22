@@ -403,10 +403,14 @@ def seo_desc(text):
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
 CNAME = "stationerydropwatch.com"
-OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (Hobonichi side)
-# The default card file is still the Hobonichi artwork. It is also the image on the hub and
-# the utility pages, so the alt names every tracker. It prints no shop count.
-OG_ALT = f"Stationery Drop Watch: restock tracker for Hobonichi, dot grid journals and limited-edition inks, checked {CHECK_FREQ}"
+OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (site-wide default card)
+# The default card covers all three trackers and shows Clip. It prints the shop count from when it was made,
+# recorded beside it in og-image.json; main() warns when that no longer matches N_STORES (re-run make_og.py).
+_OG_META = ROOT / "site/assets/brand/og-image.json"
+OG_SHOPS = json.loads(_OG_META.read_text())["shops"] if _OG_META.exists() else None
+OG_ALT = ("Stationery Drop Watch: Never miss a stationery restock. "
+          + (f"We check {OG_SHOPS} shops for you: " if OG_SHOPS else "Restock tracker for ")
+          + f"Hobonichi Techo 2027, dot grid journals and limited-edition inks, checked {CHECK_FREQ}. Clip, the paper clip mascot, holds a magnifying glass.")
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
 OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked " + CHECK_FREQ
 CONTENT_LASTMOD = "2026-11-12"  # floor for pages whose HTML changed in the Nov 12 refresh
@@ -4366,6 +4370,8 @@ def publish_ink_data():
 def main():
     if shop_preview() and SITE.resolve() == (ROOT / "site").resolve():
         raise SystemExit("Refusing to write a shop preview into site/. Set DROPWATCH_SITE_OUT to another directory.")
+    if OG_SHOPS is not None and OG_SHOPS != N_STORES:
+        print(f"WARNING: og-image.png says {OG_SHOPS} shops but we check {N_STORES}; re-run scripts/brand/make_og.py")
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
     shutil.copy(ROOT / "data/changes.json", SITE / "data/changes.json")
