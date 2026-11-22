@@ -2786,13 +2786,14 @@ def build_dotgrid_guide():
         raise SystemExit(f"dot grid guide counts differ from tracker: makers {count_line(guide_ls)!r}, tracker {count_line(trk)!r}")
     dg_total = count_line(guide_ls)
     dg_all = count_line(trk)
+    jump = {sid: canons[0] for _, sid, canons in DG_COLS}  # tracker section ids are the canonical ids
     def avail(store_id, canons):
         ls = col_ls(store_id)
         if not ls:
-            return f'<a href="{DOTGRID_SLUG}/#shop-{store_id}">Live stock</a>'
-        buy = [re.sub(r"\s*Bullet Journal", "", l["label"]) for l in ls if l["status"] in BUYABLE]
+            return f'<a href="{DOTGRID_SLUG}/#{jump[store_id]}">Live stock</a>'
+        buy = [l["label"] for l in ls if l["status"] in BUYABLE]
         names = f'<br><span class="muted small">In stock: {E("; ".join(buy))}</span>' if buy else ""
-        return f'<strong>{len(buy)} of {len(ls)}</strong> versions we track · <a href="{DOTGRID_SLUG}/#shop-{store_id}">live stock</a>{names}'
+        return f'<strong>{len(buy)} of {len(ls)}</strong> versions we track · <a href="{DOTGRID_SLUG}/#{jump[store_id]}">live stock</a>{names}'
     na = "Not listed on the product page"
     rows = [  # (row, A&O, Leuchtturm1917, Scribbles That Matter, Notebook Therapy), each cell (text, source keys)
         ("Paper weight", ("160gsm (Storybook also comes in kraft dot grid, 150gsm)", "ao ao2"), ("80 g/m² (the 120G edition is 120 gsm)", "lt lt120"),
@@ -2867,16 +2868,16 @@ def build_dotgrid_guide():
 <h2>Who each one suits</h2>
 <h3>Archer and Olive: for markers, paint and lots of size choices</h3>
 <p>Pick Archer and Olive if you want thick paper and a specific size. Its notebooks use 160gsm paper, and the A5 has 192 pages {s("ao")}. Sizes run from Pocket to Letter, including B5, B6, square and a TN size {s("ao")}. Some designs also offer kraft (150gsm) or ivory dot grid paper {s("ao2")}. The product page doesn't mention page numbers, an index or bookmarks, so plan to set those up yourself.</p>
-<p><a href="{DOTGRID_SLUG}/#shop-archerolive">Live Archer and Olive stock</a></p>
+<p><a href="{DOTGRID_SLUG}/#{jump['archerolive']}">Live Archer and Olive stock</a></p>
 <h3>Leuchtturm1917: for writing, and the most pages</h3>
 <p>Pick the Leuchtturm1917 Hardcover Medium (A5) if you mostly write and want room. It has 251 numbered pages, a blank table of contents, two page markers, a gusseted pocket and 8 perforated sheets {s("lt")}. The paper is 80 g/m² and slightly chamois-colored, the thinnest here {s("lt")}. If you want thicker paper with the same setup, the 120G edition has 120 gsm paper and 203 numbered pages {s("lt120")}.</p>
-<p><a href="{DOTGRID_SLUG}/#shop-leuchtturm-us">Live Leuchtturm1917 stock</a></p>
+<p><a href="{DOTGRID_SLUG}/#{jump['leuchtturm-us']}">Live Leuchtturm1917 stock</a></p>
 <h3>Scribbles That Matter: for starting right away</h3>
 <p>Pick the Scribbles That Matter Dotted Journal Pro if you want the setup done. It comes with numbered pages, an index, a key page and a pen test page, two ribbon bookmarks, a pen loop and a 0.7 mm fineliner in the box {s("stm")}. A5 and B5 come in 160gsm or 120gsm, and B6 comes in 120gsm only {s("stm")}. The Pro has a plain matte cover; the Iconic is the same idea with an embossed cover {s("stm2")}. The page doesn't list a page count.</p>
-<p><a href="{DOTGRID_SLUG}/#shop-scribbles">Live Scribbles That Matter stock</a></p>
+<p><a href="{DOTGRID_SLUG}/#{jump['scribbles']}">Live Scribbles That Matter stock</a></p>
 <h3>Notebook Therapy Tsuki: for a smaller book</h3>
 <p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we track too.</p>
-<p><a href="{DOTGRID_SLUG}/#shop-notebooktherapy">Live Notebook Therapy stock</a></p>
+<p><a href="{DOTGRID_SLUG}/#{jump['notebooktherapy']}">Live Notebook Therapy stock</a></p>
 
 <h2>Where to buy</h2>
 <p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
