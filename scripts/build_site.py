@@ -35,6 +35,7 @@ _TITLE_STATUS = (
     (re.compile(r"\bPreorder Only - (Ships [^/]+)", re.I), r"\1"),
     (re.compile(r"\s*\[SOLD OUT\]", re.I), ""),
     (re.compile(r"\s+-?\s*In Stock\s*$", re.I), ""),
+    (re.compile(r"\s*\u263e"), ""),  # Notebook Therapy's decorative crescent moon in its titles
 )
 def display_title(t):
     for rx, rep in _TITLE_STATUS:
