@@ -8,7 +8,21 @@ Live at https://stationerydropwatch.com/. A restock tracker, checked about every
 - **Traveler's Company and MIDORI: removed Nov 19, 2026.** TRAVELER'S COMPANY USA asked us to remove both brands, and the owner approved. `/travelers-company-limited-edition/`, `/midori-md-limited-edition/` and the old Traveler's size guide URL now show the owner-approved notice (`TAKEDOWN_NOTICE` in `build_site.py`; do not edit its wording without the owner). The old item pages redirect to their brand's notice. Neither brand is checked, alerted, emailed or shown anywhere else.
 - A new section is added in `SECTIONS` (`build_site.py`); until it has listings it shows only in the home page's "Coming to the tracker" box, which disappears when every section is live.
 
-Pens, inks and other paper are not tracked.
+- **Limited-edition fountain pen ink** (`/limited-edition-fountain-pen-ink/`): limited, seasonal and shop-exclusive inks from Diamine and Sailor (Robert Oster is watched for new finds), only at shops on each brand's own dealer list (`inks.json` "brands"; see `research/inks-2026-11-21.md` in the owner's working copy). Every ink shop is already a shop in `stores.json`, so the site-wide shop count (distinct shop ids across `data/stock.json` and the public ink rows) only changes if a new shop is added. Pelikan, Colorverse, Lamy and Montblanc are left out until a dealer list verifies them. Milligram and every Designphil brand are never tracked.
+
+Pens and other paper are not tracked.
+
+### Ink tracker (`scripts/ink_tracker.py`)
+
+    python3 scripts/ink_tracker.py check      # every checker run (check-and-deploy.yml): data/inks/stock.json, changes.json, retired.json
+    python3 scripts/ink_tracker.py discover   # daily (ink-discovery.yml): data/inks/discovery.json, pending.json, new_finds.json
+    python3 scripts/ink_tracker.py approve <find_id> --ink <ink_id> [--name "..."] [--color "..."]
+
+- Statuses use the same polite fetcher and rules as `checker.py`. An unavailable product in the shop's own coming-soon collection (`inks.json` "coming_soon_collections") is "Not yet on sale", not sold out; available products in a pre-order collection are "Preorder". If that collection can't be read, the row is "Couldn't check".
+- Ink changes go to `data/inks/changes.json`. `new_in_stock.py` (the drop-alert webhook) reads only `data/changes.json`, so inks never send alerts or emails, and a listing's first check never counts as a change.
+- Discovery reads each verified shop's public `/products.json`. A shop's first scan is a baseline (remembered, not reported) apart from coming-soon or preorder items. After that, each new limited ink match becomes a pending find: it is checked from the next run, carries `"hidden": true`, and never renders. `data/inks/new_finds.json` lists that run's finds and a plain-text `note`; the note is empty on days with no finds. Nothing is sent from here.
+- Owner approval: `approve` moves a find into `inks.json`; it shows on the page after the next check.
+- Retirement: an ink whose every listing has been sold out for 60 days is moved to `data/inks/retired.json`, stops being checked, and is listed under "No longer tracked".
 
     python3 scripts/checker.py      # polite stock check -> data/stock.json, data/changes.json
     python3 scripts/build_site.py   # renders site/ from stores.json + data/ + content/

@@ -1,0 +1,571 @@
+{
+ "about": "Limited-edition fountain pen ink tracker. Only shop+brand pairs that appear on the brand's own dealer list are tracked (research/inks-2026-11-21.md, section 2). New finds from scripts/ink_tracker.py discover go to data/inks/pending.json and stay off the public site until the owner approves them (ink_tracker.py approve). Never add Milligram or any Designphil product (MIDORI, Traveler's Company).",
+ "brands": {
+  "diamine": {
+   "name": "Diamine",
+   "vendor_rx": "\\bdiamine\\b",
+   "dealer_list": "https://www.diamineinks.co.uk/pages/retailers",
+   "shops": [
+    "atlas",
+    "dromgooles",
+    "goldspot",
+    "penboutique",
+    "goulet",
+    "cultpens"
+   ]
+  },
+  "sailor": {
+   "name": "Sailor",
+   "vendor_rx": "\\bsailor\\b",
+   "dealer_list": "https://en.sailor.co.jp/dealer/",
+   "shops": [
+    "yoseka",
+    "goulet",
+    "dromgooles",
+    "penboutique",
+    "wonder",
+    "cultpens"
+   ]
+  },
+  "robert-oster": {
+   "name": "Robert Oster",
+   "vendor_rx": "\\brobert oster\\b",
+   "dealer_list": "https://robertoster.com/where-to-buy",
+   "shops": [
+    "atlas",
+    "goulet",
+    "blesket",
+    "cultpens"
+   ]
+  }
+ },
+ "coming_soon_collections": {
+  "atlas": [
+   "coming-soon"
+  ],
+  "penboutique": [
+   "coming-soon"
+  ],
+  "goulet": [
+   "coming-soon"
+  ],
+  "cultpens": [
+   "coming-soon"
+  ],
+  "yoseka": [
+   "coming-soon"
+  ]
+ },
+ "preorder_collections": {
+  "wonder": [
+   "pre-order"
+  ]
+ },
+ "inks": [
+  {
+   "id": "diamine-inkvent-2026",
+   "brand": "diamine",
+   "name": "Diamine Inkvent Calendar 2026 (Burgundy Edition)",
+   "kind": "Advent calendar",
+   "added": "2026-11-21",
+   "note": "Diamine's 2026 advent calendar of 25 inks.",
+   "listings": [
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-2026-inkvent-calendar-set-of-25-inks",
+     "source_title": "Diamine 2026 Inkvent Calendar - Set of 25 inks"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/diamine-inkvent-calendar-2026-burgundy-edition",
+     "source_title": "Diamine Inkvent Calendar (2026 - Burgundy Edition)"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-calendar-2026-25-ink-gift-set-burgundy-edition",
+     "source_title": "Diamine Inkvent Calendar 2026 - 25 Ink Gift Set - Burgundy Edition In Stock"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/diamine-inkvent-inks-2026-calendar-burgundy-edition",
+     "source_title": "Diamine Inkvent Inks – 2026 Calendar (Burgundy Edition)"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/diamine-inkvent-calendar-2026-burgundy-edition",
+     "source_title": "Diamine InkVent Calendar 2026 (Burgundy Edition)"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/diamine-inkvent-calendar-2026-burgundy-edition",
+     "source_title": "Diamine Inkvent Calendar 2026 Burgundy Edition"
+    }
+   ]
+  },
+  {
+   "id": "diamine-inkvent-teal-singles",
+   "brand": "diamine",
+   "name": "Diamine Inkvent Teal Edition single bottles (50ml)",
+   "kind": "Single bottles",
+   "added": "2026-11-21",
+   "display": "colors",
+   "note": "The 25 inks from Diamine's 2025 Inkvent calendar (Teal Edition), sold one 50ml bottle at a time.",
+   "listings": [
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-myrrh-the-merrier-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Myrrh the Merrier - 50ml Bottled Ink",
+     "color": "Myrrh the Merrier"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-pineapple-spritz-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Pineapple Spritz - 50ml Bottled Ink",
+     "color": "Pineapple Spritz"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-brrr-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Brrr! - 50ml Bottled Ink",
+     "color": "Brrr"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-let-it-snow-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Let It Snow - 50ml Bottled Ink",
+     "color": "Let It Snow"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-ambience-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Ambience - 50ml Bottled Ink",
+     "color": "Ambience"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-ruby-taffeta-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Ruby Taffeta - 50ml Bottled Ink",
+     "color": "Ruby Taffeta"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-nostalgia-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Nostalgia - 50ml Bottled Ink",
+     "color": "Nostalgia"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-fir-fog-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Fir & Fog - 50ml Bottled Ink",
+     "color": "Fir & Fog"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-chaos-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Chaos - 50ml Bottled Ink",
+     "color": "Chaos"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-laurel-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Laurel - 50ml Bottled Ink",
+     "color": "Laurel"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-dream-catcher-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Dream Catcher - 50ml Bottled Ink",
+     "color": "Dream Catcher"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-smoky-tobacco-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Smoky Tobacco - 50ml Bottled Ink",
+     "color": "Smoky Tobacco"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-antler-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Antler - 50ml Bottled Ink",
+     "color": "Antler"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-mittens-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Mittens - 50ml Bottled Ink",
+     "color": "Mittens"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-carousel-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Carousel - 50ml Bottled Ink",
+     "color": "Carousel"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-energy-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Energy - 50ml Bottled Ink",
+     "color": "Energy"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-frostbite-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Frostbite - 50ml Bottled Ink",
+     "color": "Frostbite"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-bubbly-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Bubbly - 50ml Bottled Ink",
+     "color": "Bubbly"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-celestial-skies-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Celestial Skies - 50ml Bottled Ink",
+     "color": "Celestial Skies"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-overcast-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Overcast - 50ml Bottled Ink",
+     "color": "Overcast"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-gala-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Gala - 50ml Bottled Ink",
+     "color": "Gala"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-molten-basalt-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Molten Basalt - 50ml Bottled Ink",
+     "color": "Molten Basalt"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-bittersweet-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Bittersweet - 50ml Bottled Ink",
+     "color": "Bittersweet"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-blush-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Blush - 50ml Bottled Ink",
+     "color": "Blush"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/diamine-inkvent-marie-rose-50ml-bottled-ink",
+     "source_title": "Diamine Inkvent Marie Rose - 50ml Bottled Ink",
+     "color": "Marie Rose"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-shimmer-sheen-bottled-ink-in-myrrh-the-merrier-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Shimmer & Sheen Bottled Ink in Myrrh the Merrier - 50 ml",
+     "color": "Myrrh the Merrier"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-pigment-chameleon-bottled-ink-in-pineapple-spritz-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Pigment Chameleon Bottled Ink in Pineapple Spritz - 50 ml",
+     "color": "Pineapple Spritz"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-pigment-shimmer-bottled-ink-in-brrr-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Pigment Shimmer Bottled Ink in BRRR - 50 ml",
+     "color": "Brrr"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-chameleon-bottled-ink-in-let-it-snow-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Chameleon Bottled Ink in Let it Snow - 50 ml",
+     "color": "Let It Snow"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-chameleon-bottled-ink-in-ambience-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Chameleon Bottled Ink in Ambience - 50 ml",
+     "color": "Ambience"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-chameleon-bottled-ink-in-ruby-taffeta-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Chameleon Bottled Ink in Ruby Taffeta - 50 ml",
+     "color": "Ruby Taffeta"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-chameleon-bottled-ink-in-nostalgia-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Chameleon Bottled Ink in Nostalgia - 50 ml",
+     "color": "Nostalgia"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-chameleon-bottled-ink-in-fir-fog-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Chameleon Bottled Ink in Fir & Fog - 50 ml",
+     "color": "Fir & Fog"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-extreme-sheen-bottled-ink-in-chaos-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Extreme Sheen Bottled Ink in Chaos - 50 ml",
+     "color": "Chaos"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-extreme-sheen-bottled-ink-in-laurel-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Extreme Sheen Bottled Ink in Laurel - 50 ml",
+     "color": "Laurel"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-extreme-sheen-bottled-ink-in-dream-catcher-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Extreme Sheen Bottled Ink in Dream Catcher - 50 ml",
+     "color": "Dream Catcher"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-scented-bottled-ink-in-smoky-tobacco-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Scented Bottled Ink in Smoky Tobacco - 50 ml",
+     "color": "Smoky Tobacco"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-pigment-bottled-ink-in-antler-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Pigment Bottled Ink in Antler - 50 ml",
+     "color": "Antler"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-pigment-bottled-ink-in-mittens-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Pigment Bottled Ink in Mittens - 50 ml",
+     "color": "Mittens"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-pigment-bottled-ink-in-carousel-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Pigment Bottled Ink in Carousel - 50 ml",
+     "color": "Carousel"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-sheen-bottled-ink-in-energy-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Sheen Bottled Ink in Energy  - 50 ml",
+     "color": "Energy"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-shimmer-bottled-ink-in-frostbite-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Shimmer Bottled Ink in Frostbite - 50 ml",
+     "color": "Frostbite"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-shimmer-bottled-ink-in-bubbly-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Shimmer Bottled Ink in Bubbly - 50 ml",
+     "color": "Bubbly"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-shimmer-bottled-ink-in-celestial-skies-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Shimmer Bottled Ink in Celestial Skies - 50 ml",
+     "color": "Celestial Skies"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-standard-bottled-ink-in-overcast-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Standard Bottled Ink in Overcast - 50 ml",
+     "color": "Overcast"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-standard-bottled-ink-in-gala-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Standard Bottled Ink in Gala - 50 ml",
+     "color": "Gala"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-standard-bottled-ink-in-molten-basalt-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Standard Bottled Ink in Molten Basalt - 50 ml",
+     "color": "Molten Basalt"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-standard-bottled-ink-in-bittersweet-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Standard Bottled Ink in Bittersweet - 50 ml",
+     "color": "Bittersweet"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-standard-bottled-ink-in-blush-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Standard Bottled Ink in Blush - 50 ml",
+     "color": "Blush"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-standard-bottled-ink-in-marie-rose-50-ml",
+     "source_title": "Diamine Inkvent Teal Edition Standard Bottled Ink in Marie Rose - 50 ml",
+     "color": "Marie Rose"
+    }
+   ]
+  },
+  {
+   "id": "sailor-advent-2026",
+   "brand": "sailor",
+   "name": "Sailor x Pentel 2026 Advent Calendar, Keep the Sparkle",
+   "kind": "Advent calendar",
+   "added": "2026-11-21",
+   "note": "A mixed stationery box made with Pentel, so it holds more than ink. Yoseka's listing says 1,000 were made worldwide.",
+   "listings": [
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/sailor-x-pentel-2026-advent-calendar-keep-the-sparkle",
+     "source_title": "Sailor x Pentel 2026 Advent Calendar - Keep the Sparkle"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/sailor-2026-advent-calendar-set-keep-the-sparkle-limited-edition",
+     "source_title": "Sailor 2026 Advent Calendar Set - Keep the Sparkle (Limited Edition)"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/sailor-pentel-2026-advent-calendar-keep-the-sparkle",
+     "source_title": "Sailor x Pentel 2026 Advent Calendar - Keep the Sparkle"
+    },
+    {
+     "store_id": "wonder",
+     "url": "https://wonderpens.ca/products/sailor-x-pentel-2026-advent-calendar-keep-the-sparkle",
+     "source_title": "Sailor x Pentel 2026 Advent Calendar - Keep the Sparkle"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/sailor-keep-the-sparkle-advent-calendar",
+     "source_title": "Sailor Keep The Sparkle Advent Calendar"
+    }
+   ]
+  },
+  {
+   "id": "sailor-manyo-takenoko",
+   "brand": "sailor",
+   "name": "Sailor Manyo Takenoko (limited edition)",
+   "kind": "Bottled ink, 50ml",
+   "added": "2026-11-21",
+   "listings": [
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/sailor-manyo-takenoko-50ml-bottled-ink",
+     "source_title": "Sailor Manyo Takenoko - 50ml Bottled Ink (Limited Edition) Discontinued"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/sailor-manyo-ink-bottle-takenoko-bamboo-shoots-50ml-limited-edition",
+     "source_title": "Sailor Manyo Ink Bottle - Takenoko (Bamboo Shoots) - 50ml (Limited Edition)"
+    },
+    {
+     "store_id": "wonder",
+     "url": "https://wonderpens.ca/products/sailor-manyo-fountain-pen-ink-50ml-limited-edition-takenoko",
+     "source_title": "Sailor Manyo - Fountain Pen Ink (50mL) - Limited Edition - Takenoko",
+     "variant_id": 46035171868917,
+     "variant_title": "Full Bottle"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/sailor-manyo-bottled-ink-limited-edition",
+     "source_title": "Sailor Manyo Bottled Ink Limited Edition",
+     "variant_id": 45779960135923,
+     "variant_title": "Takenoko"
+    }
+   ]
+  },
+  {
+   "id": "sailor-manyo-kaki",
+   "brand": "sailor",
+   "name": "Sailor Manyo Kaki (limited edition)",
+   "kind": "Bottled ink, 50ml",
+   "added": "2026-11-21",
+   "listings": [
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/sailor-manyo-ink-bottle-kaki-persimmon-50ml-limited-edition",
+     "source_title": "Sailor Manyo Ink Bottle - Kaki (Persimmon) - 50ml (Limited Edition)"
+    },
+    {
+     "store_id": "wonder",
+     "url": "https://wonderpens.ca/products/sailor-manyo-fountain-pen-ink-50ml-limited-edition-kaki",
+     "source_title": "Sailor Manyo - Fountain Pen Ink (50mL) - Limited Edition - Kaki",
+     "variant_id": 46035174457589,
+     "variant_title": "Full Bottle"
+    }
+   ]
+  },
+  {
+   "id": "sailor-manyo-aka-mai",
+   "brand": "sailor",
+   "name": "Sailor Manyo Aka-Mai (limited edition)",
+   "kind": "Bottled ink, 50ml",
+   "added": "2026-11-21",
+   "listings": [
+    {
+     "store_id": "wonder",
+     "url": "https://wonderpens.ca/products/sailor-manyo-fountain-pen-ink-50ml-aka-mai",
+     "source_title": "Sailor Manyo - Fountain Pen Ink (50mL) - Limited Edition - Aka-Mai",
+     "variant_id": 46035165282549,
+     "variant_title": "Full Bottle"
+    }
+   ]
+  },
+  {
+   "id": "sailor-usa-state-minnesota",
+   "brand": "sailor",
+   "name": "Sailor USA State ink: Minnesota",
+   "kind": "Bottled ink, 20ml",
+   "added": "2026-11-21",
+   "note": "Pen Boutique lists the USA State inks as a North America exclusive.",
+   "listings": [
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/sailor-bottled-ink-usa-state-minnesota-20ml-north-america-exclusive",
+     "source_title": "Sailor Bottled Ink - USA State - Minnesota - 20ml (North America Exclusive)"
+    }
+   ]
+  },
+  {
+   "id": "sailor-usa-state-connecticut",
+   "brand": "sailor",
+   "name": "Sailor USA State ink: Connecticut",
+   "kind": "Bottled ink, 20ml",
+   "added": "2026-11-21",
+   "note": "Pen Boutique lists the USA State inks as a North America exclusive.",
+   "listings": [
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/sailor-bottled-ink-usa-state-connecticut-20ml-north-america-exclusive",
+     "source_title": "Sailor Bottled Ink - USA State - Connecticut - 20ml (North America Exclusive)"
+    }
+   ]
+  },
+  {
+   "id": "sailor-teatime-koicha",
+   "brand": "sailor",
+   "name": "Sailor Teatime Around the World: Japanese Tea Ceremony (Koicha)",
+   "kind": "Bottled ink",
+   "added": "2026-11-21",
+   "listings": [
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/sailor-tea-time-series-japanese-tea-ceremony-ink",
+     "source_title": "Sailor Tea Time Series - Japanese Tea Ceremony Ink - Koicha"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/sailor-ink-bottle-teatime-around-the-world-japanese-tea-ceremony-koicha-20ml-limited-edition",
+     "source_title": "Sailor Ink Bottle - Teatime Around the World Japanese Tea Ceremony Koicha - 20ml (Limited Edition)"
+    }
+   ]
+  }
+ ]
+}
