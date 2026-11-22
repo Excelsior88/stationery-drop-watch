@@ -621,3 +621,11 @@ table.stock.compare thead th{vertical-align:top}
 .signup-strip .strip-check{display:inline-flex;align-items:center;gap:6px;margin:0 16px 6px 0;font:400 .95rem var(--sans);color:var(--ink);cursor:pointer}
 .signup-strip .strip-check input{flex:0 0 auto;width:18px;height:18px;margin:0;accent-color:var(--accent)}
 @media (min-width:901px){.signup-strip .signup-form{flex-wrap:wrap}.signup-strip input[type=email]{flex:1 1 220px}.signup-strip .strip-trackers{order:3}}
+
+.signup-strip .hp-field{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.signup-strip .signup-status{order:4;flex:1 1 100%;margin:4px 0 0;font:500 .92rem/1.4 var(--sans);color:var(--ink)}
+.signup-strip .signup-status[data-state=ok]{color:#23603a}
+.signup-strip .signup-status[data-state=error]{color:#a8452e}
+.signup-strip .cf-turnstile{order:5;flex:1 1 100%}
+@media (min-width:901px){.signup-strip button{order:2}}
+.signup-strip .cf-turnstile:empty{display:none}
