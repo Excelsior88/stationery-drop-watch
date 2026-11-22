@@ -137,7 +137,7 @@ class RestockFeedTests(unittest.TestCase):
         self.assertIn('data-now="in_stock"', still)
         self.assertIn('href="https://example.test/sold"', sold)
         self.assertIn("Fixture Shop (official)", sold)
-        self.assertIn('href="/archer-and-olive-dot-grid-journal/"', sold)
+        self.assertIn('href="/dot-grid-journal-restock-tracker/"', sold)
         self.assertIn("restocked", sold)
         self.assertLess(doc.find("https://example.test/sold"), doc.find("https://example.test/still"))
         self.assertLess(doc.find("https://example.test/still"), doc.find("https://example.test/failed"))

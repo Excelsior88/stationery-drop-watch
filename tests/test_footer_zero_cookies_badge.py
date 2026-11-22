@@ -76,7 +76,7 @@ class FooterMatchedBadgeTests(unittest.TestCase):
 
         zero_img = footer.find("<img", footer.find("badge-zero-cookies"))
         zero_a = footer.rfind("<a ", 0, zero_img)
-        self.assertIn('href="/privacy"', footer[zero_a:zero_img])
+        self.assertIn('href="/privacy/"', footer[zero_a:zero_img])
         self.assertNotIn('target="_blank"', footer[zero_a:zero_img])
         self.assertIn('alt="Zero cookies: this site sets no cookies"', footer)
         self.assertIn(

@@ -111,7 +111,7 @@ class PolicyWordingTests(unittest.TestCase):
         doc = html_of(site.build_privacy())
         text = html.unescape(re.sub(r"<[^>]+>", " ", doc))
         self.assertIn("updated Nov 20, 2026", text)
-        self.assertEqual(site.STATIC_LASTMOD["privacy.html"], "2026-11-20")
+        self.assertEqual(site.STATIC_LASTMOD["privacy/"], "2026-11-20")
         self.assertIn("Cloudflare Web Analytics", text)
         self.assertIn("does not track individual end users across its customers", text)
         self.assertNotIn("does not currently run analytics beacons", text)
