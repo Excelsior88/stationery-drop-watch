@@ -486,7 +486,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
            f'<details class="nav-menu"><summary>Menu</summary>'
            f'<nav class="site-nav site-nav-panel" aria-label="Main">{nav_inner}</nav></details>')
     foot_items = list(NAV_TRACKERS) + [
-        ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("shop/", "Shop"),
+        ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("sold-out-everywhere/", "Sold out everywhere"), ("shop/", "Shop"),
         ("follow/", "Follow us"),
         ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy")]
     foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
