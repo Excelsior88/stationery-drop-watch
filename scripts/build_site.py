@@ -2697,10 +2697,10 @@ def build_january_april():
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     sources = [
-        ("https://help.1101.com/hc/en-us/articles/4889929315230", "April-start editions"),
-        ("https://help.1101.com/hc/en-us/articles/4889951964190", "Spring lineup guidance"),
-        ("https://help.1101.com/hc/en-us/articles/4889935445534", "sale schedule"),
-        ("https://help.1101.com/hc/en-us/articles/4889951953566", "Sunday-start editions"),
+        ("https://www.1101.com/store/techo/en/faq/articles/4889929315230.html", "April-start editions"),
+        ("https://www.1101.com/store/techo/en/faq/articles/4889951964190.html", "Spring lineup guidance"),
+        ("https://www.1101.com/store/techo/en/faq/articles/4889935445534.html", "sale schedule"),
+        ("https://www.1101.com/store/techo/en/faq/articles/4889951953566.html", "Sunday-start editions"),
         ("https://www.1101.com/store/techo/en/2027/pc/shopping_guide/", "Hobonichi Techo 2027 shopping guide"),
     ]
     src_items = "".join(
