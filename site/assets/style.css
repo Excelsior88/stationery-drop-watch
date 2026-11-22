@@ -615,3 +615,9 @@ table.stock.compare thead th{vertical-align:top}
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
   .book-cover img,.hub-card a{transform:none !important}
 }
+/* Kit signup: tracker checkboxes (signup() in build_site.py) */
+.signup-strip .strip-trackers{flex:1 1 100%;border:0;margin:2px 0 0;padding:0;display:block;min-width:0}
+.signup-strip .strip-trackers legend{font:600 .85rem var(--sans);color:var(--ink-2);padding:0;margin:0 0 2px;float:none;width:100%}
+.signup-strip .strip-check{display:inline-flex;align-items:center;gap:6px;margin:0 16px 6px 0;font:400 .95rem var(--sans);color:var(--ink);cursor:pointer}
+.signup-strip .strip-check input{flex:0 0 auto;width:18px;height:18px;margin:0;accent-color:var(--accent)}
+@media (min-width:901px){.signup-strip .signup-form{flex-wrap:wrap}.signup-strip input[type=email]{flex:1 1 220px}.signup-strip .strip-trackers{order:3}}
