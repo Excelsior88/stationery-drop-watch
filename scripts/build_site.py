@@ -2840,7 +2840,7 @@ def gift_price(key):
         return f'<span class="muted">{STATUS["unknown"]}</span>'
     return '<span class="muted">No price: not in stock or on preorder</span>'
 
-GIFT_SALE_ENDS = dt.date(2026, 11, 30)  # last day of the Etsy launch sale named in ETSY_PRICE[1]
+GIFT_SALE_ENDS = dt.date(2026, 12, 1)  # last day of the Etsy Cyber sale named in ETSY_PRICE[1]
 
 def gift_today():
     return dt.datetime.now(ET).date()
@@ -2855,7 +2855,7 @@ def gift_shared_price_listings():
 
 def gift_sale_note():
     """The Etsy sale line used on every printables price-table row. Empty once the sale has ended
-    (each checker run rebuilds the page, so it comes off on Dec 1 by itself), when /shop drops the
+    (each checker run rebuilds the page, so it comes off on Dec 2 by itself), when /shop drops the
     sale line, or when a shared-price printable isn't on that sale."""
     items = gift_shared_price_listings()
     if not items or gift_today() > GIFT_SALE_ENDS or "% off" not in ETSY_PRICE[1]:
@@ -2867,7 +2867,7 @@ def gift_sale_note():
 def gift_printable_rows():
     """Price-table rows for our Etsy printables, using each listing's data-source price.
     Shared-price printables share one 'Our printables' row. A printable at a different
-    regular price gets its own row. Both rows use the same sale line, which drops after Nov 30."""
+    regular price gets its own row. Both rows use the same sale line, which drops after Dec 1."""
     items = etsy_listings()
     if not items:
         return []
@@ -3066,8 +3066,8 @@ def build_guides_index():
 
 # Soft Days listing confirmed by the owner on 2026-11-06.
 # Public permalink is the url below. The shopwide sale applies, so the card uses the
-# same price line as the other Etsy printables: regular $6.99 plus "20% off launch sale
-# Oct 31 to Nov 30". Do not print the intro amount (it would read as the lasting price),
+# same price line as the other Etsy printables: regular $6.99 plus "25% off all listings, Cyber sale
+# Nov 23 to Dec 1". Do not print the intro amount (it would read as the lasting price),
 # the sale code, an AI-disclosure line, or fee records.
 # Fit: an earlier card said the inserts were tested in a Hobonichi Weeks Mega. The
 # 2026-11-08 source for these files says the 85 x 175 mm trim was not physically tested.
@@ -3283,7 +3283,7 @@ SHOP_ALSO = {
         "url": "https://www.amazon.com/dp/B0HP9PXSR1",
     },
 }
-ETSY_PRICE = ("$6.99", "20% off launch sale Oct 31 to Nov 30")
+ETSY_PRICE = ("$6.99", "25% off all listings, Cyber sale Nov 23 to Dec 1")
 # Interior previews, web-sized into assets/shop/inside/: our own Etsy listing images (etsy/printables/*/listing-images)
 # and, for the Amazon books, interior spreads Kiln exported from the print files (keyed by ASIN). (file stem, caption)
 def _inside_dim(inside, stem):
@@ -3696,7 +3696,7 @@ def build_shop():
             sub = item.get("sub_unpublished", sub)
             btn = "Etsy listing not published yet"
             note = ("Preview only, not a live listing. No public Etsy URL is set, so this card is left out of the public site. "
-                    "The price shown is the approved regular price, US$6.99. Launch-sale eligibility is not confirmed.")
+                    "The price shown is the approved regular price, US$6.99. sale eligibility is not confirmed.")
         return card(item["img"], item["alt"], item["title"], sub, item["blurb"],
                     item.get("details", ["US Letter 8.5 x 11 in", "172 pages"]), url, btn, False, etsy_price_html(item),
                     item.get("inside"), img_class=item.get("img_class", ""),
