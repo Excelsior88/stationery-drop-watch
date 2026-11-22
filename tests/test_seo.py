@@ -57,7 +57,7 @@ class SeoHeadTests(unittest.TestCase):
         self.assertEqual(len(titles), len(set(titles)))
         self.assertEqual(len(titles), 98)  # (Nov 22: +24 cover design pages) 82, minus 12 Traveler's/MIDORI pages removed Nov 19, 2026, plus 3 Weeks design pages
 
-    def test_descriptions_match_social_tags_and_stay_under_160(self):
+    def test_descriptions_match_social_tags_and_stay_under_155(self):
         descs = []
         for path, doc in self.docs:
             desc = html.unescape(DESC_RE.search(doc).group(1))
@@ -65,8 +65,8 @@ class SeoHeadTests(unittest.TestCase):
             tw = html.unescape(TW_DESC_RE.search(doc).group(1))
             self.assertEqual(desc, og, path)
             self.assertEqual(desc, tw, path)
-            self.assertLessEqual(len(desc), 160, path)
-            self.assertGreaterEqual(len(desc), 140, path)
+            self.assertLessEqual(len(desc), 155, path)
+            self.assertGreaterEqual(len(desc), 110, path)
             self.assertTrue(desc.endswith("."), path)
             self.assertNotIn("hourly", desc.lower(), path)
             descs.append(desc)

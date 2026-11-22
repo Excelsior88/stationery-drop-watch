@@ -109,7 +109,7 @@ class AuditPolishTests(unittest.TestCase):
         self.assertNotIn("does not currently run analytics beacons", PRIVACY)
         self.assertIn("hosted on Cloudflare Pages", PRIVACY)
         desc = "How Stationery Drop Watch handles email signups, plus page-view stats from Cloudflare Web Analytics. No cookies set by the site, no ad trackers."
-        self.assertLess(len(desc), 160)
+        self.assertLess(len(desc), 155)
         self.assertEqual(PRIVACY.count('content="' + desc + '"'), 3)
         # Cloudflare Web Analytics is disclosed. These older blanket phrases stay out of the page.
         for doc, label in ((HOME, "home"), (PRIVACY, "privacy"), (ABOUT, "about"), (CSS, "css")):

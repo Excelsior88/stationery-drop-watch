@@ -110,7 +110,7 @@ class DotGridCopyAndOfficialTests(unittest.TestCase):
         desc = site.dotgrid_meta_desc()
         self.assertGreaterEqual(len(desc), 140)
         self.assertLessEqual(len(desc), site.DESC_LIMIT)
-        self.assertIn("Official-store checks", desc)
+        self.assertIn("Official stores", desc)
         self.assertIn("independent", desc)
         self.assertIn("Leuchtturm1917", desc)
         self.assertIn(desc, doc)
