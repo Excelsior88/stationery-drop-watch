@@ -16,6 +16,7 @@ const MSG = {
   tags: "Pick at least one tracker so we know what to email you about.",
   check: "The anti-spam check didn't pass. Please reload the page and try again. It needs JavaScript and a browser that can run Cloudflare Turnstile.",
   origin: "That request didn't come from our site.",
+  rejoin: "This address unsubscribed from our emails before. To rejoin, please sign up on our Kit signup page and confirm from there (Kit only lets people who unsubscribed rejoin through its own form).",
   upstream: "We couldn't add you just now. Please try again in a few minutes.",
   method: "Use the signup form on the site.",
 };
@@ -96,8 +97,9 @@ export async function onRequest(context) {
       return created.status === 422 ? reply(request, 400, false, MSG.email) : reply(request, 502, false, MSG.upstream);
     }
     const sub = created.data.subscriber;
-    // Already confirmed: leave their tags and state alone (anyone could type this address). The note in MSG.ok covers it.
-    if (sub.state === "active") return reply(request, 200, true, MSG.ok);
+    // Already confirmed (or unsubscribed): leave their tags and state alone (anyone could type this address). The note in MSG.ok covers it.
+    if (sub.state === "cancelled") return reply(request, 200, false, MSG.rejoin, { rejoin: KIT_HOSTED_FORM });
+    if (sub.state !== "inactive") return reply(request, 200, true, MSG.ok);  // active, bounced, complained: nothing to do
     const added = await kit(env, `/forms/${KIT_FORM_ID}/subscribers/${sub.id}`, { referrer: "https://stationerydropwatch.com/" });
     if (added.status !== 200 && added.status !== 201) return reply(request, 502, false, MSG.upstream);
     for (const t of tags) {

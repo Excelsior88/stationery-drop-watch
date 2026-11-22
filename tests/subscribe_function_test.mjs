@@ -53,6 +53,9 @@ reset(); r = await post([...base, ["website", "http://spam"]]); assert.equal(r.s
 // already active: no form add, no tag changes
 reset(); state = "active"; r = await post(base); assert.equal(r.status, 200); assert.equal(calls.length, 2);
 
+// unsubscribed before: Kit's API can't re-confirm them, so point to Kit's own form and change nothing
+reset(); state = "cancelled"; r = await post(base); j = await r.json(); assert.equal(r.status, 200); assert.equal(j.ok, false); assert.match(j.rejoin, /kit\.com/); assert.equal(calls.length, 2);
+
 // cross-origin refused
 reset(); r = await post(base, { origin: "https://evil.example" }); assert.equal(r.status, 403); assert.equal(calls.length, 0);
 
