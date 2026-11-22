@@ -21,10 +21,13 @@
 /travelers-company-limited-edition/road-trip-brown   /travelers-company-limited-edition/  301
 /travelers-company-limited-edition/card-size-20th-anniversary-black/  /travelers-company-limited-edition/  301
 /travelers-company-limited-edition/card-size-20th-anniversary-black   /travelers-company-limited-edition/  301
-/midori-md-limited-edition/md-diary-2027-a5/  /midori-md-limited-edition/  301
-/midori-md-limited-edition/md-diary-2027-a5   /midori-md-limited-edition/  301
-/midori-md-limited-edition/md-diary-1-day-1-page-2027-a5/  /midori-md-limited-edition/  301
-/midori-md-limited-edition/md-diary-1-day-1-page-2027-a5   /midori-md-limited-edition/  301
+# The MIDORI notice page duplicated the Traveler's notice word for word. One canonical page: /travelers-company-limited-edition/.
+/midori-md-limited-edition/md-diary-2027-a5/  /travelers-company-limited-edition/  301
+/midori-md-limited-edition/md-diary-2027-a5   /travelers-company-limited-edition/  301
+/midori-md-limited-edition/md-diary-1-day-1-page-2027-a5/  /travelers-company-limited-edition/  301
+/midori-md-limited-edition/md-diary-1-day-1-page-2027-a5   /travelers-company-limited-edition/  301
+/midori-md-limited-edition/  /travelers-company-limited-edition/  301
+/midori-md-limited-edition   /travelers-company-limited-edition/  301
 /faq/  /#good-to-know  301
 /faq   /#good-to-know  301
 # Dot grid tracker moved to /dot-grid-journal-restock-tracker/. /archer-and-olive-dot-grid-journal/ stays as an Archer and Olive page, so only its design pages redirect.

@@ -96,7 +96,7 @@ class NoticeTests(unittest.TestCase):
         self.assertTrue(site.HOME_NOTICE_LINE.startswith("We asked politely for permission to use their official product photos."))
 
     def test_old_urls_show_the_notice(self):
-        for slug, noindex in ((site.TN_SLUG, False), (site.MIDORI_SLUG, False), (site.TN_GUIDE_SLUG, True)):
+        for slug, noindex in ((site.TN_SLUG, False), (site.TN_GUIDE_SLUG, True)):
             fname, doc = site.build_takedown_notice(slug, noindex=noindex)
             text = html.unescape(doc)
             self.assertEqual(fname, slug + "/")
@@ -121,13 +121,20 @@ class NoticeTests(unittest.TestCase):
     def test_item_pages_redirect_to_their_notice(self):
         for parent, slugs in site.TAKEDOWN_ITEMS.items():
             for slug in slugs:
-                self.assertEqual(site.REDIRECTS[f"{parent}/{slug}"], parent + "/")
+                self.assertEqual(site.REDIRECTS[f"{parent}/{slug}"], site.TN_SLUG + "/")
         self.assertEqual(site.REDIRECTS["travelers-notebook-regular-size"], site.TN_SLUG + "/")
         cf = (ROOT / "cloudflare/_redirects").read_text()
         for parent, slugs in site.TAKEDOWN_ITEMS.items():
             for slug in slugs:
-                self.assertIn(f"/{parent}/{slug}/  /{parent}/  301", cf)
+                self.assertIn(f"/{parent}/{slug}/  /{site.TN_SLUG}/  301", cf)
         self.assertNotIn("#tracker", cf)
+        # one canonical notice: the MIDORI duplicate 301s to it and is not in the sitemap
+        self.assertEqual(site.REDIRECTS[site.MIDORI_SLUG], site.TN_SLUG + "/")
+        self.assertIn(f"/{site.MIDORI_SLUG}/  /{site.TN_SLUG}/  301", cf)
+        self.assertIn(f"/{site.MIDORI_SLUG}   /{site.TN_SLUG}/  301", cf)
+        sm = site.build_sitemap()
+        self.assertIn(f"/{site.TN_SLUG}/</loc>", sm)
+        self.assertNotIn(f"/{site.MIDORI_SLUG}/</loc>", sm)
 
 
 NOTICE_CARD = re.compile(r'<li class="hub-card hub-notice">.*?</li>', re.S)
