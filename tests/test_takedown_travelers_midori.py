@@ -141,14 +141,16 @@ class HomeNoticeCardTests(unittest.TestCase):
         grid = re.search(r'<ul class="hub-grid">(.*?)</ul>', self.doc, re.S).group(1)
         self.cards = re.findall(r'<li class="hub-card[^"]*">.*?</li>', grid, re.S)
 
-    def test_notice_is_the_third_card_after_the_two_trackers(self):
-        self.assertEqual(len(self.cards), 3)
-        self.assertNotIn("hub-notice", self.cards[0] + self.cards[1])
-        self.assertTrue(self.cards[2].startswith('<li class="hub-card hub-notice">'))
+    def test_notice_is_the_card_after_the_trackers(self):
+        # Was the third card beside two trackers; the limited ink tracker (Nov 2026) adds a tracker card before it.
+        n = len(site.NAV_TRACKERS)
+        self.assertEqual(len(self.cards), n + 1)
+        self.assertNotIn("hub-notice", "".join(self.cards[:n]))
+        self.assertTrue(self.cards[n].startswith('<li class="hub-card hub-notice">'))
         self.assertEqual(len(NOTICE_CARD.findall(self.doc)), 1)
 
     def test_card_has_heading_verbatim_line_and_button_only(self):
-        card = self.cards[2]
+        card = self.cards[-1]
         self.assertIn('href="/travelers-company-limited-edition/"', card)
         self.assertIn("<h3>Why Traveler&#x27;s Company and MIDORI are gone</h3>", card)
         self.assertIn('<span class="hub-go">Read the notice</span>', card)

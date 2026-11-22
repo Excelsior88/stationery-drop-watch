@@ -39,6 +39,27 @@ def taken_down(r):
 stock["products"] = [p for p in stock["products"] if not taken_down(p)]
 changes = [c for c in changes if not taken_down(c)]
 
+# Limited-edition ink tracker (scripts/ink_tracker.py). Its rows live in data/inks/, apart from stock.json, so
+# they never reach the Hobonichi or dot grid pages, the restock feeds or the drop-alert webhook. A page shows
+# only rows of inks listed in inks.json (owner-approved). Pending finds ("hidden": true) never render.
+INK_CFG = json.loads((ROOT / "inks.json").read_text()) if (ROOT / "inks.json").exists() else {"brands": {}, "inks": []}
+def _ink_load(name, default):
+    f = ROOT / "data/inks" / name
+    return json.loads(f.read_text()) if f.exists() else default
+INK_STOCK = _ink_load("stock.json", {"products": [], "run_started": None, "run_finished": None})
+INKS = {i["id"]: i for i in INK_CFG["inks"]}
+_INK_URLS = {l["url"] for i in INK_CFG["inks"] for l in i["listings"]}
+_STORE_IDS = {x["id"] for x in stores["stores"]}
+def _ink_public(r):
+    return (not r.get("hidden") and r.get("ink_id") in INKS and r.get("url") in _INK_URLS
+            and r.get("store_id") in _STORE_IDS and r.get("store_id") not in TAKEDOWN_STORES)
+INK_ROWS = [r for r in INK_STOCK["products"] if _ink_public(r)]
+INK_CHANGES = [c for c in _ink_load("changes.json", []) if _ink_public(c)]
+INK_RETIRED = {k: v for k, v in _ink_load("retired.json", {}).items() if k in INKS}
+INK_SLUG = "limited-edition-fountain-pen-ink"
+INK_NAV = "Limited inks"
+INK_LIVE = bool(INK_ROWS)
+
 # Canonical products from other brands (e.g. Archer and Olive).
 OTHER_BRAND = {c["id"] for c in stores["canonical"] if c.get("brand")}
 CANON_SECTION = {c["id"]: c["section"] for c in stores["canonical"] if c.get("section")}
@@ -81,7 +102,8 @@ def section_products(sec):
 def hobo_products():
     return section_products("hobonichi")
 
-N_STORES = len({p["store_id"] for p in stock["products"]})  # stores the checker actually checks
+N_STORES = len({p["store_id"] for p in stock["products"]} | {r["store_id"] for r in INK_ROWS})  # stores the checkers actually check (inks included)
+N_INK = len({r["store_id"] for r in INK_ROWS})  # shops on the ink tracker
 N_SEC = {k: len({p["store_id"] for p in section_products(k)}) for k in ("hobonichi", *SECTIONS)}  # shops per section, from data
 LIVE = [k for k in SECTIONS if section_products(k)]  # sections that have tracked listings (and so a page)
 
@@ -117,7 +139,7 @@ for _x in stores["stores"]:
         _x["name"] = _display
 # Older change-log rows predate the "(official)" name and read "Leuchtturm1917 US". Same shop, same display name.
 _STRIP.setdefault("Leuchtturm1917 US", "Leuchtturm1917 (official)")
-for _r in stock["products"] + changes + stock.get("not_checked", []):
+for _r in stock["products"] + changes + stock.get("not_checked", []) + INK_ROWS + INK_CHANGES:
     for _k in ("store", "name"):
         if _r.get(_k) in _STRIP:
             _r[_k] = _STRIP[_r[_k]]
@@ -275,7 +297,8 @@ REDIRECTS.update({f"{parent}/{slug}": parent + "/" for parent, slugs in TAKEDOWN
 HOBO_TRACKER = "hobonichi-restock-tracker/"
 # Header: one link per restock tracker, then the rest of the site. Wraps on narrow screens; nothing is hidden.
 # NAV is not part of the tracker count. The calendar, guides, and shop are resources, not extra trackers.
-NAV_TRACKERS = [(HOBO_TRACKER, "Hobonichi tracker")] + [(SECTIONS[k]["slug"] + "/", SECTIONS[k]["nav"]) for k in LIVE]
+NAV_TRACKERS = ([(HOBO_TRACKER, "Hobonichi tracker")] + [(SECTIONS[k]["slug"] + "/", SECTIONS[k]["nav"]) for k in LIVE]
+                + ([(INK_SLUG + "/", INK_NAV)] if INK_LIVE else []))
 # Shop stays in the header, after the trackers, and is not one of them.
 NAV = [("hobonichi-2027/", "2027 calendar"), ("guides/", "Guides"),
        ("follow/", "Follow us"), ("about/", "About")]
@@ -886,6 +909,8 @@ def also_tracked(here):
         slug = SECTIONS[k]["slug"] + "/"
         if slug != here:
             links.append((slug, SECTIONS[k]["nav"]))
+    if INK_LIVE and here != INK_SLUG + "/":
+        links.append((INK_SLUG + "/", INK_NAV))
     return '<p class="small section-switch">Also tracked: ' + " · ".join(f'<a href="{h}">{E(t)}</a>' for h, t in links) + "</p>"
 
 def right_now_sentence(ls):
@@ -1091,6 +1116,12 @@ def hub_art(kind):
         body = (f'<rect x="51" y="6" width="58" height="52" rx="3" fill="#f4ecdc" stroke="{ink}" stroke-width="2"/>'
                 f'<path d="M51 14 h58" stroke="{accent}" stroke-width="6"/>'
                 f'<path d="M75 6 v11 l5-3 5 3 V6" fill="{sage}"/>{dots}')
+    elif kind == "inks":
+        # An ink bottle on the same center (80, 32): terracotta cap, sage ink line.
+        body = (f'<rect x="72" y="6" width="16" height="10" rx="2" fill="{accent}" stroke="{ink}" stroke-width="2"/>'
+                f'<path d="M66 20 h28 l4 6 v26 a4 4 0 0 1 -4 4 h-28 a4 4 0 0 1 -4 -4 v-26 z" fill="{paper}" stroke="{ink}" stroke-width="2" stroke-linejoin="round"/>'
+                f'<path d="M66 16 h28 v4 h-28 z" fill="{ink}"/>'
+                f'<path d="M64 38 h32 v14 a2 2 0 0 1 -2 2 h-28 a2 2 0 0 1 -2 -2 z" fill="{sage}"/>')
     elif kind == "notice":
         # A letter on the same center (80, 32): envelope flap in terracotta, two sage lines.
         body = (f'<rect x="50" y="12" width="60" height="42" rx="3" fill="{paper}" stroke="{ink}" stroke-width="2"/>'
@@ -1145,6 +1176,20 @@ def build_index():
   <span class="hub-art">{hub_art(k)}</span>
   <h3>{E(name)}</h3><p>{E(line)}</p>
   <p class="hub-count"><b>{st["in_stock"]}</b> of {len(ps)} listings in stock <span class="muted small">{E(" · ".join(bits))}</span></p>
+  <span class="hub-go">View tracker</span></a></li>""")
+    if INK_LIVE:
+        ist = {x: sum(r["status"] == x for r in INK_ROWS) for x in STATUS}
+        ibits = [nshops(N_INK)]
+        if ist["preorder"]:
+            ibits.append(f'{ist["preorder"]} on preorder')
+        if ist["coming_soon"]:
+            ibits.append(f'{ist["coming_soon"]} not yet on sale')
+        if ist["unknown"]:
+            ibits.append(f'{ist["unknown"]} couldn\'t be checked')
+        cards.append(f"""<li class="hub-card"><a href="{INK_SLUG}/">
+  <span class="hub-art">{hub_art("inks")}</span>
+  <h3>Limited-edition inks</h3><p>{E(INK_HUB_LINE)}</p>
+  <p class="hub-count"><b>{ist["in_stock"]}</b> of {len(INK_ROWS)} listings in stock <span class="muted small">{E(" · ".join(ibits))}</span></p>
   <span class="hub-go">View tracker</span></a></li>""")
     # Third card: the takedown notice. Same card and button as the trackers; no counts or stock badges.
     # The line is verbatim phrases from TAKEDOWN_NOTICE, including the Nov 20 lines.
@@ -2048,8 +2093,10 @@ def faq_block(only=None, sid="faq"):
     # {shop} is a link in the page and the plain URL in the FAQ structured data
     # rstrip the coverage sentence so the ". " join does not add a second period after "shops."
     secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + ((". " + dotgrid_where_checked().rstrip(".")) if k == "dotgrid" else "") for k in LIVE)
+    if INK_LIVE:
+        secs += f". Limited-edition inks: {N_INK} shops, {ink_shop_names()}, each on the brand's own dealer list"
     secs += ". Some shops sell more than one brand, so they're counted once in the total"
-    tracks = " ".join(FAQ_TRACKS[k] for k in LIVE)
+    tracks = " ".join(FAQ_TRACKS[k] for k in LIVE) + ((" " + INK_FAQ_TRACK) if INK_LIVE else "")
     answers = []
     for q, a in FAQ:
         if q == "Do you sell planners?" and shop_inserts_public():
@@ -2091,6 +2138,8 @@ def build_sitemap():
     urls = [(url_for("index.html"), home_mod), (url_for(HOBO_TRACKER), latest(*[p.get("status_since") for p in hobo_products()], *[c["at"] for c in changes], CONTENT_LASTMOD))]
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
     urls += [(url_for(design_fname(d)), design_lastmod(d)) for d in DESIGNS]
+    if INK_LIVE:
+        urls.append((url_for(INK_SLUG + "/"), ink_lastmod()))
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG, MIDORI_SLUG)]  # the indexed takedown notices
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
@@ -2136,10 +2185,10 @@ def build_404():
 {eyebrow("404", "page not found")}
 <h1>This page sold out. Or it never existed.</h1>
 <p class="lede">The link may be old or mistyped. Every tracker is still here and checked {CHECK_FREQ}.</p>
-<p><a class="btn" href="{HOBO_TRACKER}">Go to the Hobonichi tracker</a> {" ".join(f'<a class="btn-ghost" href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE)}</p>
+<p><a class="btn" href="{HOBO_TRACKER}">Go to the Hobonichi tracker</a> {" ".join([f'<a class="btn-ghost" href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE] + ([f'<a class="btn-ghost" href="{INK_SLUG}/">{E(INK_NAV)}</a>'] if INK_LIVE else []))}</p>
 <section class="card"><h2>Restock pages</h2>
   <p class="eyebrow">Hobonichi Techo 2027</p><ul class="link-list"><li><a href="{HOBO_TRACKER}">Hobonichi tracker</a></li>{hobo}</ul>
-{"".join(f'  <p class="eyebrow">{E(SECTIONS[k]["foot"])}</p><ul class="link-list"><li><a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a> <span class="muted small">· {E(shop_names(k))}</span></li></ul>' + chr(10) for k in LIVE)}
+{"".join(f'  <p class="eyebrow">{E(SECTIONS[k]["foot"])}</p><ul class="link-list"><li><a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a> <span class="muted small">· {E(shop_names(k))}</span></li></ul>' + chr(10) for k in LIVE)}{f'  <p class="eyebrow">Limited-edition fountain pen ink</p><ul class="link-list"><li><a href="{INK_SLUG}/">{E(INK_NAV)}</a> <span class="muted small">· {E(ink_shop_names())}</span></li></ul>' + chr(10) if INK_LIVE else ""}
   <p class="eyebrow">Guides</p><ul class="link-list">{"".join(f'<li><a href="{h}">{E(t)}</a></li>' for h, t in GUIDES)}</ul>
 </section>
 </article>"""
@@ -3898,6 +3947,185 @@ def check_none_claim(fname, doc):
     if badges and all(b == "unknown" for b in badges) and _NONE_CLAIM.search(doc):
         raise SystemExit(f"{fname}: says none in stock but every listing is Couldn't check")
 
+# --- Limited-edition fountain pen ink tracker ----------------------------------------------------------
+# Rows come from data/inks/stock.json (scripts/ink_tracker.py), filtered to owner-approved inks in inks.json.
+# Only shop + brand pairs on each brand's own dealer list are tracked. Ink restocks are shown on this page only:
+# the restock emails and social alerts read data/changes.json, which has no ink rows.
+INK_HUB_LINE = "Diamine Inkvent, Sailor Manyo and other limited inks, at shops on each brand's own dealer list."
+INK_FAQ_TRACK = ("On a separate limited inks page, we track limited-edition fountain pen inks from Diamine and Sailor, "
+                 "only at shops on each brand's own dealer list. Ink restocks show on that page; restock emails don't cover inks yet.")
+INK_DEALER_LABEL = {"diamine": "Diamine's retailer list", "sailor": "Sailor's dealer list", "robert-oster": "Robert Oster's where-to-buy page"}
+INK_INTRO = ("Limited, seasonal and shop-exclusive fountain pen inks, checked at shops that each brand lists as its own dealer. "
+             "We show what each shop's product data says, including inks that aren't on sale yet.")
+
+def ink_shops():
+    ids = {r["store_id"] for r in INK_ROWS}
+    return [s for s in stores["stores"] if s["id"] in ids]
+
+def ink_shop_names():
+    return names_and([s["name"] for s in ink_shops()])
+
+def ink_lastmod():
+    return latest(*[r.get("status_since") for r in INK_ROWS], *[r.get("first_seen") for r in INK_ROWS],
+                  *[c["at"] for c in INK_CHANGES], INK_CONTENT_LASTMOD)
+
+INK_CONTENT_LASTMOD = "2026-11-22"
+
+def ink_hero_facts(ls):
+    """Same five tiles as the other trackers. The check time is the ink checker's own run."""
+    s = {k: sum(p["status"] == k for p in ls) for k in ("in_stock", "preorder", "sold_out", "coming_soon", "unknown")}
+    tracked, checked_shops, _ = shop_sets(ls)
+    when = INK_STOCK.get("run_finished")
+    last = f'Last check: {time_tag(when)} · ' if when else ""
+    return f'''<div class="stats five">
+    <div><b>{s["in_stock"]}</b><span>in stock</span></div>
+    <div><b>{s["preorder"]}</b><span>preorder</span></div>
+    <div><b>{s["sold_out"]}</b><span>sold out</span></div>
+    <div><b>{s["coming_soon"]}</b><span>not yet on sale</span></div>
+    <div class="unk"><b>{s["unknown"]}</b><span>couldn't check this run</span></div>
+  </div>
+  <p class="muted small hero-check">{last}{len(ls) - s["unknown"]} of {len(ls)} listings checked successfully · {len(checked_shops)} of {nshops(len(tracked))} checked.</p>'''
+
+def ink_checked_line():
+    return f'checked {time_tag(INK_STOCK["run_finished"])}' if INK_STOCK.get("run_finished") else ""
+
+def ink_color_table(ink, rows):
+    """One row per color, one column per shop: for single bottles sold color by color."""
+    shop_ids = []
+    for l in ink["listings"]:
+        if l["store_id"] not in shop_ids:
+            shop_ids.append(l["store_id"])
+    names = {s["id"]: s["name"] for s in stores["stores"]}
+    colors = sorted({r.get("color") or r["label"] for r in rows}, key=str.lower)
+    by = {(r.get("color") or r["label"], r["store_id"]): r for r in rows}
+    head = "".join(f'<th>{E(names[sid])}{region_tag(sid)}</th>' for sid in shop_ids)
+    body = []
+    for c in colors:
+        cells = []
+        for sid in shop_ids:
+            r = by.get((c, sid))
+            if not r:
+                cells.append('<td><span class="muted small">Not listed</span></td>')
+                continue
+            cells.append(f'<td><a href="{E(r["url"])}" rel="noopener" target="_blank" aria-label="{E(c)} at {E(r["store"])}">'
+                         f'<span class="badge {E(r["status"])}">{E(STATUS[r["status"]])}</span></a></td>')
+        body.append(f'<tr data-status="{E(" ".join(sorted({by[(c, s)]["status"] for s in shop_ids if (c, s) in by})))}"><td>{E(c)}</td>{"".join(cells)}</tr>')
+    return (f'<div class="table-wrap"><table class="stock ink-colors"><thead><tr><th>Color</th>{head}</tr></thead>'
+            f'<tbody>{"".join(body)}</tbody></table></div>'
+            '<p class="muted small">Open a status to go straight to that shop\'s listing.</p>')
+
+def ink_card(ink):
+    rows = [r for r in INK_ROWS if r["ink_id"] == ink["id"]]
+    if not rows:
+        return ""
+    meta = f"{E(count_line(rows).capitalize())} · {ink_checked_line()}"
+    about = " · ".join(E(x) for x in (ink.get("kind"), ink.get("note")) if x)
+    kind, note = (f'<p class="muted small">{about}</p>' if about else ""), ""
+    if ink.get("display") == "colors":
+        table = ink_color_table(ink, rows)
+    else:
+        table = f'''<div class="table-wrap"><table class="stock">
+    <thead><tr><th>Shop</th><th>Status</th></tr></thead>
+    <tbody>{status_rows(rows)}</tbody>
+  </table></div>
+  <p class="muted small">Open a shop's name to go straight to its listing.</p>'''
+    return f"""<details class="card group-fold" id="ink-{E(ink['id'])}">
+  <summary><h3 class="fam-name">{E(ink['name'])}</h3><span class="fam-meta">{meta}</span></summary>
+  <section class="group-sec">
+  {kind}{note}
+  {sold_everywhere_html(rows)}
+  {table}
+</section></details>"""
+
+def ink_restock_html():
+    rs = sorted([c for c in INK_CHANGES if is_restock_event(c)], key=lambda c: c["at"], reverse=True)[:10]
+    if not rs:
+        start = min((r["first_seen"] for r in INK_ROWS if r.get("first_seen")), default=INK_STOCK.get("run_started"))
+        since = f" Tracking started {time_tag(start)}." if start else ""
+        return f'''<div class="empty"><p><strong>No restocks spotted yet.</strong>{since}
+  A restock shows up here when a sold-out or not-yet-on-sale ink becomes available between two checks.</p></div>'''
+    now = {r["url"]: r["status"] for r in INK_ROWS}  # every ink listing URL is unique (ink_tracker.validate)
+    items = []
+    for c in rs:
+        st = now.get(c["url"], "unknown")
+        tone = {"in_stock": "live", "preorder": "hold", "sold_out": "sold"}.get(st, "past")
+        ink = INKS[c["ink_id"]]["name"]
+        items.append(f'''<li class="feed-item" data-tone="{tone}" data-now="{E(st)}"><span class="feed-now">now <span class="badge {E(st)}">{E(STATUS.get(st, "Couldn't check"))}</span></span>
+  <span class="feed-body"><a href="{E(c['url'])}" rel="noopener" target="_blank">{E(ink)}{(" · " + E(c["label"])) if c.get("label") and c["label"] != ink else ""}</a> <span class="muted">at {E(c['store'])}</span>
+  <span class="feed-when">restocked {time_tag(c['at'])}</span></span></li>''')
+    return f'<p class="muted small">{RESTOCK_NOW_NOTE}</p><div class="restocks" id="ink-restocks"><ol class="feed">{"".join(items)}</ol></div>'
+
+def build_inks():
+    fname = INK_SLUG + "/"
+    ls = INK_ROWS
+    shops = ink_shops()
+    parts = []
+    for b, info in INK_CFG["brands"].items():
+        inks = [i for i in INK_CFG["inks"] if i["brand"] == b and i["id"] not in INK_RETIRED and any(r["ink_id"] == i["id"] for r in ls)]
+        if not inks:
+            continue
+        bshops = names_and([s["name"] for s in stores["stores"] if s["id"] in info["shops"]])
+        parts.append(f'''<h2 class="shop-head" id="brand-{E(b)}"><span>{E(info["name"])}</span>
+  <span class="muted small">Checked at {E(bshops)}, from <a href="{E(info["dealer_list"])}" rel="noopener" target="_blank">{E(INK_DEALER_LABEL.get(b, info["name"] + "'s dealer list"))}</a></span></h2>''')
+        parts.extend(ink_card(i) for i in inks)
+    watching = [b for b, info in INK_CFG["brands"].items() if not any(i["brand"] == b and any(r["ink_id"] == i["id"] for r in ls) for i in INK_CFG["inks"])]
+    watch_html = ""
+    if watching:
+        lines = "".join(f'<li>{E(INK_CFG["brands"][b]["name"])}: {E(names_and([s["name"] for s in stores["stores"] if s["id"] in INK_CFG["brands"][b]["shops"]]))} '
+                        f'(<a href="{E(INK_CFG["brands"][b]["dealer_list"])}" rel="noopener" target="_blank">{E(INK_DEALER_LABEL.get(b, "dealer list"))}</a>)</li>' for b in watching)
+        watch_html = f'<p>No limited ink from these brands is on the tracker yet. We look for new ones at the shops their dealer lists name:</p><ul>{lines}</ul>'
+    retired_html = ""
+    if INK_RETIRED:
+        rl = "".join(f'<li>{E(v["name"])} <span class="muted small">· sold out at every shop we checked since {time_tag(v["sold_out_since"])}; no longer checked</span></li>' for v in INK_RETIRED.values())
+        retired_html = f'<section class="card"><h2>No longer tracked</h2><p class="muted small">An ink leaves the tracker after it has been sold out at every shop we check for 60 days.</p><ul class="link-list">{rl}</ul></section>'
+    soon_rows = [r for r in ls if r["status"] == "coming_soon"]
+    soon_html = ""
+    if soon_rows:
+        by_ink = {}
+        for r in soon_rows:
+            by_ink.setdefault(r["ink_id"], set()).add(r["store"])
+        li = "".join(f'<li><a href="#ink-{E(k)}">{E(INKS[k]["name"])}</a> <span class="muted small">· not yet on sale at {E(names_and(sorted(v)))}</span></li>' for k, v in by_ink.items())
+        soon_html = f'<section class="card"><h2>Not yet on sale</h2><p class="muted small">Listed by the shop, but not taking orders yet. That is different from sold out.</p><ul class="link-list">{li}</ul></section>'
+    faq_html, faq_ld = tracker_good_to_know(
+        "Do restock emails cover inks?",
+        "Not yet. Ink restocks show on this page. Our restock emails and social alerts cover the Hobonichi and dot grid trackers for now.")
+    how = f'''<section class="card"><h2>How we pick shops</h2>
+  <p>We track a brand's limited inks only at shops that appear on that brand's own dealer list. A shop calling itself an authorized dealer isn't enough. Some shops on our other trackers sell these inks too, but if the brand doesn't list them, we leave them out.</p>
+  {watch_html}
+  <p class="muted small">We also look through these shops' catalogs every day for new limited inks, including ones listed as coming soon or on preorder. A new find is checked right away, and it appears here once we've confirmed it.</p>
+</section>'''
+    body = f"""
+<div class="product-page">
+{crumbs((fname, INK_NAV))}
+<section class="hero">
+  {eyebrow("Limited-edition fountain pen ink", nshops(len(shops)), f"{N_STORES} across all trackers", f"checked {CHECK_FREQ}")}
+  <h1>Limited-edition fountain pen ink tracker</h1>
+  <p class="lede">{E(INK_INTRO)}</p>
+  {ink_hero_facts(ls)}
+  {also_tracked(fname)}
+</section>
+<div class="layout solo">
+  <div class="main-col">
+    <section class="card"><h2>Recent restocks</h2>{ink_restock_html()}</section>
+    {soon_html}
+    <div id="tracker">
+    {group_toggle_html()}{''.join(parts)}
+    </div>
+    {retired_html}
+    {how}
+    {faq_html}
+  </div>
+</div>
+</div>"""
+    items = {"@context": "https://schema.org", "@type": "ItemList", "name": "Limited-edition fountain pen inks: listings we track",
+             "numberOfItems": len(ls), "itemListElement": [
+                 {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
+                 for i, l in enumerate(sorted(ls, key=lambda l: (l["ink_id"], l.get("color") or "", l["store"])))]}
+    desc = (f"Is a limited-edition fountain pen ink in stock? Live status for Diamine Inkvent, Sailor limiteds and more "
+            f"at {nshops(len(shops))} on each brand's own dealer list.")
+    return fname, page(fname, "Limited-edition fountain pen ink tracker", desc, body,
+                       ld=(crumbs_ld((fname, INK_NAV)), items, faq_ld))
+
 # --- Traveler's Company and MIDORI takedown notice ----------------------------------------------------
 # Owner-approved wording (Nov 19, 2026, with two lines added Nov 20, 2026).
 # Do not edit a word of the earlier paragraphs. The Nov 20 lines are the owner's exact words.
@@ -3937,7 +4165,8 @@ def build_takedown_notice(slug, noindex=False):
 </aside>'''
     paras = "\n".join(f"<p>{E(x)}</p>" for x in TAKEDOWN_NOTICE[:4]) + "\n" + callout + "\n" + f"<p>{E(TAKEDOWN_NOTICE[4])}</p>"
     still = " · ".join([f'<a href="{HOBO_TRACKER}">Hobonichi tracker</a>']
-                       + [f'<a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE])
+                       + [f'<a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE]
+                       + ([f'<a href="{INK_SLUG}/">{E(INK_NAV)}</a>'] if INK_LIVE else []))
     body = f"""
 <article class="prose takedown-notice">
 {crumbs((fname, TAKEDOWN_HEADING))}
@@ -3971,6 +4200,11 @@ def main():
         (SITE / fname / "index.html").write_text(doc)
     for d in DESIGNS:
         fname, doc = build_design(d)
+        check_none_claim(fname, doc)
+        (SITE / fname).mkdir(parents=True, exist_ok=True)
+        (SITE / fname / "index.html").write_text(doc)
+    if INK_LIVE:
+        fname, doc = build_inks()
         check_none_claim(fname, doc)
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)

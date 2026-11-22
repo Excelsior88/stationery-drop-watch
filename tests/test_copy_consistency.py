@@ -97,7 +97,7 @@ class ShopCountDefinitionTests(unittest.TestCase):
         self.assertGreaterEqual(sum(site.N_SEC.values()), site.N_STORES)
         # Current catalog overlaps (a shop can sell more than one brand). The total must not add those twice.
         self.assertGreater(sum(site.N_SEC.values()), site.N_STORES)
-        self.assertEqual(len(site.NAV_TRACKERS), 1 + len(site.LIVE))
+        self.assertEqual(len(site.NAV_TRACKERS), 1 + len(site.LIVE) + (1 if site.INK_LIVE else 0))  # + limited inks tracker
 
 
 class HeroAndScopeTests(unittest.TestCase):

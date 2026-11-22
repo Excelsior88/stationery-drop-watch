@@ -598,3 +598,14 @@ table.stock.compare thead th{vertical-align:top}
 .gift-note{margin:0 0 16px;padding:14px 18px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px}
 .gift-note p{margin:0;color:var(--ink)}
 .gift-note a{font-weight:600}
+/* Limited ink tracker: single bottles in one color-by-shop table. On phones the pills may wrap inside their cell. */
+.ink-colors td{vertical-align:middle}
+@media (max-width:560px){
+  .ink-colors td,.ink-colors th{padding:8px 6px}
+  .ink-colors td:first-child,.ink-colors th:first-child{width:32%}
+  .ink-colors .badge{white-space:normal;font-size:.72rem;padding:3px 7px;max-width:100%}
+}
+/* Four homepage cards on a wide screen: the notice card takes its own full row instead of sitting alone in one column. */
+@media (min-width:1001px){.hub-grid .hub-notice:nth-child(3n+1){grid-column:1/-1}}
+/* Two-column homepage grid with three tracker cards: the third tracker takes a full row, so no cell sits empty above the notice. */
+@media (max-width:1000px){.hub-grid .hub-card:nth-child(3):not(.hub-notice):nth-last-child(2){grid-column:1/-1}}
