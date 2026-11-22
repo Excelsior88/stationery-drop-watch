@@ -118,8 +118,8 @@ class GuideAndShopListTests(unittest.TestCase):
                   for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', raw)]
         art = next(b for b in blocks if b.get("@type") == "Article")
         self.assertEqual(art["datePublished"], "2026-11-04")
-        self.assertEqual(art["dateModified"], "2026-11-20")
-        self.assertEqual(site.DG_GUIDE_LASTMOD, "2026-11-20")
+        self.assertEqual(art["dateModified"], site.guide_modified(site.build_dotgrid_guide))  # the visible "updated" day
+        self.assertEqual(site.DG_GUIDE_LASTMOD, "2026-11-20")  # still the "specs as of" date in the page text
 
     def test_nanami_is_gone_and_jetpens_is_the_only_link_only_shop(self):
         self.assertEqual(site.link_only_clause(),

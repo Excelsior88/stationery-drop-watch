@@ -26,6 +26,25 @@ stock = json.loads((ROOT / "data/stock.json").read_text())
 changes = json.loads((ROOT / "data/changes.json").read_text())
 picks = json.loads((ROOT / "content/editor_picks.json").read_text())
 
+# Some shops put an availability phrase in the product or variant title ("In Stock - Ships Now",
+# "Preorder Only - Ships Mid February", "... In Stock", "[SOLD OUT]"). Our status column already says
+# that, and a stale phrase can contradict it, so pages show the title without it. A ship date stays.
+# The raw data files keep the shop's exact title.
+_TITLE_STATUS = (
+    (re.compile(r"\s*/\s*In Stock - Ships Now\b", re.I), ""),
+    (re.compile(r"\bPreorder Only - (Ships [^/]+)", re.I), r"\1"),
+    (re.compile(r"\s*\[SOLD OUT\]", re.I), ""),
+    (re.compile(r"\s+-?\s*In Stock\s*$", re.I), ""),
+    (re.compile(r"\s*\u263e"), ""),  # Notebook Therapy's decorative crescent moon in its titles
+)
+def display_title(t):
+    for rx, rep in _TITLE_STATUS:
+        t = rx.sub(rep, t)
+    return t.strip()
+for _p in stock["products"]:
+    if _p.get("title"):
+        _p["title"] = display_title(_p["title"])
+
 # Traveler's Company and MIDORI were removed on Nov 19, 2026, at TRAVELER'S COMPANY USA's request (owner
 # approved). Their old URLs show TAKEDOWN_NOTICE instead. Rows left in data/ from before the removal, and any row
 # whose URL is no longer in stores.json, never reach a page, a restock feed or the site/data copies.
@@ -53,6 +72,9 @@ _STORE_IDS = {x["id"] for x in stores["stores"]}
 def _ink_public(r):
     return (not r.get("hidden") and r.get("ink_id") in INKS and r.get("url") in _INK_URLS
             and r.get("store_id") in _STORE_IDS and r.get("store_id") not in TAKEDOWN_STORES)
+for _r in INK_STOCK["products"]:
+    if _r.get("title"):
+        _r["title"] = display_title(_r["title"])
 INK_ROWS = [r for r in INK_STOCK["products"] if _ink_public(r)]
 INK_CHANGES = [c for c in _ink_load("changes.json", []) if _ink_public(c)]
 INK_RETIRED = {k: v for k, v in _ink_load("retired.json", {}).items() if k in INKS}
@@ -237,10 +259,14 @@ def sections_phrase():
     """'dot grid journals' (live sections only, joined with commas and 'and')."""
     return names_and([SECTIONS[k]["name"] for k in LIVE])
 
+def non_hobonichi_phrase():
+    """Every tracker besides Hobonichi, for the home and Organization descriptions: live sections plus the inks."""
+    return names_and([SECTIONS[k]["name"] for k in LIVE] + (["limited-edition fountain pen inks"] if INK_LIVE else []))
+
 def organization():
     """Shared Organization JSON-LD. Locality only: no street address."""
     return {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
-            "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {sections_phrase()}. Statuses come straight from each shop's public product data.",
+            "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {non_hobonichi_phrase()}. Statuses come straight from each shop's public product data.",
             "logo": BASE + "assets/brand/icon-512.png", "email": PUBLIC_EMAIL,
             "sameAs": [s[2] for s in SOCIALS],
             "address": {"@type": "PostalAddress", "addressLocality": "Hamtramck",
@@ -276,6 +302,12 @@ def guide_updated(fn):
     d = dt.date.fromisoformat(e["date"])
     return f"updated {d.strftime('%b')} {d.day}, {d.year}"
 
+def guide_modified(fn):
+    """ISO date behind a guide's visible "updated" line, for its Article dateModified and sitemap lastmod,
+    so the structured data and the page say the same day. Call after guide_updated(fn) has run."""
+    import json as _j
+    return _j.loads(GUIDE_DATES.read_text())[fn.__name__]["date"]
+
 STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not yet on sale",
           "sold_out": "Sold out", "unknown": "Couldn't check"}
 DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
@@ -283,7 +315,7 @@ DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
 AO_SLUG = "archer-and-olive-dot-grid-journal"
 TN_SLUG = "travelers-company-limited-edition"   # takedown notice since Nov 19, 2026
 MIDORI_SLUG = "midori-md-limited-edition"       # takedown notice since Nov 19, 2026
-TN_GUIDE_SLUG = "travelers-notebook-regular-vs-passport-vs-card-size"  # takedown notice (noindex) since Nov 19, 2026
+TN_GUIDE_SLUG = "travelers-notebook-regular-vs-passport-vs-card-size"  # old guide URL; 301 to the takedown notice since Nov 22, 2026
 TAKEDOWN_ITEMS = {TN_SLUG: ("regular-black", "regular-blue", "regular-brown", "regular-camel", "regular-olive",
                             "road-trip-brown", "card-size-20th-anniversary-black"),
                   MIDORI_SLUG: ("md-diary-2027-a5", "md-diary-1-day-1-page-2027-a5")}
@@ -291,6 +323,7 @@ TAKEDOWN_ITEMS = {TN_SLUG: ("regular-black", "regular-blue", "regular-brown", "r
 REDIRECTS = {"archer-and-olive-bullet-journal": AO_SLUG + "/",
              MIDORI_SLUG: TN_SLUG + "/",  # duplicate of the Traveler's notice: one canonical page, the other 301s
              "travelers-notebook-regular-size": TN_SLUG + "/",  # takedown notice
+             TN_GUIDE_SLUG: TN_SLUG + "/",  # old size guide, retired with the takedown
              "faq": "#good-to-know"}  # /faq -> the homepage FAQ ("Good to know")
 # Old Traveler's Company and MIDORI item pages point at their brand's takedown notice.
 REDIRECTS.update({f"{parent}/{slug}": TN_SLUG + "/" for parent, slugs in TAKEDOWN_ITEMS.items() for slug in slugs})
@@ -376,10 +409,14 @@ def seo_desc(text):
 # Public URL of the site (GitHub Pages custom domain, see site/CNAME). Used for canonical/OG URLs, JSON-LD and sitemap.xml.
 BASE = "https://stationerydropwatch.com/"
 CNAME = "stationerydropwatch.com"
-OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (Hobonichi side)
-# The default card file is still the Hobonichi artwork. It is also the image on the hub and
-# the utility pages, so the alt names every tracker. It prints no shop count.
-OG_ALT = f"Stationery Drop Watch: restock tracker for Hobonichi, dot grid journals and limited-edition inks, checked {CHECK_FREQ}"
+OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (site-wide default card)
+# The default card covers all three trackers and shows Clip. It prints the shop count from when it was made,
+# recorded beside it in og-image.json; main() warns when that no longer matches N_STORES (re-run make_og.py).
+_OG_META = ROOT / "site/assets/brand/og-image.json"
+OG_SHOPS = json.loads(_OG_META.read_text())["shops"] if _OG_META.exists() else None
+OG_ALT = ("Stationery Drop Watch: Never miss a stationery restock. "
+          + (f"We check {OG_SHOPS} shops for you: " if OG_SHOPS else "Restock tracker for ")
+          + f"Hobonichi Techo 2027, dot grid journals and limited-edition inks, checked {CHECK_FREQ}. Clip, the paper clip mascot, holds a magnifying glass.")
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
 OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked " + CHECK_FREQ
 CONTENT_LASTMOD = "2026-11-12"  # floor for pages whose HTML changed in the Nov 12 refresh
@@ -419,6 +456,10 @@ def plain_email():
     """Visible address, not a mailto link. The comments keep Cloudflare from obfuscating it."""
     return f"<!--email_off-->{E(PUBLIC_EMAIL)}<!--/email_off-->"
 
+def mailto_email():
+    """The visible address as a mailto link (Contact, About, Privacy). Same comments, same literal address."""
+    return f'<!--email_off--><a href="mailto:{E(PUBLIC_EMAIL)}">{E(PUBLIC_EMAIL)}</a><!--/email_off-->'
+
 def jsonld(obj):
     payload = json.dumps(obj, ensure_ascii=False).replace("</", "<\\/")
     script = '<script type="application/ld+json">' + payload + "</script>"
@@ -456,7 +497,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
            f'<details class="nav-menu"><summary>Menu</summary>'
            f'<nav class="site-nav site-nav-panel" aria-label="Main">{nav_inner}</nav></details>')
     foot_items = list(NAV_TRACKERS) + [
-        ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("shop/", "Shop"),
+        ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("sold-out-everywhere/", "Sold out everywhere"), ("shop/", "Shop"),
         ("follow/", "Follow us"),
         ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy")]
     foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
@@ -537,14 +578,14 @@ LIST_LINE = (
     "Unsubscribe anytime. We'll email you a confirmation link. You aren't on the list until you click it."
 )
 SIGNUP_COPY = {
-    "alerts": ("Get restock alerts by email", LIST_LINE),
-    "shop": ("Get restock alerts by email", LIST_LINE),
+    "alerts": ("Get an email when anything we track restocks", LIST_LINE),
+    "shop": ("Get an email when anything we track restocks", LIST_LINE),
 }
 TAGLINE = "Never miss a stationery restock"
-ONE_LIST_LABEL = "Get every restock alert by email"
+ONE_LIST_LABEL = "Get an email when anything we track restocks"
 SIGNUP_LABELS = {
     "hobonichi": "Get an email when Hobonichi items restock",
-    "dotgrid": "Get restock emails for dot grid journals and more",
+    "dotgrid": "Get an email when dot grid journals restock",
     "inks": "Get an email when limited-edition inks restock",
 }
 
@@ -555,11 +596,12 @@ def signup_for(subject=None, back=None, section=None, placement="top"):
     pre = {"hobonichi": "hobonichi", "dotgrid": "dot-grid", "inks": "inks"}.get(section)
     return signup(label=label, note=LIST_LINE, placement=placement, kicker=TAGLINE, preselect=pre)
 
-def signup(kind="alerts", label=None, note=None, placement="top", kicker=None, preselect=None):
+def signup(kind="alerts", label=None, note=None, placement="top", kicker=TAGLINE, preselect=None):
     """Kit's HTML form (form 10225471): a plain POST to app.kit.com/forms/<id>/subscriptions with email_address and one
     tags[] checkbox per tracker, so it works without JavaScript. Kit's form is double opt-in. The top box is always
     id="alerts", so "#alerts" links work on every page. A bottom repeat uses id="alerts-bottom" and distinct field ids so
-    the markup stays valid. preselect is a tag slug to tick by default on a tracker page; otherwise every tracker is ticked."""
+    the markup stays valid. Every box carries the TAGLINE kicker except the home hero, whose h1 already says it.
+    preselect is a tag slug to tick by default on a tracker page; otherwise every tracker is ticked."""
     d_label, d_note = SIGNUP_COPY[kind]
     label, note = label or d_label, note or d_note
     sid = "alerts" if placement == "top" else "alerts-bottom"
@@ -1271,7 +1313,7 @@ def build_index():
   <p class="hero-shops">We check {N_STORES} shops for you</p>
   <p class="suggest">Know the moment your planner, journal or ink is back.</p>
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals and limited-edition inks, and tell you when they come back.</p>
-  {signup()}
+  {signup(kicker=None)}
   {trust_strip(prods + (INK_ROWS if INK_LIVE else []))}
   <p class="small section-switch">More on the site: <a href="hobonichi-2027/">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a class="nobr" href="sold-out-everywhere/">Sold out everywhere</a>.</p>
 </section>
@@ -1297,7 +1339,7 @@ def build_index():
 {faq_html}
 """
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
-               "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
+               "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {non_hobonichi_phrase()}.",
                "publisher": organization()}
     return page("index.html", "Hobonichi, dot grid and ink restock tracker",
                 f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, flagship dot grid journals and limited-edition inks, plus free restock emails for all three trackers.",
@@ -1398,6 +1440,7 @@ def build_privacy():
 <p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, plus page-view and performance statistics from Cloudflare Web Analytics. The site sets no cookies and runs no ad trackers.</p>
 <h2>Email alerts (Kit)</h2>
 <p>If you sign up for restock alerts, your email address and the trackers you pick (Hobonichi, dot grid journals, limited-edition inks) go to <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>, the service that stores the list and sends the emails. Kit sends a confirmation email first; we only add the address to the list after you click the link. We use it only to send restock alerts for the trackers you chose and occasional site updates. Every email has an unsubscribe link, and you can also email us to be removed. Kit's own privacy policy is at <a href="https://kit.com/privacy" target="_blank" rel="noopener">kit.com/privacy</a>.</p>
+<p>Before November 22, 2026, signups went to <a href="https://buttondown.com" target="_blank" rel="noopener">Buttondown</a>, our previous email service. While we finish moving to Kit, readers who joined through Buttondown also get Hobonichi and dot grid alerts from Buttondown through December 7, 2026. From December 8, alerts go out through Kit only. Buttondown's privacy policy is at <a href="https://buttondown.com/legal/privacy" target="_blank" rel="noopener">buttondown.com/legal/privacy</a>.</p>
 <p>The signup form is protected from bots by <a href="https://www.cloudflare.com/application-services/products/turnstile/" target="_blank" rel="noopener">Cloudflare Turnstile</a>, an anti-spam check. On pages with the form, your browser loads a script from Cloudflare (challenges.cloudflare.com) and, when you submit, sends Cloudflare a token that we verify on our server. Cloudflare may look at things like your IP address and browser details to tell people from bots, and may use browser storage for that, under <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">its privacy policy</a>. The form goes through our own server at stationerydropwatch.com/api/subscribe, which passes your email address and chosen trackers to Kit and doesn't store them itself.</p>
 <h2>Hosting</h2>
 <p>The site is hosted on Cloudflare Pages. Cloudflare handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
@@ -1407,7 +1450,7 @@ def build_privacy():
 <h2>Links to other sites</h2>
 <p>When you follow a link to a shop we track, or to Amazon, Etsy, or Teachers Pay Teachers for our own planners, journals, and printables, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
 <h2>Contact</h2>
-<p>Questions, or want your email address removed? Email {plain_email()}.</p>
+<p>Questions, or want your email address removed? Email {mailto_email()}.</p>
 </article>"""
     return page(fname, "Privacy", "How Stationery Drop Watch handles email signups, plus page-view stats from Cloudflare Web Analytics. No cookies set by the site, no ad trackers.", body, ld=(crumbs_ld((fname, "Privacy")),))
 
@@ -1428,28 +1471,29 @@ def build_about():
 <h2>How it works</h2>
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}. When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
+<p>Clip, the paper clip with the magnifying glass on our <a href="index.html">home page</a>, is the site's mascot.</p>
 <h2>Contact</h2>
-<p>Questions, corrections, or a shop we should track? Email {plain_email()}. The <a href="contact/">contact page</a> is there too.</p>
+<p>Questions, corrections, or a shop we should track? Email {mailto_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
     org_ld = {"@context": "https://schema.org", **organization()}
     return page("about/", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi planner, dot grid and limited-edition ink restocks. A failed check is never shown as a guess.", body, ld=(crumbs_ld(("about/", "About")), org_ld))
 
 def build_contact():
-    """Visible contact page. The address is plain text, wrapped so Cloudflare Email Obfuscation leaves it alone."""
+    """Visible contact page. The address is a mailto link, wrapped so Cloudflare Email Obfuscation leaves it alone.
+    The independent-site note is in the footer, so the body doesn't repeat it."""
     fname = "contact/"
-    shown = plain_email()
+    shown = mailto_email()
     body = f"""
 <article class="prose">
 {crumbs((fname, "Contact"))}
 {eyebrow("Contact", "Stationery Drop Watch")}
 <h1>Contact</h1>
 <p class="lede">Stationery Drop Watch checks planner, journal and limited-edition ink stock at official stores and independent shops, and writes down what each shop last reported.</p>
-<p>{independent_note()}</p>
 <p>Andrew Robinson runs the site and can be reached at {shown}. Questions, corrections, or a shop we should track are welcome.</p>
 <p class="small"><a href="about/">About</a> explains how the checks work. <a href="privacy/">Privacy</a> explains the email list.</p>
 </article>"""
     desc = ("How to reach Stationery Drop Watch with questions, corrections, or a shop to add to the stock trackers. "
-            "The email address is written as plain text.")
+            "Email us at the address on this page.")
     return fname, page(fname, "Contact", desc, body, ld=(crumbs_ld((fname, "Contact")),))
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
@@ -1938,12 +1982,8 @@ DESIGNS = [
          match=lambda p: p.get("canonical") == "ao-songbird-beige"),
     dict(parent=DOTGRID_SLUG, slug="archer-and-olive-storybook-plum", name="Archer and Olive Storybook in Plum", full="Archer and Olive Storybook in Plum dot grid notebook",
          match=lambda p: p.get("canonical") == "ao-storybook-plum"),
-    dict(parent=DOTGRID_SLUG, slug="archer-and-olive-songbird-warm-gray", name="Archer and Olive Songbird in Warm Gray", full="Archer and Olive Songbird in Warm Gray dot grid notebook",
-         match=lambda p: p.get("canonical") == "ao-songbird-warm-gray"),
     dict(parent=DOTGRID_SLUG, slug="archer-and-olive-storybook-olive", name="Archer and Olive Storybook in Olive", full="Archer and Olive Storybook in Olive dot grid notebook",
          match=lambda p: p.get("canonical") == "ao-storybook-olive"),
-    dict(parent=DOTGRID_SLUG, slug="archer-and-olive-meteor-shower", name="Archer and Olive Meteor Shower", full="Archer and Olive Meteor Shower dot grid notebook",
-         match=lambda p: p.get("canonical") == "ao-meteor-shower"),
     dict(parent=DOTGRID_SLUG, slug="leuchtturm1917-hardcover-a5-dotted", name="Leuchtturm1917 Hardcover Medium (A5) dotted", full="Leuchtturm1917 Hardcover Medium (A5) dotted notebook",
          match=lambda p: p.get("canonical") == "lt-hardcover-a5"),
     dict(parent=DOTGRID_SLUG, slug="leuchtturm1917-120g-a5-dotted", name="Leuchtturm1917 Medium (A5) 120G dotted", full="Leuchtturm1917 Medium (A5) 120G dotted notebook",
@@ -2033,6 +2073,10 @@ def design_page_for(listings):
 
 # The old tracker URL used to hold every dot grid design page. They moved under DOTGRID_SLUG.
 REDIRECTS.update({f"{AO_SLUG}/{d['slug']}": f"{DOTGRID_SLUG}/{d['slug']}/" for d in DESIGNS if d["parent"] == DOTGRID_SLUG})
+# Designs Archer and Olive took off its store (product page and catalog entry gone, checked Nov 22, 2026).
+# Their pages now point at the dot grid tracker, from both the current and the old URL.
+RETIRED_DOTGRID_DESIGNS = ("archer-and-olive-songbird-warm-gray", "archer-and-olive-meteor-shower")
+REDIRECTS.update({f"{parent}/{slug}": DOTGRID_SLUG + "/" for slug in RETIRED_DOTGRID_DESIGNS for parent in (DOTGRID_SLUG, AO_SLUG)})
 
 def designs_of(parent_slug):
     if parent_slug == AO_SLUG:  # the Archer and Olive page lists its own designs; the pages live under DOTGRID_SLUG
@@ -2172,7 +2216,7 @@ FAQ = [
     ("Which shops do you check?",
      "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. {unchecked}"),
     ("What do you track?",
-     "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and @@COVERS@@. {tracks} We don't track pens."),
+     "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and @@COVERS@@. {tracks} @@PENS@@"),
     ('What do "Not yet on sale" and "Couldn\'t check" mean?',
      '"Not yet on sale" means the shop has a preview page up but isn\'t taking orders yet. That\'s different from sold out. '
      '"Couldn\'t check" means our check failed, for example because the shop\'s site didn\'t respond, so we don\'t know. '
@@ -2227,9 +2271,12 @@ def faq_block(only=None, sid="faq"):
     _n5 = sum(c.startswith("cover-a5-") for c in _cv)
     _nw = sum(c.startswith("weeks-cover-") for c in _cv)
     covers_txt = f"{_n6} A6 covers, {_n5} A5 covers and {_nw} Weeks covers"
+    # The Sailor x Pentel advent box (ink tracker) includes "limited edition writing instruments" (Yoseka's listing).
+    pens_txt = ("We don't track pens on their own, though the Sailor x Pentel advent box on the ink tracker includes writing instruments."
+                if INK_LIVE and any(r.get("ink_id") == "sailor-advent-2026" for r in INK_ROWS) else "We don't track pens.")
     answers = []
     for q, a in FAQ:
-        a = a.replace("@@COVERS@@", covers_txt)
+        a = a.replace("@@COVERS@@", covers_txt).replace("@@PENS@@", pens_txt)
         if q == "Do you sell planners?" and shop_inserts_public():
             a = ("Yes, our own: we make planners, journals, and printable planner inserts, and sell them on our shop page ({shop}). "
                  "Printed books are on Amazon. Printable PDFs, including undated paper tip-ins, are on Etsy. "
@@ -2274,7 +2321,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG,)]  # the indexed takedown notices
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_MODIFIED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"])), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-20"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD, guide_modified(build_vs))), (url_for(JAN_APR_SLUG + "/"), latest(JAN_APR_MODIFIED, guide_modified(build_january_april))), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD, guide_modified(build_dotgrid_guide))), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], guide_modified(build_gift_guide))), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-20"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2340,6 +2387,7 @@ HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", 
 GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared"),
                         ("holiday-stationery-gift-guide-2026/", "Holiday gift guide 2026")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
 GUIDES_LASTMOD = "2026-10-29"
+GIFT_PUBLISHED = "2026-11-20"  # PR #52 merged Fri Nov 20, 2026, 9:13 AM ET
 DG_GUIDE_LASTMOD = "2026-11-20"  # STM Pro sizes, Leuchtturm formats, and TN wording (America/Detroit)
 GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin A5, Weeks and Weeks Mega in stock right now, checked about every 30 minutes, plus tips for catching a restock.",
                 VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits.",
@@ -2639,7 +2687,7 @@ def build_vs():
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": "Hobonichi Techo vs Cousin vs Weeks: which 2027 planner fits you?",
-           "datePublished": GUIDES_LASTMOD, "dateModified": GUIDES_LASTMOD, "url": url_for(fname), "image": OG_IMAGE,
+           "datePublished": GUIDES_LASTMOD, "dateModified": guide_modified(build_vs), "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -2665,10 +2713,10 @@ def build_january_april():
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     sources = [
-        ("https://help.1101.com/hc/en-us/articles/4889929315230", "April-start editions"),
-        ("https://help.1101.com/hc/en-us/articles/4889951964190", "Spring lineup guidance"),
-        ("https://help.1101.com/hc/en-us/articles/4889935445534", "sale schedule"),
-        ("https://help.1101.com/hc/en-us/articles/4889951953566", "Sunday-start editions"),
+        ("https://www.1101.com/store/techo/en/faq/articles/4889929315230.html", "April-start editions"),
+        ("https://www.1101.com/store/techo/en/faq/articles/4889951964190.html", "Spring lineup guidance"),
+        ("https://www.1101.com/store/techo/en/faq/articles/4889935445534.html", "sale schedule"),
+        ("https://www.1101.com/store/techo/en/faq/articles/4889951953566.html", "Sunday-start editions"),
         ("https://www.1101.com/store/techo/en/2027/pc/shopping_guide/", "Hobonichi Techo 2027 shopping guide"),
     ]
     src_items = "".join(
@@ -2738,7 +2786,7 @@ def build_january_april():
 </article>"""
     headline = "Hobonichi Techo January-start vs April-start"
     art = {"@context": "https://schema.org", "@type": "Article", "headline": headline,
-           "datePublished": JAN_APR_PUBLISHED, "dateModified": JAN_APR_MODIFIED, "url": url_for(fname), "image": OG_IMAGE,
+           "datePublished": JAN_APR_PUBLISHED, "dateModified": guide_modified(build_january_april), "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -2785,13 +2833,14 @@ def build_dotgrid_guide():
         raise SystemExit(f"dot grid guide counts differ from tracker: makers {count_line(guide_ls)!r}, tracker {count_line(trk)!r}")
     dg_total = count_line(guide_ls)
     dg_all = count_line(trk)
+    jump = {sid: canons[0] for _, sid, canons in DG_COLS}  # tracker section ids are the canonical ids
     def avail(store_id, canons):
         ls = col_ls(store_id)
         if not ls:
-            return f'<a href="{DOTGRID_SLUG}/#shop-{store_id}">Live stock</a>'
-        buy = [re.sub(r"\s*Bullet Journal", "", l["label"]) for l in ls if l["status"] in BUYABLE]
+            return f'<a href="{DOTGRID_SLUG}/#{jump[store_id]}">Live stock</a>'
+        buy = [l["label"] for l in ls if l["status"] in BUYABLE]
         names = f'<br><span class="muted small">In stock: {E("; ".join(buy))}</span>' if buy else ""
-        return f'<strong>{len(buy)} of {len(ls)}</strong> versions we track · <a href="{DOTGRID_SLUG}/#shop-{store_id}">live stock</a>{names}'
+        return f'<strong>{len(buy)} of {len(ls)}</strong> versions we track · <a href="{DOTGRID_SLUG}/#{jump[store_id]}">live stock</a>{names}'
     na = "Not listed on the product page"
     rows = [  # (row, A&O, Leuchtturm1917, Scribbles That Matter, Notebook Therapy), each cell (text, source keys)
         ("Paper weight", ("160gsm (Storybook also comes in kraft dot grid, 150gsm)", "ao ao2"), ("80 g/m² (the 120G edition is 120 gsm)", "lt lt120"),
@@ -2866,16 +2915,16 @@ def build_dotgrid_guide():
 <h2>Who each one suits</h2>
 <h3>Archer and Olive: for markers, paint and lots of size choices</h3>
 <p>Pick Archer and Olive if you want thick paper and a specific size. Its notebooks use 160gsm paper, and the A5 has 192 pages {s("ao")}. Sizes run from Pocket to Letter, including B5, B6, square and a TN size {s("ao")}. Some designs also offer kraft (150gsm) or ivory dot grid paper {s("ao2")}. The product page doesn't mention page numbers, an index or bookmarks, so plan to set those up yourself.</p>
-<p><a href="{DOTGRID_SLUG}/#shop-archerolive">Live Archer and Olive stock</a></p>
+<p><a href="{DOTGRID_SLUG}/#{jump['archerolive']}">Live Archer and Olive stock</a></p>
 <h3>Leuchtturm1917: for writing, and the most pages</h3>
 <p>Pick the Leuchtturm1917 Hardcover Medium (A5) if you mostly write and want room. It has 251 numbered pages, a blank table of contents, two page markers, a gusseted pocket and 8 perforated sheets {s("lt")}. The paper is 80 g/m² and slightly chamois-colored, the thinnest here {s("lt")}. If you want thicker paper with the same setup, the 120G edition has 120 gsm paper and 203 numbered pages {s("lt120")}.</p>
-<p><a href="{DOTGRID_SLUG}/#shop-leuchtturm-us">Live Leuchtturm1917 stock</a></p>
+<p><a href="{DOTGRID_SLUG}/#{jump['leuchtturm-us']}">Live Leuchtturm1917 stock</a></p>
 <h3>Scribbles That Matter: for starting right away</h3>
 <p>Pick the Scribbles That Matter Dotted Journal Pro if you want the setup done. It comes with numbered pages, an index, a key page and a pen test page, two ribbon bookmarks, a pen loop and a 0.7 mm fineliner in the box {s("stm")}. A5 and B5 come in 160gsm or 120gsm, and B6 comes in 120gsm only {s("stm")}. The Pro has a plain matte cover; the Iconic is the same idea with an embossed cover {s("stm2")}. The page doesn't list a page count.</p>
-<p><a href="{DOTGRID_SLUG}/#shop-scribbles">Live Scribbles That Matter stock</a></p>
+<p><a href="{DOTGRID_SLUG}/#{jump['scribbles']}">Live Scribbles That Matter stock</a></p>
 <h3>Notebook Therapy Tsuki: for a smaller book</h3>
 <p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we track too.</p>
-<p><a href="{DOTGRID_SLUG}/#shop-notebooktherapy">Live Notebook Therapy stock</a></p>
+<p><a href="{DOTGRID_SLUG}/#{jump['notebooktherapy']}">Live Notebook Therapy stock</a></p>
 
 <h2>Where to buy</h2>
 <p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
@@ -2889,7 +2938,7 @@ def build_dotgrid_guide():
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
-           "datePublished": "2026-11-04", "dateModified": DG_GUIDE_LASTMOD, "url": url_for(fname), "image": OG_DOTGRID,
+           "datePublished": "2026-11-04", "dateModified": guide_modified(build_dotgrid_guide), "url": url_for(fname), "image": OG_DOTGRID,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -2925,7 +2974,7 @@ GIFT_PICKS = {
     "lta5": ("lt-hardcover-a5", None, DOTGRID_SLUG + "/leuchtturm1917-hardcover-a5-dotted/", "Leuchtturm1917 Hardcover Medium (A5), dotted"),
     "lted2": ("lt-bullet-journal-ed2", None, DOTGRID_SLUG + "/leuchtturm1917-edition-2/", "Leuchtturm1917 Bullet Journal Edition 2"),
     "aonavy": ("ao-storybook-navy", "A5 ", DOTGRID_SLUG + "/archer-and-olive-storybook-navy/", "Archer and Olive Storybook in Navy, A5"),
-    "aobeige": ("ao-songbird-beige", "A5 ", DOTGRID_SLUG + "/archer-and-olive-songbird-beige/", "Archer and Olive Songbird in Beige, A5"),
+    "aobeige": ("ao-songbird-beige", "B5 ", DOTGRID_SLUG + "/archer-and-olive-songbird-beige/", "Archer and Olive Songbird in Beige, B5"),  # B5 since Nov 22, 2026: the A5 dot grid sold out
     # Winter 2026 designs: only the ships-now A5 dot grid option (the Feb preorder option is a separate listing).
     "aoice": ("ao-ice-castle", "A5 dot grid · ships now", DOTGRID_SLUG + "/archer-and-olive-ice-castle/", "Archer and Olive Ice Castle, A5"),
     "aotrain": ("ao-winter-train", "A5 dot grid · ships now", DOTGRID_SLUG + "/archer-and-olive-winter-train/", "Archer and Olive Winter Train, A5"),
@@ -3179,7 +3228,7 @@ def build_gift_guide():
 {eyebrow("Guide", "Gifts", guide_updated(build_gift_guide))}
 <h1>Stationery gifts that are actually in stock</h1>
 <p class="lede">Every stock line and price below is from our last check, {asof}, and each pick links to its live restock page. Specs come from the maker's or the shop's own product page.</p>
-{signup(label="Get restock emails for these gifts and more", note=LIST_LINE, kicker=TAGLINE)}
+{signup(label="Get an email when these gifts restock", note=LIST_LINE)}
 
 <h2 id="prices">Every pick: stock and price</h2>
 <p class="small"><strong>Stock checked {asof}.</strong> We check stock live at every shop we track, and the counts are those shops. Each tracked row links you to the shop for the current price. Amazon and Etsy prices are the listed prices for our own books and printables.</p>
@@ -3220,7 +3269,7 @@ def build_gift_guide():
   <li><strong>Leuchtturm1917 Hardcover Medium (A5), dotted.</strong> 251 numbered pages of 80 gsm paper, a blank table of contents, two page markers, a pocket and an elastic band. {s("lt_hc", "pm_lt")} {L("lta5")}</li>
   <li><strong>Leuchtturm1917 Bullet Journal Edition 2,</strong> for heavier paper: A5 hardcover, dotted, 206 numbered pages of 120 gsm paper. {s("lt_ed2")} {L("lted2")}</li>
   <li><strong>Archer and Olive Storybook in Navy, A5.</strong> Vegan leather with gold detailing; 192 pages of 160 gsm dot grid paper. {s("ao_navy")} {L("aonavy")}</li>
-  <li><strong>Archer and Olive Songbird in Beige, A5.</strong> Vegan leather, 160 gsm paper, lay-flat binding, 192 pages. {s("ao_beige")} {L("aobeige")}</li>
+  <li><strong>Archer and Olive Songbird in Beige, B5.</strong> Vegan leather, 160 gsm paper, lay-flat binding, 160 pages. {s("ao_beige")} {L("aobeige")}</li>
   <li><strong>Archer and Olive Ice Castle, A5,</strong> a winter design: an icy blue vegan leather hardcover with a frozen castle in platinum foil and gilded page edges; 192 pages of 160 gsm dot grid paper, lay-flat binding, elastic band and pen loop. {s("ao_ice")} {L("aoice")}</li>
   <li><strong>Archer and Olive Winter Train, A5,</strong> a winter design: a deep olive-green vegan leather hardcover with a steam train through a snowy village in gold and white foil; 192 pages of 160 gsm dot grid paper, lay-flat binding, elastic band and pen loop. {s("ao_train")} {L("aotrain")}</li>
 </ul>
@@ -3245,9 +3294,9 @@ def build_gift_guide():
 <ol class="sources two-col">{src_items}</ol>
 {related_block(fname)}
 </article>"""
-    upd = json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"]
+    upd = guide_modified(build_gift_guide)
     art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
-           "datePublished": upd, "dateModified": upd, "url": url_for(fname), "image": OG_IMAGE,
+           "datePublished": GIFT_PUBLISHED, "dateModified": upd, "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -4328,6 +4377,8 @@ def publish_ink_data():
 def main():
     if shop_preview() and SITE.resolve() == (ROOT / "site").resolve():
         raise SystemExit("Refusing to write a shop preview into site/. Set DROPWATCH_SITE_OUT to another directory.")
+    if OG_SHOPS is not None and OG_SHOPS != N_STORES:
+        print(f"WARNING: og-image.png says {OG_SHOPS} shops but we check {N_STORES}; re-run scripts/brand/make_og.py")
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
     shutil.copy(ROOT / "data/changes.json", SITE / "data/changes.json")
@@ -4360,7 +4411,7 @@ def main():
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for slug, hide in ((TN_SLUG, False), (TN_GUIDE_SLUG, True)):
+    for slug, hide in ((TN_SLUG, False),):
         fname, doc = build_takedown_notice(slug, noindex=hide)
         for old in SITE.joinpath(slug).glob("*/index.html"):  # old item pages; REDIRECTS rewrites the ones it knows
             old.unlink()

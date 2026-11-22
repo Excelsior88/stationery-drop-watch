@@ -55,7 +55,7 @@ class SeoHeadTests(unittest.TestCase):
             self.assertNotIn("hourly", title.lower(), path)
             titles.append(title)
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 98)  # (Nov 22: +24 cover design pages) 82, minus 12 Traveler's/MIDORI pages removed Nov 19, 2026, plus 3 Weeks design pages
+        self.assertEqual(len(titles), 96)  # (Nov 22: -2 retired Archer and Olive design pages) (Nov 22: +24 cover design pages) 82, minus 12 Traveler's/MIDORI pages removed Nov 19, 2026, plus 3 Weeks design pages
 
     def test_descriptions_match_social_tags_and_stay_under_155(self):
         descs = []
@@ -119,19 +119,20 @@ class SeoHeadTests(unittest.TestCase):
     def test_guide_article_dates_come_from_the_first_publish(self):
         where = site.build_where_to_buy()[1]
         vs = site.build_vs()[1]
-        for doc in (where, vs):
+        for doc, modified in ((where, "2026-10-29"), (vs, site.guide_modified(site.build_vs))):
             art = next(json.loads(html.unescape(b.replace("<\\/", "</")))
                        for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', doc)
                        if '"Article"' in b)
             self.assertEqual(art["datePublished"], "2026-10-29")
-            self.assertEqual(art["dateModified"], "2026-10-29")
-            self.assertNotIn(site.stock["run_finished"][:10], art["dateModified"])
+            self.assertEqual(art["dateModified"], modified)  # vs guide: the visible "updated" day (Nov 22, 2026)
+            if doc is where:  # a fixed date, never the stock run's day (the vs date comes from guide_dates.json)
+                self.assertNotIn(site.stock["run_finished"][:10], art["dateModified"])
         dot = site.build_group(next(g for g in site.GROUPS if g["slug"] == "dot-grid-journal-restock-tracker"), {})[1]
         self.assertIn('href="/hobonichi-restock-tracker/">Hobonichi tracker</a>', dot)
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 100 + (1 if site.INK_LIVE else 0))  # (Nov 22: +24 cover design pages) (Nov 22: the MIDORI notice now 301s to the Traveler notice, so one fewer URL) 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide, plus 3 Weeks design pages (Sheep Sheep Sheep x2, Leather Forest Green), plus the old Archer and Olive URL page, plus the limited ink tracker
+        self.assertEqual(len(mods), 98 + (1 if site.INK_LIVE else 0))  # (Nov 22: -2 retired Archer and Olive design pages) (Nov 22: +24 cover design pages) (Nov 22: the MIDORI notice now 301s to the Traveler notice, so one fewer URL) 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide, plus 3 Weeks design pages (Sheep Sheep Sheep x2, Leather Forest Green), plus the old Archer and Olive URL page, plus the limited ink tracker
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):
@@ -185,7 +186,7 @@ class SeoHeadTests(unittest.TestCase):
         art = next(b for b in blocks if b.get("@type") == "Article")
         faq = next(b for b in blocks if b.get("@type") == "FAQPage")
         self.assertEqual(art["datePublished"], "2026-11-12")
-        self.assertEqual(art["dateModified"], "2026-11-19")
+        self.assertEqual(art["dateModified"], site.guide_modified(site.build_january_april))  # the visible "updated" day
         visible = [(html.unescape(q), html.unescape(a)) for q, a in questions]
         schema = [(q["name"], q["acceptedAnswer"]["text"]) for q in faq["mainEntity"]]
         self.assertEqual(visible, schema)

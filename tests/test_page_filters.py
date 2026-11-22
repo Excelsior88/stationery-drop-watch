@@ -146,7 +146,8 @@ class PageFilterMarkupTests(unittest.TestCase):
                 self.assertIn("Archer and Olive · A5 Soft Cover Refill Notebook", names)
                 self.assertIn("Archer and Olive · A5 Notepad Refill", names)
                 self.assertLess(names.index("Archer and Olive · A5 Notepad Refill"), names.index("Leuchtturm1917 · Hardcover Medium (A5) dotted notebook"))
-                self.assertIn("A5 Soft Cover Refill Notebook · White Dot Grid", doc)
+                self.assertIn("A5 Soft Cover Refill Notebook · Kraft Dot Grid", doc)
+                self.assertNotIn("A5 Soft Cover Refill Notebook · White Dot Grid", doc)  # variant gone from the store, Nov 22, 2026
                 self.assertIn("A5 Notepad Refill | Dot Grid · White: Dot Grid", doc)
 
     def expected_signup_label(self, name):
