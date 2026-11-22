@@ -237,10 +237,14 @@ def sections_phrase():
     """'dot grid journals' (live sections only, joined with commas and 'and')."""
     return names_and([SECTIONS[k]["name"] for k in LIVE])
 
+def non_hobonichi_phrase():
+    """Every tracker besides Hobonichi, for the home and Organization descriptions: live sections plus the inks."""
+    return names_and([SECTIONS[k]["name"] for k in LIVE] + (["limited-edition fountain pen inks"] if INK_LIVE else []))
+
 def organization():
     """Shared Organization JSON-LD. Locality only: no street address."""
     return {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
-            "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {sections_phrase()}. Statuses come straight from each shop's public product data.",
+            "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {non_hobonichi_phrase()}. Statuses come straight from each shop's public product data.",
             "logo": BASE + "assets/brand/icon-512.png", "email": PUBLIC_EMAIL,
             "sameAs": [s[2] for s in SOCIALS],
             "address": {"@type": "PostalAddress", "addressLocality": "Hamtramck",
@@ -1298,7 +1302,7 @@ def build_index():
 {faq_html}
 """
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
-               "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
+               "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {non_hobonichi_phrase()}.",
                "publisher": organization()}
     return page("index.html", "Hobonichi, dot grid and ink restock tracker",
                 f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, flagship dot grid journals and limited-edition inks, plus free restock emails for all three trackers.",
