@@ -2176,5 +2176,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-22T21:49:29+00:00",
+  "store_id": "kinousa",
+  "store": "Kinokuniya USA",
+  "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+  "url": "https://usa.kinokuniya.com/products/4580812708784",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
