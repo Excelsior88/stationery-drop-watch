@@ -1418,7 +1418,7 @@ def build_about():
 <p>Questions, corrections, or a shop we should track? Email {plain_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
     org_ld = {"@context": "https://schema.org", **organization()}
-    return page("about/", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi planner, dot grid journal and limited-edition ink restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about/", "About")), org_ld))
+    return page("about/", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi planner, dot grid journal and limited-edition ink restocks. A failed check is never shown as a guess.", body, ld=(crumbs_ld(("about/", "About")), org_ld))
 
 def build_contact():
     """Visible contact page. The address is plain text, wrapped so Cloudflare Email Obfuscation leaves it alone."""
@@ -1434,8 +1434,8 @@ def build_contact():
 <p>Andrew Robinson runs the site and can be reached at {shown}. Questions, corrections, or a shop we should track are welcome.</p>
 <p class="small"><a href="about/">About</a> explains how the checks work. <a href="privacy/">Privacy</a> explains the email list.</p>
 </article>"""
-    desc = ("How to reach Stationery Drop Watch: questions, corrections, or a shop to add to the stock trackers. "
-            "The email address is written out on this page too, as plain text.")
+    desc = ("How to reach Stationery Drop Watch with questions, corrections, or a shop to add to the stock trackers. "
+            "The email address is written out here as plain text.")
     return fname, page(fname, "Contact", desc, body, ld=(crumbs_ld((fname, "Contact")),))
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
@@ -2308,7 +2308,7 @@ def build_404():
 </section>
 </article>"""
     return page("404.html", "Page not found",
-                "This page doesn't exist. The link may be old or mistyped. The Hobonichi planner, dot grid journal and limited-edition ink trackers are linked here. Pick one below.", body, noindex=True)
+                "This page doesn't exist. The link may be old or mistyped. The Hobonichi, dot grid journal and limited-edition ink trackers are linked here. Pick one below.", body, noindex=True)
 
 # --- SEO guides (Hobonichi section) -------------------------------------------------------------
 # Editorial pages. Every stock status on them comes from data/stock.json (rebuilt about every 30 minutes by the
@@ -3258,7 +3258,7 @@ def build_guides_index():
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": t, "url": url_for(h)} for i, (h, t) in enumerate(GUIDES)]}
     return fname, page(fname, "Stationery buying guides",
-                       "Guides from Stationery Drop Watch: where to buy Hobonichi 2027, Techo vs Cousin vs Weeks, the launch calendar, dot grid journals compared, and a holiday gift guide.",
+                       "Stationery Drop Watch guides: where to buy Hobonichi 2027, Techo vs Cousin vs Weeks, the launch calendar, dot grid journals compared, and a holiday gift guide.",
                        body, ld=(crumbs_ld((fname, "Guides")), lst))
 
 # Soft Days listing confirmed by the owner on 2026-11-06.
