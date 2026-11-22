@@ -3296,6 +3296,17 @@ def _inside_dim(inside, stem):
     except Exception:
         return (800, 600)
 
+def _local_img_dim(src):
+    """Pixel size of a site-local cover, so a lazy image reserves its box (no width/height left it 0px tall and it could
+    stay blank). Returns None for a missing file or an external URL."""
+    path = ROOT / "site" / src.split("?")[0].lstrip("/")
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            return im.size
+    except Exception:
+        return None
+
 SHOP_INSIDE = {
     "B0HRTLMZ1M": [("january-month-pages", "January calendar and Goals & Priorities pages"),
                    ("weekly-spread-dec28-2026-jan3-2027", "Weekly spread, Dec 28, 2026 to Jan 3, 2027")],
@@ -3616,6 +3627,8 @@ def build_shop():
             cls = "shop-img"
         else:
             cls = "shop-img photo"
+        if not dims and img:
+            dims = _local_img_dim(img)
         dim = f' width="{int(dims[0])}" height="{int(dims[1])}"' if dims else ""
         img_sizes = sizes or "(max-width:600px) 240px, 150px"
         image = f'<img src="{E(img)}"{srcset(img)}{dim} sizes="{E(img_sizes)}" alt="{E(alt)}" loading="lazy" decoding="async">'
