@@ -283,7 +283,7 @@ DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
 AO_SLUG = "archer-and-olive-dot-grid-journal"
 TN_SLUG = "travelers-company-limited-edition"   # takedown notice since Nov 19, 2026
 MIDORI_SLUG = "midori-md-limited-edition"       # takedown notice since Nov 19, 2026
-TN_GUIDE_SLUG = "travelers-notebook-regular-vs-passport-vs-card-size"  # takedown notice (noindex) since Nov 19, 2026
+TN_GUIDE_SLUG = "travelers-notebook-regular-vs-passport-vs-card-size"  # old guide URL; 301 to the takedown notice since Nov 22, 2026
 TAKEDOWN_ITEMS = {TN_SLUG: ("regular-black", "regular-blue", "regular-brown", "regular-camel", "regular-olive",
                             "road-trip-brown", "card-size-20th-anniversary-black"),
                   MIDORI_SLUG: ("md-diary-2027-a5", "md-diary-1-day-1-page-2027-a5")}
@@ -291,6 +291,7 @@ TAKEDOWN_ITEMS = {TN_SLUG: ("regular-black", "regular-blue", "regular-brown", "r
 REDIRECTS = {"archer-and-olive-bullet-journal": AO_SLUG + "/",
              MIDORI_SLUG: TN_SLUG + "/",  # duplicate of the Traveler's notice: one canonical page, the other 301s
              "travelers-notebook-regular-size": TN_SLUG + "/",  # takedown notice
+             TN_GUIDE_SLUG: TN_SLUG + "/",  # old size guide, retired with the takedown
              "faq": "#good-to-know"}  # /faq -> the homepage FAQ ("Good to know")
 # Old Traveler's Company and MIDORI item pages point at their brand's takedown notice.
 REDIRECTS.update({f"{parent}/{slug}": TN_SLUG + "/" for parent, slugs in TAKEDOWN_ITEMS.items() for slug in slugs})
@@ -1938,12 +1939,8 @@ DESIGNS = [
          match=lambda p: p.get("canonical") == "ao-songbird-beige"),
     dict(parent=DOTGRID_SLUG, slug="archer-and-olive-storybook-plum", name="Archer and Olive Storybook in Plum", full="Archer and Olive Storybook in Plum dot grid notebook",
          match=lambda p: p.get("canonical") == "ao-storybook-plum"),
-    dict(parent=DOTGRID_SLUG, slug="archer-and-olive-songbird-warm-gray", name="Archer and Olive Songbird in Warm Gray", full="Archer and Olive Songbird in Warm Gray dot grid notebook",
-         match=lambda p: p.get("canonical") == "ao-songbird-warm-gray"),
     dict(parent=DOTGRID_SLUG, slug="archer-and-olive-storybook-olive", name="Archer and Olive Storybook in Olive", full="Archer and Olive Storybook in Olive dot grid notebook",
          match=lambda p: p.get("canonical") == "ao-storybook-olive"),
-    dict(parent=DOTGRID_SLUG, slug="archer-and-olive-meteor-shower", name="Archer and Olive Meteor Shower", full="Archer and Olive Meteor Shower dot grid notebook",
-         match=lambda p: p.get("canonical") == "ao-meteor-shower"),
     dict(parent=DOTGRID_SLUG, slug="leuchtturm1917-hardcover-a5-dotted", name="Leuchtturm1917 Hardcover Medium (A5) dotted", full="Leuchtturm1917 Hardcover Medium (A5) dotted notebook",
          match=lambda p: p.get("canonical") == "lt-hardcover-a5"),
     dict(parent=DOTGRID_SLUG, slug="leuchtturm1917-120g-a5-dotted", name="Leuchtturm1917 Medium (A5) 120G dotted", full="Leuchtturm1917 Medium (A5) 120G dotted notebook",
@@ -2033,6 +2030,10 @@ def design_page_for(listings):
 
 # The old tracker URL used to hold every dot grid design page. They moved under DOTGRID_SLUG.
 REDIRECTS.update({f"{AO_SLUG}/{d['slug']}": f"{DOTGRID_SLUG}/{d['slug']}/" for d in DESIGNS if d["parent"] == DOTGRID_SLUG})
+# Designs Archer and Olive took off its store (product page and catalog entry gone, checked Nov 22, 2026).
+# Their pages now point at the dot grid tracker, from both the current and the old URL.
+RETIRED_DOTGRID_DESIGNS = ("archer-and-olive-songbird-warm-gray", "archer-and-olive-meteor-shower")
+REDIRECTS.update({f"{parent}/{slug}": DOTGRID_SLUG + "/" for slug in RETIRED_DOTGRID_DESIGNS for parent in (DOTGRID_SLUG, AO_SLUG)})
 
 def designs_of(parent_slug):
     if parent_slug == AO_SLUG:  # the Archer and Olive page lists its own designs; the pages live under DOTGRID_SLUG
@@ -4360,7 +4361,7 @@ def main():
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for slug, hide in ((TN_SLUG, False), (TN_GUIDE_SLUG, True)):
+    for slug, hide in ((TN_SLUG, False),):
         fname, doc = build_takedown_notice(slug, noindex=hide)
         for old in SITE.joinpath(slug).glob("*/index.html"):  # old item pages; REDIRECTS rewrites the ones it knows
             old.unlink()

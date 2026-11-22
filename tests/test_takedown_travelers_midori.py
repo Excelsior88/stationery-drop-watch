@@ -96,7 +96,8 @@ class NoticeTests(unittest.TestCase):
         self.assertTrue(site.HOME_NOTICE_LINE.startswith("We asked politely for permission to use their official product photos."))
 
     def test_old_urls_show_the_notice(self):
-        for slug, noindex in ((site.TN_SLUG, False), (site.TN_GUIDE_SLUG, True)):
+        self.assertEqual(site.REDIRECTS[site.TN_GUIDE_SLUG], site.TN_SLUG + "/")
+        for slug, noindex in ((site.TN_SLUG, False),):
             fname, doc = site.build_takedown_notice(slug, noindex=noindex)
             text = html.unescape(doc)
             self.assertEqual(fname, slug + "/")

@@ -262,20 +262,8 @@
    "brand": "archerandolive"
   },
   {
-   "id": "ao-songbird-warm-gray",
-   "label": "Archer and Olive · Songbird in Warm Gray dot grid notebook",
-   "type": "Dot grid notebook",
-   "brand": "archerandolive"
-  },
-  {
    "id": "ao-storybook-olive",
    "label": "Archer and Olive · Storybook in Olive dot grid notebook",
-   "type": "Dot grid notebook",
-   "brand": "archerandolive"
-  },
-  {
-   "id": "ao-meteor-shower",
-   "label": "Archer and Olive · Meteor Shower dot grid notebook",
    "type": "Dot grid notebook",
    "brand": "archerandolive"
   },
@@ -6625,14 +6613,6 @@
      "source_title": "Apothecary Shelf | Notebook · B5: 160 Page / White Dot Grid"
     },
     {
-     "canonical": "ao-refill-soft",
-     "label": "A5 Soft Cover Refill Notebook · white dot grid",
-     "type": "Dot grid refill",
-     "url": "https://www.archerandolive.com/products/a5-soft-cover-refill-notebook-copy?variant=48885168668827",
-     "variant_id": 48885168668827,
-     "source_title": "A5 Soft Cover Refill Notebook · White Dot Grid"
-    },
-    {
      "canonical": "ao-refill-notepad",
      "label": "A5 Notepad Refill · white dot grid",
      "type": "Dot grid refill",
@@ -7297,14 +7277,6 @@
      "source_title": "Storybook in Plum: Notebook · PS: 112 Pages / Dot Grid"
     },
     {
-     "canonical": "ao-songbird-warm-gray",
-     "label": "Songbird in Warm Gray · letter dot grid",
-     "type": "Dot grid notebook",
-     "url": "https://www.archerandolive.com/products/songbird-in-warm-gray-dot-grid?variant=47271031406747",
-     "variant_id": 47271031406747,
-     "source_title": "Songbird in Warm Gray Dot Grid Notebook · Default Title"
-    },
-    {
      "canonical": "ao-storybook-olive",
      "label": "Storybook in Olive · letter dot grid",
      "type": "Dot grid notebook",
@@ -7343,30 +7315,6 @@
      "url": "https://www.archerandolive.com/products/storybook-in-olive-copy?variant=47128962793627",
      "variant_id": 47128962793627,
      "source_title": "Storybook in Olive Notebook · PS: 112 Pages / Dot Grid"
-    },
-    {
-     "canonical": "ao-meteor-shower",
-     "label": "Meteor Shower · 8x8 dot grid",
-     "type": "Dot grid notebook",
-     "url": "https://www.archerandolive.com/products/meteor-shower-notebook?variant=44579048489115",
-     "variant_id": 44579048489115,
-     "source_title": "Meteor Shower: Notebook · 8X8: 160 Pages / Dot Grid"
-    },
-    {
-     "canonical": "ao-meteor-shower",
-     "label": "Meteor Shower · A5 dot grid",
-     "type": "Dot grid notebook",
-     "url": "https://www.archerandolive.com/products/meteor-shower-notebook?variant=44579048521883",
-     "variant_id": 44579048521883,
-     "source_title": "Meteor Shower: Notebook · A5: 192 Pages / Dot Grid"
-    },
-    {
-     "canonical": "ao-meteor-shower",
-     "label": "Meteor Shower · Travelers dot grid",
-     "type": "Dot grid notebook",
-     "url": "https://www.archerandolive.com/products/meteor-shower-notebook?variant=44579048554651",
-     "variant_id": 44579048554651,
-     "source_title": "Meteor Shower: Notebook · Travelers: 144 Pages / Dot Grid"
     },
     {
      "canonical": "ao-refill-soft",
