@@ -2927,7 +2927,7 @@ GIFT_PICKS = {
     "lta5": ("lt-hardcover-a5", None, DOTGRID_SLUG + "/leuchtturm1917-hardcover-a5-dotted/", "Leuchtturm1917 Hardcover Medium (A5), dotted"),
     "lted2": ("lt-bullet-journal-ed2", None, DOTGRID_SLUG + "/leuchtturm1917-edition-2/", "Leuchtturm1917 Bullet Journal Edition 2"),
     "aonavy": ("ao-storybook-navy", "A5 ", DOTGRID_SLUG + "/archer-and-olive-storybook-navy/", "Archer and Olive Storybook in Navy, A5"),
-    "aobeige": ("ao-songbird-beige", "A5 ", DOTGRID_SLUG + "/archer-and-olive-songbird-beige/", "Archer and Olive Songbird in Beige, A5"),
+    "aobeige": ("ao-songbird-beige", "B5 ", DOTGRID_SLUG + "/archer-and-olive-songbird-beige/", "Archer and Olive Songbird in Beige, B5"),  # B5 since Nov 22, 2026: the A5 dot grid sold out
     # Winter 2026 designs: only the ships-now A5 dot grid option (the Feb preorder option is a separate listing).
     "aoice": ("ao-ice-castle", "A5 dot grid · ships now", DOTGRID_SLUG + "/archer-and-olive-ice-castle/", "Archer and Olive Ice Castle, A5"),
     "aotrain": ("ao-winter-train", "A5 dot grid · ships now", DOTGRID_SLUG + "/archer-and-olive-winter-train/", "Archer and Olive Winter Train, A5"),
@@ -3222,7 +3222,7 @@ def build_gift_guide():
   <li><strong>Leuchtturm1917 Hardcover Medium (A5), dotted.</strong> 251 numbered pages of 80 gsm paper, a blank table of contents, two page markers, a pocket and an elastic band. {s("lt_hc", "pm_lt")} {L("lta5")}</li>
   <li><strong>Leuchtturm1917 Bullet Journal Edition 2,</strong> for heavier paper: A5 hardcover, dotted, 206 numbered pages of 120 gsm paper. {s("lt_ed2")} {L("lted2")}</li>
   <li><strong>Archer and Olive Storybook in Navy, A5.</strong> Vegan leather with gold detailing; 192 pages of 160 gsm dot grid paper. {s("ao_navy")} {L("aonavy")}</li>
-  <li><strong>Archer and Olive Songbird in Beige, A5.</strong> Vegan leather, 160 gsm paper, lay-flat binding, 192 pages. {s("ao_beige")} {L("aobeige")}</li>
+  <li><strong>Archer and Olive Songbird in Beige, B5.</strong> Vegan leather, 160 gsm paper, lay-flat binding, 160 pages. {s("ao_beige")} {L("aobeige")}</li>
   <li><strong>Archer and Olive Ice Castle, A5,</strong> a winter design: an icy blue vegan leather hardcover with a frozen castle in platinum foil and gilded page edges; 192 pages of 160 gsm dot grid paper, lay-flat binding, elastic band and pen loop. {s("ao_ice")} {L("aoice")}</li>
   <li><strong>Archer and Olive Winter Train, A5,</strong> a winter design: a deep olive-green vegan leather hardcover with a steam train through a snowy village in gold and white foil; 192 pages of 160 gsm dot grid paper, lay-flat binding, elastic band and pen loop. {s("ao_train")} {L("aotrain")}</li>
 </ul>
