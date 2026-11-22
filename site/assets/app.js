@@ -58,7 +58,20 @@
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const dataEl = document.getElementById("stock-data");
   if (dataEl) {
-    const rows = JSON.parse(dataEl.textContent);
+    // Rows come either as a plain list or packed ({k: keys, d: shared string tables, r: value rows}, see pack_rows in build_site.py).
+    const rows = (() => {
+      const raw = JSON.parse(dataEl.textContent);
+      if (Array.isArray(raw)) return raw;
+      return raw.r.map(vals => {
+        const row = {};
+        raw.k.forEach((k, i) => {
+          const v = vals[i];
+          if (v === null) return;
+          row[k] = raw.d[k] ? raw.d[k][v] : v;
+        });
+        return row;
+      });
+    })();
     const order = { in_stock: 0, preorder: 1, coming_soon: 2, sold_out: 3, unknown: 4 };
     rows.sort((a, b) => (order[a.st] - order[b.st]) || a.s.localeCompare(b.s));
     const $ = id => document.getElementById(id);

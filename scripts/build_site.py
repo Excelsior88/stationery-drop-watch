@@ -482,7 +482,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <nav class="foot-nav" aria-label="Footer">{foot_nav}</nav>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="muted">{independent_note()}</p>
-  <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="63" loading="lazy"></a> <a href="/privacy/"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></a> <img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="63" loading="lazy"></p>
+  <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="50" loading="lazy"></a> <a href="/privacy/"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></a> <img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="50" loading="lazy"></p>
 </div></footer>
 <script src="assets/local-time.js?v={ASSET_V['local-time.js']}" defer></script>
 <script src="assets/app.js?v={ASSET_V['app.js']}" defer></script>
@@ -952,8 +952,33 @@ def count_line(ls, unit="listings"):
         return f"couldn't check {'this listing' if n == 1 else f'these {n} {unit}'} this run"
     return f"{b} of {n - u} checked {unit} in stock or on preorder · {u} couldn't be checked this run"
 
+def pack_rows(rows):
+    """Compact form of the listing rows for the page (decoded back to the same row objects by assets/app.js):
+    {"k": [keys], "d": {key: [distinct values]}, "r": [[value or dictionary index per key, null = key absent]]}.
+    Repeated strings (product, shop, status, family...) are stored once. Falls back to the plain list if any value is null."""
+    keys = []
+    for r in rows:
+        for k in r:
+            if k not in keys:
+                keys.append(k)
+    if any(v is None for r in rows for v in r.values()):
+        return rows
+    d = {}
+    for k in keys:
+        vals = [r[k] for r in rows if k in r]
+        distinct = []
+        for v in vals:
+            if v not in distinct and isinstance(v, str):
+                distinct.append(v)
+        if len(distinct) * 3 < len(vals) and len(distinct) == len({r[k] for r in rows if k in r}):
+            d[k] = distinct
+    out = []
+    for r in rows:
+        out.append([(d[k].index(r[k]) if k in d else r[k]) if k in r else None for k in keys])
+    return {"k": keys, "d": d, "r": out}
+
 def stock_data(rows):
-    return f'<script id="stock-data" type="application/json">{json.dumps(rows, ensure_ascii=False).replace("</", "<\\/")}</script>'
+    return f'<script id="stock-data" type="application/json">{json.dumps(pack_rows(rows), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")}</script>'
 
 def soon_block():
     """Sections we plan to track but don't have listings for yet. Disappears once every one is live."""
@@ -3224,7 +3249,7 @@ SHOP_ETSY = [
     # launch-sale note. Do not print the sale price or the sale code.
     dict(id="holiday-planner", kind="insert", sale_confirmed=True, price="$6.99",
          title="The Holiday Planner Pages",
-         img="assets/shop/holiday-planner-pages.webp", img_class="sheet", img_w=2000, img_h=2000,
+         img="assets/shop/holiday-planner-pages-600.webp", img_class="sheet", img_w=600, img_h=600,  # 2000px original kept beside it
          url="https://www.etsy.com/listing/4616108634/holiday-planner-printable-tip-ins-gift",
          alt=("The Holiday Planner Pages: three cream covers labeled Narrow Weekly 85 × 175 mm, "
               "Pocket A6 95 × 138 mm, and Standard A5 138 × 198 mm, each with a green wreath and a snowflake."),
