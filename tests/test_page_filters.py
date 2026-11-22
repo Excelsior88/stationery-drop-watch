@@ -181,22 +181,21 @@ class PageFilterMarkupTests(unittest.TestCase):
             self.assertEqual(len(notes), 2, name)
             for note in notes:
                 self.assertIn(site.LIST_LINE, html.unescape(note), name)
-                self.assertIn("Emails are sent via", note, name)
-                self.assertIn("Kit", note, name)
-                self.assertNotIn("Buttondown", note, name)
+                self.assertIn("Sent via", note, name)
+                self.assertIn("Buttondown", note, name)
                 self.assertIn("Privacy", note, name)
                 self.assertNotIn("multiple emails a day", note, name)
                 self.assertNotRegex(note, r"\d+ emails a day")
             forms = re.findall(
-                r'<form class="signup-form kit-signup-form" action="([^"]+)" method="post">(.*?)</form>',
+                r'<form class="signup-form embeddable-buttondown-form" action="([^"]+)" method="post">(.*?)</form>',
                 doc, flags=re.S)
             self.assertEqual(len(forms), 2, name)
             for href, body in forms:
                 self.assertEqual(href, action, name)
-                self.assertIn('type="email" name="email_address"', body, name)
-                self.assertEqual(sorted(re.findall(r'name="tags\[\]" value="(\d+)"', body)),
-                                 sorted(t[1] for t in site.KIT_TAGS), name)
-                self.assertNotIn('name="embed"', body, name)
+                self.assertIn('type="email" name="email"', body, name)
+                self.assertIn('type="hidden" value="1" name="embed"', body, name)
+                self.assertNotIn('name="tag"', body, name)
+                self.assertNotIn("name=\"tags", body, name)
             self.assertIn('id="alerts"', doc, name)
             self.assertIn('id="alerts-bottom"', doc, name)
             self.assertIn('id="email-top"', doc, name)
