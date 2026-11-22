@@ -1484,7 +1484,7 @@ GROUPS = [
          match=lambda p: p["type"] == "Cover",
          desc="Are Hobonichi Techo 2027 covers in stock? Live status for the tracked A6 and A5 covers at {shops} shops, with a link to each listing. Open a shop's page to confirm.",
          intro="Popular Hobonichi covers can sell out within minutes of a drop. "
-               "We track the covers that sold best in Hobonichi's first-week overseas ranking, plus a few more: A6 covers for the Original and A5 covers for the Cousin. Weeks covers are on the Weeks page. "
+               "We track the covers that sold best in Hobonichi's first-week overseas ranking, plus more: A6 covers for the Original and A5 covers for the Cousin. Weeks covers are on the Weeks page. "
                "Here's what each shop reported at its last check."),
     dict(slug=DOTGRID_SLUG, short="Dot grid journals", product="Dot grid journal", section="dotgrid", featured=True,
          search_hint="Ice Castle, 8x8, kraft…",
@@ -2156,7 +2156,7 @@ FAQ = [
     ("Which shops do you check?",
      "{n} shops across all trackers, in separate sections per brand family. Hobonichi: {nh} shops, the official Hobonichi Online Store and independent stationery shops. {secs}. Each listing in the tracker links to the shop's own page. {unchecked}"),
     ("What do you track?",
-     "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and a few A6 and A5 covers. {tracks} We don't track pens."),
+     "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and @@COVERS@@. {tracks} We don't track pens."),
     ('What do "Not yet on sale" and "Couldn\'t check" mean?',
      '"Not yet on sale" means the shop has a preview page up but isn\'t taking orders yet. That\'s different from sold out. '
      '"Couldn\'t check" means our check failed, for example because the shop\'s site didn\'t respond, so we don\'t know. '
@@ -2205,8 +2205,15 @@ def faq_block(only=None, sid="faq"):
         secs += f". Limited-edition inks: {N_INK} shops, {ink_shop_names()}, each on the brand's own dealer list"
     secs += ". Some shops sell more than one brand, so they're counted once in the total"
     tracks = " ".join(FAQ_TRACKS[k] for k in LIVE) + ((" " + INK_FAQ_TRACK) if INK_LIVE else "")
+    _cn = [p.get("canonical", "") for p in stock["products"]]
+    _cv = {c for c in _cn if c.startswith(("cover-a6-", "cover-a5-", "weeks-cover-"))}
+    _n6 = sum(c.startswith("cover-a6-") for c in _cv)
+    _n5 = sum(c.startswith("cover-a5-") for c in _cv)
+    _nw = sum(c.startswith("weeks-cover-") for c in _cv)
+    covers_txt = f"{_n6} A6 covers, {_n5} A5 covers and {_nw} Weeks covers"
     answers = []
     for q, a in FAQ:
+        a = a.replace("@@COVERS@@", covers_txt)
         if q == "Do you sell planners?" and shop_inserts_public():
             a = ("Yes, our own: we make planners, journals, and printable planner inserts, and sell them on our shop page ({shop}). "
                  "Printed books are on Amazon. Printable PDFs, including undated paper tip-ins, are on Etsy. "
