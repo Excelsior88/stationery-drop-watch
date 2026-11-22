@@ -19,7 +19,7 @@ Pens and other paper are not tracked.
     python3 scripts/ink_tracker.py approve <find_id> --ink <ink_id> [--name "..."] [--color "..."]
 
 - Statuses use the same polite fetcher and rules as `checker.py`. An unavailable product in the shop's own coming-soon collection (`inks.json` "coming_soon_collections") is "Not yet on sale", not sold out; available products in a pre-order collection are "Preorder". If that collection can't be read, the row is "Couldn't check".
-- Ink changes go to `data/inks/changes.json`. `new_in_stock.py` (the drop-alert webhook) reads only `data/changes.json`, so inks never send alerts or emails, and a listing's first check never counts as a change.
+- Ink changes go to `data/inks/changes.json`. `new_in_stock.py` (the drop-alert webhook) reads it too and adds new flips to in_stock to the ping with `tracker: "inks"` and `section: "inks"`, so the alert routine can email the Limited-edition inks list. A listing's first check never counts as a change, and hidden (pending) rows never alert.
 - Discovery reads each verified shop's public `/products.json`. A shop's first scan is a baseline (remembered, not reported) apart from coming-soon or preorder items. After that, each new limited ink match becomes a pending find: it is checked from the next run, carries `"hidden": true`, and never renders. `data/inks/new_finds.json` lists that run's finds and a plain-text `note`; the note is empty on days with no finds. Nothing is sent from here.
 - Owner approval: `approve` moves a find into `inks.json`; it shows on the page after the next check.
 - Retirement: an ink whose every listing has been sold out for 60 days is moved to `data/inks/retired.json`, stops being checked, and is listed under "No longer tracked".
