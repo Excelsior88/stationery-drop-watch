@@ -1461,6 +1461,7 @@ def build_about():
 <h2>How it works</h2>
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}. When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
+<p>Clip, the paper clip with the magnifying glass on our <a href="index.html">home page</a>, is the site's mascot.</p>
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email {mailto_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
