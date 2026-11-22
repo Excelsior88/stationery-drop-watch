@@ -567,14 +567,14 @@ LIST_LINE = (
     "Unsubscribe anytime. We'll email you a confirmation link. You aren't on the list until you click it."
 )
 SIGNUP_COPY = {
-    "alerts": ("Get restock alerts by email", LIST_LINE),
-    "shop": ("Get restock alerts by email", LIST_LINE),
+    "alerts": ("Get an email when anything we track restocks", LIST_LINE),
+    "shop": ("Get an email when anything we track restocks", LIST_LINE),
 }
 TAGLINE = "Never miss a stationery restock"
-ONE_LIST_LABEL = "Get every restock alert by email"
+ONE_LIST_LABEL = "Get an email when anything we track restocks"
 SIGNUP_LABELS = {
     "hobonichi": "Get an email when Hobonichi items restock",
-    "dotgrid": "Get restock emails for dot grid journals and more",
+    "dotgrid": "Get an email when dot grid journals restock",
     "inks": "Get an email when limited-edition inks restock",
 }
 
@@ -585,11 +585,12 @@ def signup_for(subject=None, back=None, section=None, placement="top"):
     pre = {"hobonichi": "hobonichi", "dotgrid": "dot-grid", "inks": "inks"}.get(section)
     return signup(label=label, note=LIST_LINE, placement=placement, kicker=TAGLINE, preselect=pre)
 
-def signup(kind="alerts", label=None, note=None, placement="top", kicker=None, preselect=None):
+def signup(kind="alerts", label=None, note=None, placement="top", kicker=TAGLINE, preselect=None):
     """Kit's HTML form (form 10225471): a plain POST to app.kit.com/forms/<id>/subscriptions with email_address and one
     tags[] checkbox per tracker, so it works without JavaScript. Kit's form is double opt-in. The top box is always
     id="alerts", so "#alerts" links work on every page. A bottom repeat uses id="alerts-bottom" and distinct field ids so
-    the markup stays valid. preselect is a tag slug to tick by default on a tracker page; otherwise every tracker is ticked."""
+    the markup stays valid. Every box carries the TAGLINE kicker except the home hero, whose h1 already says it.
+    preselect is a tag slug to tick by default on a tracker page; otherwise every tracker is ticked."""
     d_label, d_note = SIGNUP_COPY[kind]
     label, note = label or d_label, note or d_note
     sid = "alerts" if placement == "top" else "alerts-bottom"
@@ -1301,7 +1302,7 @@ def build_index():
   <p class="hero-shops">We check {N_STORES} shops for you</p>
   <p class="suggest">Know the moment your planner, journal or ink is back.</p>
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals and limited-edition inks, and tell you when they come back.</p>
-  {signup()}
+  {signup(kicker=None)}
   {trust_strip(prods + (INK_ROWS if INK_LIVE else []))}
   <p class="small section-switch">More on the site: <a href="hobonichi-2027/">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a class="nobr" href="sold-out-everywhere/">Sold out everywhere</a>.</p>
 </section>
@@ -3211,7 +3212,7 @@ def build_gift_guide():
 {eyebrow("Guide", "Gifts", guide_updated(build_gift_guide))}
 <h1>Stationery gifts that are actually in stock</h1>
 <p class="lede">Every stock line and price below is from our last check, {asof}, and each pick links to its live restock page. Specs come from the maker's or the shop's own product page.</p>
-{signup(label="Get restock emails for these gifts and more", note=LIST_LINE, kicker=TAGLINE)}
+{signup(label="Get an email when these gifts restock", note=LIST_LINE)}
 
 <h2 id="prices">Every pick: stock and price</h2>
 <p class="small"><strong>Stock checked {asof}.</strong> We check stock live at every shop we track, and the counts are those shops. Each tracked row links you to the shop for the current price. Amazon and Etsy prices are the listed prices for our own books and printables.</p>
