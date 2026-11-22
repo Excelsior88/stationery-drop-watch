@@ -12,7 +12,7 @@
 <meta name="twitter:title" content="Follow us · Stationery Drop Watch"><meta name="twitter:description" content="Follow Stationery Drop Watch on X, Instagram, Threads, Bluesky, Pinterest, Facebook and Reddit for restock alerts and planner news. Pick one."><meta name="twitter:image" content="https://stationerydropwatch.com/assets/brand/og-image.png"><meta name="twitter:image:alt" content="Stationery Drop Watch: restock tracker for Hobonichi, dot grid journals and limited-edition inks, checked about every 30 minutes">
 <link rel="preload" href="/assets/fonts/newsreader-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/liberation-sans-regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/style.css?v=cde5ef08">
+<link rel="stylesheet" href="/assets/style.css?v=46bb202a">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/brand/favicon-32.png" type="image/png" sizes="32x32">
@@ -34,11 +34,14 @@
 <h1>Follow us</h1>
 <p class="lede">We post restock alerts and planner news. Pick the app you already use.</p>
 <section class="signup-strip" id="alerts" aria-label="Get restock alerts by email">
-  <form class="signup-form kit-signup-form" action="https://app.kit.com/forms/10225471/subscriptions" method="post">
+  <form class="signup-form kit-signup-form" action="/api/subscribe" method="post" data-turnstile="1">
     <label class="strip-label" for="email-top">Get restock alerts by email</label>
     <input id="email-top" type="email" name="email_address" placeholder="you@example.com" required autocomplete="email">
     <fieldset class="strip-trackers"><legend>Email me about</legend><label class="strip-check"><input type="checkbox" name="tags[]" value="26280763" id="alerts-tag-hobonichi" checked> Hobonichi</label><label class="strip-check"><input type="checkbox" name="tags[]" value="26280764" id="alerts-tag-dot-grid" checked> Dot grid journals</label><label class="strip-check"><input type="checkbox" name="tags[]" value="26280765" id="alerts-tag-inks" checked> Limited-edition inks</label></fieldset>
+    <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAGM1G3F90gZdAcnK" data-appearance="interaction-only" data-theme="light"></div>
     <button type="submit">Notify me</button>
+    <p class="signup-status" role="status" aria-live="polite" hidden></p>
   </form>
   <p class="strip-note">Free restock emails for the trackers you pick: Hobonichi, dot grid journals and limited-edition inks. Pick at least one, plus an occasional update when we add a tracker or release something new. Unsubscribe anytime. We&#x27;ll email you a confirmation link. You aren&#x27;t on the list until you click it. Emails are sent via <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>. <a href="/privacy/">Privacy</a></p>
 </section>
@@ -66,5 +69,5 @@
   <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="50" loading="lazy"></a> <a href="/privacy/"><picture><source type="image/webp" srcset="/assets/badges/zero-cookies-badge_v1_300x126.webp 1x, /assets/badges/zero-cookies-badge_v1_600x252.webp 2x"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></picture></a> <picture><source type="image/webp" srcset="/assets/badges/made-in-hamtramck_v2_300x100.webp 300w, /assets/badges/made-in-hamtramck_v2_900x300.webp 900w" sizes="150px"><img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="50" loading="lazy"></picture></p>
 </div></footer>
 <script src="/assets/local-time.js?v=0f8524ee" defer></script>
-<script src="/assets/app.js?v=12a233b1" defer></script>
+<script src="/assets/app.js?v=c3e91828" defer></script>
 </body></html>

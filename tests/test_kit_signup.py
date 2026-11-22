@@ -11,7 +11,7 @@ import build_site as site  # noqa: E402
 
 class KitSignup(unittest.TestCase):
     def test_action_and_tags(self):
-        self.assertEqual(site.KIT_SIGNUP_ACTION, "https://app.kit.com/forms/10225471/subscriptions")
+        self.assertEqual(site.KIT_SIGNUP_ACTION, "/api/subscribe")
         self.assertEqual([(s, i) for s, i, _ in site.KIT_TAGS],
                          [("hobonichi", "26280763"), ("dot-grid", "26280764"), ("inks", "26280765")])
 
@@ -46,7 +46,7 @@ class InkPageSignupTests(unittest.TestCase):
         doc = (ROOT / "site/limited-edition-fountain-pen-ink/index.html").read_text()
         self.assertEqual(doc.count('id="alerts"'), 1)
         self.assertEqual(doc.count('id="alerts-bottom"'), 1)
-        self.assertIn("app.kit.com/forms/10225471/subscriptions", doc)
+        self.assertIn('action="/api/subscribe"', doc)
         ticked = re.findall(r'id="alerts-tag-([a-z-]+)"[^>]*? checked>', doc)
         self.assertEqual(ticked, ["inks"])
 
@@ -62,6 +62,36 @@ class InkPageSignupTests(unittest.TestCase):
             if "http-equiv=\"refresh\"" in doc:
                 continue
             self.assertTrue('id="alerts"' in doc or 'href="#alerts"' in doc or 'href="/#alerts"' in doc, rel)
+
+
+
+
+class TurnstileSignupTests(unittest.TestCase):
+    def test_box_has_turnstile_honeypot_and_status(self):
+        doc = site.signup()
+        self.assertIn('class="cf-turnstile"', doc)
+        self.assertIn(f'data-sitekey="{site.TURNSTILE_SITEKEY}"', doc)
+        self.assertIn('name="website"', doc)  # honeypot
+        self.assertIn('class="signup-status"', doc)
+        self.assertNotIn("app.kit.com/forms", doc)
+
+    def test_no_secret_in_source(self):
+        src = (ROOT / "site/functions/api/subscribe.js").read_text()
+        self.assertNotRegex(src, r"0x4[A-Za-z0-9_-]{20,}")
+        self.assertIn("env.TURNSTILE_SECRET", src)
+        self.assertIn("env.KIT_API_KEY", src)
+
+    def test_privacy_names_turnstile(self):
+        doc = (ROOT / "site/privacy/index.html").read_text()
+        self.assertIn("Cloudflare Turnstile", doc)
+        self.assertIn("/api/subscribe", doc)
+
+    def test_function_behaviour_with_mocked_fetch(self):
+        import shutil, subprocess
+        if not shutil.which("node"):
+            self.skipTest("node not installed")
+        r = subprocess.run(["node", str(ROOT / "tests/subscribe_function_test.mjs")], capture_output=True, text=True, timeout=60)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
 
 
 if __name__ == "__main__":

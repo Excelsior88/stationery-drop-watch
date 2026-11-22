@@ -494,7 +494,12 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 
 NEWSLETTER = "dropwatch"  # Buttondown username (kept for the cutover fallback; signups now go to Kit)
 KIT_FORM_ID = "10225471"  # Kit form "Never miss a stationery restock" (data-uid ada05fa216)
-KIT_SIGNUP_ACTION = f"https://app.kit.com/forms/{KIT_FORM_ID}/subscriptions"
+# Signups post to our own Pages Function (site/functions/api/subscribe.js), which checks Cloudflare Turnstile and then
+# calls the Kit API (Kit's plain HTML form post is quarantined by Kit's captcha, so it cannot be used directly).
+KIT_SIGNUP_ACTION = "/api/subscribe"
+# Public Turnstile sitekey for stationerydropwatch.com (managed mode). SDW_TURNSTILE_SITEKEY overrides it for local and
+# preview builds (Cloudflare's always-pass test key 1x00000000000000000000AA).
+TURNSTILE_SITEKEY = os.environ.get("SDW_TURNSTILE_SITEKEY", "0x4AAAAAAGM1G3F90gZdAcnK")
 # Kit tag ids (hobonichi, dot-grid, inks). The form posts them as tags[]; alerts send to one tag per tracker.
 KIT_TAGS = (("hobonichi", "26280763", "Hobonichi"), ("dot-grid", "26280764", "Dot grid journals"), ("inks", "26280765", "Limited-edition inks"))
 KIT_PRIVACY_URL = "https://kit.com/privacy"
@@ -552,11 +557,14 @@ def signup(kind="alerts", label=None, note=None, placement="top", kicker=None, p
         f'{" checked" if (preselect is None or preselect == slug) else ""}> {E(name)}</label>'
         for slug, tid, name in KIT_TAGS)
     return f"""<section class="signup-strip{extra}" id="{sid}" aria-label="{E(label)}">
-  {kicker_html}<form class="signup-form kit-signup-form" action="{SIGNUP_ACTION}" method="post">
+  {kicker_html}<form class="signup-form kit-signup-form" action="{SIGNUP_ACTION}" method="post" data-turnstile="1">
     <label class="strip-label" for="{eid}">{E(label)}</label>
     <input id="{eid}" type="email" name="email_address" placeholder="you@example.com" required autocomplete="email">
     <fieldset class="strip-trackers"><legend>Email me about</legend>{boxes}</fieldset>
+    <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="cf-turnstile" data-sitekey="{TURNSTILE_SITEKEY}" data-appearance="interaction-only" data-theme="light"></div>
     <button type="submit">Notify me</button>
+    <p class="signup-status" role="status" aria-live="polite" hidden></p>
   </form>
   <p class="strip-note">{E(note)} Emails are sent via <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>. <a href="privacy/">Privacy</a></p>
 </section>"""
@@ -1388,6 +1396,7 @@ def build_privacy():
 <p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, plus page-view and performance statistics from Cloudflare Web Analytics. The site sets no cookies and runs no ad trackers.</p>
 <h2>Email alerts (Kit)</h2>
 <p>If you sign up for restock alerts, your email address and the trackers you pick (Hobonichi, dot grid journals, limited-edition inks) go to <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>, the service that stores the list and sends the emails. Kit sends a confirmation email first; we only add the address to the list after you click the link. We use it only to send restock alerts for the trackers you chose and occasional site updates. Every email has an unsubscribe link, and you can also email us to be removed. Kit's own privacy policy is at <a href="https://kit.com/privacy" target="_blank" rel="noopener">kit.com/privacy</a>.</p>
+<p>The signup form is protected from bots by <a href="https://www.cloudflare.com/application-services/products/turnstile/" target="_blank" rel="noopener">Cloudflare Turnstile</a>, an anti-spam check. On pages with the form, your browser loads a script from Cloudflare (challenges.cloudflare.com) and, when you submit, sends Cloudflare a token that we verify on our server. Cloudflare may look at things like your IP address and browser details to tell people from bots, and may use browser storage for that, under <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">its privacy policy</a>. The form goes through our own server at stationerydropwatch.com/api/subscribe, which passes your email address and chosen trackers to Kit and doesn't store them itself.</p>
 <h2>Hosting</h2>
 <p>The site is hosted on Cloudflare Pages. Cloudflare handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
 <p>The site uses <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener">Cloudflare Web Analytics</a>, a privacy-focused analytics service from our host, Cloudflare. It loads a small script (beacon.min.js from static.cloudflareinsights.com) that counts page views and measures how pages perform. The statistics we can see include pages visited, referrer, browser and device type, country, and load times. Cloudflare says Web Analytics collects the minimum information needed to show how a site performs and does not track individual end users across its customers' Internet properties.</p>

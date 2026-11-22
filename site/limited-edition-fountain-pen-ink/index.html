@@ -12,7 +12,7 @@
 <meta name="twitter:title" content="Limited-edition fountain pen ink tracker · Drop Watch"><meta name="twitter:description" content="Is a limited-edition fountain pen ink in stock? Live status for Diamine Inkvent, Sailor limiteds and more at 8 shops on each brand&#x27;s own dealer list."><meta name="twitter:image" content="https://stationerydropwatch.com/assets/brand/og-image.png"><meta name="twitter:image:alt" content="Stationery Drop Watch: restock tracker for Hobonichi, dot grid journals and limited-edition inks, checked about every 30 minutes">
 <link rel="preload" href="/assets/fonts/newsreader-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/liberation-sans-regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/style.css?v=cde5ef08">
+<link rel="stylesheet" href="/assets/style.css?v=46bb202a">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/brand/favicon-32.png" type="image/png" sizes="32x32">
@@ -45,11 +45,14 @@
   <p class="small section-switch">Also tracked: <a href="/hobonichi-restock-tracker/">Hobonichi tracker</a> · <a href="/dot-grid-journal-restock-tracker/">Dot grid journals</a></p>
   <section class="signup-strip" id="alerts" aria-label="Get an email when limited-edition inks restock">
   <p class="strip-kicker">Never miss a stationery restock</p>
-  <form class="signup-form kit-signup-form" action="https://app.kit.com/forms/10225471/subscriptions" method="post">
+  <form class="signup-form kit-signup-form" action="/api/subscribe" method="post" data-turnstile="1">
     <label class="strip-label" for="email-top">Get an email when limited-edition inks restock</label>
     <input id="email-top" type="email" name="email_address" placeholder="you@example.com" required autocomplete="email">
     <fieldset class="strip-trackers"><legend>Email me about</legend><label class="strip-check"><input type="checkbox" name="tags[]" value="26280763" id="alerts-tag-hobonichi"> Hobonichi</label><label class="strip-check"><input type="checkbox" name="tags[]" value="26280764" id="alerts-tag-dot-grid"> Dot grid journals</label><label class="strip-check"><input type="checkbox" name="tags[]" value="26280765" id="alerts-tag-inks" checked> Limited-edition inks</label></fieldset>
+    <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAGM1G3F90gZdAcnK" data-appearance="interaction-only" data-theme="light"></div>
     <button type="submit">Notify me</button>
+    <p class="signup-status" role="status" aria-live="polite" hidden></p>
   </form>
   <p class="strip-note">Free restock emails for the trackers you pick: Hobonichi, dot grid journals and limited-edition inks. Pick at least one, plus an occasional update when we add a tracker or release something new. Unsubscribe anytime. We&#x27;ll email you a confirmation link. You aren&#x27;t on the list until you click it. Emails are sent via <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>. <a href="/privacy/">Privacy</a></p>
 </section>
@@ -181,11 +184,14 @@
     <section class="card faq" id="faq"><h2>Good to know</h2><details class="faq-item"><summary>What do the statuses mean?</summary><p>Statuses are exactly what each shop&#x27;s public product data said at the time shown. Always confirm on the shop&#x27;s page before you buy.</p></details><details class="faq-item"><summary>What do &quot;Not yet on sale&quot; and &quot;Couldn&#x27;t check&quot; mean?</summary><p>&quot;Not yet on sale&quot; means the shop has a preview page up but isn&#x27;t taking orders yet. &quot;Couldn&#x27;t check&quot; means our check failed, so we don&#x27;t know.</p></details><details class="faq-item"><summary>Why don&#x27;t you show prices?</summary><p>We don&#x27;t show prices, because they change and differ by shop. Check the shop&#x27;s page.</p></details><details class="faq-item"><summary>Do restock emails cover inks?</summary><p>Yes. Tick "Limited-edition inks" in the signup box and we'll email you when a tracked ink comes back. Ink restocks also show on this page.</p></details></section>
     <section class="signup-strip signup-strip-bottom" id="alerts-bottom" aria-label="Get an email when limited-edition inks restock">
   <p class="strip-kicker">Never miss a stationery restock</p>
-  <form class="signup-form kit-signup-form" action="https://app.kit.com/forms/10225471/subscriptions" method="post">
+  <form class="signup-form kit-signup-form" action="/api/subscribe" method="post" data-turnstile="1">
     <label class="strip-label" for="email-bottom">Get an email when limited-edition inks restock</label>
     <input id="email-bottom" type="email" name="email_address" placeholder="you@example.com" required autocomplete="email">
     <fieldset class="strip-trackers"><legend>Email me about</legend><label class="strip-check"><input type="checkbox" name="tags[]" value="26280763" id="alerts-bottom-tag-hobonichi"> Hobonichi</label><label class="strip-check"><input type="checkbox" name="tags[]" value="26280764" id="alerts-bottom-tag-dot-grid"> Dot grid journals</label><label class="strip-check"><input type="checkbox" name="tags[]" value="26280765" id="alerts-bottom-tag-inks" checked> Limited-edition inks</label></fieldset>
+    <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAGM1G3F90gZdAcnK" data-appearance="interaction-only" data-theme="light"></div>
     <button type="submit">Notify me</button>
+    <p class="signup-status" role="status" aria-live="polite" hidden></p>
   </form>
   <p class="strip-note">Free restock emails for the trackers you pick: Hobonichi, dot grid journals and limited-edition inks. Pick at least one, plus an occasional update when we add a tracker or release something new. Unsubscribe anytime. We&#x27;ll email you a confirmation link. You aren&#x27;t on the list until you click it. Emails are sent via <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>. <a href="/privacy/">Privacy</a></p>
 </section>
@@ -200,5 +206,5 @@
   <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="50" loading="lazy"></a> <a href="/privacy/"><picture><source type="image/webp" srcset="/assets/badges/zero-cookies-badge_v1_300x126.webp 1x, /assets/badges/zero-cookies-badge_v1_600x252.webp 2x"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></picture></a> <picture><source type="image/webp" srcset="/assets/badges/made-in-hamtramck_v2_300x100.webp 300w, /assets/badges/made-in-hamtramck_v2_900x300.webp 900w" sizes="150px"><img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="50" loading="lazy"></picture></p>
 </div></footer>
 <script src="/assets/local-time.js?v=0f8524ee" defer></script>
-<script src="/assets/app.js?v=12a233b1" defer></script>
+<script src="/assets/app.js?v=c3e91828" defer></script>
 </body></html>

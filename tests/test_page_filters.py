@@ -188,7 +188,7 @@ class PageFilterMarkupTests(unittest.TestCase):
                 self.assertNotIn("multiple emails a day", note, name)
                 self.assertNotRegex(note, r"\d+ emails a day")
             forms = re.findall(
-                r'<form class="signup-form kit-signup-form" action="([^"]+)" method="post">(.*?)</form>',
+                r'<form class="signup-form kit-signup-form" action="([^"]+)" method="post" data-turnstile="1">(.*?)</form>',
                 doc, flags=re.S)
             self.assertEqual(len(forms), 2, name)
             for href, body in forms:

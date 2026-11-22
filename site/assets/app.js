@@ -408,4 +408,34 @@
   window.addEventListener("scroll", pinTableHeads, { passive: true });
   window.addEventListener("resize", pinTableHeads);
   pinTableHeads();
+  // Restock-alert signup: Cloudflare Turnstile (anti-spam) + our own /api/subscribe. Without JavaScript the form still
+  // posts to /api/subscribe and gets a plain result page (which says the anti-spam check needs JavaScript).
+  const signupForms = document.querySelectorAll("form[data-turnstile]");
+  if (signupForms.length) {
+    const ts = document.createElement("script");
+    ts.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    ts.async = true; ts.defer = true;
+    document.head.appendChild(ts);
+    signupForms.forEach(form => {
+      const status = form.querySelector(".signup-status");
+      const btn = form.querySelector("button[type=submit]");
+      const say = (msg, ok) => { status.textContent = msg; status.hidden = false; status.dataset.state = ok ? "ok" : "error"; };
+      const tokenOf = () => (form.querySelector("[name=cf-turnstile-response]") || {}).value || "";
+      form.addEventListener("submit", async e => {
+        e.preventDefault();
+        if (btn.disabled) return;
+        if (![...form.querySelectorAll("input[name='tags[]']")].some(c => c.checked)) { say("Pick at least one tracker so we know what to email you about.", false); return; }
+        btn.disabled = true; status.hidden = true;
+        for (let i = 0; i < 40 && !tokenOf(); i++) await new Promise(r => setTimeout(r, 250));
+        try {
+          const res = await fetch(form.action, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } });
+          const data = await res.json().catch(() => ({}));
+          say(data.message || "Something went wrong. Please try again.", !!data.ok);
+          if (data.ok) form.querySelector("input[type=email]").value = "";
+        } catch (_) { say("We couldn't reach the server. Please try again.", false); }
+        if (window.turnstile) { try { window.turnstile.reset(); } catch (_) {} }
+        btn.disabled = false;
+      });
+    });
+  }
 })();
