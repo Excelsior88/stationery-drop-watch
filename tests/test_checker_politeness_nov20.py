@@ -316,7 +316,7 @@ class DisclaimerAndPrivacyTests(unittest.TestCase):
         self.assertNotIn("does not currently run analytics beacons", privacy)
         self.assertIn("The site is hosted on Cloudflare Pages.", privacy)
         self.assertIn("hosted on GitHub (GitHub Pages)", privacy)
-        self.assertIn("Kit", privacy)
+        self.assertIn("Buttondown", privacy)
         self.assertIn("On November 17, 2026, we reached out to Traveler's Company", site.TAKEDOWN_NOTICE[0])
 
 

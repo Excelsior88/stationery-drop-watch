@@ -492,29 +492,23 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     doc = LOCAL_LINK.sub(lambda m: f'{m.group(1)}="/{pretty(m.group(2))}"', doc)
     return doc
 
-NEWSLETTER = "dropwatch"  # Buttondown username (kept for the cutover fallback; signups now go to Kit)
-KIT_FORM_ID = "10225471"  # Kit form "Never miss a stationery restock" (data-uid ada05fa216)
-KIT_SIGNUP_ACTION = f"https://app.kit.com/forms/{KIT_FORM_ID}/subscriptions"
-# Kit tag ids (hobonichi, dot-grid, inks). The form posts them as tags[]; alerts send to one tag per tracker.
-KIT_TAGS = (("hobonichi", "26280763", "Hobonichi"), ("dot-grid", "26280764", "Dot grid journals"), ("inks", "26280765", "Limited-edition inks"))
-KIT_PRIVACY_URL = "https://kit.com/privacy"
+NEWSLETTER = "dropwatch"  # Buttondown username (https://buttondown.com/dropwatch)
 
 # Page types: trackers (home + GROUPS) use hero + .layout with a sidebar; guides and info pages use article.prose.
 # Guides, the homepage, about, follow and the shop keep one signup box under the intro.
 # Tracker, product and design pages add a compact repeat at the bottom (id="alerts-bottom").
-SIGNUP_ACTION = KIT_SIGNUP_ACTION
+SIGNUP_ACTION = f"https://buttondown.com/api/emails/embed-subscribe/{NEWSLETTER}"
 
-# One Kit list with a tag per tracker (Hobonichi, dot grid journals, limited-edition inks): a subscriber gets restock emails
-# for the trackers they tick, plus occasional site updates. Tracker, product and design labels name the brand or category
+# One Buttondown list: every subscriber gets every restock email, not alerts for one product,
+# plus occasional site updates. Tracker, product and design labels name the brand or category
 # on that page, never a single design or SKU. The signup note is the same on every box,
-# including the shop, and mentions confirmation because Kit's form is double opt-in.
+# including the shop, and mentions confirmation because Buttondown is double opt-in.
 # It must not give a daily number.
 # SPEED_LINE is backed by data/changes.json (Oct 26-Nov 11, 2026): of 19 restocks where we also saw the sell-out,
 # 7 sold out within an hour and 14 within 6 hours. Re-check it before changing the wording.
 SPEED_LINE = "Restocks often sell out within hours."
 LIST_LINE = (
-    "Free restock emails for the trackers you pick: Hobonichi, dot grid journals and limited-edition inks. "
-    "Pick at least one, plus an occasional update when we add a tracker or release something new. "
+    "Free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. "
     "Unsubscribe anytime. We'll email you a confirmation link. You aren't on the list until you click it."
 )
 SIGNUP_COPY = {
@@ -532,32 +526,27 @@ def signup_for(subject=None, back=None, section=None, placement="top"):
     """Signup box for a product, design, or tracker page. Label is brand-level, never a single item.
     subject and back stay on the signature so older callers still work; section picks the label."""
     label = SIGNUP_LABELS.get(section, ONE_LIST_LABEL)
-    pre = {"hobonichi": "hobonichi", "dotgrid": "dot-grid"}.get(section)
-    return signup(label=label, note=LIST_LINE, placement=placement, kicker=TAGLINE, preselect=pre)
+    return signup(label=label, note=LIST_LINE, placement=placement, kicker=TAGLINE)
 
-def signup(kind="alerts", label=None, note=None, placement="top", kicker=None, preselect=None):
-    """Kit's HTML form (form 10225471): a plain POST to app.kit.com/forms/<id>/subscriptions with email_address and one
-    tags[] checkbox per tracker, so it works without JavaScript. Kit's form is double opt-in. The top box is always
-    id="alerts", so "#alerts" links work on every page. A bottom repeat uses id="alerts-bottom" and distinct field ids so
-    the markup stays valid. preselect is a tag slug to tick by default on a tracker page; otherwise every tracker is ticked."""
+def signup(kind="alerts", label=None, note=None, placement="top", kicker=None):
+    """Buttondown's standard HTML embed form (docs.buttondown.com/building-your-subscriber-base): a plain POST
+    to embed-subscribe; don't submit via fetch, Buttondown may need to show a CAPTCHA. The top box is always
+    id="alerts", so "#alerts" links work on every page. A bottom repeat uses id="alerts-bottom" and a second
+    email field id so the markup stays valid. The form action and fields never change."""
     d_label, d_note = SIGNUP_COPY[kind]
     label, note = label or d_label, note or d_note
     sid = "alerts" if placement == "top" else "alerts-bottom"
     eid = "email-top" if placement == "top" else "email-bottom"
     extra = " signup-strip-bottom" if placement == "bottom" else ""
     kicker_html = f'<p class="strip-kicker">{E(kicker)}</p>\n  ' if kicker else ""
-    boxes = "".join(
-        f'<label class="strip-check"><input type="checkbox" name="tags[]" value="{tid}" id="{sid}-tag-{slug}"'
-        f'{" checked" if (preselect is None or preselect == slug) else ""}> {E(name)}</label>'
-        for slug, tid, name in KIT_TAGS)
     return f"""<section class="signup-strip{extra}" id="{sid}" aria-label="{E(label)}">
-  {kicker_html}<form class="signup-form kit-signup-form" action="{SIGNUP_ACTION}" method="post">
+  {kicker_html}<form class="signup-form embeddable-buttondown-form" action="{SIGNUP_ACTION}" method="post">
     <label class="strip-label" for="{eid}">{E(label)}</label>
-    <input id="{eid}" type="email" name="email_address" placeholder="you@example.com" required autocomplete="email">
-    <fieldset class="strip-trackers"><legend>Email me about</legend>{boxes}</fieldset>
+    <input id="{eid}" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+    <input type="hidden" value="1" name="embed">
     <button type="submit">Notify me</button>
   </form>
-  <p class="strip-note">{E(note)} Emails are sent via <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>. <a href="privacy/">Privacy</a></p>
+  <p class="strip-note">{E(note)} Sent via <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>. <a href="privacy/">Privacy</a></p>
 </section>"""
 
 def crumbs(*trail):
@@ -1289,7 +1278,7 @@ def build_index():
                "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
                "publisher": organization()}
     return page("index.html", "Hobonichi, dot grid and ink restock tracker",
-                f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, flagship dot grid journals and limited-edition inks, plus free restock emails for all three trackers.",
+                f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, flagship dot grid journals and limited-edition inks, plus free restock emails for Hobonichi and dot grid.",
                 body, ld=(site_ld, faq_ld))
 
 def build_hobonichi():
@@ -1346,7 +1335,7 @@ def build_hobonichi():
   <li>Live stock by product: """ + " · ".join(f'<a href="{g["slug"]}/">{E(g["short"])}</a>' for g in GROUPS if not g.get("aux")) + """.</li>
   <li>Want the 2027 store-exclusive bonus? Check eligibility, shipping times, and customs notes in <a href="#ordering-direct">Ordering direct from Hobonichi</a> above.</li>
   <li>Which shops have it right now: <a href="where-to-buy-hobonichi-2027/">where to buy the Hobonichi Techo 2027</a>. Choosing a size: <a href="hobonichi-techo-vs-cousin-vs-weeks/">Techo vs Cousin vs Weeks</a>.</li>
-  <li><a href="#alerts">Sign up for alerts</a> (above) for free restock emails for Hobonichi, dot grid journals and limited-edition inks. You can unsubscribe anytime.</li>
+  <li><a href="#alerts">Sign up for alerts</a> (above) for free restock emails from every shop we track. You can unsubscribe anytime.</li>
 </ul>
 
 <h2>Sources</h2>
@@ -1382,11 +1371,11 @@ def build_privacy():
     body = f"""
 <article class="prose">
 {crumbs((fname, "Privacy"))}
-{eyebrow("Privacy", "updated Nov 22, 2026")}
+{eyebrow("Privacy", "updated Nov 20, 2026")}
 <h1>Privacy</h1>
 <p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, plus page-view and performance statistics from Cloudflare Web Analytics. The site sets no cookies and runs no ad trackers.</p>
-<h2>Email alerts (Kit)</h2>
-<p>If you sign up for restock alerts, your email address and the trackers you pick (Hobonichi, dot grid journals, limited-edition inks) go to <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>, the service that stores the list and sends the emails. Kit sends a confirmation email first; we only add the address to the list after you click the link. We use it only to send restock alerts for the trackers you chose and occasional site updates. Every email has an unsubscribe link, and you can also email us to be removed. Kit's own privacy policy is at <a href="https://kit.com/privacy" target="_blank" rel="noopener">kit.com/privacy</a>.</p>
+<h2>Email alerts (Buttondown)</h2>
+<p>If you sign up for restock alerts, your email address goes to <a href="https://buttondown.com/{NEWSLETTER}" target="_blank" rel="noopener">Buttondown</a>, the service that stores the list and sends the emails. Buttondown sends a confirmation email first; we only add the address to the list after you click the link. We use it only to send restock alerts and occasional site updates. Every email has an unsubscribe link, and you can also email us to be removed. Buttondown's own privacy policy is at <a href="https://buttondown.com/legal/privacy" target="_blank" rel="noopener">buttondown.com/legal/privacy</a>.</p>
 <h2>Hosting</h2>
 <p>The site is hosted on Cloudflare Pages. Cloudflare handles standard request data, such as your IP address, to deliver and protect the site. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</p>
 <p>The site uses <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener">Cloudflare Web Analytics</a>, a privacy-focused analytics service from our host, Cloudflare. It loads a small script (beacon.min.js from static.cloudflareinsights.com) that counts page views and measures how pages perform. The statistics we can see include pages visited, referrer, browser and device type, country, and load times. Cloudflare says Web Analytics collects the minimum information needed to show how a site performs and does not track individual end users across its customers' Internet properties.</p>
@@ -1414,7 +1403,7 @@ def build_about():
 <p>Drop Watch is run by Andrew Robinson. He built the tracker after seeing how frustrating it was for his partner, Arden, to keep up with planner restocks, and now they run it together. Stationery Drop Watch is built in Hamtramck, Michigan.</p>
 </section>
 <h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}. When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
+<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}. When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list. Ink restocks show on the inks page only; restock emails don't cover inks yet.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email {plain_email()} for rates and dates.</p>
@@ -2017,7 +2006,7 @@ def build_design(d, oe=None):
           ("How often do you check?",
            f"Every shop is checked {CHECK_FREQ}. Each status is exactly what the shop's public product data said at that time. \"Not yet on sale\" means the shop has a preview page up but isn't taking orders yet, and \"Couldn't check\" means our check failed, so we don't guess."),
           ("Can I get restock alerts?",
-           f"Yes, sign up above. We'll email you a confirmation link; you aren't on the list until you click it. Once you confirm, you'll get free restock emails for the trackers you pick (Hobonichi, dot grid journals, limited-edition inks), plus an occasional update when we add a tracker or release something new, not just {d['full']}. You can unsubscribe anytime.")]
+           f"Yes, sign up above. We'll email you a confirmation link; you aren't on the list until you click it. Once you confirm, it's one free list of restock emails from every shop we track, plus an occasional update when we add a tracker or release something new, not just {d['full']}. You can unsubscribe anytime.")]
     when_html = time_tag(run)
     faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(
         f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a).replace(E(when), when_html, 1)}</p></details>' for q, a in qa) + "</section>"
@@ -2095,9 +2084,9 @@ FAQ = [
      "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon, as printable PDFs on Etsy, and as classroom printables on Teachers Pay Teachers. "
      "The stationery we track is sold by the shops themselves; we just link you to them. "),
     ("How do restock alerts work?",
-     "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails for the trackers you pick: Hobonichi, dot grid journals and limited-edition inks, plus an occasional update when we add a tracker or release something new. "
-     "Ink restocks also show on the inks page. "
-     "You can unsubscribe anytime."),
+     "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails for Hobonichi and dot grid journal restocks, plus an occasional update when we add a tracker or release something new. "
+     "Limited ink restocks show on the inks page only; restock emails don't cover inks yet. "
+     "It's one list, and you can unsubscribe anytime."),
 ]
 
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
@@ -2169,7 +2158,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22"}
+STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-20", "about/": "2026-11-20", "privacy/": "2026-11-20"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -2407,7 +2396,7 @@ def build_where_to_buy():
         ("Will sold-out 2027 books come back?",
          "Often, but not always. The Paper Mouse says almost all items have been restocked at least once after launch in past years, but it can't guarantee restocks."),
         ("How do I get told when something restocks?",
-         "Sign up for Stationery Drop Watch alerts. We'll email you a confirmation link. Once you confirm, we send free restock emails for the trackers you pick (Hobonichi, dot grid journals and limited-edition inks), plus an occasional update when we add a tracker or release something new. We check the shops about every 30 minutes. You can unsubscribe anytime."),
+         "Sign up for Stationery Drop Watch alerts. We'll email you a confirmation link. Once you confirm, we send free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. We check the shops about every 30 minutes. You can unsubscribe anytime."),
     ]
     checked_at = fmt_et(stock["run_finished"])
     faq_html = "".join(
@@ -2436,7 +2425,7 @@ def build_where_to_buy():
         <li><strong>Watch for preorders.</strong> Restocks don't always show up as "in stock". At the October 1 wave, some shops took preorders for earlier sell-outs. We count preorders as available. <a href="hobonichi-2027/">See the 2027 calendar</a>.</li>
         <li><strong>Don't mistake "not yet on sale" for sold out.</strong> Shops put up preview pages before items go on sale.</li>
         <li><strong>Sign up at the official store too.</strong> Hobonichi's restock notification emails cover the Techo books and the Drawer Pouch, not accessories, and don't guarantee you'll get one <a href="#src-shop">[Hobonichi]</a>. Many independent shops offer their own restock sign-ups on product pages <a href="#src-pm">[Paper Mouse]</a>.</li>
-        <li><strong>Get our alerts.</strong> We check about every 30 minutes and send free restock emails for the trackers you pick. <a href="#alerts">Sign up above</a>.</li>
+        <li><strong>Get our alerts.</strong> We check about every 30 minutes and send free restock emails from every shop we track. <a href="#alerts">Sign up above</a>.</li>
       </ul>
     </section>
 <h2>Which one should you get?</h2>
@@ -2535,7 +2524,7 @@ def build_vs():
 <p><a href="hobonichi-weeks-2027/">Live Weeks stock</a> · <a href="hobonichi-weeks-mega-2027/">Weeks Mega</a></p>
 
 <h2>Where to buy</h2>
-<p>Stock changes fast, and one shop is often sold out while another has it. See <a href="{WTB_SLUG}/">where to buy the Hobonichi Techo 2027</a> for every shop we track, edition by edition, or <a href="#alerts">sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime.</p>
+<p>Stock changes fast, and one shop is often sold out while another has it. See <a href="{WTB_SLUG}/">where to buy the Hobonichi Techo 2027</a> for every shop we track, edition by edition, or <a href="#alerts">sign up above</a> for free restock emails from every shop we track. You can unsubscribe anytime.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
@@ -2739,7 +2728,7 @@ def build_dotgrid_guide():
          "Leuchtturm1917 (numbered pages and a blank table of contents) and Scribbles That Matter (numbered pages, an index, a key page and a pen test page). "
          "Archer and Olive's and Notebook Therapy's product pages don't mention numbered pages or an index."),
         ("How do the email alerts work?",
-         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up and we'll email you a confirmation link. Once you confirm, you'll get free restock emails for the trackers you pick (Hobonichi, dot grid journals, limited-edition inks), plus an occasional update when we add a tracker or release something new, including sold-out sizes and colors coming back. You can unsubscribe anytime."),
+         f"Our dot grid tracker checks every journal above {CHECK_FREQ}. Sign up and we'll email you a confirmation link. Once you confirm, you'll get free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new, including sold-out sizes and colors coming back. You can unsubscribe anytime."),
     ]
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}" rel="noopener" target="_blank">{E(t)}</a>, {E(b)} (official product page).</li>'
@@ -2785,7 +2774,7 @@ def build_dotgrid_guide():
 <p><a href="{DOTGRID_SLUG}/#shop-notebooktherapy">Live Notebook Therapy stock</a></p>
 
 <h2>Where to buy</h2>
-<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
+<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for free restock emails from every shop we track. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
@@ -3987,10 +3976,11 @@ def check_none_claim(fname, doc):
 
 # --- Limited-edition fountain pen ink tracker ----------------------------------------------------------
 # Rows come from data/inks/stock.json (scripts/ink_tracker.py), filtered to owner-approved inks in inks.json.
-# Only shop + brand pairs on each brand's own dealer list are tracked. Ink restock emails go to the Kit 'inks' tag.
+# Only shop + brand pairs on each brand's own dealer list are tracked. Ink restocks are shown on this page only:
+# the restock emails and social alerts read data/changes.json, which has no ink rows.
 INK_HUB_LINE = "Diamine Inkvent, Sailor Manyo and other limited inks, at shops on each brand's own dealer list."
 INK_FAQ_TRACK = ("On a separate limited inks page, we track limited-edition fountain pen inks from Diamine and Sailor, "
-                 "only at shops on each brand's own dealer list. Ink restocks show on that page, and you can get them by email.")
+                 "only at shops on each brand's own dealer list. Ink restocks show on that page; restock emails don't cover inks yet.")
 INK_DEALER_LABEL = {"diamine": "Diamine's retailer list", "sailor": "Sailor's dealer list", "robert-oster": "Robert Oster's where-to-buy page"}
 INK_INTRO = ("Limited, seasonal and shop-exclusive fountain pen inks, checked at shops that each brand lists as its own dealer. "
              "We show what each shop's product data says, including inks that aren't on sale yet.")
@@ -4125,7 +4115,7 @@ def build_inks():
         soon_html = f'<section class="card"><h2>Not yet on sale</h2><p class="muted small">Listed by the shop, but not taking orders yet. That is different from sold out.</p><ul class="link-list">{li}</ul></section>'
     faq_html, faq_ld = tracker_good_to_know(
         "Do restock emails cover inks?",
-        "Yes. Tick \"Limited-edition inks\" in the signup box and we'll email you when a tracked ink comes back. Ink restocks also show on this page.")
+        "Not yet. Ink restocks show on this page. Our restock emails and social alerts cover the Hobonichi and dot grid trackers for now.")
     how = f'''<section class="card"><h2>How we pick shops</h2>
   <p>We track a brand's limited inks only at shops that appear on that brand's own dealer list. A shop calling itself an authorized dealer isn't enough. Some shops on our other trackers sell these inks too, but if the brand doesn't list them, we leave them out.</p>
   {watch_html}

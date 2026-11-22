@@ -9,14 +9,13 @@ import scripts.build_site as site
 
 CONFIRM = "We'll email you a confirmation link. You aren't on the list until you click it."
 NOTE = (
-    "Free restock emails for the trackers you pick: Hobonichi, dot grid journals and limited-edition inks. "
-    "Pick at least one, plus an occasional update when we add a tracker or release something new. "
+    "Free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. "
     "Unsubscribe anytime. We'll email you a confirmation link. You aren't on the list until you click it."
 )
 ALERTS_FAQ = (
-    "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails for the trackers you pick: Hobonichi, dot grid journals and limited-edition inks, plus an occasional update when we add a tracker or release something new. "
-    "Ink restocks also show on the inks page. "
-    "You can unsubscribe anytime."
+    "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails for Hobonichi and dot grid journal restocks, plus an occasional update when we add a tracker or release something new. "
+    "Limited ink restocks show on the inks page only; restock emails don't cover inks yet. "
+    "It's one list, and you can unsubscribe anytime."
 )
 TRACK_HOBO = "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and a few A6 and A5 covers."
 HUB_HOBO = "Original A6, Cousin A5, the English Planner A6, HON, Weeks, Weeks Mega and covers, at the official store and independent shops."
@@ -112,15 +111,15 @@ class PolicyWordingTests(unittest.TestCase):
     def test_privacy_discloses_confirmation_tpt_and_github(self):
         doc = html_of(site.build_privacy())
         text = html.unescape(re.sub(r"<[^>]+>", " ", doc))
-        self.assertIn("updated Nov 22, 2026", text)
-        self.assertEqual(site.STATIC_LASTMOD["privacy/"], "2026-11-22")
+        self.assertIn("updated Nov 20, 2026", text)
+        self.assertEqual(site.STATIC_LASTMOD["privacy/"], "2026-11-20")
         self.assertIn("Cloudflare Web Analytics", text)
         self.assertIn("does not track individual end users across its customers", text)
         self.assertNotIn("does not currently run analytics beacons", text)
         self.assertIn("The site is hosted on Cloudflare Pages.", text)
-        self.assertIn("Kit sends a confirmation email first", text)
+        self.assertIn("Buttondown sends a confirmation email first", text)
         self.assertIn("we only add the address to the list after you click the link", text)
-        self.assertIn("We use it only to send restock alerts for the trackers you chose and occasional site updates.", text)
+        self.assertIn("We use it only to send restock alerts and occasional site updates.", text)
         self.assertIn(OUTBOUND, text)
         self.assertIn(GITHUB, text)
         self.assertNotIn("Amazon or Etsy for our own planners and journals,", text)
