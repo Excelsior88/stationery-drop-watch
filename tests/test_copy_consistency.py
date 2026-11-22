@@ -117,11 +117,11 @@ class HeroAndScopeTests(unittest.TestCase):
 
     def test_dot_grid_page_names_every_maker_and_keeps_the_legacy_url(self):
         group = next(g for g in site.GROUPS if g.get("section") == "dotgrid")
-        self.assertEqual(group["slug"], "archer-and-olive-dot-grid-journal")
-        self.assertEqual(site.REDIRECTS["archer-and-olive-bullet-journal"], group["slug"] + "/")
+        self.assertEqual(group["slug"], "dot-grid-journal-restock-tracker")
+        self.assertEqual(site.REDIRECTS["archer-and-olive-bullet-journal"], site.AO_SLUG + "/")
         _fname, doc = site.build_group(group, {})
         text = plain(doc)
-        self.assertIn("https://stationerydropwatch.com/archer-and-olive-dot-grid-journal/", doc)
+        self.assertIn("https://stationerydropwatch.com/dot-grid-journal-restock-tracker/", doc)
         self.assertIn("<h1>Dot grid journal restock tracker</h1>", doc)
         self.assertNotIn("<h1>Archer and Olive", doc)
         for name in ("Archer and Olive", "Leuchtturm1917", "Scribbles That Matter", "Notebook Therapy"):

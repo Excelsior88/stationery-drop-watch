@@ -245,7 +245,7 @@ class GiftGuideTests(unittest.TestCase):
 
 class SiteCopyTests(unittest.TestCase):
     def test_no_tracker_page_nav_or_faq_mentions_either_brand(self):
-        docs = [("index.html", NOTICE_CARD.sub("", site.build_index())), ("about.html", site.build_about()), ("404.html", site.build_404()),
+        docs = [("index.html", NOTICE_CARD.sub("", site.build_index())), ("about/", site.build_about()), ("404.html", site.build_404()),
                 (site.HOBO_TRACKER, site.build_hobo_tracker())]
         docs += [site.build_group(g, {}) for g in site.GROUPS]
         docs += [site.build_guides_index(), site.build_sold_out(), site.build_follow(), site.build_contact()]

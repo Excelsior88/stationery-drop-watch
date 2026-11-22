@@ -27,9 +27,9 @@ def pages():
     found = [
         ("index.html", site.build_index()),
         (site.HOBO_TRACKER, site.build_hobo_tracker()),
-        ("hobonichi-2027.html", site.build_hobonichi()),
-        ("about.html", site.build_about()),
-        ("privacy.html", site.build_privacy()),
+        ("hobonichi-2027/", site.build_hobonichi()),
+        ("about/", site.build_about()),
+        ("privacy/", site.build_privacy()),
         ("404.html", site.build_404()),
     ]
     found.extend(site.build_group(g) for g in site.GROUPS)
@@ -55,7 +55,7 @@ class SeoHeadTests(unittest.TestCase):
             self.assertNotIn("hourly", title.lower(), path)
             titles.append(title)
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 73)  # 82, minus 12 Traveler's/MIDORI pages removed Nov 19, 2026, plus 3 Weeks design pages
+        self.assertEqual(len(titles), 74)  # 82, minus 12 Traveler's/MIDORI pages removed Nov 19, 2026, plus 3 Weeks design pages
 
     def test_descriptions_match_social_tags_and_stay_under_160(self):
         descs = []
@@ -98,7 +98,7 @@ class SeoHeadTests(unittest.TestCase):
         missing = dict(self.docs)["404.html"]
         self.assertIn('<meta name="robots" content="noindex">', missing)
         self.assertNotIn('rel="canonical"', missing)
-        dot = dict(self.docs)["archer-and-olive-dot-grid-journal/"]
+        dot = dict(self.docs)["dot-grid-journal-restock-tracker/"]
         self.assertIn("og-dotgrid.png", dot)
         for path, doc in self.docs:
             for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', doc):
@@ -126,12 +126,12 @@ class SeoHeadTests(unittest.TestCase):
             self.assertEqual(art["datePublished"], "2026-10-29")
             self.assertEqual(art["dateModified"], "2026-10-29")
             self.assertNotIn(site.stock["run_finished"][:10], art["dateModified"])
-        dot = site.build_group(next(g for g in site.GROUPS if g["slug"] == "archer-and-olive-dot-grid-journal"), {})[1]
+        dot = site.build_group(next(g for g in site.GROUPS if g["slug"] == "dot-grid-journal-restock-tracker"), {})[1]
         self.assertIn('href="/hobonichi-restock-tracker/">Hobonichi tracker</a>', dot)
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 76)  # 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide, plus 3 Weeks design pages (Sheep Sheep Sheep x2, Leather Forest Green)
+        self.assertEqual(len(mods), 77)  # 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide, plus 3 Weeks design pages (Sheep Sheep Sheep x2, Leather Forest Green)
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):
@@ -197,7 +197,7 @@ class SeoHeadTests(unittest.TestCase):
 
 
     def test_hamtramck_is_visible_on_about_and_in_organization_jsonld(self):
-        about = dict(self.docs)["about.html"]
+        about = dict(self.docs)["about/"]
         home = dict(self.docs)["index.html"]
         line = "Stationery Drop Watch is built in Hamtramck, Michigan."
         self.assertIn(line, about)

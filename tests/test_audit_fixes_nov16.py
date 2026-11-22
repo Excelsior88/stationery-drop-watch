@@ -38,7 +38,7 @@ class BreadcrumbTests(unittest.TestCase):
         self.assertIn('<a href="/hobonichi-restock-tracker/">Hobonichi tracker</a>', star)
 
     def test_other_sections_stay_top_level(self):
-        stag = (SITE / "archer-and-olive-dot-grid-journal/archer-and-olive-stag/index.html").read_text()
+        stag = (SITE / "dot-grid-journal-restock-tracker/archer-and-olive-stag/index.html").read_text()
         self.assertEqual(crumb_names(stag), ["Home", "Dot grid journals", "Archer and Olive Stag"])
         tn = (SITE / "travelers-company-limited-edition/index.html").read_text()
         self.assertEqual(crumb_names(tn), ["Home", "Why Traveler's Company and MIDORI are gone"])
@@ -52,7 +52,7 @@ class BreadcrumbTests(unittest.TestCase):
 
 class AboutTests(unittest.TestCase):
     def test_no_coming_soon_and_hamtramck_line_stays(self):
-        about = (SITE / "about.html").read_text()
+        about = (SITE / "about" / "index.html").read_text()
         self.assertNotIn("tag-soon", about)
         self.assertNotIn("Coming soon", about)
         self.assertNotIn("coming soon", about)

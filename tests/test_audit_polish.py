@@ -8,8 +8,8 @@ CSS = (ROOT / "site" / "assets" / "style.css").read_text()
 HOME = (ROOT / "site" / "index.html").read_text()
 SHOP = (ROOT / "site" / "shop" / "index.html").read_text()
 FOLLOW = (ROOT / "site" / "follow" / "index.html").read_text()
-PRIVACY = (ROOT / "site" / "privacy.html").read_text()
-ABOUT = (ROOT / "site" / "about.html").read_text()
+PRIVACY = (ROOT / "site" / "privacy" / "index.html").read_text()
+ABOUT = (ROOT / "site" / "about" / "index.html").read_text()
 
 
 def _hub_card(html, name):
@@ -42,7 +42,7 @@ class AuditPolishTests(unittest.TestCase):
         # Order: Shop, then Follow us, then About
         self.assertRegex(
             foot.group(1),
-            r'href="/shop/">Shop</a><a href="/follow/">Follow us</a><a href="/about">About</a>',
+            r'href="/shop/">Shop</a><a href="/follow/">Follow us</a><a href="/about/">About</a>',
         )
 
     def test_follow_page_centers_a_lone_last_card(self):
@@ -73,7 +73,7 @@ class AuditPolishTests(unittest.TestCase):
         self.assertNotIn("independent", blurb.lower())
         self.assertNotIn("own store", blurb)
         # Official-store detail remains on the dot-grid hub.
-        hub = (ROOT / "site" / "archer-and-olive-dot-grid-journal" / "index.html").read_text()
+        hub = (ROOT / "site" / "dot-grid-journal-restock-tracker" / "index.html").read_text()
         self.assertIn("official US store", hub)
         self.assertIn("own store", hub)
         self.assertIn("We check Archer and Olive", hub)

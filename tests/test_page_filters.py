@@ -122,7 +122,7 @@ class PageFilterMarkupTests(unittest.TestCase):
             for cid in re.findall(r'<section class="group-sec" id="([^"]+)"', doc):
                 self.assertTrue(cid, name)
             self.assertNotIn('class="shop-head"', doc, name)
-            if g["slug"] == "archer-and-olive-dot-grid-journal":
+            if g["slug"] == "dot-grid-journal-restock-tracker":
                 self.assertIn("Leuchtturm1917 · Hardcover Medium (A5) dotted notebook", doc)
                 self.assertIn("Leuchtturm1917 · Bullet Journal Edition 2", doc)
                 self.assertIn("Leuchtturm1917 · Medium (A5) 120G dotted notebook", doc)
@@ -152,6 +152,8 @@ class PageFilterMarkupTests(unittest.TestCase):
     def expected_signup_label(self, name):
         if name == "hobonichi-restock-tracker/" or name.startswith("hobonichi-"):
             return site.SIGNUP_LABELS["hobonichi"]
+        if name == site.AO_SLUG + "/":
+            return site.SIGNUP_LABELS["dotgrid"]
         for sec, meta in site.SECTIONS.items():
             slug = meta["slug"]
             if name == slug + "/" or name.startswith(slug + "/"):
@@ -381,7 +383,7 @@ class PageFilterMarkupTests(unittest.TestCase):
             self.assertEqual([q["name"] for q in schema["mainEntity"]], [html.unescape(x) for x in questions], name)
         hobo = site.build_hobo_tracker()
         self.assertIn("Hobonichi 2027 launch", hobo)
-        dot = next(doc for n, doc in pages if n.startswith("archer-and-olive"))
+        dot = next(doc for n, doc in pages if n.startswith("dot-grid-journal-restock-tracker"))
         self.assertIn("best dot grid journals compared", dot)
         self.assertIn("sells out on its own", dot)
         self.assertFalse(any("travelers-company" in n or "midori-md" in n for n, _doc in pages))

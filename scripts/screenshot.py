@@ -3,7 +3,7 @@ from playwright.sync_api import sync_playwright
 port = open(".port").read().strip()
 base = f"http://127.0.0.1:{port}/"
 shots = [("index.html", "home", [(1440, 900, "desktop"), (390, 844, "mobile")]),
-         ("hobonichi-2027.html", "hobonichi-2027", [(1440, 900, "desktop"), (390, 844, "mobile")])]
+         ("hobonichi-2027/", "hobonichi-2027", [(1440, 900, "desktop"), (390, 844, "mobile")])]
 with sync_playwright() as p:
     b = p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox"])
     for path, name, sizes in shots:
