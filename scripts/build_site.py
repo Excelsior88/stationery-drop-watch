@@ -26,6 +26,24 @@ stock = json.loads((ROOT / "data/stock.json").read_text())
 changes = json.loads((ROOT / "data/changes.json").read_text())
 picks = json.loads((ROOT / "content/editor_picks.json").read_text())
 
+# Some shops put an availability phrase in the product or variant title ("In Stock - Ships Now",
+# "Preorder Only - Ships Mid February", "... In Stock", "[SOLD OUT]"). Our status column already says
+# that, and a stale phrase can contradict it, so pages show the title without it. A ship date stays.
+# The raw data files keep the shop's exact title.
+_TITLE_STATUS = (
+    (re.compile(r"\s*/\s*In Stock - Ships Now\b", re.I), ""),
+    (re.compile(r"\bPreorder Only - (Ships [^/]+)", re.I), r"\1"),
+    (re.compile(r"\s*\[SOLD OUT\]", re.I), ""),
+    (re.compile(r"\s+-?\s*In Stock\s*$", re.I), ""),
+)
+def display_title(t):
+    for rx, rep in _TITLE_STATUS:
+        t = rx.sub(rep, t)
+    return t.strip()
+for _p in stock["products"]:
+    if _p.get("title"):
+        _p["title"] = display_title(_p["title"])
+
 # Traveler's Company and MIDORI were removed on Nov 19, 2026, at TRAVELER'S COMPANY USA's request (owner
 # approved). Their old URLs show TAKEDOWN_NOTICE instead. Rows left in data/ from before the removal, and any row
 # whose URL is no longer in stores.json, never reach a page, a restock feed or the site/data copies.
@@ -53,6 +71,9 @@ _STORE_IDS = {x["id"] for x in stores["stores"]}
 def _ink_public(r):
     return (not r.get("hidden") and r.get("ink_id") in INKS and r.get("url") in _INK_URLS
             and r.get("store_id") in _STORE_IDS and r.get("store_id") not in TAKEDOWN_STORES)
+for _r in INK_STOCK["products"]:
+    if _r.get("title"):
+        _r["title"] = display_title(_r["title"])
 INK_ROWS = [r for r in INK_STOCK["products"] if _ink_public(r)]
 INK_CHANGES = [c for c in _ink_load("changes.json", []) if _ink_public(c)]
 INK_RETIRED = {k: v for k, v in _ink_load("retired.json", {}).items() if k in INKS}
