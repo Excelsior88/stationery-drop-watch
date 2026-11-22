@@ -4205,12 +4205,28 @@ def build_takedown_notice(slug, noindex=False):
     return fname, page(fname, TAKEDOWN_HEADING, TAKEDOWN_DESC, body,
                        ld=(crumbs_ld((fname, TAKEDOWN_HEADING)),), og_type="article", noindex=noindex)
 
+def publish_ink_data():
+    """Ink status and changes for the drop-alert routine (it reads the LIVE site data): site/data/inks/{stock,changes}.json.
+    Pending finds ("hidden": true) are never published."""
+    out = SITE / "data" / "inks"
+    out.mkdir(parents=True, exist_ok=True)
+    stock_p, changes_p = ROOT / "data/inks/stock.json", ROOT / "data/inks/changes.json"
+    if stock_p.exists():
+        stock = json.loads(stock_p.read_text())
+        stock["products"] = [r for r in stock.get("products") or [] if not r.get("hidden")]
+        (out / "stock.json").write_text(json.dumps(stock, indent=1, ensure_ascii=False) + "\n")
+    if changes_p.exists():
+        changes = [c for c in json.loads(changes_p.read_text()) if not c.get("hidden")]
+        (out / "changes.json").write_text(json.dumps(changes, indent=1, ensure_ascii=False) + "\n")
+
+
 def main():
     if shop_preview() and SITE.resolve() == (ROOT / "site").resolve():
         raise SystemExit("Refusing to write a shop preview into site/. Set DROPWATCH_SITE_OUT to another directory.")
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
     shutil.copy(ROOT / "data/changes.json", SITE / "data/changes.json")
+    publish_ink_data()
     (SITE / "index.html").write_text(build_index())
     (SITE / HOBO_TRACKER).mkdir(parents=True, exist_ok=True)
     (SITE / HOBO_TRACKER / "index.html").write_text(build_hobo_tracker())
