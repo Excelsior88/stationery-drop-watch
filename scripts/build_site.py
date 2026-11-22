@@ -302,6 +302,12 @@ def guide_updated(fn):
     d = dt.date.fromisoformat(e["date"])
     return f"updated {d.strftime('%b')} {d.day}, {d.year}"
 
+def guide_modified(fn):
+    """ISO date behind a guide's visible "updated" line, for its Article dateModified and sitemap lastmod,
+    so the structured data and the page say the same day. Call after guide_updated(fn) has run."""
+    import json as _j
+    return _j.loads(GUIDE_DATES.read_text())[fn.__name__]["date"]
+
 STATUS = {"in_stock": "In stock", "preorder": "Preorder", "coming_soon": "Not yet on sale",
           "sold_out": "Sold out", "unknown": "Couldn't check"}
 DOTGRID_SLUG = SECTIONS["dotgrid"]["slug"]
@@ -2315,7 +2321,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG,)]  # the indexed takedown notices
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_MODIFIED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"])), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-20"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD, guide_modified(build_vs))), (url_for(JAN_APR_SLUG + "/"), latest(JAN_APR_MODIFIED, guide_modified(build_january_april))), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD, guide_modified(build_dotgrid_guide))), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], guide_modified(build_gift_guide))), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-20"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -2381,6 +2387,7 @@ HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", 
 GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared"),
                         ("holiday-stationery-gift-guide-2026/", "Holiday gift guide 2026")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
 GUIDES_LASTMOD = "2026-10-29"
+GIFT_PUBLISHED = "2026-11-20"  # PR #52 merged Fri Nov 20, 2026, 9:13 AM ET
 DG_GUIDE_LASTMOD = "2026-11-20"  # STM Pro sizes, Leuchtturm formats, and TN wording (America/Detroit)
 GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin A5, Weeks and Weeks Mega in stock right now, checked about every 30 minutes, plus tips for catching a restock.",
                 VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits.",
@@ -2680,7 +2687,7 @@ def build_vs():
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": "Hobonichi Techo vs Cousin vs Weeks: which 2027 planner fits you?",
-           "datePublished": GUIDES_LASTMOD, "dateModified": GUIDES_LASTMOD, "url": url_for(fname), "image": OG_IMAGE,
+           "datePublished": GUIDES_LASTMOD, "dateModified": guide_modified(build_vs), "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -2779,7 +2786,7 @@ def build_january_april():
 </article>"""
     headline = "Hobonichi Techo January-start vs April-start"
     art = {"@context": "https://schema.org", "@type": "Article", "headline": headline,
-           "datePublished": JAN_APR_PUBLISHED, "dateModified": JAN_APR_MODIFIED, "url": url_for(fname), "image": OG_IMAGE,
+           "datePublished": JAN_APR_PUBLISHED, "dateModified": guide_modified(build_january_april), "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -2931,7 +2938,7 @@ def build_dotgrid_guide():
 {related_block(fname)}
 </article>"""
     art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
-           "datePublished": "2026-11-04", "dateModified": DG_GUIDE_LASTMOD, "url": url_for(fname), "image": OG_DOTGRID,
+           "datePublished": "2026-11-04", "dateModified": guide_modified(build_dotgrid_guide), "url": url_for(fname), "image": OG_DOTGRID,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -3287,9 +3294,9 @@ def build_gift_guide():
 <ol class="sources two-col">{src_items}</ol>
 {related_block(fname)}
 </article>"""
-    upd = json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"]
+    upd = guide_modified(build_gift_guide)
     art = {"@context": "https://schema.org", "@type": "Article", "headline": title,
-           "datePublished": upd, "dateModified": upd, "url": url_for(fname), "image": OG_IMAGE,
+           "datePublished": GIFT_PUBLISHED, "dateModified": upd, "url": url_for(fname), "image": OG_IMAGE,
            "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
            "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
