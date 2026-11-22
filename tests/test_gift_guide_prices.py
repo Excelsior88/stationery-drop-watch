@@ -2,7 +2,7 @@
 
 The checker records a Shopify listing's price only when the shop sells in USD (its /meta.json says so).
 The guide shows the lowest recorded price among shops that had the pick in stock or on preorder, and
-says so plainly when there is no price. The Etsy sale line follows ETSY_PRICE and ends after Nov 30.
+says so plainly when there is no price. The Etsy sale line follows ETSY_PRICE and ends after Dec 1.
 """
 import copy
 import datetime as dt
@@ -144,17 +144,17 @@ class EtsySaleLine(unittest.TestCase):
     def doc(self, day, etsy_price=None, listings=None):
         return text(self.html(day, etsy_price, listings))
 
-    def test_shown_through_nov_30_and_gone_on_dec_1(self):
+    def test_shown_through_dec_1_and_gone_on_dec_2(self):
         happy = next(e for e in site.etsy_listings() if e.get("id") == "happy-mail")
         shared = f"{site.ETSY_PRICE[0]} each on Etsy"
         other = f"{happy['price']} on Etsy"
-        for day in (dt.date(2026, 11, 20), dt.date(2026, 11, 30)):
+        for day in (dt.date(2026, 11, 20), dt.date(2026, 12, 1)):
             rows = price_rows(self.html(day))
             printable = next(r for r in rows if "Our printables" in r)
             happy_row = next(r for r in rows if happy["title"] in r)
             self.assertIn(f"{shared}, {site.ETSY_PRICE[1]}", printable)
             self.assertIn(f"{other}, {site.ETSY_PRICE[1]}", happy_row)
-        dec_html = self.html(dt.date(2026, 12, 1))
+        dec_html = self.html(dt.date(2026, 12, 2))
         dec_rows = price_rows(dec_html)
         printable = next(r for r in dec_rows if "Our printables" in r)
         happy_row = next(r for r in dec_rows if happy["title"] in r)
@@ -168,12 +168,12 @@ class EtsySaleLine(unittest.TestCase):
         """Happy Mail is $5.99 in shop data; both printable rows get the same sale wording, then drop it."""
         happy = next(e for e in site.etsy_listings() if e.get("id") == "happy-mail")
         self.assertEqual(site.etsy_item_price(happy), "$5.99")
-        rows = price_rows(self.html(dt.date(2026, 11, 30)))
+        rows = price_rows(self.html(dt.date(2026, 12, 1)))
         shared = next(r for r in rows if "Our printables" in r)
         other = next(r for r in rows if happy["title"] in r)
         self.assertIn(f"{site.ETSY_PRICE[0]} each on Etsy, {site.ETSY_PRICE[1]}", shared)
         self.assertIn(f"{happy['price']} on Etsy, {site.ETSY_PRICE[1]}", other)
-        dec_rows = price_rows(self.html(dt.date(2026, 12, 1)))
+        dec_rows = price_rows(self.html(dt.date(2026, 12, 2)))
         shared = next(r for r in dec_rows if "Our printables" in r)
         other = next(r for r in dec_rows if happy["title"] in r)
         self.assertIn(f"{site.ETSY_PRICE[0]} each on Etsy", shared)
@@ -185,12 +185,12 @@ class EtsySaleLine(unittest.TestCase):
         items = [dict(e) for e in site.etsy_listings()]
         happy = next(e for e in items if e.get("id") == "happy-mail")
         happy["price"] = "$4.50"
-        rows = price_rows(self.html(dt.date(2026, 11, 30), listings=items))
+        rows = price_rows(self.html(dt.date(2026, 12, 1), listings=items))
         other = next(r for r in rows if happy["title"] in r)
         self.assertIn(f"$4.50 on Etsy, {site.ETSY_PRICE[1]}", other)
         shared = next(r for r in rows if "Our printables" in r)
         self.assertIn(f"{site.ETSY_PRICE[0]} each on Etsy, {site.ETSY_PRICE[1]}", shared)
-        dec = next(r for r in price_rows(self.html(dt.date(2026, 12, 1), listings=items)) if happy["title"] in r)
+        dec = next(r for r in price_rows(self.html(dt.date(2026, 12, 2), listings=items)) if happy["title"] in r)
         self.assertIn("$4.50 on Etsy", dec)
         self.assertNotIn("% off", dec)
 
