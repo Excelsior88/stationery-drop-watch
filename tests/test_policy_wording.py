@@ -13,7 +13,8 @@ NOTE = (
     "Unsubscribe anytime. We'll email you a confirmation link. You aren't on the list until you click it."
 )
 ALERTS_FAQ = (
-    "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. "
+    "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails for Hobonichi and dot grid journal restocks, plus an occasional update when we add a tracker or release something new. "
+    "Limited ink restocks show on the inks page only; restock emails don't cover inks yet. "
     "It's one list, and you can unsubscribe anytime."
 )
 TRACK_HOBO = "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and a few A6 and A5 covers."

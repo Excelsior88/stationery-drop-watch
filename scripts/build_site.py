@@ -1252,7 +1252,7 @@ def build_index():
                "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
                "publisher": organization()}
     return page("index.html", "Hobonichi and dot grid journal restock tracker",
-                f"Live stock at {N_STORES} shops: Hobonichi Techo 2027 planners and covers and flagship dot grid journals, plus free email alerts for every restock we track.",
+                f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, flagship dot grid journals and limited-edition inks, plus free restock emails for Hobonichi and dot grid.",
                 body, ld=(site_ld, faq_ld))
 
 def build_hobonichi():
@@ -1377,7 +1377,7 @@ def build_about():
 <p>Drop Watch is run by Andrew Robinson. He built the tracker after seeing how frustrating it was for his partner, Arden, to keep up with planner restocks, and now they run it together. Stationery Drop Watch is built in Hamtramck, Michigan.</p>
 </section>
 <h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}. When a sold-out listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list.</p>
+<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}. When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a> and goes out to the alert list. Ink restocks show on the inks page only; restock emails don't cover inks yet.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2 id="sponsor">Featured shop slot</h2>
 <p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email {plain_email()} for rates and dates.</p>
@@ -2058,7 +2058,8 @@ FAQ = [
      "Yes, our own: we make planners and journals and sell them on our shop page ({shop}), printed on Amazon, as printable PDFs on Etsy, and as classroom printables on Teachers Pay Teachers. "
      "The stationery we track is sold by the shops themselves; we just link you to them. "),
     ("How do restock alerts work?",
-     "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails from every shop we track, plus an occasional update when we add a tracker or release something new. "
+     "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails for Hobonichi and dot grid journal restocks, plus an occasional update when we add a tracker or release something new. "
+     "Limited ink restocks show on the inks page only; restock emails don't cover inks yet. "
      "It's one list, and you can unsubscribe anytime."),
 ]
 
