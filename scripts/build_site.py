@@ -445,6 +445,10 @@ def plain_email():
     """Visible address, not a mailto link. The comments keep Cloudflare from obfuscating it."""
     return f"<!--email_off-->{E(PUBLIC_EMAIL)}<!--/email_off-->"
 
+def mailto_email():
+    """The visible address as a mailto link (Contact, About, Privacy). Same comments, same literal address."""
+    return f'<!--email_off--><a href="mailto:{E(PUBLIC_EMAIL)}">{E(PUBLIC_EMAIL)}</a><!--/email_off-->'
+
 def jsonld(obj):
     payload = json.dumps(obj, ensure_ascii=False).replace("</", "<\\/")
     script = '<script type="application/ld+json">' + payload + "</script>"
@@ -1434,7 +1438,7 @@ def build_privacy():
 <h2>Links to other sites</h2>
 <p>When you follow a link to a shop we track, or to Amazon, Etsy, or Teachers Pay Teachers for our own planners, journals, and printables, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
 <h2>Contact</h2>
-<p>Questions, or want your email address removed? Email {plain_email()}.</p>
+<p>Questions, or want your email address removed? Email {mailto_email()}.</p>
 </article>"""
     return page(fname, "Privacy", "How Stationery Drop Watch handles email signups, plus page-view stats from Cloudflare Web Analytics. No cookies set by the site, no ad trackers.", body, ld=(crumbs_ld((fname, "Privacy")),))
 
@@ -1456,27 +1460,27 @@ def build_about():
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}. When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <h2>Contact</h2>
-<p>Questions, corrections, or a shop we should track? Email {plain_email()}. The <a href="contact/">contact page</a> is there too.</p>
+<p>Questions, corrections, or a shop we should track? Email {mailto_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
     org_ld = {"@context": "https://schema.org", **organization()}
     return page("about/", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi planner, dot grid and limited-edition ink restocks. A failed check is never shown as a guess.", body, ld=(crumbs_ld(("about/", "About")), org_ld))
 
 def build_contact():
-    """Visible contact page. The address is plain text, wrapped so Cloudflare Email Obfuscation leaves it alone."""
+    """Visible contact page. The address is a mailto link, wrapped so Cloudflare Email Obfuscation leaves it alone.
+    The independent-site note is in the footer, so the body doesn't repeat it."""
     fname = "contact/"
-    shown = plain_email()
+    shown = mailto_email()
     body = f"""
 <article class="prose">
 {crumbs((fname, "Contact"))}
 {eyebrow("Contact", "Stationery Drop Watch")}
 <h1>Contact</h1>
 <p class="lede">Stationery Drop Watch checks planner, journal and limited-edition ink stock at official stores and independent shops, and writes down what each shop last reported.</p>
-<p>{independent_note()}</p>
 <p>Andrew Robinson runs the site and can be reached at {shown}. Questions, corrections, or a shop we should track are welcome.</p>
 <p class="small"><a href="about/">About</a> explains how the checks work. <a href="privacy/">Privacy</a> explains the email list.</p>
 </article>"""
     desc = ("How to reach Stationery Drop Watch with questions, corrections, or a shop to add to the stock trackers. "
-            "The email address is written as plain text.")
+            "Email us at the address on this page.")
     return fname, page(fname, "Contact", desc, body, ld=(crumbs_ld((fname, "Contact")),))
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
