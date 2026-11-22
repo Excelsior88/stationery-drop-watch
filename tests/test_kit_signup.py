@@ -37,7 +37,14 @@ class KitSignup(unittest.TestCase):
             low = doc.lower()
             self.assertNotIn("don't cover inks", low, name)
             self.assertNotIn("emails don't cover", low, name)
-            self.assertNotIn("buttondown", low.replace("buttondown-archive", ""), name) if name == "privacy" else None
+            if name == "privacy":
+                # Buttondown appears only in the one paragraph about the move to Kit (dual-send through Dec 7, 2026).
+                m = re.search(r"<p>before november 22, 2026, signups went to .*?</p>", low)
+                self.assertIsNotNone(m)
+                self.assertIn("through december 7, 2026", m.group(0))
+                self.assertIn("kit only", m.group(0))
+                rest = low[:m.start()] + low[m.end():]
+                self.assertNotIn("buttondown", rest.replace("buttondown-archive", ""), name)
 
 
 class InkPageSignupTests(unittest.TestCase):
