@@ -160,7 +160,6 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .signup-strip-bottom{margin:28px 0 8px}
 @media (max-width:420px){.signup-strip button{flex:1 1 100%}}
 
-.sponsor-title{font:600 1.15rem var(--serif);margin:.1em 0 .3em}
 
 .editor{background:#fffaf2}
 .books{display:grid;gap:18px}
@@ -194,11 +193,10 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 
 .m-lead{display:contents}
 @media (max-width:900px){
-  /* one column: flatten both columns and re-order (first main section, then the Featured shop if one is booked) */
+  /* one column: flatten both columns and re-order (first main section) */
   .layout{display:flex;flex-direction:column}
   .main-col,.side-col{display:contents}
   .m-lead>*{order:-2}
-  .layout .sponsor{order:-1}
 }
 @media (max-width:560px){
   .wrap{padding:0 14px}
