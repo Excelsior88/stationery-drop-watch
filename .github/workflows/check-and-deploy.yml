@@ -53,9 +53,9 @@ jobs:
       - name: Run stock checker
         run: python scripts/checker.py
 
-      # Limited-edition inks: same polite fetcher, separate files (data/inks/), never read by the
-      # drop-alert webhook. A failed ink run must not stop the stock deploy; the page then shows the
-      # last committed ink check.
+      # Limited-edition inks: same polite fetcher, separate files (data/inks/). Real status changes to in_stock
+      # also go to the drop-alert webhook (new_in_stock.py, tracker=inks); first observations never do. A failed
+      # ink run must not stop the stock deploy; the page then shows the last committed ink check.
       - name: Run ink checker
         continue-on-error: true
         run: python scripts/ink_tracker.py check

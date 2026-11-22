@@ -53,11 +53,7 @@ class BaselineTests(unittest.TestCase):
         self.assertEqual(changes, [])
         self.assertEqual(rec["status_since"], old["status_since"])
 
-    def test_ink_changes_never_reach_the_drop_alert_feed(self):
-        # The webhook reads data/changes.json only; ink rows live in data/inks/.
-        src = (ROOT / "scripts/new_in_stock.py").read_text()
-        self.assertIn('"data/changes.json"', src)
-        self.assertNotIn("data/inks", src)
+    def test_ink_files_stay_under_data_inks(self):
         self.assertEqual(ink.DATA, ROOT / "data" / "inks")
 
 
