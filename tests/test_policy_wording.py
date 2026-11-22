@@ -18,7 +18,7 @@ ALERTS_FAQ = (
     "Ink restocks also show on the inks page. "
     "You can unsubscribe anytime."
 )
-TRACK_HOBO = "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and a few A6 and A5 covers."
+TRACK_HOBO = "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the English Planner A6 book, HON, Weeks and Weeks Mega, and 15 A6 covers, 12 A5 covers and 3 Weeks covers."
 HUB_HOBO = "Original A6, Cousin A5, the English Planner A6, HON, Weeks, Weeks Mega and covers, at the official store and independent shops."
 SELL_TPT = "Classroom printables are on Teachers Pay Teachers."
 OUTBOUND = "When you follow a link to a shop we track, or to Amazon, Etsy, or Teachers Pay Teachers for our own planners, journals, and printables, that site has its own privacy policy."
