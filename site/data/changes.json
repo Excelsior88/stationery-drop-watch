@@ -2176,5 +2176,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-22T23:17:44+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks · Shirt Fabric: Graph Plaid",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
