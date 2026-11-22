@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Write this run's NEW changes to in_stock (in data/changes.json but not in HEAD's copy).
 
-Every new to=in_stock change is included, except Traveler's Company and MIDORI (removed Nov 19, 2026).
+Every new to=in_stock change is included (limited-edition inks too, from data/inks/changes.json, tagged tracker=inks), except Traveler's Company and MIDORI (removed Nov 19, 2026).
 There is no product, cover, or Weeks filter.
 The webhook body is that list plus the run clock. Run before the data commit.
 """
@@ -31,6 +31,21 @@ def fresh_in_stock(old, new):
             if change.get("to") == "in_stock" and key(change) not in seen and not taken_down(change)]
 
 
+def fresh_ink_in_stock(old, new):
+    """New ink changes to in_stock, tagged tracker=inks (and section=inks so the email step picks the inks tag).
+
+    Same rule as fresh_in_stock: only changes that are not already in HEAD's copy. ink_tracker.check only writes a change
+    when a listing it already had a status for flips, so a newly tracked ink never produces an event. Hidden rows
+    (ink_tracker marks them hidden) never alert."""
+    seen = {key(change) for change in old}
+    out = []
+    for change in new:
+        if change.get("to") != "in_stock" or change.get("hidden") or key(change) in seen or taken_down(change):
+            continue
+        out.append(dict(change, tracker="inks", section="inks"))
+    return out
+
+
 def webhook_body(changes, run_at, test=False):
     body = {"source": "stationery-drop-watch", "run_at": run_at, "changes": changes}
     if test:
@@ -52,6 +67,14 @@ def main(argv=None):
     except subprocess.CalledProcessError:
         old = []
     fresh = fresh_in_stock(old, new)
+    ink_path = "data/inks/changes.json"
+    if os.path.exists(ink_path):
+        ink_new = json.load(open(ink_path))
+        try:
+            ink_old = json.loads(subprocess.run(["git", "show", "HEAD:" + ink_path], capture_output=True, text=True, check=True).stdout)
+        except subprocess.CalledProcessError:
+            ink_old = ink_new  # file not in HEAD yet: everything in it is history, nothing is new
+        fresh += fresh_ink_in_stock(ink_old, ink_new)
     json.dump(fresh, open(argv[0], "w"), indent=1)
     print(len(fresh))
     return 0

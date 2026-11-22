@@ -13,7 +13,7 @@ check
   shop files under its own coming-soon collection is "coming_soon", not "sold_out". A failed check is
   "unknown" ("Couldn't check" on the site), never guessed. The first observation of a listing only sets
   first_seen: it never writes a change, so a new ink can't look like a restock. Ink changes go to
-  data/inks/changes.json, which the drop-alert webhook (new_in_stock.py) does not read.
+  data/inks/changes.json, which new_in_stock.py reads for the drop-alert webhook (changes to in_stock, tracker=inks).
   Pending finds are checked too, but their rows carry "hidden": true and no page shows them.
   An ink whose every listing has been sold out for RETIRE_DAYS days is retired: it stops being
   checked and the page lists it under "No longer tracked".
