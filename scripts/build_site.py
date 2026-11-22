@@ -1474,10 +1474,10 @@ GROUPS = [
                "Below is what each shop we track reported at its last check: in stock, on preorder, sold out, or not on sale yet. "
                "If a check failed we say \"Couldn't check\" rather than guess."),
     dict(slug="hobonichi-techo-2027-cousin-a5", short="Cousin A5", product="Hobonichi Techo 2027 Cousin (A5)",
-         match=lambda p: p.get("canonical") == "cousin-a5-en",
-         desc="Is the Hobonichi Cousin A5 in stock? Live status for the English Cousin at {shops} shops, with every restock we spot and a link to each listing. See each listing.",
+         match=lambda p: p.get("canonical") in ("cousin-a5-en", "cousin-avec-a5-jp"),
+         desc="Is the Hobonichi Cousin A5 in stock? Live status for the English Cousin and the Japanese Avec set at {shops} shops, with every restock we spot. See each listing.",
          intro="The Cousin is the A5 version of the Techo, with a page a day and more room to write. "
-               "Here's what each shop we track reported for the English Cousin at its last check."),
+               "Here's what each shop we track reported for the English Cousin and for the Japanese Cousin Avec, the two-book set with January to June and July to December, at its last check."),
     dict(slug="hobonichi-weeks-2027", short="Weeks", product="Hobonichi Weeks 2027",
          match=lambda p: p["type"] == "Weeks",
          desc="Is Hobonichi Weeks 2027 in stock? Live status for Midnight Blue, Canaria Yellow, tanakadaisuke: Starlight and more at {shops} shops. Open a shop's page to confirm.",
@@ -1498,7 +1498,7 @@ GROUPS = [
          match=lambda p: p["type"] == "Cover",
          desc="Are Hobonichi Techo 2027 covers in stock? Live status for the tracked A6 and A5 covers at {shops} shops, with a link to each listing. Open a shop's page to confirm.",
          intro="Popular Hobonichi covers can sell out within minutes of a drop. "
-               "We track a handful of 2027 covers: A6 covers for the Original, and one A5 cover for the Cousin. "
+               "We track the covers that sold best in Hobonichi's first-week overseas ranking, plus a few more: A6 covers for the Original and A5 covers for the Cousin. Weeks covers are on the Weeks page. "
                "Here's what each shop reported at its last check."),
     dict(slug=DOTGRID_SLUG, short="Dot grid journals", product="Dot grid journal", section="dotgrid", featured=True,
          search_hint="Ice Castle, 8x8, kraft…",

@@ -350,6 +350,131 @@
    "label": "Notebook Therapy · Tsuki 'Raven's Secret' Limited Edition",
    "type": "Dot grid notebook",
    "brand": "notebooktherapy"
+  },
+  {
+   "id": "cover-a6-akiko-miyakoshi-airport",
+   "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-va-strawberry-thief",
+   "label": "A6 cover · V&A Series: Strawberry Thief",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-puppet-sunsun-wa",
+   "label": "A6 cover · PUPPET SUNSUN: Wa!",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-yoshie-watanabe-petit-bloom",
+   "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-colors-bordeaux-terracotta",
+   "label": "A6 cover · Colors: Bordeaux Terracotta",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-colors-blue-parasol",
+   "label": "A6 cover · Colors: Blue Parasol",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-tanakadaisuke-handkerchief",
+   "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-glow-chianti",
+   "label": "A6 cover · Glow: Chianti",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-natal-hello-new-day-camo",
+   "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a6-arts-science-wax-coating-kip",
+   "label": "A6 cover · Arts&Science: Wax Coating Kip",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-yumi-kitagishi-white-cat-village",
+   "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-va-blackthorn",
+   "label": "A5 cover · V&A Series: Blackthorn",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-akiko-miyakoshi-airport",
+   "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-puppet-sunsun-s",
+   "label": "A5 cover · PUPPET SUNSUN: S",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-colors-chiffon-greige",
+   "label": "A5 cover · Colors: Chiffon Greige",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-colors-misty-cedar",
+   "label": "A5 cover · Colors: Misty Cedar",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-colors-mango-latte",
+   "label": "A5 cover · Colors: Mango Latte",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-moomin-my-yard-pink-gray",
+   "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-mina-perhonen-felice-blue",
+   "label": "A5 cover · minä perhonen: felice (Blue)",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-tanakadaisuke-handkerchief",
+   "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+   "type": "Cover"
+  },
+  {
+   "id": "cover-a5-glow-chianti",
+   "label": "A5 cover · Glow: Chianti",
+   "type": "Cover"
+  },
+  {
+   "id": "weeks-cover-tragen-bitter-plaid",
+   "label": "Weeks cover · Tragen: Bitter Plaid",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-cover-alettone-sweets",
+   "label": "Weeks cover · Alettone: Sweets",
+   "type": "Weeks"
+  },
+  {
+   "id": "weeks-cover-mina-perhonen-felice-blue",
+   "label": "Weeks cover · minä perhonen: felice (Blue)",
+   "type": "Weeks"
+  },
+  {
+   "id": "cousin-avec-a5-jp",
+   "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+   "type": "Book"
   }
  ],
  "stores": [
@@ -672,6 +797,206 @@
      "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_m_tiesheep/",
      "source_key": "wb27_m_tiesheep",
      "source_title": "Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_miyakoshi/",
+     "source_key": "oc27_miyakoshi",
+     "source_title": "An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_vastrawberry/",
+     "source_key": "oc27_vastrawberry",
+     "source_title": "Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-puppet-sunsun-wa",
+     "label": "A6 cover · PUPPET SUNSUN: Wa!",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_sunsun/",
+     "source_key": "oc27_sunsun",
+     "source_title": "Wa!"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_watanabe/",
+     "source_key": "oc27_watanabe",
+     "source_title": "Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_colorsbterracotta/",
+     "source_key": "oc27_colorsbterracotta",
+     "source_title": "Bordeaux Teracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_colorsbparasol/",
+     "source_key": "oc27_colorsbparasol",
+     "source_title": "Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_tdaisuke/",
+     "source_key": "oc27_tdaisuke",
+     "source_title": "White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_chianti/",
+     "source_key": "oc27_chianti",
+     "source_title": "Chianti"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_natal/",
+     "source_key": "oc27_natal",
+     "source_title": "Hello New Day! (Camo)"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_aswaxkip/",
+     "source_key": "oc27_aswaxkip",
+     "source_title": "Wax Coating Kip"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_kitagishi/",
+     "source_key": "cc27_kitagishi",
+     "source_title": "White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_vablackthorn/",
+     "source_key": "cc27_vablackthorn",
+     "source_title": "Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_miyakoshi/",
+     "source_key": "cc27_miyakoshi",
+     "source_title": "An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-puppet-sunsun-s",
+     "label": "A5 cover · PUPPET SUNSUN: S",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_sunsun/",
+     "source_key": "cc27_sunsun",
+     "source_title": "S"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_colorscgreige/",
+     "source_key": "cc27_colorscgreige",
+     "source_title": "Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_colorsmcedar/",
+     "source_key": "cc27_colorsmcedar",
+     "source_title": "Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_colorsmlatte/",
+     "source_key": "cc27_colorsmlatte",
+     "source_title": "Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_moomin/",
+     "source_key": "cc27_moomin",
+     "source_title": "My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_minafelice/",
+     "source_key": "cc27_minafelice",
+     "source_title": "felice (Blue)"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_tdaisuke/",
+     "source_key": "cc27_tdaisuke",
+     "source_title": "White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_chianti/",
+     "source_key": "cc27_chianti",
+     "source_title": "Chianti"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wc27_tragenbplaid/",
+     "source_key": "wc27_tragenbplaid",
+     "source_title": "Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wc27_aileronsweets/",
+     "source_key": "wc27_aileronsweets",
+     "source_title": "Sweets"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wc27_minafelice/",
+     "source_key": "wc27_minafelice",
+     "source_title": "felice (Blue)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_avec/",
+     "source_key": "cb27_avec",
+     "source_title": "Hobonichi Techo 2027 Japanese Cousin Avec Books"
     }
    ]
   },
@@ -975,6 +1300,139 @@
      "type": "Dot grid notebook",
      "url": "https://www.thepapermouse.com/products/leuchtturm1917-a5-bullet-journal-edition-2-black",
      "source_title": "Leuchtturm1917 A5 Bullet Journal Edition 2 | Black"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a6-original-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Techo A6 Original Cover | Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a6-original-cover-v-a-series-strawberry-thief",
+     "source_title": "Hobonichi Techo A6 Original Cover | V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a6-original-cover-yoshie-watanabe-petit-bloom",
+     "source_title": "Hobonichi Techo A6 Original Cover | Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a6-original-cover-colors-bordeaux-teracotta",
+     "source_title": "Hobonichi Techo A6 Original Cover | Colors: Bordeaux Teracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a6-original-cover-colors-blue-parasol",
+     "source_title": "Hobonichi Techo A6 Original Cover | Colors: Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a6-original-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi Techo A6 Original Cover | tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a6-original-cover-hello-new-day-camo",
+     "source_title": "Hobonichi Techo A6 Original Cover | Hello New Day! (Camo)"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-yumi-kitagishi-white-cat-village",
+     "source_title": "Hobonichi Techo A5 Cousin Cover | Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-v-a-series-blackthorn",
+     "source_title": "Hobonichi Techo A5 Cousin Cover | V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Techo A5 Cousin Cover | Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-colors-chiffon-greige",
+     "source_title": "Hobonichi Techo A5 Cousin Cover | Colors: Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-colors-misty-cedar",
+     "source_title": "Hobonichi Techo A5 Cousin Cover | Colors: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-colors-mango-latte",
+     "source_title": "Hobonichi Techo A5 Cousin Cover | Colors: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-moomin-my-yard-pink-gray",
+     "source_title": "Hobonichi Techo A5 Cousin Cover | Moomin: My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Techo A5 Cousin Cover | minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-a5-cousin-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi Techo A5 Cousin Cover | tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-weeks-cover-tragen-bitter-plaid",
+     "source_title": "Hobonichi Techo Weeks Cover | Tragen: Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-weeks-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Techo Weeks Cover | minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-a5-cousin-avec-planner-book-only-japanese",
+     "source_title": "Hobonichi Techo 2027 A5 Cousin Avec Planner | Book Only | Japanese"
     }
    ]
   },
@@ -1291,6 +1749,167 @@
      "url": "https://www.atlasstationers.com/products/leuchtturm-a5-bullet-journal-edition-2?variant=43514758496417",
      "source_title": "Leuchtturm A5 Bullet Journal Edition 2 · Black",
      "variant_id": 43514758496417
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-v-a-series-strawberry-thief",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-yoshie-watanabe-petit-bloom",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-colors-bordeaux-teracotta",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Colors: Bordeaux Teracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-colors-blue-parasol",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Colors: Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-glow-chianti",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-hello-new-day-camo",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Hello New Day! (Camo)"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a6-original-planner-cover-arts-science-wax-coating-kip",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Arts&Science: Wax Coating Kip"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-yumi-kitagishi-white-cat-village",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-v-a-series-blackthorn",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-colors-chiffon-greige",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Colors: Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-colors-misty-cedar",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Colors: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-colors-mango-latte",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Colors: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-moomin-my-yard-pink-gray",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Moomin: My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-cover-glow-chianti",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-cover-tragen-bitter-plaid",
+     "source_title": "Hobonichi Techo Weeks Cover - Tragen: Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-cover-alettone-sweets",
+     "source_title": "Hobonichi Techo Weeks Cover - Alettone: Sweets"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Techo Weeks Cover - minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://www.atlasstationers.com/products/hobonichi-techo-a5-cousin-avec-books",
+     "source_title": "Hobonichi Techo A5 Cousin Avec Books"
     }
    ]
   },
@@ -1562,6 +2181,20 @@
      "type": "Cover",
      "url": "https://www.baum-kuchen.net/products/hobonichi-cover-yumi-kitagishi-white-cat-house-a6",
      "source_title": "[Hobonichi Cover] Yumi Kitagishi: White Cat House (A6)"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-cover-yumi-kitagishi-white-cat-village-a5",
+     "source_title": "[Hobonichi Cover] Yumi Kitagishi: White Cat Village [A5]"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.baum-kuchen.net/products/hobonichi-cover-moomin-my-yard-a5",
+     "source_title": "[Hobonichi Cover] Moomin: My Yard (A5)"
     }
    ]
   },
@@ -1828,6 +2461,160 @@
      "type": "Weeks Mega",
      "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-english-mega-weeks-bow-tie-sheep-sheep-sheep",
      "source_title": "PREVIEW - Hobonichi 2027 - English MEGA Weeks - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-v-a-series-strawberry-thief",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-yoshie-watanabe-petit-bloom",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-colors-bordeaux-teracotta",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - Colors: Bordeaux Teracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-colors-blue-parasol",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - Colors: Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-glow-chianti",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-natal-design-hello-new-day-camo",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - Natal Design: Hello New Day! (Camo)"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a6-cover-arts-science-wax-coating-kip",
+     "source_title": "PREVIEW - Hobonichi 2027 - A6 Cover - Arts&Science: Wax Coating Kip"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-yumi-kitagishi-white-cat-village",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-v-a-series-blackthorn",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-colors-chiffon-greige",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - Colors: Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-colors-misty-cedar",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - Colors: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-colors-mango-latte",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - Colors: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-moomin-my-yard-pink-gray",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - Moomin: My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-mina-perhonen-felice-blue",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-a5-cover-glow-chianti",
+     "source_title": "PREVIEW - Hobonichi 2027 - A5 Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-weeks-cover-tragen-bitter-plaid",
+     "source_title": "PREVIEW - Hobonichi 2027 - Weeks Cover - Tragen: Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-weeks-cover-alettone-sweets",
+     "source_title": "PREVIEW - Hobonichi 2027 - Weeks Cover - Alettone: Sweets"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://wonderpens.ca/products/b-preview-b-hobonichi-2027-weeks-cover-mina-perhonen-felice-blue",
+     "source_title": "PREVIEW - Hobonichi 2027 - Weeks Cover - minä perhonen: felice (Blue)"
     }
    ]
   },
@@ -1933,6 +2720,69 @@
      "type": "Weeks Mega",
      "url": "https://laywines.com/products/hobonichi-weeks-mega-colors-canaria-yellow-2027",
      "source_title": "Hobonichi Weeks MEGA Colors: Canaria Yellow 2027"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://laywines.com/products/hobonichi-a6-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi A6 Cover Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://laywines.com/products/hobonichi-a6-cover-yoshie-watanabe-petit-bloom",
+     "source_title": "Hobonichi A6 Cover Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://laywines.com/products/hobonichi-a6-cover-colors-bordeaux-teracotta",
+     "source_title": "Hobonichi A6 Cover Colors: Bordeaux Teracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://laywines.com/products/hobonichi-a6-cover-colors-blue-parasol",
+     "source_title": "Hobonichi A6 Cover Colors: Blue Parasol"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://laywines.com/products/hobonichi-a5-cover-yumi-kitagishi-white-cat-village",
+     "source_title": "Hobonichi A5 Cover Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://laywines.com/products/hobonichi-a5-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi A5 Cover Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://laywines.com/products/hobonichi-a5-cover-colors-mango-latte",
+     "source_title": "Hobonichi A5 Cover Colors: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://laywines.com/products/hobonichi-a5-cover-moomin-my-yard-pink-gray",
+     "source_title": "Hobonichi A5 Cover Moomin: My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://laywines.com/products/hobonichi-a5-cousin-avec-japanese-books-2027",
+     "source_title": "Hobonichi A5 Cousin Avec Japanese Books 2027"
     }
    ]
   },
@@ -2197,6 +3047,167 @@
      "url": "https://www.penboutique.com/products/leuchtturm-1917-hardcover-notebook-a5-dotted?variant=41769475604598",
      "source_title": "Leuchtturm 1917 Hardcover Notebook - A5 - Dotted · Black",
      "variant_id": 41769475604598
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-japanese-2027-book-cover-akiko-miyakoshi-an-airport-at-night-a6",
+     "source_title": "Hobonichi Japanese 2027 Cover - Akiko Miyakoshi: An Airport at Night - A6"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-japanese-2027-book-cover-v-a-series-strawberry-thief-a6",
+     "source_title": "Hobonichi Japanese 2027 Cover - V&A Series: Strawberry Thief - A6"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-japanese-2027-book-cover-yoshie-watanabe-petit-bloom-a6",
+     "source_title": "Hobonichi Japanese 2027 Cover - Yoshie Watanabe: Petit Bloom - A6"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-japanese-2027-book-cover-colors-bordeaux-teracotta-a6",
+     "source_title": "Hobonichi Japanese 2027 Cover - Colors: Bordeaux Teracotta - A6"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-japanese-2027-book-cover-colors-blue-parasol-a6",
+     "source_title": "Hobonichi Japanese 2027 Cover - Colors: Blue Parasol - A6"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-japanese-2027-book-cover-tanakadaisuke-white-handkerchief-diary-a6",
+     "source_title": "Hobonichi Japanese 2027 Cover - tanakadaisuke: White Handkerchief Diary - A6"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-japanese-2027-book-cover-tragen-bitter-plaid-a6-1",
+     "source_title": "Hobonichi Japanese 2027 Cover - Glow: Chianti - A6"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-japanese-2027-book-cover-tnatal-design-hello-new-day-camo-a6",
+     "source_title": "Hobonichi Japanese 2027 Cover - Natal Design: Hello New Day! (Camo) - A6"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-original-a6-cover-arts-and-science-wax-coating-kip-2027",
+     "source_title": "Hobonichi Japanese 2027 Cover - Arts&Science: Wax Coating Kip - A6"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/yumi-kitagishi-hobonichi-white-cat-village-cousin-a5-cover",
+     "source_title": "Hobonichi 2027 Cousin Cover - Yumi Kitagishi: White Cat Village - A5"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-va-series-blackthorn-cousin-a5-cover",
+     "source_title": "Hobonichi 2027 Cousin Cover - V&A Series: Blackthorn - A5"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/akiko-miyakoshi-hobonichi-an-airport-at-night-cousin-a5-cover",
+     "source_title": "Hobonichi 2027 Cousin Cover - Akiko Miyakoshi: An Airport at Night - A5"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-cousin-japanese-book-cover-colors-chiffon-greige-a5",
+     "source_title": "Hobonichi 2027 Cousin Japanese Cover - Colors: Chiffon Greige - A5"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-colors-misty-cedar-cousin-a5-cover",
+     "source_title": "Hobonichi 2027 Colors Cousin Cover - Misty Cedar - A5"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-colors-mango-latte-cousin-a5-cover",
+     "source_title": "Hobonichi 2027 Colors Cousin Cover - Mango Latte - A5"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/moomin-hobonichi-my-yard-pink-gray-cousin-a5-cover",
+     "source_title": "Hobonichi 2027 Cousin Cover - Moomin: My Yard (Pink Gray) - A5"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-japanese-2027-cover-mina-perhonen-felice-blue-a5",
+     "source_title": "Hobonichi Japanese Cover - Minä Perhonen: Felice (Blue) - A5"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/tanakadaisuke-hobonichi-white-handkerchief-diary-cousin-a5-cover",
+     "source_title": "Hobonichi 2027 Cousin Cover - Tanakadaisuke: White Handkerchief Diary - A5"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.penboutique.com/products/hobonichi-glow-chianti-cousin-a5-leather-cover",
+     "source_title": "Hobonichi 2027 Cousin Cover - Glow: Chianti - A5"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-tragen-bitter-plaid-tall-and-slim-cover",
+     "source_title": "Hobonichi 2027 Tri-Fold Cover - Tragen: Bitter Plaid - Tall & Slim"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-alettone-sweets-tall-and-slim-cover",
+     "source_title": "Hobonichi 2027 Tri-Fold Cover - Alettone: Sweets - Tall & Slim"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://www.penboutique.com/products/hobonichi-cover-mina-perhonen-felice-blue-tall-slim",
+     "source_title": "Hobonichi Cover - Minä Perhonen: Felice - Blue - Tall & Slim"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://www.penboutique.com/products/hobonichi-techo-2027-japanese-cousin-avec-refill-books-a5-daily-6-month-x-2-book-set-january-start-monday-start",
+     "source_title": "Hobonichi Techo 2027 Japanese Cousin Avec Refill Books - A5 (Daily 6-month x 2 book set - January Start - Monday Start)"
     }
    ]
   },
@@ -2494,6 +3505,167 @@
      "url": "https://yosekastationery.com/products/leuchtturm1917-hardcover-medium-notebook-a5-dot-grid?variant=42736827334869",
      "source_title": "Leuchtturm1917 Hardcover Medium Notebook - A5 - Dot Grid · Navy",
      "variant_id": 42736827334869
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-akiko-miyakoshi-an-airport-at-night-a6",
+     "source_title": "Hobonichi Original Cover 2027 - Akiko Miyakoshi: An Airport at Night - A6"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-v-a-series-strawberry-thief-a6",
+     "source_title": "Hobonichi Original Cover 2027 - V&A Series: Strawberry Thief - A6"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-yoshie-watanabe-petit-bloom-a6",
+     "source_title": "Hobonichi Original Cover 2027 - Yoshie Watanabe: Petit Bloom - A6"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-colors-bordeaux-teracotta-a6",
+     "source_title": "Hobonichi Original Cover 2027 - Colors: Bordeaux Teracotta - A6"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-colors-blue-parasol-a6",
+     "source_title": "Hobonichi Original Cover 2027 - Colors: Blue Parasol - A6"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-tanakadaisuke-white-handkerchief-diary-a6",
+     "source_title": "Hobonichi Original Cover 2027 - tanakadaisuke: White Handkerchief Diary - A6"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-glow-chianti-a6",
+     "source_title": "Hobonichi Original Cover 2027 - Glow: Chianti - A6"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-natal-design-hello-new-day-camo-a6",
+     "source_title": "Hobonichi Original Cover 2027 - Natal Design: Hello New Day! (Camo) - A6"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-arts-science-wax-coating-kip-a6",
+     "source_title": "Hobonichi Original Cover 2027 - Arts&Science: Wax Coating Kip - A6"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-yumi-kitagishi-white-cat-village-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - Yumi Kitagishi: White Cat Village - A5"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-v-a-series-blackthorn-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - V&A Series: Blackthorn - A5"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-akiko-miyakoshi-an-airport-at-night-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - Akiko Miyakoshi: An Airport at Night - A5"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-colors-chiffon-greige-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - Colors: Chiffon Greige - A5"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-colors-misty-cedar-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - Colors: Misty Cedar - A5"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-colors-mango-latte-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - Colors: Mango Latte - A5"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-moomin-my-yard-pink-gray-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - Moomin: My Yard (Pink Gray) - A5"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-mina-perhonen-felice-blue-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - minä perhonen: felice (Blue) - A5"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-tanakadaisuke-white-handkerchief-diary-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - tanakadaisuke: White Handkerchief Diary - A5"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-glow-chianti-a5",
+     "source_title": "Hobonichi Techo Cousin Cover 2027 - Glow: Chianti - A5"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-weeks-techo-cover-2027-tragen-bitter-plaid",
+     "source_title": "Hobonichi Weeks Techo Cover 2027 - Tragen: Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-weeks-techo-cover-2027-alettone-sweets",
+     "source_title": "Hobonichi Weeks Techo Cover 2027 - Alettone: Sweets"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://yosekastationery.com/products/hobonichi-weeks-techo-cover-2027-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Weeks Techo Cover 2027 - mina perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-avec-2027-a5",
+     "source_title": "Hobonichi Techo Cousin Avec 2027 - A5"
     }
    ]
   },
@@ -2760,6 +3932,167 @@
      "type": "Weeks Mega",
      "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-2027-bow-tie-sheep-sheep-sheep-1",
      "source_title": "Hobonichi Techo Weeks Mega 2027 - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a6-original-cover-only-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Techo A6 Original Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a6-original-cover-only-v-a-series-strawberry-thief",
+     "source_title": "Hobonichi Techo A6 Original Cover - V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a6-original-cover-only-yoshie-watanabe-petit-bloom",
+     "source_title": "Hobonichi Techo A6 Original Cover - Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a6-original-cover-only-bordeaux-terracotta",
+     "source_title": "Hobonichi Techo A6 Original Cover - Bordeaux Terracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a6-original-cover-only-blue-parasol",
+     "source_title": "Hobonichi Techo A6 Original Cover - Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a6-original-cover-only-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi Techo A6 Original Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a6-original-cover-only-glow-chianti",
+     "source_title": "Hobonichi Techo A6 Original Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a6-original-cover-only-hello-new-day-camo",
+     "source_title": "Hobonichi Techo A6 Original Cover - Hello New Day!"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a6-original-cover-only-arts-science-wax-coating-kip",
+     "source_title": "Hobonichi Techo A6 Original Cover - Arts&Science: Wax Coating Kip"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-yumi-kitagishi-white-cat-village",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-v-a-series-blackthorn",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-colors-chiffon-greige",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Colors: Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-colors-misty-cedar",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Colors: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-colors-mango-latte",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Colors: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-moomin-my-yard-pink-gray",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Moomin: My Yard"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - mina perhonen: felice"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-glow-chianti",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-cover-tragen-bitter-plaid",
+     "source_title": "Hobonichi Techo Weeks Cover - Tragen: Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-cover-alettone-sweets",
+     "source_title": "Hobonichi Techo Weeks Cover - Alettone: Sweets"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-weeks-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Techo Weeks Cover - mina perhonen: felice Blue"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://www.jennibick.com/products/hobonichi-techo-2026-japanese-cousin-avec-books-a5-size-daily-6-month-x-2-book-set-jan-start-mon-start",
+     "source_title": "Hobonichi Techo 2027 Cousin Avec Books A5 Set of 2"
     }
    ]
   },
@@ -2976,6 +4309,104 @@
      "type": "Book",
      "url": "https://usa.kinokuniya.com/products/4580812710343",
      "source_title": "Hobonichi Techo 2027 Japanese Original Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812708784",
+     "source_title": "Akiko Miyakoshi: An Airport at Night Cover - A6 Size (Original) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812708807",
+     "source_title": "Yoshie Watanabe: Petit Bloom Cover - A6 Size (Original) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812708777",
+     "source_title": "Colors: Bordeaux Teracotta Cover - A6 Size (Original) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812708753",
+     "source_title": "Colors: Blue Parasol Cover - A6 Size (Original) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812708968",
+     "source_title": "Glow: Chianti Cover - A6 Size (Original) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812709071",
+     "source_title": "Yumi Kitagishi: White Cat Village Cover - A5 Size (Cousin) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812709033",
+     "source_title": "Colors: Chiffon Greige Cover - A5 Size (Cousin) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812709057",
+     "source_title": "Colors: Misty Cedar Cover - A5 Size (Cousin) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812709040",
+     "source_title": "Colors: Mango Latte Cover - A5 Size (Cousin) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812709132",
+     "source_title": "Moomin: My Yard (Pink Gray) Cover - A5 Size (Cousin) - Hobonichi 2027"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://usa.kinokuniya.com/products/4580812709248",
+     "source_title": "Glow: Chianti Cover - A5 Size (Cousin) - Hobonichi 2027"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://usa.kinokuniya.com/products/4580812710138",
+     "source_title": "Alettone: Sweets Cover - Weeks - Hobonichi 2027"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://usa.kinokuniya.com/products/4580812701945",
+     "source_title": "minä perhonen: felice (Blue) Cover - Weeks - Hobonichi 2027"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://usa.kinokuniya.com/products/4580812710411",
+     "source_title": "Hobonichi Techo 2027 Japanese Cousin Avec Books [A5 size/Daily 6-month x 2 book set/Jan start/Mon start]"
     }
    ]
   },
@@ -3314,6 +4745,125 @@
      "type": "Dot grid notebook",
      "url": "https://blesket.com/products/leuchtturm1917-a5-bullet-journal-edition-2-black",
      "source_title": "LEUCHTTURM1917 A5 Bullet Journal - Edition 2 - Black"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-akiko-miyakoshi-an-airport-at-night-a6-cover",
+     "source_title": "Hobonichi Techo 2027 Akiko Miyakoshi: An Airport at Night A6 Cover"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-v-a-series-strawberry-thief-a6-cover",
+     "source_title": "Hobonichi Techo 2027 V&A Series: Strawberry Thief A6 Cover"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-yoshie-watanabe-petit-bloom-a6-cover",
+     "source_title": "Hobonichi Techo 2027 Yoshie Watanabe: Petit Bloom A6 Cover"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-colors-bordeaux-terracotta-a6-original-size-cover",
+     "source_title": "Hobonichi Techo Colors – Bordeaux Terracotta A6 Original Size Cover"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-tanakadaisuke-white-handkerchief-diary-a6-cover",
+     "source_title": "Hobonichi Techo 2027 Tanakadaisuke: White Handkerchief Diary A6 Cover"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-natal-design-hello-new-day-camo-a6-cover",
+     "source_title": "Hobonichi Techo 2027 Natal Design: Hello New Day! (Camo) A6 Cover"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-yumi-kitagishi-white-cat-village-a5-cover",
+     "source_title": "Hobonichi Techo 2027 Yumi Kitagishi: White Cat Village A5 Cover"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-akiko-miyakoshi-an-airport-at-night-a5-cover",
+     "source_title": "Hobonichi Techo 2027 Akiko Miyakoshi: An Airport at Night A5 Cover"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-colors-chiffon-greige-a5-cover",
+     "source_title": "Hobonichi Techo 2027 Colors: Chiffon Greige A5 Cover"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-colors-misty-cedar-a5-cousin-cover",
+     "source_title": "Hobonichi Techo Colors – Misty Cedar A5 Cousin Cover"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-moomin-my-yard-pink-gray-a5-cover",
+     "source_title": "Hobonichi Techo 2027 Moomin: My Yard (Pink Gray) A5 Cover"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-mina-perhonen-felice-blue-a5-cover",
+     "source_title": "Hobonichi Techo 2027 Minä Perhonen: Felice (Blue) A5 Cover"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-tanakadaisuke-white-handkerchief-diary-a5-cover",
+     "source_title": "Hobonichi Techo 2027 Tanakadaisuke: White Handkerchief Diary A5 Cover"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-weeks-tragen-bitter-plaid-tall-slim-cover",
+     "source_title": "Hobonichi Techo 2027 Weeks Tragen: Bitter Plaid [Tall & Slim] Cover"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://blesket.com/products/hobonichi-techo-alettone-sweets-weeks-cover",
+     "source_title": "Hobonichi Techo Alettone – Sweets Weeks Cover"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-weeks-mina-perhonen-felice-blue-tall-slim-cover",
+     "source_title": "Hobonichi Techo 2027 Weeks Minä Perhonen: Felice (Blue) [Tall & Slim] Cover"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://blesket.com/products/hobonichi-techo-2027-a5-cousin-avec-books-japanese",
+     "source_title": "Hobonichi Techo 2027 A5 Cousin Avec Books – Japanese"
     }
    ]
   },
@@ -3604,6 +5154,167 @@
      "type": "Dot grid notebook",
      "url": "https://www.thejournalshop.com/products/leuchtturm1917-bullet-journal-edition-2-limited-colour-purple26",
      "source_title": "Leuchtturm1917 Bullet Journal Edition 2 Limited Colour Purple26"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi 2027 A6 Planner Cover: Akiko Miyakoshi - An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-v-a-series-strawberry-thief",
+     "source_title": "Hobonichi 2027 A6 Planner Cover: V&A Series - Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-yoshie-watanabe-petit-bloom",
+     "source_title": "Hobonichi 2027 A6 Planner Cover: Yoshie Watanabe - Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-colors-bordeaux-teracotta",
+     "source_title": "Hobonichi 2027 A6 Planner Cover: Colors - Bordeaux Teracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-colors-blue-parasol",
+     "source_title": "Hobonichi 2027 A6 Planner Cover: Colors - Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi 2027 A6 Planner Cover: tanakadaisuke - White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-glow-chianti",
+     "source_title": "Hobonichi 2027 A6 Planner Cover: Glow - Chianti"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-hello-new-day-camo",
+     "source_title": "Hobonichi 2027 A6 Planner Cover: Hello New Day! (Camo)"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-arts-science-wax-coating-kip",
+     "source_title": "Hobonichi 2027 A6 Planner Cover: Arts&Science - Wax Coating Kip"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-yumi-kitagishi-white-cat-village",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: Yumi Kitagishi - White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-v-a-series-blackthorn",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: V&A Series - Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: Akiko Miyakoshi - An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-colors-chiffon-greige",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: Colors - Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-colors-misty-cedar",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: Colors - Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-colors-mango-latte",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: Colors - Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-moomin-my-yard-pink-gray",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: Moomin - My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: minä perhonen - felice (Blue)"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: tanakadaisuke - White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-a5-cousin-cover-glow-chianti",
+     "source_title": "Hobonichi 2027 A5 Cousin Cover: Glow - Chianti"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-cover-tragen-bitter-plaid",
+     "source_title": "Hobonichi 2027 Weeks Cover: Tragen - Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-cover-alettone-sweets",
+     "source_title": "Hobonichi 2027 Weeks Cover: Alettone - Sweets"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi 2027 Weeks Cover: minä perhonen - felice (Blue)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://www.thejournalshop.com/products/hobonichi-techo-2027-japanese-cousin-avec-books-a5-size-daily-6-month-x-2-book-set-jan-start-mon-start",
+     "source_title": "Hobonichi Techo 2027 Japanese Cousin Avec Books [A5 size/Daily 6-month x 2 book set/Jan start/Mon start]"
     }
    ]
   },
@@ -3895,6 +5606,118 @@
      "type": "Dot grid notebook",
      "url": "https://www.buchanst.com/products/leuchtturm1917-bullet-journal-edition-2-purple-26",
      "source_title": "Leuchtturm1917 - Bullet Journal Edition 2 - Purple 26"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a6-cover-only-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Techo 2027 - A6 Cover Only - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a6-cover-only-v-a-series-strawberry-thief",
+     "source_title": "Hobonichi Techo 2027 - A6 Cover Only - V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a6-cover-only-yoshie-watanabe-petit-bloom",
+     "source_title": "Hobonichi Techo 2027 - A6 Cover Only - Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a6-cover-only-colors-bordeaux-terracotta",
+     "source_title": "Hobonichi Techo 2027 - A6 Cover Only - Colors: Bordeaux Terracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a6-cover-only-colors-blue-parasol",
+     "source_title": "Hobonichi Techo 2027 - A6 Cover Only - Colors: Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a6-cover-only-glow-chianti",
+     "source_title": "Hobonichi Techo 2027 - A6 Cover Only - Glow: Chianti"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-yumi-kitagishi-white-cat-village",
+     "source_title": "Hobonichi Techo 2027 - A5 Cover Only - Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-v-a-series-blackthorn",
+     "source_title": "Hobonichi Techo 2027 - A5 Cover Only - V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Techo 2027 - A5 Cover Only - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-colors-colors-chiffon-greige",
+     "source_title": "Hobonichi Techo 2027 - A5 Cover Only - Colors: Colors: Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-colors-misty-cedar",
+     "source_title": "Hobonichi Techo 2027 - A5 Cover Only - Colors: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-colors-mango-latte",
+     "source_title": "Hobonichi Techo 2027 - A5 Cover Only - Colors: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-moomin-my-yard-pink-gray",
+     "source_title": "Hobonichi Techo 2027 - A5 Cover Only - Moomin: My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Techo 2027 - A5 Cover Only - mina perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-a5-cover-only-glow-chianti",
+     "source_title": "Hobonichi Techo 2027 - A5 Cover Only - Glow: Chianti"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://www.buchanst.com/products/hobonichi-techo-2027-cousin-avec-a5-6-months-x-2-planner-books-japanese-jan-start-mon-start",
+     "source_title": "Hobonichi Techo 2027 - A5 Cousin AVEC (2 Book Set) - Japanese/Jan Start/Mon Start"
     }
    ]
   },
@@ -3953,6 +5776,167 @@
      "type": "HON",
      "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-hon-a6-english-hardcover-planner-book-bow-tie-sheep-sheep-sheep",
      "source_title": "2027 Hobonichi Techo HON A6 English Hardcover Planner Book - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-planner-cover-only-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-planner-cover-only-v-a-series-strawberry-thief",
+     "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-planner-cover-only-yoshie-watanabe-petit-bloom",
+     "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-planner-cover-only-colors-bordeaux-teracotta",
+     "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - Colors: Bordeaux Terracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-planner-cover-only-colors-blue-parasol",
+     "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - Colors: Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-planner-cover-only-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-planner-cover-only-glow-chianti",
+     "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - Glow: Chianti"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-planner-cover-only-natal-design-hello-new-day-camo",
+     "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - Natal Design: Hello New Day! (Camo)"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-planner-cover-only-arts-science-wax-coating-kip",
+     "source_title": "2027 Hobonichi Techo A6 Planner Cover Only - Arts&Science: Wax Coating Kip"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-yumi-kitagishi-white-cat-village",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only - Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-v-a-series-blackthorn",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only - V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-colors-chiffon-greige",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only - Colors: Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-colors-misty-cedar",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only - Colors: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-colors-mango-latte",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only  - Colors: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-moomin-my-yard-pink-gray",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only - Moomin: My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-only-mina-perhonen-felice-blue",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only - minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-only-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-cousin-a5-planner-cover-glow-chianti",
+     "source_title": "2027 Hobonichi Techo Cousin A5 Planner Cover Only - Glow: Chianti"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://www.mlovewell.com/products/hobonichi-techo-weeks-cover-tragen-bitter-plaid",
+     "source_title": "Hobonichi Techo Weeks Cover - Tragen: Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://www.mlovewell.com/products/hobonichi-techo-weeks-cover-alettone-sweets",
+     "source_title": "Hobonichi Techo Weeks Cover - Alettone: Sweets"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://www.mlovewell.com/products/hobonichi-techo-weeks-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Techo Weeks Cover - minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://www.mlovewell.com/products/2027-hobonichi-techo-original-avec-books-japanese-a5",
+     "source_title": "2027 Hobonichi Techo Original Avec Books Japanese A5"
     }
    ]
   },
@@ -4264,6 +6248,118 @@
      "type": "Dot grid notebook",
      "url": "https://www.dromgooles.com/products/leuchtturm1917-a5-medium-hardcover-dotted-notebook-sage",
      "source_title": "Leuchtturm1917 A5 Medium Hardcover Dotted Notebook - Sage"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a6-techo-cover-only-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi A6 Techo Cover Only - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a6-techo-cover-only-v-a-series-strawberry-thief",
+     "source_title": "Hobonichi A6 Techo Cover Only - V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a6-techo-cover-only-yoshie-watanabe-petit-bloom",
+     "source_title": "Hobonichi A6 Techo Cover Only - Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a6-techo-cover-only-colors-bordeaux-teracotta",
+     "source_title": "Hobonichi A6 Techo Cover Only - Colors: Bordeaux Teracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a6-techo-cover-only-colors-blue-parasol",
+     "source_title": "Hobonichi A6 Techo Cover Only - Colors: Blue Parasol"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a5-cousin-cover-only-yumi-kitagishi-white-cat-village",
+     "source_title": "Hobonichi A5 Cousin Cover Only - Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a5-cousin-cover-only-v-a-series-blackthorn",
+     "source_title": "Hobonichi A5 Cousin Cover Only - V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a5-cousin-cover-only-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi A5 Cousin Cover Only - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a5-cousin-cover-only-colors-chiffon-greige",
+     "source_title": "Hobonichi A5 Cousin Cover Only - Colors: Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a5-cousin-cover-only-colors-misty-cedar",
+     "source_title": "Hobonichi A5 Cousin Cover Only - Colors: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a5-cousin-cover-only-colors-mango-latte",
+     "source_title": "Hobonichi A5 Cousin Cover Only - Colors: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a5-cousin-cover-only-moomin-my-yard-pink-gray",
+     "source_title": "Hobonichi A5 Cousin Cover Only - Moomin: My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://www.dromgooles.com/products/hobonichi-a5-cousin-cover-only-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi A5 Cousin Cover Only - mina perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://www.dromgooles.com/products/hobonichi-weeks-cover-tragen-bitter-plaid",
+     "source_title": "Hobonichi Weeks Cover - Tragen: Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://www.dromgooles.com/products/hobonichi-weeks-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Weeks Cover - mina perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://www.dromgooles.com/products/hobonichi-2027-a5-techo-cousin-avec-book-set-of-2-mon-jan-start-6-month-japanese",
+     "source_title": "Hobonichi 2027 A5 Techo Cousin Avec Book - Set of 2 (Mon/Jan Start) (6-Month) (Japanese)"
     }
    ]
   },
@@ -4309,6 +6405,34 @@
      "type": "Cover",
      "url": "https://milligram.com/products/hobonichi-techo-original-a6-cover-my-yard-pale-mint",
      "source_title": "Techo Original A6 Cover My Yard Pale Mint"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://milligram.com/products/hobonichi-techo-original-a6-cover-petit-bloom",
+     "source_title": "Techo Original A6 Cover Petit Bloom"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://milligram.com/products/hobonichio-techo-original-a5-cover-misty-cedar",
+     "source_title": "Techo Original A5 Cover Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://milligram.com/products/hobonichi-techo-original-a5-cover-my-yard-pink-gray",
+     "source_title": "Techo Original A5 Cover My Yard Pink Gray"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://milligram.com/products/hobonichi-2027-techo-cousin-avec-books-a5-japanese",
+     "source_title": "2027 Techo Cousin Avec Books A5 Japanese"
     }
    ]
   },
