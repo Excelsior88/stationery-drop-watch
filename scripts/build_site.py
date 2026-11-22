@@ -585,18 +585,6 @@ def eyebrow(*parts):
 
 
 
-# Featured shop slot. Hidden until a shop books it: set SPONSOR to dict(name=..., line=..., url=...) to show it.
-SPONSOR = None
-
-def sponsor_block():
-    if not SPONSOR:
-        return ""
-    return f"""<aside class="card sponsor" aria-label="Featured shop">
-  <p class="eyebrow">Featured shop · sponsored</p>
-  <p class="sponsor-title"><a href="{E(SPONSOR['url'])}" rel="sponsored noopener" target="_blank">{E(SPONSOR['name'])}</a></p>
-  <p>{E(SPONSOR['line'])}</p>
-</aside>"""
-
 def editor_block(page="home"):
     """Owner's own books for one page: "home" (Hobonichi side, the default) or "dotgrid"."""
     items = []
@@ -1426,8 +1414,6 @@ def build_about():
 <h2>How it works</h2>
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}. When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
-<h2 id="sponsor">Featured shop slot</h2>
-<p>Independent stationery shops can book the featured spot on the tracker to promote a restock or launch. It's clearly labeled as sponsored. Shops: want a featured restock slot? Email {plain_email()} for rates and dates.</p>
 <h2>Contact</h2>
 <p>Questions, corrections, or a shop we should track? Email {plain_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
@@ -1445,11 +1431,11 @@ def build_contact():
 <h1>Contact</h1>
 <p class="lede">Stationery Drop Watch checks planner and journal stock at official stores and independent shops, and writes down what each shop last reported.</p>
 <p>{independent_note()}</p>
-<p>Andrew Robinson runs the site and can be reached at {shown}. Questions, corrections, a shop we should track, or a featured restock slot are welcome.</p>
+<p>Andrew Robinson runs the site and can be reached at {shown}. Questions, corrections, or a shop we should track are welcome.</p>
 <p class="small"><a href="about/">About</a> explains how the checks work. <a href="privacy/">Privacy</a> explains the email list.</p>
 </article>"""
-    desc = ("How to reach Stationery Drop Watch: questions, corrections, a shop to add, "
-            "or a featured restock slot. The address is written on this page too.")
+    desc = ("How to reach Stationery Drop Watch: questions, corrections, or a shop to add to the stock trackers. "
+            "The email address is written out on this page too, as plain text.")
     return fname, page(fname, "Contact", desc, body, ld=(crumbs_ld((fname, "Contact")),))
 
 # --- Product restock pages (one indexable page per tracked product group) ---------------------
@@ -2068,7 +2054,6 @@ def build_design(d, oe=None):
     {sources_html}
   </div>
   <aside class="side-col">
-    {sponsor_block()}
     <section class="card"><p class="eyebrow">More restock pages</p><ul class="link-list">{others}</ul></section>
     {section_guides(sec)}
   </aside>
