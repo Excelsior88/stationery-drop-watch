@@ -5,3 +5,27 @@ https://:project.pages.dev/*
 
 https://:version.:project.pages.dev/*
   X-Robots-Tag: noindex
+
+# Security headers for the live site. Cloudflare Pages already sends X-Content-Type-Options: nosniff and
+# Referrer-Policy: strict-origin-when-cross-origin (checked live Nov 22, 2026), so they are not repeated here.
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Frame-Options: SAMEORIGIN
+
+# Cache. HTML stays on Pages' default (public, max-age=0, must-revalidate), which is right for a page that changes every
+# ~30 minutes. The stylesheet and scripts are linked as ?v=<content hash>, so each URL never changes and can be cached for a year.
+# Other assets keep stable file names, so one day. (Pages default for them today is 4 hours.)
+/assets/style.css
+  Cache-Control: public, max-age=31536000, immutable
+/assets/app.js
+  Cache-Control: public, max-age=31536000, immutable
+/assets/local-time.js
+  Cache-Control: public, max-age=31536000, immutable
+/assets/brand/*
+  Cache-Control: public, max-age=86400
+/assets/badges/*
+  Cache-Control: public, max-age=86400
+/assets/books/*
+  Cache-Control: public, max-age=86400
+/assets/shop/*
+  Cache-Control: public, max-age=86400

@@ -80,7 +80,7 @@ class MadeByUsCardTests(unittest.TestCase):
         html = after_stock(self, self.hobo_doc, "holiday-planner")
         self.assertIn("Made by us", html)
         self.assertIn(self.holiday["title"], html)
-        self.assertIn("/assets/shop/holiday-planner-pages.webp", html)
+        self.assertIn("/assets/shop/holiday-planner-pages-600.webp", html)
         self.assertIn(self.holiday["alt"], html)
         self.assertIn("Printable holiday tip-ins in three sizes: Narrow Weekly 85 × 175 mm, "
                       "Pocket A6 95 × 138 mm, and Standard A5 138 × 198 mm.", html)

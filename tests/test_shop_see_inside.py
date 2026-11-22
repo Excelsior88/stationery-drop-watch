@@ -289,8 +289,8 @@ class ShopSeeInsideTests(unittest.TestCase):
         url = "https://www.etsy.com/listing/4616108634/holiday-planner-printable-tip-ins-gift"
         self.assertEqual(holiday.count(url), 2)
         self.assertIn('class="shop-img sheet"', holiday)
-        self.assertIn('width="2000" height="2000"', holiday)
-        self.assertIn("holiday-planner-pages.webp", holiday.split("<details", 1)[0])
+        self.assertIn('width="600" height="600"', holiday)
+        self.assertIn("holiday-planner-pages-600.webp", holiday.split("<details", 1)[0])
         self.assertNotIn("holiday-planner-layouts.webp", holiday.split("<details", 1)[0])
         self.assertIn("$6.99", holiday)
         self.assertIn("25% off all listings, Cyber sale Nov 23 to Dec 1", holiday)

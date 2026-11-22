@@ -34,7 +34,7 @@ class ShareImageAltTests(unittest.TestCase):
         self.assertNotIn("Traveler", site.OG_ALT)
         self.assertNotIn("MIDORI", site.OG_ALT)
         self.assertIn(site.CHECK_FREQ, site.OG_ALT)
-        title = site.seo_title("Hobonichi and dot grid journal restock tracker")
+        title = site.seo_title("Hobonichi, dot grid and ink restock tracker")
         self.assertLessEqual(len(title), 60)
         self.assertIn("dot grid", title)
         self.assertNotRegex(site.OG_ALT, SHOP_COUNT_RE)

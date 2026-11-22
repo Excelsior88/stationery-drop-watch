@@ -609,3 +609,9 @@ table.stock.compare thead th{vertical-align:top}
 @media (min-width:1001px){.hub-grid .hub-notice:nth-child(3n+1){grid-column:1/-1}}
 /* Two-column homepage grid with three tracker cards: the third tracker takes a full row, so no cell sits empty above the notice. */
 @media (max-width:1000px){.hub-grid .hub-card:nth-child(3):not(.hub-notice):nth-last-child(2){grid-column:1/-1}}
+
+/* Respect the visitor's reduced-motion setting: no transitions, animations or smooth scrolling. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+  .book-cover img,.hub-card a{transform:none !important}
+}

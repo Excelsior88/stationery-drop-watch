@@ -93,10 +93,15 @@ class FooterMatchedBadgeTests(unittest.TestCase):
         ham_img = footer.find("<img", footer.find("badge-hamtramck"))
         self.assertNotIn("<a ", footer[footer.find("</a>", zero_img):ham_img])
 
+        from PIL import Image
         for tag in re.findall(r"<img[^>]+>", footer):
             self.assertIn('width="150"', tag)
-            self.assertIn('height="63"', tag)
             self.assertIn('loading="lazy"', tag)
+            # width/height attributes keep the real aspect ratio of the file (CSS still draws every badge in an equal 150x63 box)
+            src = re.search(r'src="/([^"]+)"', tag).group(1)
+            with Image.open(ROOT / "site" / src) as im:
+                real_h = round(150 * im.size[1] / im.size[0])
+            self.assertEqual(int(re.search(r'height="(\d+)"', tag).group(1)), real_h, tag)
 
         self.assertIn(
             ".foot-badge{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}",

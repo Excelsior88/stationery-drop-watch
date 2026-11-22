@@ -289,10 +289,11 @@ TAKEDOWN_ITEMS = {TN_SLUG: ("regular-black", "regular-blue", "regular-brown", "r
                   MIDORI_SLUG: ("md-diary-2027-a5", "md-diary-1-day-1-page-2027-a5")}
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": AO_SLUG + "/",
+             MIDORI_SLUG: TN_SLUG + "/",  # duplicate of the Traveler's notice: one canonical page, the other 301s
              "travelers-notebook-regular-size": TN_SLUG + "/",  # takedown notice
              "faq": "#good-to-know"}  # /faq -> the homepage FAQ ("Good to know")
 # Old Traveler's Company and MIDORI item pages point at their brand's takedown notice.
-REDIRECTS.update({f"{parent}/{slug}": parent + "/" for parent, slugs in TAKEDOWN_ITEMS.items() for slug in slugs})
+REDIRECTS.update({f"{parent}/{slug}": TN_SLUG + "/" for parent, slugs in TAKEDOWN_ITEMS.items() for slug in slugs})
 # Home is a hub; the Hobonichi tracker (the old homepage content) lives on its own page.
 HOBO_TRACKER = "hobonichi-restock-tracker/"
 # Header: one link per restock tracker, then the rest of the site. Wraps on narrow screens; nothing is hidden.
@@ -369,7 +370,7 @@ CNAME = "stationerydropwatch.com"
 OG_IMAGE = BASE + "assets/brand/og-image.png"  # 1200x630, made by scripts/brand/make_og.py (Hobonichi side)
 # The default card file is still the Hobonichi artwork. It is also the image on the hub and
 # the utility pages, so the alt names every tracker. It prints no shop count.
-OG_ALT = f"Stationery Drop Watch: restock tracker for Hobonichi and dot grid journals, checked {CHECK_FREQ}"
+OG_ALT = f"Stationery Drop Watch: restock tracker for Hobonichi, dot grid journals and limited-edition inks, checked {CHECK_FREQ}"
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
 OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked " + CHECK_FREQ
 CONTENT_LASTMOD = "2026-11-12"  # floor for pages whose HTML changed in the Nov 12 refresh
@@ -481,7 +482,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <nav class="foot-nav" aria-label="Footer">{foot_nav}</nav>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="muted">{independent_note()}</p>
-  <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="63" loading="lazy"></a> <a href="/privacy/"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></a> <img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="63" loading="lazy"></p>
+  <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="50" loading="lazy"></a> <a href="/privacy/"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></a> <img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="50" loading="lazy"></p>
 </div></footer>
 <script src="assets/local-time.js?v={ASSET_V['local-time.js']}" defer></script>
 <script src="assets/app.js?v={ASSET_V['app.js']}" defer></script>
@@ -951,8 +952,33 @@ def count_line(ls, unit="listings"):
         return f"couldn't check {'this listing' if n == 1 else f'these {n} {unit}'} this run"
     return f"{b} of {n - u} checked {unit} in stock or on preorder · {u} couldn't be checked this run"
 
+def pack_rows(rows):
+    """Compact form of the listing rows for the page (decoded back to the same row objects by assets/app.js):
+    {"k": [keys], "d": {key: [distinct values]}, "r": [[value or dictionary index per key, null = key absent]]}.
+    Repeated strings (product, shop, status, family...) are stored once. Falls back to the plain list if any value is null."""
+    keys = []
+    for r in rows:
+        for k in r:
+            if k not in keys:
+                keys.append(k)
+    if any(v is None for r in rows for v in r.values()):
+        return rows
+    d = {}
+    for k in keys:
+        vals = [r[k] for r in rows if k in r]
+        distinct = []
+        for v in vals:
+            if v not in distinct and isinstance(v, str):
+                distinct.append(v)
+        if len(distinct) * 3 < len(vals) and len(distinct) == len({r[k] for r in rows if k in r}):
+            d[k] = distinct
+    out = []
+    for r in rows:
+        out.append([(d[k].index(r[k]) if k in d else r[k]) if k in r else None for k in keys])
+    return {"k": keys, "d": d, "r": out}
+
 def stock_data(rows):
-    return f'<script id="stock-data" type="application/json">{json.dumps(rows, ensure_ascii=False).replace("</", "<\\/")}</script>'
+    return f'<script id="stock-data" type="application/json">{json.dumps(pack_rows(rows), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")}</script>'
 
 def soon_block():
     """Sections we plan to track but don't have listings for yet. Disappears once every one is live."""
@@ -1221,10 +1247,10 @@ def build_index():
   {eyebrow(tracker_count_label(), f"{N_STORES} shops", f"checked {CHECK_FREQ}")}
   <h1>Never miss a stationery restock.</h1>
   <p class="hero-shops">We check {N_STORES} shops for you</p>
-  <p class="suggest">Know the moment your planner or journal is back.</p>
-  <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners and dot grid journals, and tell you when they come back.</p>
+  <p class="suggest">Know the moment your planner, journal or ink is back.</p>
+  <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals and limited-edition inks, and tell you when they come back.</p>
   {signup()}
-  {trust_strip(prods)}
+  {trust_strip(prods + (INK_ROWS if INK_LIVE else []))}
   <p class="small section-switch">More on the site: <a href="hobonichi-2027/">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a class="nobr" href="sold-out-everywhere/">Sold out everywhere</a>.</p>
 </section>
 
@@ -1251,7 +1277,7 @@ def build_index():
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
                "description": f"Restock checks {CHECK_FREQ} for Hobonichi Techo 2027 planners and covers across the official store and independent shops, and, in separate sections, {sections_phrase()}.",
                "publisher": organization()}
-    return page("index.html", "Hobonichi and dot grid journal restock tracker",
+    return page("index.html", "Hobonichi, dot grid and ink restock tracker",
                 f"Live stock at {N_STORES} shops: Hobonichi Techo 2027, flagship dot grid journals and limited-edition inks, plus free restock emails for Hobonichi and dot grid.",
                 body, ld=(site_ld, faq_ld))
 
@@ -1385,7 +1411,7 @@ def build_about():
 <p>Questions, corrections, or a shop we should track? Email {plain_email()}. The <a href="contact/">contact page</a> is there too.</p>
 </article>"""
     org_ld = {"@context": "https://schema.org", **organization()}
-    return page("about/", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi planner and dot grid journal restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about/", "About")), org_ld))
+    return page("about/", "About Stationery Drop Watch: how we check stock", f"How Stationery Drop Watch checks {n_checked} shops for Hobonichi planner, dot grid journal and limited-edition ink restocks, and why a failed check is never shown as a guess.", body, ld=(crumbs_ld(("about/", "About")), org_ld))
 
 def build_contact():
     """Visible contact page. The address is plain text, wrapped so Cloudflare Email Obfuscation leaves it alone."""
@@ -2142,7 +2168,7 @@ def build_sitemap():
     if INK_LIVE:
         urls.append((url_for(INK_SLUG + "/"), ink_lastmod()))
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
-    urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG, MIDORI_SLUG)]  # the indexed takedown notices
+    urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG,)]  # the indexed takedown notices
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
     urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD)), (url_for(JAN_APR_SLUG + "/"), JAN_APR_MODIFIED), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD)), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], json.loads(GUIDE_DATES.read_text())["build_gift_guide"]["date"])), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-20"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
@@ -2194,7 +2220,7 @@ def build_404():
 </section>
 </article>"""
     return page("404.html", "Page not found",
-                "This page doesn't exist. The link may be old or mistyped. The Hobonichi planner and dot grid journal trackers are linked here. Pick one below.", body, noindex=True)
+                "This page doesn't exist. The link may be old or mistyped. The Hobonichi planner, dot grid journal and limited-edition ink trackers are linked here. Pick one below.", body, noindex=True)
 
 # --- SEO guides (Hobonichi section) -------------------------------------------------------------
 # Editorial pages. Every stock status on them comes from data/stock.json (rebuilt about every 30 minutes by the
@@ -3223,7 +3249,7 @@ SHOP_ETSY = [
     # launch-sale note. Do not print the sale price or the sale code.
     dict(id="holiday-planner", kind="insert", sale_confirmed=True, price="$6.99",
          title="The Holiday Planner Pages",
-         img="assets/shop/holiday-planner-pages.webp", img_class="sheet", img_w=2000, img_h=2000,
+         img="assets/shop/holiday-planner-pages-600.webp", img_class="sheet", img_w=600, img_h=600,  # 2000px original kept beside it
          url="https://www.etsy.com/listing/4616108634/holiday-planner-printable-tip-ins-gift",
          alt=("The Holiday Planner Pages: three cream covers labeled Narrow Weekly 85 × 175 mm, "
               "Pocket A6 95 × 138 mm, and Standard A5 138 × 198 mm, each with a green wreath and a snowflake."),
@@ -4213,7 +4239,7 @@ def main():
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for slug, hide in ((TN_SLUG, False), (MIDORI_SLUG, False), (TN_GUIDE_SLUG, True)):
+    for slug, hide in ((TN_SLUG, False), (TN_GUIDE_SLUG, True)):
         fname, doc = build_takedown_notice(slug, noindex=hide)
         for old in SITE.joinpath(slug).glob("*/index.html"):  # old item pages; REDIRECTS rewrites the ones it knows
             old.unlink()

@@ -147,13 +147,14 @@ class RenderTests(unittest.TestCase):
             doc = site.build_hobo_tracker()
         li = next(x for x in doc.split("<li>") if f'href="{STARLIGHT_URL}"' in x.split("</li>")[0]).split("</li>")[0]
         self.assertIn(f'<span class="official-note">{note}</span>', li)
-        self.assertIn(f'"on": "{note}"', doc)  # the JSON rows app.js re-renders from
+        self.assertIn('"on"', doc)  # packed JSON rows app.js re-renders from: "on" is one of the keys,
+        self.assertIn(f'"{note}"', doc)  # and the note sits in the row data
         js = (ROOT / "site/assets/app.js").read_text()
         self.assertIn('r.on && r.st === "sold_out"', js)
         with mock.patch.object(site, "stock", self.stock_with(None)):
             plain = site.build_hobo_tracker()
         self.assertNotIn("official-note", plain)
-        self.assertNotIn('"on": ', plain)
+        self.assertNotIn('"on"', plain)
 
     def test_rows_without_the_field_render_as_before(self):
         for doc in self.pages(self.stock_with(None)):
