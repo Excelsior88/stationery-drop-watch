@@ -58,6 +58,24 @@ def taken_down(r):
 stock["products"] = [p for p in stock["products"] if not taken_down(p)]
 changes = [c for c in changes if not taken_down(c)]
 
+# Link-only shops ("link_only": true in stores.json; permission to check stock is pending). The checker never requests
+# them. Their listings stay on the site as plain links to the shop's own product page: no status, no "last checked", no
+# stock counts, no restock events. Rows or events for them still sitting in data/ from before the switch are dropped
+# here too, so no page, feed or site/data copy shows them. To turn a shop back on, delete its "link_only" lines in
+# stores.json: nothing in this file changes.
+LINK_ONLY = {s["id"] for s in stores["stores"] if s.get("link_only")}
+stock["products"] = [p for p in stock["products"] if p.get("store_id") not in LINK_ONLY]
+changes = [c for c in changes if c.get("store_id") not in LINK_ONLY]
+LINK_ROWS = [dict(store_id=s["id"], store=s["name"], canonical=p.get("canonical"), label=p["label"], type=p["type"], url=p["url"],
+                  status="link_only", title=display_title(p.get("source_title") or ""),
+                  **({"section": p["section"]} if p.get("section") else {}))
+             for s in stores["stores"] if s.get("link_only") for p in s["products"]]
+LINK_LABEL = "Link only"
+LINK_HINT = "Check stock at the shop"
+# One switch for the shop totals ("We check 27 shops"). True keeps the count exactly as before this change (the four
+# link-only shops still counted). False counts only shops the checker actually requests (27 becomes 23 everywhere).
+COUNT_LINK_ONLY_IN_SHOP_TOTALS = True
+
 # Limited-edition ink tracker (scripts/ink_tracker.py). Its rows live in data/inks/, apart from stock.json, so
 # they never reach the Hobonichi or dot grid pages, the restock feeds or the drop-alert webhook. A page shows
 # only rows of inks listed in inks.json (owner-approved). Pending finds ("hidden": true) never render.
@@ -124,14 +142,16 @@ def section_products(sec):
 def hobo_products():
     return section_products("hobonichi")
 
-N_STORES = len({p["store_id"] for p in stock["products"]} | {r["store_id"] for r in INK_ROWS})  # stores the checkers actually check (inks included)
+N_STORES = len({p["store_id"] for p in stock["products"]} | {r["store_id"] for r in INK_ROWS} | ({r["store_id"] for r in LINK_ROWS} if COUNT_LINK_ONLY_IN_SHOP_TOTALS else set()))  # stores the checkers actually check (inks included)
 N_INK = len({r["store_id"] for r in INK_ROWS})  # shops on the ink tracker
-N_SEC = {k: len({p["store_id"] for p in section_products(k)}) for k in ("hobonichi", *SECTIONS)}  # shops per section, from data
+N_SEC = {k: len({p["store_id"] for p in section_products(k)} | ({r["store_id"] for r in LINK_ROWS if section_of(r) == k} if COUNT_LINK_ONLY_IN_SHOP_TOTALS else set())) for k in ("hobonichi", *SECTIONS)}  # shops per section, from data
 LIVE = [k for k in SECTIONS if section_products(k)]  # sections that have tracked listings (and so a page)
 
 def section_shops(sec):
     """Store entries with listings in a section, in stores.json order."""
     ids = {p["store_id"] for p in section_products(sec)}
+    if COUNT_LINK_ONLY_IN_SHOP_TOTALS:
+        ids |= {r["store_id"] for r in LINK_ROWS if section_of(r) == sec}
     return [s for s in stores["stores"] if s["id"] in ids]
 
 # Shop's home country, from its own site or domain (stores.json "country", first word). Never a shipping claim.
@@ -161,7 +181,7 @@ for _x in stores["stores"]:
         _x["name"] = _display
 # Older change-log rows predate the "(official)" name and read "Leuchtturm1917 US". Same shop, same display name.
 _STRIP.setdefault("Leuchtturm1917 US", "Leuchtturm1917 (official)")
-for _r in stock["products"] + changes + stock.get("not_checked", []) + INK_ROWS + INK_CHANGES:
+for _r in stock["products"] + changes + stock.get("not_checked", []) + LINK_ROWS + INK_ROWS + INK_CHANGES:
     for _k in ("store", "name"):
         if _r.get(_k) in _STRIP:
             _r[_k] = _STRIP[_r[_k]]
@@ -694,6 +714,26 @@ def is_restock_event(c):
     """A restock is a listing becoming buyable. coming_soon -> sold_out is not one, and it must not alert."""
     return c.get("to") in BUYABLE and c.get("from") in NOT_BUYABLE
 
+def link_listings(match):
+    """Link-only listings that a page's own matcher (group or design) covers."""
+    return [r for r in LINK_ROWS if match(r)]
+
+def link_status_rows(ls):
+    """Table rows for link-only listings: the shop's own page, no status and no check time."""
+    rows = []
+    for l in sorted(ls, key=lambda l: (l["store"], l["label"])):
+        rows.append(f"""<tr class="link-only-row" data-store="{E(l['store_id'])}" data-status="link_only" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
+  <td><span class="badge link_only">{LINK_LABEL}</span><span class="sub">{LINK_HINT}</span></td></tr>""")
+    return "".join(rows)
+
+def link_note(ls):
+    """One line under a table that has link-only rows."""
+    if not ls:
+        return ""
+    n = len({l["store_id"] for l in ls})
+    return (f'<p class="muted small link-only-note">{n} {"shop is" if n == 1 else "shops are"} listed as a link only. '
+            f'We don\'t check {"its" if n == 1 else "their"} stock, so no status is shown. Open the shop\'s page to see what it has.</p>')
+
 def listed_unchecked():
     """Link-only shops still configured in stores.json.
 
@@ -703,8 +743,27 @@ def listed_unchecked():
     allowed = {s["id"] for s in stores["stores"] if s.get("platform") not in ("shopify", "hobonichi")}
     return [n for n in stock.get("not_checked", []) if n.get("id") in allowed]
 
+def listed_link_only():
+    """Link-only shops (stores.json "link_only"): name, url and reason, for the "we list but don't check" notes."""
+    return [dict(id=x["id"], name=x["name"], url=x["url"], reason="Link only for now: we don't check its stock, so no status is shown.")
+            for x in stores["stores"] if x.get("link_only")]
+
+def link_only_shops_sentence():
+    names = [n["name"] for n in listed_link_only()]
+    if not names:
+        return ""
+    return (f"{names_and(names)} {'is' if len(names) == 1 else 'are'} listed as {'a link only' if len(names) == 1 else 'links only'} for now: "
+            f"we don't check {'its' if len(names) == 1 else 'their'} stock, so no status is shown.")
+
 def link_only_clause():
     """FAQ sentence. Singular when JetPens is the only shop we link and do not check."""
+    blocked = _blocked_clause()
+    extra = link_only_shops_sentence()
+    if blocked == "Every shop we list is checked automatically.":
+        return extra or blocked
+    return blocked + (" " + extra if extra else "")
+
+def _blocked_clause():
     names = [n["name"] for n in listed_unchecked()]
     if len(names) == 1:
         return f"{names[0]} is listed as a link only, because its site blocks automated checks."
@@ -808,10 +867,16 @@ def in_stock_tally(statuses):
     return f"{inn} of {n} listings in stock"
 
 def shop_tally(ls):
-    shops = len({r["sid"] for r in ls})
-    in_shops = len({r["sid"] for r in ls if r["st"] == "in_stock"})
+    """Counts only listings we check. Link-only listings are named, never counted as stock or as checked."""
+    chk = [r for r in ls if r["st"] != "link_only"]
+    links = len({r["sid"] for r in ls if r["st"] == "link_only"})
+    link_bit = f" · {links} {'shop' if links == 1 else 'shops'} link only" if links else ""
+    if not chk:
+        return "Link only, we don't check stock"
+    shops = len({r["sid"] for r in chk})
+    in_shops = len({r["sid"] for r in chk if r["st"] == "in_stock"})
     word = "shop" if shops == 1 else "shops"
-    return f"{in_stock_tally([r['st'] for r in ls])} · {in_shops} of {shops} {word} in stock"
+    return f"{in_stock_tally([r['st'] for r in chk])} · {in_shops} of {shops} {word} in stock{link_bit}"
 
 def official_note(l):
     """Optional note from Hobonichi's own feed (checker.hobonichi_note), only on sold-out official rows.
@@ -821,7 +886,7 @@ def official_note(l):
 
 def compare_product(ls):
     """One product, every shop that lists it, so the statuses sit next to each other."""
-    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4, "link_only": 5}
     ls = sorted(ls, key=lambda r: (order.get(r["st"], 9), r["s"].lower()))
     h = ls[0]
     name = f'<a href="{E(h["dp"])}">{E(h["gn"])}</a>' if h.get("dp") else E(h["gn"])
@@ -837,7 +902,7 @@ def compare_product(ls):
         title = f'<span class="sub">{E(r["title"])}</span>' if r.get("title") and r["title"] not in (r.get("gn"), r.get("p")) else ""
         items.append(
             f'<li><span class="compare-shop"><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region}{variant}{title}</span>'
-            f'<span class="badge {E(r["st"])}">{STATUS[r["st"]]}</span>'
+            f'<span class="badge {E(r["st"])}">{STATUS.get(r["st"], LINK_LABEL)}</span>'
             + (f'<span class="official-note">{E(r["on"])}</span>' if r.get("on") and r.get("st") == "sold_out" else "") + '</li>')
     anchor = f' id="{E(h["g"])}"' if re.fullmatch(r"[A-Za-z][\w-]*", h.get("g") or "") else ""
     return f'''<article class="compare"{anchor}>
@@ -847,7 +912,7 @@ def compare_product(ls):
 
 def tracker_static(rows):
     """No-JS listing groups. Families start closed; the summary is a real control, so they still open."""
-    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4, "link_only": 5}
     fam_order = [g["slug"] for g in GROUPS if g_sec(g) == "hobonichi"] + ["other"]
     by_fam = {}
     for r in rows:
@@ -865,7 +930,7 @@ def tracker_static(rows):
         all_rows = [r for ls in groups for r in ls]
         body = "".join(compare_product(ls) for ls in groups)
         parts.append(f'''<details class="fam-block" id="{E(fam)}">
-  <summary><span class="fam-name">{E(name)}</span><span class="fam-meta">{E(in_stock_tally([r["st"] for r in all_rows]))}</span></summary>
+  <summary><span class="fam-name">{E(name)}</span><span class="fam-meta">{E(in_stock_tally([r["st"] for r in all_rows if r["st"] != "link_only"]))}</span></summary>
   <div class="fam-products">{body}</div>
 </details>''')
     return "".join(parts)
@@ -874,11 +939,15 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
     """Filterable list of every listing in `prods` (driven by assets/app.js).
     Without JavaScript the same groups are in the page, inside noscript."""
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
-    sids = {p["store_id"] for p in prods}
+    sids = {p["store_id"] for p in prods} | {r["sid"] for r in rows if r["st"] == "link_only"}
     store_opts = "".join(f'<option value="{E(x["id"])}">{E(x["name"])}</option>' for x in stores["stores"] if x["id"] in sids)
     prod_opts = "".join(f'<option value="{E(k)}">{E(v)}</option>' for k, v in canon.items() if any(p.get("canonical") == k for p in prods))
     type_opts = "".join(f'<option value="{E(t)}">{E(t)}</option>' for t in sorted({p["type"] for p in prods}))
     status_opts = "".join(f'<option value="{k}">{v}</option>' for k, v in STATUS.items() if any(p["status"] == k for p in prods))
+    if any(r["st"] == "link_only" for r in rows):
+        status_opts += f'<option value="link_only">{LINK_LABEL}</option>'
+    link_help = (' "Link only" means we don\'t check that shop\'s stock, so no status is shown; the link goes to the shop\'s own page.'
+                 if any(r["st"] == "link_only" for r in rows) else "")
     sizes = facet_values(prods, listing_size)
     langs = [v for v in ("English", "Japanese") if any(listing_language(p) == v for p in prods)]
     size_label = (f'<label>Size<select id="f-size"><option value="">All sizes</option>'
@@ -915,12 +984,12 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
       {lang_note}
       <div id="rows" class="tracker-groups"><noscript>{noscript_rows}</noscript></div>
       <button type="button" id="more" class="btn-ghost more" hidden>Show all</button>
-      <p class="muted small">Groups can be collapsed. "Not yet on sale" means the store has a preview page up but isn't taking orders yet. "Couldn't check" is a failed check, not a sold-out guess.</p>
+      <p class="muted small">Groups can be collapsed. "Not yet on sale" means the store has a preview page up but isn't taking orders yet. "Couldn't check" is a failed check, not a sold-out guess.{link_help}</p>
       {region_legend(p["store_id"] for p in prods)}
       {extra}
     </section>"""
 
-def tracker_rows(prods, out_everywhere=None):
+def tracker_rows(prods, out_everywhere=None, links=()):
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
     fam_index = {g["slug"]: i for i, g in enumerate(g for g in GROUPS if g_sec(g) == "hobonichi")}
     rows = []
@@ -937,6 +1006,14 @@ def tracker_rows(prods, out_everywhere=None):
         dp = design_page_for([p])
         if dp:
             r["dp"] = "/" + pretty(dp)
+    for p in links:  # link-only listings: no status time, no variant counts (keys left out on purpose)
+        famn, fam = listing_family(p)
+        r = dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st="link_only",
+                 u=p["url"], title=p.get("title") or "", sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99))
+        dp = design_page_for([p])
+        if dp:
+            r["dp"] = "/" + pretty(dp)
+        rows.append(r)
     return rows
 
 def tracking_start(ls):
@@ -1141,8 +1218,8 @@ def build_hobo_tracker():
   <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet. Those are the ones we're watching.{f" {s['unknown']} couldn't be checked this run." if s['unknown'] else ""}</p></div>"""
 
     # table data (embedded so the page works without fetch)
-    rows = tracker_rows(prods)
-    unchecked = listed_unchecked()
+    rows = tracker_rows(prods, links=[r for r in LINK_ROWS if section_of(r) == "hobonichi"])
+    unchecked = listed_unchecked() + listed_link_only()
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a>: <span class="muted">{E(n["reason"] or "")}</span></li>' for n in unchecked)
     unchecked_summary = "Store we list but don't check automatically" if len(unchecked) == 1 else "Stores we list but don't check automatically"
 
@@ -1178,7 +1255,7 @@ def build_hobo_tracker():
 {signup_for(section="hobonichi", placement="bottom")}
 {stock_data(rows)}
 """
-    n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
+    n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS} | ({r['store_id'] for r in LINK_ROWS if section_of(r) == "hobonichi"} if COUNT_LINK_ONLY_IN_SHOP_TOTALS else set()))
     return page(HOBO_TRACKER, "Hobonichi 2027 restock tracker",
                 f"Hobonichi 2027 restock tracker. Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, plus separate trackers for other brands.",
                 body, ld=(faq_ld, crumbs_ld((HOBO_TRACKER, "Hobonichi tracker"))))
@@ -1639,6 +1716,8 @@ def list_filter(ls, hint):
             seen.append((l["store_id"], l["store"]))
     store_opts = "".join(f'<option value="{E(sid)}">{E(name)}</option>' for sid, name in seen)
     status_opts = "".join(f'<option value="{k}">{STATUS[k]}</option>' for k in STATUS if any(l["status"] == k for l in ls))
+    if any(l["status"] == "link_only" for l in ls):
+        status_opts += f'<option value="link_only">{LINK_LABEL}</option>'
     sizes = facet_values(ls, listing_size)
     langs = [v for v in ("English", "Japanese") if any(listing_language(l) == v for l in ls)]
     size_label = (f'<label>Size<select data-filter="size"><option value="">All sizes</option>'
@@ -1716,6 +1795,9 @@ def build_group(g, oe=None):
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
     shops = len({l["store_id"] for l in ls})
     buy = [l for l in ls if l["status"] in BUYABLE]
+    link_sections = {}
+    for l in link_listings(g["match"]):
+        link_sections.setdefault(listing_group_id(l), []).append(l)
     sections = {}
     for l in ls:
         sections.setdefault(listing_group_id(l), []).append(l)
@@ -1762,8 +1844,9 @@ def build_group(g, oe=None):
   {sold_html}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
-    <tbody>{status_rows(sl)}</tbody>
+    <tbody>{status_rows(sl)}{link_status_rows(link_sections.get(cid, []))}</tbody>
   </table></div>
+  {link_note(link_sections.get(cid, []))}
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{tracker}{dp_link}</p>
   {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
 </section></details>""")
@@ -1786,7 +1869,7 @@ def build_group(g, oe=None):
     else:
         others += f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>'
         shop_nav = dg_tracker = ""
-    card_filter = list_filter(ls, g.get("search_hint") or "Shop or design")
+    card_filter = list_filter(ls + link_listings(g["match"]), g.get("search_hint") or "Shop or design")
     ds = designs_of(g["slug"])
     links = "".join(f'<li><a href="{design_fname(d)}">{E(d["name"])}</a></li>' for d in ds)
     design_nav = (f'<details class="design-fold"><summary>Design pages ({len(ds)})</summary>'
@@ -2086,6 +2169,7 @@ def designs_of(parent_slug):
 def build_design(d, oe=None):
     parent = next(g for g in GROUPS if g["slug"] == d["parent"])
     ls = design_listings(d)
+    lsl = link_listings(d["match"])
     pids = {id(x) for x in group_listings(parent)}
     if not all(id(l) in pids for l in ls):  # a design page must count only listings its parent tracker shows
         raise SystemExit(f"design page {design_fname(d)} has listings its parent tracker doesn't show")
@@ -2101,12 +2185,13 @@ def build_design(d, oe=None):
               if d["slug"] in {"nothing-to-hide-green", "nothing-to-hide-pink", "nothing-to-hide-yellow"} else "")
     table = (f"""<section class="card group-sec" id="stock">
   <div class="section-head"><h2>Stock by shop</h2><p class="muted small">{E(count_line(ls).capitalize())} · {checked_line(ls)}</p></div>
-  {list_filter(ls, "Shop name")}
+  {list_filter(ls + lsl, "Shop name")}
   {sold_everywhere_html(ls)}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
-    <tbody>{status_rows(ls)}</tbody>
+    <tbody>{status_rows(ls)}{link_status_rows(lsl)}</tbody>
   </table></div>
+  {link_note(lsl)}
   <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
   <p class="muted small">Open a shop's name to go straight to its listing.</p>
   {region_legend(l["store_id"] for l in ls)}
@@ -2155,7 +2240,8 @@ def build_design(d, oe=None):
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
     sources = "".join(f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(l["store"])}: {E(l.get("title") or l["label"])}</a></li>' for l in sorted(ls, key=lambda l: l["store"]))
-    extra_links = UNCHECKED_LINKS.get(d["parent"] + "/" + d["slug"], [])
+    extra_links = UNCHECKED_LINKS.get(d["parent"] + "/" + d["slug"], []) + [
+        dict(store=l["store"], url=l["url"], note="Link to the shop's own page. We don't check this shop's stock.") for l in sorted(lsl, key=lambda l: l["store"])]
     extra_html = ""
     if extra_links:
         items = "".join(
@@ -2257,7 +2343,7 @@ def tracker_good_to_know(question, answer_html):
 
 def faq_block(only=None, sid="faq"):
     """only: questions to show, in that order. None shows the full list."""
-    n = len({p["store_id"] for p in stock["products"]})
+    n = len({p["store_id"] for p in stock["products"]} | ({r["store_id"] for r in LINK_ROWS} if COUNT_LINK_ONLY_IN_SHOP_TOTALS else set()))
     # {shop} is a link in the page and the plain URL in the FAQ structured data
     # rstrip the coverage sentence so the ". " join does not add a second period after "shops."
     secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + ((". " + dotgrid_where_checked().rstrip(".")) if k == "dotgrid" else "") for k in LIVE)
@@ -2483,18 +2569,18 @@ def _names(xs):
     xs = list(xs)
     return ", ".join(xs[:-1]) + " and " + xs[-1] if len(xs) > 1 else "".join(xs)
 
-def _shop_table(ls):
+def _shop_table(ls, links=()):
     rank = {s["id"]: i for i, s in enumerate(stores["stores"])}
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
-    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4, "link_only": 5}
     by = {}
-    for l in ls:
+    for l in list(ls) + list(links):
         by.setdefault(l["store_id"], []).append(l)
     rows = []
     for sid in sorted(by, key=lambda s: (min(order[l["status"]] for l in by[s]), rank.get(s, 99))):
         items = "".join(
             f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(canon.get(l.get("canonical") or "") or l.get("title") or l["label"])}</a> '
-            f'<span class="badge {E(l["status"])}">{E(STATUS[l["status"]])}</span></li>'
+            f'<span class="badge {E(l["status"])}">{E(STATUS.get(l["status"], LINK_LABEL))}</span></li>'
             for l in sorted(by[sid], key=lambda l: (order[l["status"]], l["label"])))
         rows.append(f'<tr><td>{E(by[sid][0]["store"])}{region_tag(sid)}</td><td><ul class="wtb-items">{items}</ul></td></tr>')
     return f'''<div class="table-wrap"><table class="stock"><thead><tr><th>Shop</th><th>What we track there · status at last check</th></tr></thead>
@@ -2518,16 +2604,16 @@ def build_where_to_buy():
         secs.append(f'''<details class="card group-fold" id="{E(g["slug"])}">
   <summary><h2 class="fam-name">{E(g["product"])}</h2><span class="fam-meta">{E(count_line(ls).capitalize())}</span></summary>
   <div class="group-body">
-  {_shop_table(ls)}
+  {_shop_table(ls, link_listings(g["match"]))}
   <p class="small"><a href="{g["slug"]}/">Full {E(g["short"])} restock page</a> <span class="muted">· every listing, when it last changed, and recent restocks</span></p>
   </div>
 </details>''')
-    unchecked = listed_unchecked()
+    unchecked = listed_unchecked() + listed_link_only()
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a> <span class="muted">· {E(n["reason"] or "")}</span></li>' for n in unchecked)
     if len(unchecked) == 1:
         unchecked_head, unchecked_blurb = "Shop we list but can't check", "Its site blocks automated checks, so we link to it without a status."
     else:
-        unchecked_head, unchecked_blurb = "Shops we list but can't check", "Their sites block automated checks, so we link to them without a status."
+        unchecked_head, unchecked_blurb = "Shops we list but don't check", "We link to these without a status. Some sites block automated checks, and some shops are link only for now."
     # Live, data-driven tip: products sold out at one shop we track while another shop has them.
     split = {}
     for l in hobo:

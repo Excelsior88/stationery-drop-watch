@@ -222,7 +222,8 @@ def check(argv=None):
     validate(cfg, shops)
     pending = load(DATA / "pending.json", [])
     retired = load(DATA / "retired.json", {})
-    listings = tracked(cfg, pending, retired)
+    skip = checker.link_only_ids()  # link-only shops are never requested
+    listings = [l for l in tracked(cfg, pending, retired) if l["store_id"] not in skip]
     started = checker.now()
     by = {}
     for l in listings:
@@ -327,8 +328,11 @@ def discover(argv=None):
     pending = load(DATA / "pending.json", [])
     tracked_urls = {l["url"] for ink in cfg["inks"] for l in ink["listings"]} | {f["url"] for f in pending}
     shop_brands = {}
+    skip = checker.link_only_ids()  # link-only shops are never scanned
     for b, info in cfg["brands"].items():
         for sid in info["shops"]:
+            if sid in skip:
+                continue
             shop_brands.setdefault(sid, []).append(b)
     run_at = checker.now()
     with ThreadPoolExecutor(max_workers=9) as ex:
