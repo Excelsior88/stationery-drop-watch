@@ -219,6 +219,8 @@ class ApexHistoryTests(unittest.TestCase):
         self.assertEqual(checker.canonical_stock_url(url), url)
         self.assertIn("admin@stationerydropwatch.com", UA)
         self.assertNotIn("gmail.com", UA)
+        self.assertIn("Agent/StationeryDropWatch", UA)
+        self.assertIn("https://stationerydropwatch.com/", UA)
 
 
 class CatalogFixTests(unittest.TestCase):
