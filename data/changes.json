@@ -2230,5 +2230,14 @@
   "url": "https://milligram.com/products/hobonichi-2027-techo-weeks-planner-canaria-yellow",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-23T04:58:57+00:00",
+  "store_id": "milligram",
+  "store": "Milligram",
+  "label": "Weeks · Colors: Canaria Yellow",
+  "url": "https://milligram.com/products/hobonichi-2027-techo-weeks-planner-canaria-yellow",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
