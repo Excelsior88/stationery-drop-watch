@@ -94,10 +94,13 @@ class ShareImageAltTests(unittest.TestCase):
 class ShopCountDefinitionTests(unittest.TestCase):
     def test_sitewide_total_is_distinct_stores_not_the_sum_of_sections(self):
         products = site.stock["products"]
-        distinct = {p["store_id"] for p in products}
+        # Link-only shops are counted too while COUNT_LINK_ONLY_IN_SHOP_TOTALS is True (the wording owner chose to keep).
+        extra = {r["store_id"] for r in site.LINK_ROWS} if site.COUNT_LINK_ONLY_IN_SHOP_TOTALS else set()
+        distinct = {p["store_id"] for p in products} | extra
         self.assertEqual(site.N_STORES, len(distinct))
         self.assertEqual(site.N_HOBO, site.N_SEC["hobonichi"])
-        self.assertEqual(site.N_HOBO, len({p["store_id"] for p in products if site.section_of(p) == "hobonichi"}))
+        self.assertEqual(site.N_HOBO, len({p["store_id"] for p in products if site.section_of(p) == "hobonichi"}
+                                          | {r["store_id"] for r in site.LINK_ROWS if site.section_of(r) == "hobonichi"} & extra))
         self.assertGreaterEqual(sum(site.N_SEC.values()), site.N_STORES)
         # Current catalog overlaps (a shop can sell more than one brand). The total must not add those twice.
         self.assertGreater(sum(site.N_SEC.values()), site.N_STORES)
@@ -115,8 +118,8 @@ class HeroAndScopeTests(unittest.TestCase):
         self.assertIn('href="/shop/"', site.build_index())
         self.assertNotIn(f"{len(site.NAV_TRACKERS) + len(site.NAV)} restock", doc)
         self.assertNotIn("refills and limited editions", doc)
-        # The only Traveler's Company link on the homepage is the takedown notice card.
-        self.assertEqual(site.build_index().count("/travelers-company-limited-edition/"), 1)
+        # Nov 23: the takedown notice card left the homepage; the notice page itself stays live.
+        self.assertEqual(site.build_index().count("/travelers-company-limited-edition/"), 0)
         self.assertNotIn("/midori-md-limited-edition/", site.build_index())
 
     def test_dot_grid_page_names_every_maker_and_keeps_the_legacy_url(self):

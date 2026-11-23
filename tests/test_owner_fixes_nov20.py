@@ -102,7 +102,7 @@ class GuideAndShopListTests(unittest.TestCase):
     def test_dot_grid_guide_specs_and_detroit_date(self):
         raw = site.build_dotgrid_guide()[1]
         doc = html.unescape(raw)
-        self.assertIn("updated Nov 22, 2026", doc)
+        self.assertIn("updated Nov 23, 2026", doc)  # Nov 23: Notebook Therapy went link-only, guide reworded
         self.assertIn("as of Nov 20, 2026", doc)
         self.assertNotIn("Nov 4, 2026", doc)
         self.assertNotIn("dimensions not listed", doc)
@@ -122,8 +122,10 @@ class GuideAndShopListTests(unittest.TestCase):
         self.assertEqual(site.DG_GUIDE_LASTMOD, "2026-11-20")  # still the "specs as of" date in the page text
 
     def test_nanami_is_gone_and_jetpens_is_the_only_link_only_shop(self):
-        self.assertEqual(site.link_only_clause(),
-                         "JetPens is listed as a link only, because its site blocks automated checks.")
+        self.assertTrue(site.link_only_clause().startswith(
+            "JetPens is listed as a link only, because its site blocks automated checks."))
+        # The four shops switched to link-only (stores.json "link_only") follow it, with their own reason.
+        self.assertIn("are listed as links only for now", site.link_only_clause())
         pages = {
             "where": site.build_where_to_buy()[1],
             "tracker": site.build_hobo_tracker(),
@@ -135,12 +137,12 @@ class GuideAndShopListTests(unittest.TestCase):
             self.assertNotIn("nanami", doc.lower(), name)
             self.assertNotIn("nanamipaper.com", doc.lower(), name)
         where = pages["where"]
-        self.assertIn("<h2>Shop we list but can't check</h2>", where)
-        self.assertIn("Its site blocks automated checks, so we link to it without a status.", where)
+        self.assertIn("<h2>Shops we list but don't check</h2>", where)
+        self.assertIn("Some sites block automated checks, and some shops are link only for now.", where)
         self.assertIn("https://www.jetpens.com/", where)
         self.assertNotIn("Shops we list but can't check", where)
         tracker = pages["tracker"]
-        self.assertIn("Store we list but don't check automatically", tracker)
+        self.assertIn("Stores we list but don't check automatically", tracker)
         self.assertIn("https://www.jetpens.com/", tracker)
         self.assertIn("JetPens is listed as a link only, because its site blocks automated checks.", pages["home"])
 

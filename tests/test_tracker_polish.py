@@ -153,14 +153,14 @@ class CountryFilterSourceTests(unittest.TestCase):
             self.assertIn(store["id"] in fixes or bool(raw), (True,), store["id"])
 
     def test_countries_present_accepts_a_one_shot_iterable(self):
-        ids = (p["store_id"] for p in site.hobo_products())
+        ids = (p["store_id"] for p in site.hobo_products() + [r for r in site.LINK_ROWS if site.section_of(r) == "hobonichi"])
         self.assertEqual(site.countries_present(ids), ["US", "CA", "SG", "UK", "AU", "JP"])
 
     def test_filter_omits_a_country_the_page_does_not_use(self):
         dot = site.countries_present(p["store_id"] for p in site.section_products("dotgrid"))
         self.assertNotIn("SG", dot)
         self.assertNotIn("JP", dot)
-        hobo = site.countries_present(p["store_id"] for p in site.hobo_products())
+        hobo = site.countries_present(p["store_id"] for p in site.hobo_products() + [r for r in site.LINK_ROWS if site.section_of(r) == "hobonichi"])
         self.assertEqual(hobo, ["US", "CA", "SG", "UK", "AU", "JP"])
 
 

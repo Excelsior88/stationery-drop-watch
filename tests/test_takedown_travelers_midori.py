@@ -45,9 +45,12 @@ class CatalogTests(unittest.TestCase):
             self.assertFalse(c["id"].startswith(("tn-", "md-")), c["id"])
 
     def test_checked_shop_count_is_27_with_the_replacements(self):
-        checked = {s["id"] for s in self.cfg["stores"] if s["products"] and s["platform"] in ("shopify", "hobonichi")}
+        checked = {s["id"] for s in self.cfg["stores"] if s["products"] and s["platform"] in ("shopify", "hobonichi") and not s.get("link_only")}  # Nov 23: link-only shops are not checked
         self.assertEqual(len(checked), 27)
-        self.assertTrue(NEW_STORES <= checked)
+        link_only = {s["id"] for s in self.cfg["stores"] if s.get("link_only")}
+        self.assertTrue(NEW_STORES - link_only <= checked)  # Milligram is link-only since Nov 23
+        self.assertTrue({"hunterpaper", "zakkajoy", "colorswatch", "greenstar"} <= checked)  # Nov 23 Hobonichi shops
+        self.assertFalse(link_only & checked)
         self.assertEqual(site.N_STORES, 27)
 
     def test_new_shops_track_only_products_we_already_track(self):
@@ -142,34 +145,29 @@ NOTICE_CARD = re.compile(r'<li class="hub-card hub-notice">.*?</li>', re.S)
 
 
 class HomeNoticeCardTests(unittest.TestCase):
-    """Owner, Nov 19: the announcement stays on the homepage as a third card beside the two tracker cards."""
+    """Owner, Nov 23 (t1797u): the notice card is off the homepage. The notice page stays live and in the sitemap."""
 
     def setUp(self):
         self.doc = site.build_index()
         grid = re.search(r'<ul class="hub-grid">(.*?)</ul>', self.doc, re.S).group(1)
         self.cards = re.findall(r'<li class="hub-card[^"]*">.*?</li>', grid, re.S)
 
-    def test_notice_is_the_card_after_the_trackers(self):
-        # Was the third card beside two trackers; the limited ink tracker (Nov 2026) adds a tracker card before it.
-        n = len(site.NAV_TRACKERS)
-        self.assertEqual(len(self.cards), n + 1)
-        self.assertNotIn("hub-notice", "".join(self.cards[:n]))
-        self.assertTrue(self.cards[n].startswith('<li class="hub-card hub-notice">'))
-        self.assertEqual(len(NOTICE_CARD.findall(self.doc)), 1)
+    def test_homepage_has_only_the_tracker_cards(self):
+        self.assertEqual(len(self.cards), len(site.NAV_TRACKERS))
+        self.assertEqual(NOTICE_CARD.findall(self.doc), [])
+        self.assertNotIn("Read the notice", self.doc)
 
-    def test_card_has_heading_verbatim_line_and_button_only(self):
-        card = self.cards[-1]
-        self.assertIn('href="/travelers-company-limited-edition/"', card)
-        self.assertIn("<h3>Why Traveler&#x27;s Company and MIDORI are gone</h3>", card)
-        self.assertIn('<span class="hub-go">Read the notice</span>', card)
-        self.assertNotIn("hub-count", card)
-        self.assertNotIn("in stock", html.unescape(card).lower())
-        self.assertNotIn("shops", html.unescape(card).lower())
-        line = html.unescape(re.search(r"</h3><p>(.*?)</p>", card).group(1))
-        self.assertEqual(line, site.HOME_NOTICE_LINE)
-        notice = " ".join(site.TAKEDOWN_NOTICE + (site.TAKEDOWN_SCALPERS_Q,) + site.TAKEDOWN_SCALPERS_ITEMS + (site.TAKEDOWN_SCALPERS_CLOSE,))
-        for sentence in line.split(". "):
-            self.assertIn(sentence.rstrip("."), notice)
+    def test_homepage_no_longer_mentions_either_brand(self):
+        text = html.unescape(re.sub(r"<[^>]+>", " ", self.doc))
+        for word in ("Traveler", "MIDORI", "Midori", site.TAKEDOWN_HEADING):
+            self.assertNotIn(word, text)
+        self.assertNotIn(f"/{site.TN_SLUG}/", self.doc)
+
+    def test_notice_page_stays_live_and_in_the_sitemap(self):
+        fname, doc = site.build_takedown_notice(site.TN_SLUG, noindex=False)
+        self.assertEqual(fname, site.TN_SLUG + "/")
+        self.assertIn(f"<h1>{site.E(site.TAKEDOWN_HEADING)}</h1>", doc)
+        self.assertIn(f"/{site.TN_SLUG}/</loc>", site.build_sitemap())
 
     def test_phones_keep_every_card_icon_at_a_two_column_size(self):
         css = (ROOT / "site/assets/style.css").read_text()

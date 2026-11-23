@@ -21,8 +21,20 @@ TAKEDOWN_SECTIONS = ("travelers", "midori")
 TAKEDOWN_STORES = {"travelerscompanyusa", "mdproductusa"}  # the two brands' own stores
 
 
+def _link_only_ids():
+    """Shops flagged "link_only" in stores.json: no checks, so never an alert, even if a stray event exists."""
+    try:
+        return {s["id"] for s in json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "stores.json")))["stores"] if s.get("link_only")}
+    except (OSError, ValueError, KeyError):
+        return set()
+
+
+LINK_ONLY_STORES = _link_only_ids()
+
+
 def taken_down(change):
-    return change.get("section") in TAKEDOWN_SECTIONS or change.get("store_id") in TAKEDOWN_STORES
+    return (change.get("section") in TAKEDOWN_SECTIONS or change.get("store_id") in TAKEDOWN_STORES
+            or change.get("store_id") in LINK_ONLY_STORES)
 
 
 def fresh_in_stock(old, new):

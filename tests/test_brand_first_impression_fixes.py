@@ -50,7 +50,10 @@ class AboutContactNameTests(unittest.TestCase):
 class HobonichiTitleTests(unittest.TestCase):
     def test_one_piece_and_planner_have_clean_canonical_names(self):
         by_url = {p["url"]: p for p in site.stock["products"]}
-        one_piece = [by_url[ONE_PIECE_WONDER], by_url[ONE_PIECE_KINO]]
+        # Kinokuniya USA is link-only now (no stock row); its listing is in LINK_ROWS with the same canonical name.
+        self.assertNotIn(ONE_PIECE_KINO, by_url)
+        link = next(r for r in site.LINK_ROWS if r["url"] == ONE_PIECE_KINO)
+        one_piece = [by_url[ONE_PIECE_WONDER], link]
         for row in one_piece:
             self.assertEqual(row["canonical"], "original-a6-jp-one-piece")
             self.assertEqual(row["label"], "Original A6 book (Japanese) · One Piece Edition")
@@ -67,7 +70,6 @@ class HobonichiTitleTests(unittest.TestCase):
         self.assertEqual(by_url[PLANNER]["status_since"], "2026-10-25T21:41:00+00:00")
         self.assertEqual(by_url[ONE_PIECE_WONDER]["first_seen"], "2026-10-25T21:40:49+00:00")
         self.assertEqual(by_url[ONE_PIECE_WONDER]["status_since"], "2026-10-31T19:06:20+00:00")
-        self.assertEqual(by_url[ONE_PIECE_KINO]["first_seen"], "2026-10-25T21:41:09+00:00")
         events = [c for c in site.changes if c["url"] == ONE_PIECE_WONDER]
         self.assertEqual(len(events), 1)
         ev = events[0]
@@ -96,7 +98,7 @@ class DotGridCopyAndOfficialTests(unittest.TestCase):
         phrase = site.dotgrid_where_checked()
         self.assertIn("Archer and Olive", phrase)
         self.assertIn("Scribbles That Matter", phrase)
-        self.assertIn("Notebook Therapy", phrase)
+        self.assertNotIn("Notebook Therapy", phrase)  # link-only since Nov 23, 2026: we don't check its store
         self.assertIn("on each maker's own store", phrase)
         self.assertIn("Leuchtturm1917 at its official US store and", phrase)
         self.assertIn("independent", phrase)
@@ -137,5 +139,6 @@ class DotGridCopyAndOfficialTests(unittest.TestCase):
         self.assertIn("Notebook Therapy (official)", text)
         # Brand lists in the lede stay uncluttered.
         lede = re.search(r'<p class="lede">(.*?)</p>', doc, re.S).group(1)
-        self.assertIn("Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy", html.unescape(lede))
+        self.assertIn("Archer and Olive, Leuchtturm1917 and Scribbles That Matter", html.unescape(lede))  # makers we check
+        self.assertIn("Notebook Therapy is listed as a link only: we don't check its stock.", html.unescape(lede))  # since Nov 23, 2026
         self.assertNotIn("(official)", lede)

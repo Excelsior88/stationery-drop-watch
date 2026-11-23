@@ -54,13 +54,13 @@ class PageFilterMarkupTests(unittest.TestCase):
 
     def _countries_for(self, name):
         if name == "hobonichi-restock-tracker/":
-            return site.countries_present(p["store_id"] for p in site.hobo_products())
+            return site.countries_present(p["store_id"] for p in site.hobo_products() + [r for r in site.LINK_ROWS if site.section_of(r) == "hobonichi"])
         for g in site.GROUPS:
             if name == g["slug"] + "/":
-                return site.countries_present(l["store_id"] for l in site.group_listings(g))
+                return site.countries_present(l["store_id"] for l in site.group_listings(g) + site.link_listings(g["match"]))
         for d in site.DESIGNS:
             if name == site.design_fname(d):
-                return site.countries_present(l["store_id"] for l in site.design_listings(d))
+                return site.countries_present(l["store_id"] for l in site.design_listings(d) + site.link_listings(d["match"]))
         return []
 
     def test_country_filter_uses_only_present_countries(self):
@@ -283,7 +283,7 @@ class PageFilterMarkupTests(unittest.TestCase):
                 self.assertEqual(doc.count(text), count, (g["slug"], text))
 
         prods = site.hobo_products()
-        rows = site.tracker_rows(prods, None)
+        rows = site.tracker_rows(prods, None, links=[r for r in site.LINK_ROWS if site.section_of(r) == "hobonichi"])
         groups = {}
         for row in rows:
             groups.setdefault(row["g"], []).append(row)
@@ -393,7 +393,7 @@ class PageFilterMarkupTests(unittest.TestCase):
         home_q = re.findall(r'<section class="card faq" id="good-to-know">.*?</section>', home, re.S)[0]
         home_names = re.findall(r"<summary>(.*?)</summary>", home_q)
         self.assertEqual([html.unescape(q) for q in home_names], list(site.HUB_FAQ))
-        self.assertEqual(len(home_names), 6)
+        self.assertEqual(len(home_names), 7)  # Nov 23: + "Can I use alerts for reselling?"
         self.assertNotIn('What does "Couldn&#x27;t check" mean?', home_q)
         self.assertNotIn('What does "Not yet on sale" mean?', home_q)
         status_q = site.TRACKER_FAQ[1][0]

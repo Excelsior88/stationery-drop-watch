@@ -189,6 +189,8 @@ class PageTests(unittest.TestCase):
     def test_shop_count_is_union_not_sum(self):
         s = self.site
         ids = {p["store_id"] for p in s.stock["products"]} | {r["store_id"] for r in s.INK_ROWS}
+        if s.COUNT_LINK_ONLY_IN_SHOP_TOTALS:
+            ids |= {r["store_id"] for r in s.LINK_ROWS}
         self.assertEqual(s.N_STORES, len(ids))
 
 

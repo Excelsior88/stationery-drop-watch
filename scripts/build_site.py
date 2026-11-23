@@ -58,6 +58,24 @@ def taken_down(r):
 stock["products"] = [p for p in stock["products"] if not taken_down(p)]
 changes = [c for c in changes if not taken_down(c)]
 
+# Link-only shops ("link_only": true in stores.json; permission to check stock is pending). The checker never requests
+# them. Their listings stay on the site as plain links to the shop's own product page: no status, no "last checked", no
+# stock counts, no restock events. Rows or events for them still sitting in data/ from before the switch are dropped
+# here too, so no page, feed or site/data copy shows them. To turn a shop back on, delete its "link_only" lines in
+# stores.json: nothing in this file changes.
+LINK_ONLY = {s["id"] for s in stores["stores"] if s.get("link_only")}
+stock["products"] = [p for p in stock["products"] if p.get("store_id") not in LINK_ONLY]
+changes = [c for c in changes if c.get("store_id") not in LINK_ONLY]
+LINK_ROWS = [dict(store_id=s["id"], store=s["name"], canonical=p.get("canonical"), label=p["label"], type=p["type"], url=p["url"],
+                  status="link_only", title=display_title(p.get("source_title") or ""),
+                  **({"section": p["section"]} if p.get("section") else {}))
+             for s in stores["stores"] if s.get("link_only") for p in s["products"]]
+LINK_LABEL = "Link only"
+LINK_HINT = "Check stock at the shop"
+# One switch for the shop totals ("We check 27 shops"). False (Nov 23, 2026, owner t1796u) counts only shops the checker
+# actually requests, so link-only shops are never in "N shops". They still show on the trackers with their "Link only" label.
+COUNT_LINK_ONLY_IN_SHOP_TOTALS = False
+
 # Limited-edition ink tracker (scripts/ink_tracker.py). Its rows live in data/inks/, apart from stock.json, so
 # they never reach the Hobonichi or dot grid pages, the restock feeds or the drop-alert webhook. A page shows
 # only rows of inks listed in inks.json (owner-approved). Pending finds ("hidden": true) never render.
@@ -124,14 +142,16 @@ def section_products(sec):
 def hobo_products():
     return section_products("hobonichi")
 
-N_STORES = len({p["store_id"] for p in stock["products"]} | {r["store_id"] for r in INK_ROWS})  # stores the checkers actually check (inks included)
+N_STORES = len({p["store_id"] for p in stock["products"]} | {r["store_id"] for r in INK_ROWS} | ({r["store_id"] for r in LINK_ROWS} if COUNT_LINK_ONLY_IN_SHOP_TOTALS else set()))  # stores the checkers actually check (inks included)
 N_INK = len({r["store_id"] for r in INK_ROWS})  # shops on the ink tracker
-N_SEC = {k: len({p["store_id"] for p in section_products(k)}) for k in ("hobonichi", *SECTIONS)}  # shops per section, from data
+N_SEC = {k: len({p["store_id"] for p in section_products(k)} | ({r["store_id"] for r in LINK_ROWS if section_of(r) == k} if COUNT_LINK_ONLY_IN_SHOP_TOTALS else set())) for k in ("hobonichi", *SECTIONS)}  # shops per section, from data
 LIVE = [k for k in SECTIONS if section_products(k)]  # sections that have tracked listings (and so a page)
 
 def section_shops(sec):
     """Store entries with listings in a section, in stores.json order."""
     ids = {p["store_id"] for p in section_products(sec)}
+    if COUNT_LINK_ONLY_IN_SHOP_TOTALS:
+        ids |= {r["store_id"] for r in LINK_ROWS if section_of(r) == sec}
     return [s for s in stores["stores"] if s["id"] in ids]
 
 # Shop's home country, from its own site or domain (stores.json "country", first word). Never a shipping claim.
@@ -161,7 +181,7 @@ for _x in stores["stores"]:
         _x["name"] = _display
 # Older change-log rows predate the "(official)" name and read "Leuchtturm1917 US". Same shop, same display name.
 _STRIP.setdefault("Leuchtturm1917 US", "Leuchtturm1917 (official)")
-for _r in stock["products"] + changes + stock.get("not_checked", []) + INK_ROWS + INK_CHANGES:
+for _r in stock["products"] + changes + stock.get("not_checked", []) + LINK_ROWS + INK_ROWS + INK_CHANGES:
     for _k in ("store", "name"):
         if _r.get(_k) in _STRIP:
             _r[_k] = _STRIP[_r[_k]]
@@ -204,8 +224,9 @@ def names_and(n):
     return ", ".join(n[:-1]) + " and " + n[-1] if len(n) > 1 else "".join(n)
 
 def dotgrid_names():
-    """Store names as shown in shop lists, including an (official) mark when present."""
-    return names_and([s["name"] for s in DOTGRID_SHOPS])
+    """Store names as shown in shop lists, including an (official) mark when present.
+    Only shops we check: a link-only maker store (Notebook Therapy since Nov 23, 2026) is left out."""
+    return names_and([s["name"] for s in DOTGRID_SHOPS if not s.get("link_only")])
 
 def bare_shop_name(name):
     """Store name without a trailing (official) mark, for brand lists in prose."""
@@ -214,11 +235,25 @@ def bare_shop_name(name):
 def dotgrid_brand_names():
     return names_and([bare_shop_name(s["name"]) for s in DOTGRID_SHOPS])
 
+def dotgrid_checked_brand_names():
+    """Brands whose own store we check. A link-only maker (Notebook Therapy since Nov 23, 2026) is left out."""
+    return names_and([bare_shop_name(s["name"]) for s in DOTGRID_SHOPS if not s.get("link_only")])
+
+def dotgrid_link_only_clause():
+    """'Notebook Therapy is listed as a link only: we don't check its stock.' or '' when every maker is checked."""
+    lo = [bare_shop_name(s["name"]) for s in DOTGRID_SHOPS if s.get("link_only")]
+    if not lo:
+        return ""
+    one = len(lo) == 1
+    return f"{names_and(lo)} {'is' if one else 'are'} listed as {'a link only' if one else 'links only'}: we don't check {'its' if one else 'their'} stock."
+
 def _dotgrid_coverage():
     """Maker-only brand names, mixed-coverage phrases, and independent-shop counts."""
     only, mixed, counts = [], [], {}
     listings = section_products("dotgrid")
     for s in DOTGRID_SHOPS:
+        if s.get("link_only"):
+            continue  # not checked (Notebook Therapy since Nov 23, 2026): never "We check ... on each maker's own store"
         canons = {p.get("canonical") for p in s.get("products") or [] if p.get("canonical")}
         shops = {p["store_id"] for p in listings if p.get("canonical") in canons}
         name = bare_shop_name(s["name"])
@@ -239,7 +274,7 @@ def dotgrid_meta_desc():
     n = leuchtturm_independent_count()
     shops = "shop" if n == 1 else "shops"
     return (
-        f"Are {dotgrid_brand_names()} in stock? Official stores, "
+        f"Are {dotgrid_checked_brand_names()} in stock right now? Official stores, "
         f"plus {n} independent {shops} for Leuchtturm1917."
     )
 
@@ -418,7 +453,8 @@ OG_ALT = ("Stationery Drop Watch: Never miss a stationery restock. "
           + (f"We check {OG_SHOPS} shops for you: " if OG_SHOPS else "Restock tracker for ")
           + f"Hobonichi Techo 2027, dot grid journals and limited-edition inks, checked {CHECK_FREQ}. Clip, the paper clip mascot, holds a magnifying glass.")
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
-OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked " + CHECK_FREQ
+OG_DOTGRID_ALT = ("Stationery Drop Watch: dot grid journal restock tracker for " + dotgrid_checked_brand_names() + ", checked " + CHECK_FREQ
+                  + ("." + " " + dotgrid_link_only_clause() if dotgrid_link_only_clause() else ""))
 CONTENT_LASTMOD = "2026-11-12"  # floor for pages whose HTML changed in the Nov 12 refresh
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
@@ -499,7 +535,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     foot_items = list(NAV_TRACKERS) + [
         ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("sold-out-everywhere/", "Sold out everywhere"), ("shop/", "Shop"),
         ("follow/", "Follow us"),
-        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy")]
+        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy"), ("terms/", "Terms")]
     foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
@@ -622,7 +658,7 @@ def signup(kind="alerts", label=None, note=None, placement="top", kicker=TAGLINE
     <button type="submit">Notify me</button>
     <p class="signup-status" role="status" aria-live="polite" hidden></p>
   </form>
-  <p class="strip-note">{E(note)} Emails are sent via <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>. <a href="privacy/">Privacy</a></p>
+  <p class="strip-note">{E(note)} Emails are sent via <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>. <a href="privacy/">Privacy</a> · <a href="terms/">Terms</a></p>
 </section>"""
 
 def crumbs(*trail):
@@ -694,6 +730,26 @@ def is_restock_event(c):
     """A restock is a listing becoming buyable. coming_soon -> sold_out is not one, and it must not alert."""
     return c.get("to") in BUYABLE and c.get("from") in NOT_BUYABLE
 
+def link_listings(match):
+    """Link-only listings that a page's own matcher (group or design) covers."""
+    return [r for r in LINK_ROWS if match(r)]
+
+def link_status_rows(ls):
+    """Table rows for link-only listings: the shop's own page, no status and no check time."""
+    rows = []
+    for l in sorted(ls, key=lambda l: (l["store"], l["label"])):
+        rows.append(f"""<tr class="link-only-row" data-store="{E(l['store_id'])}" data-status="link_only" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
+  <td><span class="badge link_only">{LINK_LABEL}</span><span class="sub">{LINK_HINT}</span></td></tr>""")
+    return "".join(rows)
+
+def link_note(ls):
+    """One line under a table that has link-only rows."""
+    if not ls:
+        return ""
+    n = len({l["store_id"] for l in ls})
+    return (f'<p class="muted small link-only-note">{n} {"shop is" if n == 1 else "shops are"} listed as a link only. '
+            f'We don\'t check {"its" if n == 1 else "their"} stock, so no status is shown. Open the shop\'s page to see what it has.</p>')
+
 def listed_unchecked():
     """Link-only shops still configured in stores.json.
 
@@ -703,8 +759,27 @@ def listed_unchecked():
     allowed = {s["id"] for s in stores["stores"] if s.get("platform") not in ("shopify", "hobonichi")}
     return [n for n in stock.get("not_checked", []) if n.get("id") in allowed]
 
+def listed_link_only():
+    """Link-only shops (stores.json "link_only"): name, url and reason, for the "we list but don't check" notes."""
+    return [dict(id=x["id"], name=x["name"], url=x["url"], reason="Link only for now: we don't check its stock, so no status is shown.")
+            for x in stores["stores"] if x.get("link_only")]
+
+def link_only_shops_sentence():
+    names = [n["name"] for n in listed_link_only()]
+    if not names:
+        return ""
+    return (f"{names_and(names)} {'is' if len(names) == 1 else 'are'} listed as {'a link only' if len(names) == 1 else 'links only'} for now: "
+            f"we don't check {'its' if len(names) == 1 else 'their'} stock, so no status is shown.")
+
 def link_only_clause():
     """FAQ sentence. Singular when JetPens is the only shop we link and do not check."""
+    blocked = _blocked_clause()
+    extra = link_only_shops_sentence()
+    if blocked == "Every shop we list is checked automatically.":
+        return extra or blocked
+    return blocked + (" " + extra if extra else "")
+
+def _blocked_clause():
     names = [n["name"] for n in listed_unchecked()]
     if len(names) == 1:
         return f"{names[0]} is listed as a link only, because its site blocks automated checks."
@@ -808,10 +883,16 @@ def in_stock_tally(statuses):
     return f"{inn} of {n} listings in stock"
 
 def shop_tally(ls):
-    shops = len({r["sid"] for r in ls})
-    in_shops = len({r["sid"] for r in ls if r["st"] == "in_stock"})
+    """Counts only listings we check. Link-only listings are named, never counted as stock or as checked."""
+    chk = [r for r in ls if r["st"] != "link_only"]
+    links = len({r["sid"] for r in ls if r["st"] == "link_only"})
+    link_bit = f" · {links} {'shop' if links == 1 else 'shops'} link only" if links else ""
+    if not chk:
+        return "Link only, we don't check stock"
+    shops = len({r["sid"] for r in chk})
+    in_shops = len({r["sid"] for r in chk if r["st"] == "in_stock"})
     word = "shop" if shops == 1 else "shops"
-    return f"{in_stock_tally([r['st'] for r in ls])} · {in_shops} of {shops} {word} in stock"
+    return f"{in_stock_tally([r['st'] for r in chk])} · {in_shops} of {shops} {word} in stock{link_bit}"
 
 def official_note(l):
     """Optional note from Hobonichi's own feed (checker.hobonichi_note), only on sold-out official rows.
@@ -821,7 +902,7 @@ def official_note(l):
 
 def compare_product(ls):
     """One product, every shop that lists it, so the statuses sit next to each other."""
-    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4, "link_only": 5}
     ls = sorted(ls, key=lambda r: (order.get(r["st"], 9), r["s"].lower()))
     h = ls[0]
     name = f'<a href="{E(h["dp"])}">{E(h["gn"])}</a>' if h.get("dp") else E(h["gn"])
@@ -837,7 +918,7 @@ def compare_product(ls):
         title = f'<span class="sub">{E(r["title"])}</span>' if r.get("title") and r["title"] not in (r.get("gn"), r.get("p")) else ""
         items.append(
             f'<li><span class="compare-shop"><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region}{variant}{title}</span>'
-            f'<span class="badge {E(r["st"])}">{STATUS[r["st"]]}</span>'
+            f'<span class="badge {E(r["st"])}">{STATUS.get(r["st"], LINK_LABEL)}</span>'
             + (f'<span class="official-note">{E(r["on"])}</span>' if r.get("on") and r.get("st") == "sold_out" else "") + '</li>')
     anchor = f' id="{E(h["g"])}"' if re.fullmatch(r"[A-Za-z][\w-]*", h.get("g") or "") else ""
     return f'''<article class="compare"{anchor}>
@@ -847,7 +928,7 @@ def compare_product(ls):
 
 def tracker_static(rows):
     """No-JS listing groups. Families start closed; the summary is a real control, so they still open."""
-    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4, "link_only": 5}
     fam_order = [g["slug"] for g in GROUPS if g_sec(g) == "hobonichi"] + ["other"]
     by_fam = {}
     for r in rows:
@@ -865,7 +946,7 @@ def tracker_static(rows):
         all_rows = [r for ls in groups for r in ls]
         body = "".join(compare_product(ls) for ls in groups)
         parts.append(f'''<details class="fam-block" id="{E(fam)}">
-  <summary><span class="fam-name">{E(name)}</span><span class="fam-meta">{E(in_stock_tally([r["st"] for r in all_rows]))}</span></summary>
+  <summary><span class="fam-name">{E(name)}</span><span class="fam-meta">{E(in_stock_tally([r["st"] for r in all_rows if r["st"] != "link_only"]))}</span></summary>
   <div class="fam-products">{body}</div>
 </details>''')
     return "".join(parts)
@@ -874,11 +955,15 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
     """Filterable list of every listing in `prods` (driven by assets/app.js).
     Without JavaScript the same groups are in the page, inside noscript."""
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
-    sids = {p["store_id"] for p in prods}
+    sids = {p["store_id"] for p in prods} | {r["sid"] for r in rows if r["st"] == "link_only"}
     store_opts = "".join(f'<option value="{E(x["id"])}">{E(x["name"])}</option>' for x in stores["stores"] if x["id"] in sids)
     prod_opts = "".join(f'<option value="{E(k)}">{E(v)}</option>' for k, v in canon.items() if any(p.get("canonical") == k for p in prods))
     type_opts = "".join(f'<option value="{E(t)}">{E(t)}</option>' for t in sorted({p["type"] for p in prods}))
     status_opts = "".join(f'<option value="{k}">{v}</option>' for k, v in STATUS.items() if any(p["status"] == k for p in prods))
+    if any(r["st"] == "link_only" for r in rows):
+        status_opts += f'<option value="link_only">{LINK_LABEL}</option>'
+    link_help = (' "Link only" means we don\'t check that shop\'s stock, so no status is shown; the link goes to the shop\'s own page.'
+                 if any(r["st"] == "link_only" for r in rows) else "")
     sizes = facet_values(prods, listing_size)
     langs = [v for v in ("English", "Japanese") if any(listing_language(p) == v for p in prods)]
     size_label = (f'<label>Size<select id="f-size"><option value="">All sizes</option>'
@@ -915,12 +1000,12 @@ def tracker_block(prods, rows, search_hint, other_opt="", extra="", prefix=""):
       {lang_note}
       <div id="rows" class="tracker-groups"><noscript>{noscript_rows}</noscript></div>
       <button type="button" id="more" class="btn-ghost more" hidden>Show all</button>
-      <p class="muted small">Groups can be collapsed. "Not yet on sale" means the store has a preview page up but isn't taking orders yet. "Couldn't check" is a failed check, not a sold-out guess.</p>
+      <p class="muted small">Groups can be collapsed. "Not yet on sale" means the store has a preview page up but isn't taking orders yet. "Couldn't check" is a failed check, not a sold-out guess.{link_help}</p>
       {region_legend(p["store_id"] for p in prods)}
       {extra}
     </section>"""
 
-def tracker_rows(prods, out_everywhere=None):
+def tracker_rows(prods, out_everywhere=None, links=()):
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
     fam_index = {g["slug"]: i for i, g in enumerate(g for g in GROUPS if g_sec(g) == "hobonichi")}
     rows = []
@@ -937,6 +1022,14 @@ def tracker_rows(prods, out_everywhere=None):
         dp = design_page_for([p])
         if dp:
             r["dp"] = "/" + pretty(dp)
+    for p in links:  # link-only listings: no status time, no variant counts (keys left out on purpose)
+        famn, fam = listing_family(p)
+        r = dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st="link_only",
+                 u=p["url"], title=p.get("title") or "", sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99))
+        dp = design_page_for([p])
+        if dp:
+            r["dp"] = "/" + pretty(dp)
+        rows.append(r)
     return rows
 
 def tracking_start(ls):
@@ -1141,8 +1234,8 @@ def build_hobo_tracker():
   <p class="muted">Right now: {s['sold_out']} tracked listings are sold out and {s['coming_soon']} aren't on sale yet. Those are the ones we're watching.{f" {s['unknown']} couldn't be checked this run." if s['unknown'] else ""}</p></div>"""
 
     # table data (embedded so the page works without fetch)
-    rows = tracker_rows(prods)
-    unchecked = listed_unchecked()
+    rows = tracker_rows(prods, links=[r for r in LINK_ROWS if section_of(r) == "hobonichi"])
+    unchecked = listed_unchecked() + listed_link_only()
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a>: <span class="muted">{E(n["reason"] or "")}</span></li>' for n in unchecked)
     unchecked_summary = "Store we list but don't check automatically" if len(unchecked) == 1 else "Stores we list but don't check automatically"
 
@@ -1178,7 +1271,7 @@ def build_hobo_tracker():
 {signup_for(section="hobonichi", placement="bottom")}
 {stock_data(rows)}
 """
-    n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS})
+    n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS} | ({r['store_id'] for r in LINK_ROWS if section_of(r) == "hobonichi"} if COUNT_LINK_ONLY_IN_SHOP_TOTALS else set()))
     return page(HOBO_TRACKER, "Hobonichi 2027 restock tracker",
                 f"Hobonichi 2027 restock tracker. Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, plus separate trackers for other brands.",
                 body, ld=(faq_ld, crumbs_ld((HOBO_TRACKER, "Hobonichi tracker"))))
@@ -1189,7 +1282,8 @@ HUB_TRACKERS = {  # one line per tracker card on the hub homepage
 }
 HUB_FAQ = ("How often do you check the shops?", "What do you track?",
            'What do "Not yet on sale" and "Couldn\'t check" mean?',
-           "How do restock alerts work?", "Which shops do you check?", "Do you sell planners?")
+           "How do restock alerts work?", "Which shops do you check?", "Do you sell planners?",
+           "Can I use alerts for reselling?")
 
 def hub_art(kind):
     """Small inline drawing in the existing palette. Not a retailer or manufacturer photo."""
@@ -1255,7 +1349,7 @@ def build_index():
         name, line = HUB_TRACKERS[k]
         if k == "dotgrid":
             # Short homepage blurb only. Official-store / independent-shop detail stays on the hub.
-            line = f"Flagship notebooks from {dotgrid_brand_names()}, plus Archer and Olive refills."
+            line = f"Flagship notebooks from {dotgrid_checked_brand_names()}, plus Archer and Olive refills."
         bits = [f"{N_SEC[k]} shops"]
         if st["preorder"]:
             bits.append(f'{st["preorder"]} on preorder')
@@ -1281,12 +1375,8 @@ def build_index():
   <h3>Limited-edition inks</h3><p>{E(INK_HUB_LINE)}</p>
   <p class="hub-count"><b>{ist["in_stock"]}</b> of {len(INK_ROWS)} listings in stock <span class="muted small">{E(" · ".join(ibits))}</span></p>
   <span class="hub-go">View tracker</span></a></li>""")
-    # Third card: the takedown notice. Same card and button as the trackers; no counts or stock badges.
-    # The line is verbatim phrases from TAKEDOWN_NOTICE, including the Nov 20 lines.
-    cards.append(f"""<li class="hub-card hub-notice"><a href="{TN_SLUG}/">
-  <span class="hub-art">{hub_art("notice")}</span>
-  <h3>{E(TAKEDOWN_HEADING)}</h3><p>{E(HOME_NOTICE_LINE)}</p>
-  <span class="hub-go">Read the notice</span></a></li>""")
+    # The takedown notice card left the homepage on Nov 23, 2026 (owner t1797u). The notice page itself stays live at
+    # /{TN_SLUG}/, in the sitemap, and linked from the gift guide.
     sec_of_url = {p["url"]: section_of(p) for p in prods}
     restocks = [c for c in changes if c["url"] in sec_of_url and is_restock_event(c)]
     restocks.sort(key=lambda c: c["at"], reverse=True)
@@ -1451,8 +1541,99 @@ def build_privacy():
 <p>When you follow a link to a shop we track, or to Amazon, Etsy, or Teachers Pay Teachers for our own planners, journals, and printables, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email {mailto_email()}.</p>
+<p>How the site may be used, including our ban on reselling, is covered in our <a href="terms/">Terms of Use</a>.</p>
 </article>"""
     return page(fname, "Privacy", "How Stationery Drop Watch handles email signups, plus page-view stats from Cloudflare Web Analytics. No cookies set by the site, no ad trackers.", body, ld=(crumbs_ld((fname, "Privacy")),))
+
+TERMS_UPDATED = "Nov 23, 2026"
+
+def build_terms():
+    """Terms of Use: same template as Privacy. Owner-approved text (Nov 23, 2026), not legal advice."""
+    fname = "terms/"
+    body = f"""
+<article class="prose">
+{crumbs((fname, "Terms of Use"))}
+{eyebrow("Terms", "updated " + TERMS_UPDATED)}
+<h1>Terms of Use</h1>
+<p class="lede">These terms explain how you may use Stationery Drop Watch, what we do and don't promise, and what we ask of you in return. They are written to be read, so please take a few minutes with them.</p>
+<h2>1. Agreeing to these terms</h2>
+<p>Stationery Drop Watch ("Stationery Drop Watch", "we", "us" or "our") runs the website at stationerydropwatch.com, its restock trackers, its guides, and its email restock alerts (together, the "Service"). By visiting the site, signing up for alerts, or otherwise using the Service, you agree to these Terms of Use and to our <a href="privacy/">Privacy</a> page. If you do not agree, please do not use the Service.</p>
+<h2>2. Who may use the Service</h2>
+<p>You must be at least 13 years old to use the Service or sign up for email alerts. If you are under 18, or under the age of majority where you live, please use the Service only with the involvement of a parent or guardian, who agrees to these terms on your behalf. The Service does not require or offer user accounts.</p>
+<h2>3. What the Service is, and what it isn't</h2>
+<p>Stationery Drop Watch is a free, independent restock tracker. About every 30 minutes, an automated checker reads the public product data of most of the shops we list and records whether each listing can be bought at that time. Some shops are listed as "Link only", which means we link to them but don't check their stock, so no status is shown. We show those results on our trackers, link each listing to the shop's own product page, and, if you sign up, email you when something on the trackers you chose comes back in stock.</p>
+<p>We are an information service, not a store. We do not sell, hold, reserve, or ship any of the stationery we track, and we do not take orders or payments for it. Every purchase of a tracked item happens on the shop's own website.</p>
+<p>We separately sell planners, journals, and printables that we make ourselves. Those are listed on our <a href="shop/">Shop</a> page and are sold through Amazon, Etsy, and Teachers Pay Teachers, under those platforms' own terms.</p>
+<p>Stationery Drop Watch is not affiliated with, sponsored by, or endorsed by any brand or shop we track, unless we clearly say otherwise. Brand names, product names, logos, and trademarks shown on the site belong to their owners and are used only to identify the products we track.</p>
+<h2>4. No guarantee of stock, prices, or accuracy</h2>
+<p>Stock changes quickly, and our information reflects only what a shop reported at the time of our last check. It may already be out of date when you see it, and it may be wrong. A check can also fail, in which case we show "Couldn't check" rather than guess. "Not yet on sale" means a shop has a preview page up but is not yet taking orders.</p>
+<p>We do not guarantee that any item is in stock, that any price, edition, color, or size is correct, that any alert will arrive promptly or at all, or that you will be able to buy an item before it sells out. Always confirm availability, price, shipping, and other details on the shop's own page before you buy or make plans around it.</p>
+<h2>5. Third-party sites and purchases</h2>
+<p>Our links take you to websites we do not own or control, including the shops we track and Amazon, Etsy, and Teachers Pay Teachers. Those sites have their own terms and privacy policies, and we are not responsible for their content, products, pricing, availability, shipping, customer service, or conduct.</p>
+<p>Any purchase you make from a shop is a transaction between you and that shop. Questions about orders, payments, delivery, returns, refunds, or product quality should go to the shop you bought from.</p>
+<h2>6. Prohibited uses</h2>
+<p>Stationery Drop Watch exists to help individual people find planners, journals, and inks for their own use, and to give everyone a fair chance at a restock. <strong>We prohibit anyone from using the Service to engage in reselling activities.</strong></p>
+<p>Specifically, you may not use the site, its trackers, its alerts, its data, or its emails to:</p>
+<ul>
+<li>Buy tracked items for the purpose of reselling them, including scalping, flipping, or reselling at a markup on any marketplace or platform.</li>
+<li>Make bulk, automated, or bot-assisted purchases, including auto-checkout tools, purchasing scripts, or running many accounts or payment methods to get around a shop's purchase limits.</li>
+<li>Trigger, feed, or power any bot, script, or automated buying service.</li>
+<li>Sell, rent, share, or otherwise provide access to our alerts, stock information, or data, whether as a paid service, a "cook group", a private channel, or any other arrangement.</li>
+</ul>
+<p>You also may not:</p>
+<ul>
+<li>Scrape, crawl, or otherwise access the Service with automated tools, other than standard search engine indexing and ordinary web browsers used by a person.</li>
+<li>Copy, republish, redistribute, mirror, or build a product or service on our stock data, alerts, or content without our prior written permission.</li>
+<li>Interfere with or disrupt the Service, including by overloading it, probing or bypassing its security or anti-spam protections, or introducing malicious code.</li>
+<li>Abuse the email alerts, including signing up addresses you do not own or control, using fake or disposable addresses at scale, or attempting to automate signups.</li>
+<li>Use the Service in any way that is unlawful, misleading, or harmful to us, the shops we track, or other readers.</li>
+</ul>
+<h2>7. Our right to restrict or end access</h2>
+<p>We may, at our discretion and without notice, block access to the Service, remove an email address from our alerts, cancel alerts, or refuse service to anyone we reasonably believe has broken these terms, is reselling, or is using the Service in a way that harms others. We may also change, pause, or discontinue any part of the Service, including any tracker, shop, or alert, at any time. You may stop using the Service at any time, and you can unsubscribe from alerts whenever you like.</p>
+<h2>8. Email restock alerts</h2>
+<p>Alerts are free. When you sign up, we send a confirmation link, and you are not added to the list until you click it. You will then receive restock emails for the trackers you choose, plus occasional updates when we add a tracker or release something new. Every email includes an unsubscribe link, and you can also ask to be removed by emailing {mailto_email()}.</p>
+<p>Alerts are a convenience. Delivery depends on our checker, our email provider, and your own email service, and alerts can be delayed, filtered as spam, or missed. How we handle your email address is explained on our <a href="privacy/">Privacy</a> page.</p>
+<h2>9. Our content</h2>
+<p>The site's text, guides, design, graphics, mascot, compiled stock data, and other original material are owned by Stationery Drop Watch or used with permission, and are protected by copyright and other laws. You may view and share links to our pages for your own personal, non-commercial use. Any other use, including copying or republishing our content or data, requires our prior written permission.</p>
+<h2>10. Feedback and suggestions</h2>
+<p>We welcome questions, corrections, and suggestions for shops to track. If you send us feedback or ideas, you agree that we may use them to improve the Service without any obligation or payment to you. Please do not send anything confidential.</p>
+<h2>11. Copyright and trademark concerns</h2>
+<p>If you believe something on the site uses your copyrighted work or trademark without permission, email {mailto_email()} with a description of the work, where it appears on our site, and how to reach you. We review every request in good faith.</p>
+<h2>12. For shops and brands</h2>
+<p>Any shop or brand can ask us at any time to remove its products or shop from our trackers, or to switch to link only, by emailing {mailto_email()}. We will honor every such request as promptly as possible.</p>
+<h2>13. Disclaimer of warranties</h2>
+<p>The Service is provided "as is" and "as available". To the fullest extent permitted by law, we make no warranties of any kind, express or implied, including warranties of accuracy, availability, merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the Service will be uninterrupted, timely, secure, or error-free.</p>
+<h2>14. Limitation of liability</h2>
+<p>To the fullest extent permitted by law, Stationery Drop Watch and its owner will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for any lost profits, lost purchases, missed restocks, or lost data, arising from or related to your use of, or inability to use, the Service, even if we were told such damages were possible.</p>
+<p>Because the Service is free, our total liability for any claim arising from or related to the Service is limited to fifty US dollars (US$50). Some jurisdictions do not allow certain of these limits, so some of them may not apply to you.</p>
+<h2>15. Indemnification and hold harmless</h2>
+<p>You agree to defend, indemnify, and hold harmless Stationery Drop Watch and its owner from and against any claims, demands, losses, liabilities, damages, costs, and expenses, including reasonable attorneys' fees, arising from or related to:</p>
+<ul>
+<li>your use or misuse of the Service;</li>
+<li>your violation of these terms or of any law or the rights of any third party;</li>
+<li>any purchase you make from, or dispute you have with, a shop or other third-party site; and</li>
+<li>any resale, attempted resale, or other reselling activity connected to items, alerts, or data you obtained through the Service.</li>
+</ul>
+<h2>16. Changes to these terms</h2>
+<p>We may update these terms from time to time. When we do, we will change the "updated" date at the top of this page. If you keep using the Service after an update is posted, you accept the updated terms.</p>
+<h2>17. Events beyond our control</h2>
+<p>We are not responsible for any delay or failure in the Service caused by events beyond our reasonable control, including outages at our hosting, email, or other service providers, changes or outages at the shops we track, internet failures, or natural disasters.</p>
+<h2>18. Governing law and venue</h2>
+<p>These terms are governed by the laws of the State of Michigan, United States, without regard to its conflict-of-laws rules. Any dispute arising from or related to these terms or the Service will be brought only in the state courts located in Wayne County, Michigan, or the United States District Court for the Eastern District of Michigan, and you consent to the jurisdiction of those courts.</p>
+<h2>19. Users outside the United States</h2>
+<p>Stationery Drop Watch is run from Michigan, in the United States, and some of the shops we track are in other countries. If you use the Service from outside the United States, you do so on your own initiative and are responsible for following your local laws.</p>
+<h2>20. General terms</h2>
+<ul>
+<li><strong>Severability.</strong> If any part of these terms is found unenforceable, that part will be enforced to the fullest extent possible and the rest will remain in full effect.</li>
+<li><strong>No waiver.</strong> Our failure to enforce any provision is not a waiver of our right to enforce it later.</li>
+<li><strong>Assignment.</strong> You may not transfer your rights under these terms. We may transfer ours, for example to a company that operates the Service in the future.</li>
+<li><strong>Survival.</strong> The sections on prohibited uses, our content, disclaimers, limitation of liability, indemnification, and governing law continue to apply after your use of the Service ends.</li>
+<li><strong>Entire agreement.</strong> These terms, together with our <a href="privacy/">Privacy</a> page, are the entire agreement between you and us about the Service.</li>
+</ul>
+<h2>21. Contact</h2>
+<p>Questions about these terms? Email {mailto_email()}, or visit our <a href="contact/">Contact</a> page.</p>
+</article>"""
+    return page(fname, "Terms of Use", "The terms for using Stationery Drop Watch, a free restock tracker: information only, no reselling or bot buying, no guarantee of stock, and Michigan law.", body, ld=(crumbs_ld((fname, "Terms of Use")),))
 
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
@@ -1555,11 +1736,12 @@ GROUPS = [
                "To compare paper weight, pages and size across the four brands, see <a href=\"best-dot-grid-journals/\">best dot grid journals compared</a>.",
          # The Archer and Olive page keeps the old URL (AO_SLUG) and links back here.
          # The title, heading, nav, and breadcrumb name every maker we check.
-         title=f"Dot grid journal restock tracker: {dotgrid_brand_names()}",
+         title=f"Dot grid journal restock tracker: {dotgrid_checked_brand_names()}",
          desc=dotgrid_meta_desc(),
          og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
-               f"We track a focused set of flagship dot grid notebooks from {dotgrid_brand_names()}, size by size and color by color, plus Archer and Olive's dot grid refills. {dotgrid_where_checked()} "
+               f"We track a focused set of flagship dot grid notebooks from {dotgrid_checked_brand_names()}, size by size and color by color, plus Archer and Olive's dot grid refills. {dotgrid_where_checked()} "
+               + (dotgrid_link_only_clause() + " " if dotgrid_link_only_clause() else "") +
                "This page covers those dot grid notebooks and refills, not pens or other paper, and Hobonichi and our other sections have their own pages."),
     # Archer and Olive only. Keeps the old tracker URL, links to the four-brand tracker (DOTGRID_SLUG).
     dict(slug=AO_SLUG, short="Archer and Olive", product="Archer and Olive dot grid journal", section="dotgrid", aux=True,
@@ -1639,6 +1821,8 @@ def list_filter(ls, hint):
             seen.append((l["store_id"], l["store"]))
     store_opts = "".join(f'<option value="{E(sid)}">{E(name)}</option>' for sid, name in seen)
     status_opts = "".join(f'<option value="{k}">{STATUS[k]}</option>' for k in STATUS if any(l["status"] == k for l in ls))
+    if any(l["status"] == "link_only" for l in ls):
+        status_opts += f'<option value="link_only">{LINK_LABEL}</option>'
     sizes = facet_values(ls, listing_size)
     langs = [v for v in ("English", "Japanese") if any(listing_language(l) == v for l in ls)]
     size_label = (f'<label>Size<select data-filter="size"><option value="">All sizes</option>'
@@ -1716,6 +1900,9 @@ def build_group(g, oe=None):
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
     shops = len({l["store_id"] for l in ls})
     buy = [l for l in ls if l["status"] in BUYABLE]
+    link_sections = {}
+    for l in link_listings(g["match"]):
+        link_sections.setdefault(listing_group_id(l), []).append(l)
     sections = {}
     for l in ls:
         sections.setdefault(listing_group_id(l), []).append(l)
@@ -1762,8 +1949,9 @@ def build_group(g, oe=None):
   {sold_html}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
-    <tbody>{status_rows(sl)}</tbody>
+    <tbody>{status_rows(sl)}{link_status_rows(link_sections.get(cid, []))}</tbody>
   </table></div>
+  {link_note(link_sections.get(cid, []))}
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{tracker}{dp_link}</p>
   {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
 </section></details>""")
@@ -1786,7 +1974,7 @@ def build_group(g, oe=None):
     else:
         others += f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>'
         shop_nav = dg_tracker = ""
-    card_filter = list_filter(ls, g.get("search_hint") or "Shop or design")
+    card_filter = list_filter(ls + link_listings(g["match"]), g.get("search_hint") or "Shop or design")
     ds = designs_of(g["slug"])
     links = "".join(f'<li><a href="{design_fname(d)}">{E(d["name"])}</a></li>' for d in ds)
     design_nav = (f'<details class="design-fold"><summary>Design pages ({len(ds)})</summary>'
@@ -2086,6 +2274,7 @@ def designs_of(parent_slug):
 def build_design(d, oe=None):
     parent = next(g for g in GROUPS if g["slug"] == d["parent"])
     ls = design_listings(d)
+    lsl = link_listings(d["match"])
     pids = {id(x) for x in group_listings(parent)}
     if not all(id(l) in pids for l in ls):  # a design page must count only listings its parent tracker shows
         raise SystemExit(f"design page {design_fname(d)} has listings its parent tracker doesn't show")
@@ -2101,12 +2290,13 @@ def build_design(d, oe=None):
               if d["slug"] in {"nothing-to-hide-green", "nothing-to-hide-pink", "nothing-to-hide-yellow"} else "")
     table = (f"""<section class="card group-sec" id="stock">
   <div class="section-head"><h2>Stock by shop</h2><p class="muted small">{E(count_line(ls).capitalize())} · {checked_line(ls)}</p></div>
-  {list_filter(ls, "Shop name")}
+  {list_filter(ls + lsl, "Shop name")}
   {sold_everywhere_html(ls)}
   <div class="table-wrap"><table class="stock">
     <thead><tr><th>Shop</th><th>Status</th></tr></thead>
-    <tbody>{status_rows(ls)}</tbody>
+    <tbody>{status_rows(ls)}{link_status_rows(lsl)}</tbody>
   </table></div>
+  {link_note(lsl)}
   <p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p>
   <p class="muted small">Open a shop's name to go straight to its listing.</p>
   {region_legend(l["store_id"] for l in ls)}
@@ -2155,7 +2345,8 @@ def build_design(d, oe=None):
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
     sources = "".join(f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(l["store"])}: {E(l.get("title") or l["label"])}</a></li>' for l in sorted(ls, key=lambda l: l["store"]))
-    extra_links = UNCHECKED_LINKS.get(d["parent"] + "/" + d["slug"], [])
+    extra_links = UNCHECKED_LINKS.get(d["parent"] + "/" + d["slug"], []) + [
+        dict(store=l["store"], url=l["url"], note="Link to the shop's own page. We don't check this shop's stock.") for l in sorted(lsl, key=lambda l: l["store"])]
     extra_html = ""
     if extra_links:
         items = "".join(
@@ -2170,21 +2361,46 @@ def build_design(d, oe=None):
               + (f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>' if sec == "hobonichi" else f'<li><a href="{parent["slug"]}/#tracker">Every listing on the {E(parent["short"])} page</a></li>'))
     intro = (f'{E(design_about(d))} This page shows its stock at every shop we track, checked {CHECK_FREQ}. '
              f'For every design, see the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a>.')
+    eyebrow_html = eyebrow(ey, nshops(shops), f"checked {CHECK_FREQ}")
+    facts_html = hero_facts(ls)
+    restock_card = f'<section class="card"><h2>Recent restocks</h2>{restock_html}</section>'
+    if not ls and lsl:
+        # Every shop that lists this design is link-only (Notebook Therapy since Nov 23, 2026): no stock claim at all.
+        lo_shops = names_and(sorted({l["store"] for l in lsl}))
+        one = len({l["store_id"] for l in lsl}) == 1
+        h1 = f'{d["full"]}: link only'
+        eyebrow_html = eyebrow(ey, "link only", "stock not checked")
+        intro = (f'{E(design_about(d))} We list it as a link only: we don\'t check its stock at {E(lo_shops)}, so no status is shown. '
+                 f'Open the shop\'s page to see what it has. For the designs we do check, see the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a>.')
+        facts_html = ""
+        restock_card = ""
+        table = (f'<section class="card group-sec" id="stock"><h2>Where to find it</h2>{list_filter(lsl, "Shop name")}<div class="table-wrap"><table class="stock">'
+                 f'<thead><tr><th>Shop</th><th>Status</th></tr></thead><tbody>{link_status_rows(lsl)}</tbody></table></div>{link_note(lsl)}'
+                 f'<p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p></section>')
+        lo_answer = (f"We don't check. {lo_shops} {'is' if one else 'are'} listed as {'a link only' if one else 'links only'}, so no status is shown. "
+                     "Open the shop's page to see what it has.")
+        qa = [(f'Is {d["full"]} in stock?', lo_answer),
+              (f'Where can I buy {d["full"]}?', f"{lo_shops} {'sells' if one else 'sell'} it. The link above opens {'the shop' if one else 'each shop'}'s own page. We don't check {'its' if one else 'their'} stock.")]
+        faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(
+            f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in qa) + "</section>"
+        faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
+        sources_html = f'<section class="card" id="sources"><h2>Shop links</h2>{extra_html}</section>' if extra_html else ""
     body = f"""
 <div class="product-page">
 {crumbs(*hub_trail(parent), (parent["slug"] + "/", parent["short"]), (fname, d["name"]))}
 <section class="hero hero-compact">
-  {eyebrow(ey, nshops(shops), f"checked {CHECK_FREQ}")}
+  {eyebrow_html}
   <h1>{E(h1)}</h1>
   <p class="lede">{intro}</p>
   {thanks}
-  {hero_facts(ls)}
+  {facts_html}
   {signup_for(section=sec)}
 </section>
 <div class="layout">
   <div class="main-col">
     <div class="m-lead">{table}</div>
-    <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
+    {restock_card}
     {faq_html}
     {sources_html}
   </div>
@@ -2195,12 +2411,15 @@ def build_design(d, oe=None):
 </div>
 {signup_for(section=sec, placement="bottom")}
 </div>"""
-    items = {"@context": "https://schema.org", "@type": "ItemList", "name": h1.replace(" restock tracker", "") + ": listings we track",
+    items = {"@context": "https://schema.org", "@type": "ItemList", "name": h1.replace(" restock tracker", "").replace(": link only", "") + (": listings we track" if ls or not lsl else ": shop links (stock not checked)"),
              "numberOfItems": len(ls), "itemListElement": [
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: l["store"]))]}
     title = design_seo_title(d)
     desc = design_seo_desc(d, shops)
+    if not ls and lsl:
+        title = f'{d["name"]} · link only'
+        desc = f"{d['name']}: we list it as a link only and don't check its stock. Open the shop's own page to see what it has."[:DESC_LIMIT]
     return fname, page(fname, title, desc, body, ld=(crumbs_ld(*hub_trail(parent), (parent["slug"] + "/", parent["short"]), (fname, d["name"])), items, faq_ld),
                        og_image=parent.get("og_image", OG_IMAGE), og_alt=parent.get("og_alt", OG_ALT))
 
@@ -2228,10 +2447,12 @@ FAQ = [
      "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails for the trackers you pick: Hobonichi, dot grid journals and limited-edition inks, plus an occasional update when we add a tracker or release something new. "
      "Ink restocks also show on the inks page. "
      "You can unsubscribe anytime."),
+    ("Can I use alerts for reselling?",
+     "No. Stationery Drop Watch is for people buying for their own use. Our {terms} prohibit using the site, its alerts or its data for reselling, scalping or bot purchasing."),
 ]
 
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
-    "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color, plus Archer and Olive's dot grid refills.",
+    "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color, plus Archer and Olive's dot grid refills.{dg_lo}",
 }
 
 HOBO_NOTE_Q = "Where are launch dates and how restocks usually go?"
@@ -2257,7 +2478,7 @@ def tracker_good_to_know(question, answer_html):
 
 def faq_block(only=None, sid="faq"):
     """only: questions to show, in that order. None shows the full list."""
-    n = len({p["store_id"] for p in stock["products"]})
+    n = len({p["store_id"] for p in stock["products"]} | ({r["store_id"] for r in LINK_ROWS} if COUNT_LINK_ONLY_IN_SHOP_TOTALS else set()))
     # {shop} is a link in the page and the plain URL in the FAQ structured data
     # rstrip the coverage sentence so the ". " join does not add a second period after "shops."
     secs = ". ".join(f'{SECTIONS[k]["foot"]}: {N_SEC[k]} shops, {shop_names(k)}' + ((". " + dotgrid_where_checked().rstrip(".")) if k == "dotgrid" else "") for k in LIVE)
@@ -2289,8 +2510,8 @@ def faq_block(only=None, sid="faq"):
         by_q = dict(answers)
         pairs = [(q, by_q[q]) for q in only]
     unchecked = link_only_clause()
-    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_brand_names()), shop=url_for("shop/"), unchecked=unchecked),
-           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_brand_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>', unchecked=E(unchecked))) for q, a in pairs]
+    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_checked_brand_names(), dg_lo=(" " + dotgrid_link_only_clause() if dotgrid_link_only_clause() else "")), shop=url_for("shop/"), unchecked=unchecked, terms="Terms of Use (" + url_for("terms/") + ")"),
+           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_checked_brand_names(), dg_lo=(" " + dotgrid_link_only_clause() if dotgrid_link_only_clause() else ""))), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>', unchecked=E(unchecked), terms='<a href="terms/">Terms of Use</a>')) for q, a in pairs]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}
@@ -2309,7 +2530,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22"}
+STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -2348,7 +2569,11 @@ def redirect_page(target):
 </body></html>
 """
 
-ROBOTS = f"""User-agent: *
+ROBOTS = f"""# Stationery Drop Watch is for personal shopping only.
+# Using this site or its data for reselling, bulk buying,
+# or automated purchasing is not allowed.
+# See {BASE}terms/
+User-agent: *
 Allow: /
 
 Sitemap: {BASE}sitemap.xml
@@ -2393,7 +2618,7 @@ GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin 
                 VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits.",
                 JAN_APR_SLUG + "/": "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1.",
                 "hobonichi-2027/": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources.",
-                DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock.",
+                DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock where we check it.",
                 "holiday-stationery-gift-guide-2026/": "Hobonichi, Leuchtturm1917, Archer and Olive and other dot grid gifts, each with live stock from our last check, plus planners and printables we make."}  # last copy change on the guide pages (sitemap lastmod floor)
 H_SRC = {  # official Hobonichi pages used for product facts
     "orig": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6 (2027), specifications"),
@@ -2421,7 +2646,7 @@ def design_index_block():
         ds = [d for d in DESIGNS if next(g_sec(g) for g in GROUPS if g["slug"] == d["parent"]) == k]
         if ds:
             out.append(f'<h3>{E(t)}</h3><ul class="link-list">' + "".join(
-                f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)))}</span></li>' for d in ds) + "</ul>")
+                f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)) if design_listings(d) or not link_listings(d["match"]) else "link only, stock not checked")}</span></li>' for d in ds) + "</ul>")
     return f'<section class="card" id="design-pages"><h2>Restock pages for single designs</h2><p class="muted small">{len(DESIGNS)} pages, one per planner or journal design we track. Counts come from the same checks as the trackers.</p>{"".join(out)}</section>'
 
 def _fmt_head(icon, label):
@@ -2483,18 +2708,18 @@ def _names(xs):
     xs = list(xs)
     return ", ".join(xs[:-1]) + " and " + xs[-1] if len(xs) > 1 else "".join(xs)
 
-def _shop_table(ls):
+def _shop_table(ls, links=()):
     rank = {s["id"]: i for i, s in enumerate(stores["stores"])}
     canon = {c["id"]: c["label"] for c in stores["canonical"]}
-    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4, "link_only": 5}
     by = {}
-    for l in ls:
+    for l in list(ls) + list(links):
         by.setdefault(l["store_id"], []).append(l)
     rows = []
     for sid in sorted(by, key=lambda s: (min(order[l["status"]] for l in by[s]), rank.get(s, 99))):
         items = "".join(
             f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(canon.get(l.get("canonical") or "") or l.get("title") or l["label"])}</a> '
-            f'<span class="badge {E(l["status"])}">{E(STATUS[l["status"]])}</span></li>'
+            f'<span class="badge {E(l["status"])}">{E(STATUS.get(l["status"], LINK_LABEL))}</span></li>'
             for l in sorted(by[sid], key=lambda l: (order[l["status"]], l["label"])))
         rows.append(f'<tr><td>{E(by[sid][0]["store"])}{region_tag(sid)}</td><td><ul class="wtb-items">{items}</ul></td></tr>')
     return f'''<div class="table-wrap"><table class="stock"><thead><tr><th>Shop</th><th>What we track there · status at last check</th></tr></thead>
@@ -2518,16 +2743,16 @@ def build_where_to_buy():
         secs.append(f'''<details class="card group-fold" id="{E(g["slug"])}">
   <summary><h2 class="fam-name">{E(g["product"])}</h2><span class="fam-meta">{E(count_line(ls).capitalize())}</span></summary>
   <div class="group-body">
-  {_shop_table(ls)}
+  {_shop_table(ls, link_listings(g["match"]))}
   <p class="small"><a href="{g["slug"]}/">Full {E(g["short"])} restock page</a> <span class="muted">· every listing, when it last changed, and recent restocks</span></p>
   </div>
 </details>''')
-    unchecked = listed_unchecked()
+    unchecked = listed_unchecked() + listed_link_only()
     not_checked = "".join(f'<li><a href="{E(n["url"])}" rel="noopener" target="_blank">{E(n["name"])}</a> <span class="muted">· {E(n["reason"] or "")}</span></li>' for n in unchecked)
     if len(unchecked) == 1:
         unchecked_head, unchecked_blurb = "Shop we list but can't check", "Its site blocks automated checks, so we link to it without a status."
     else:
-        unchecked_head, unchecked_blurb = "Shops we list but can't check", "Their sites block automated checks, so we link to them without a status."
+        unchecked_head, unchecked_blurb = "Shops we list but don't check", "We link to these without a status. Some sites block automated checks, and some shops are link only for now."
     # Live, data-driven tip: products sold out at one shop we track while another shop has them.
     split = {}
     for l in hobo:
@@ -2834,13 +3059,27 @@ def build_dotgrid_guide():
     dg_total = count_line(guide_ls)
     dg_all = count_line(trk)
     jump = {sid: canons[0] for _, sid, canons in DG_COLS}  # tracker section ids are the canonical ids
+    link_only_ids = {x["id"] for x in stores["stores"] if x.get("link_only")}
     def avail(store_id, canons):
         ls = col_ls(store_id)
+        if store_id in link_only_ids:  # not checked: no stock claim, just where to find the listings
+            return f'Link only: we don\'t check this shop\'s stock · <a href="{DOTGRID_SLUG}/#{jump[store_id]}">listings</a>'
         if not ls:
             return f'<a href="{DOTGRID_SLUG}/#{jump[store_id]}">Live stock</a>'
         buy = [l["label"] for l in ls if l["status"] in BUYABLE]
         names = f'<br><span class="muted small">In stock: {E("; ".join(buy))}</span>' if buy else ""
         return f'<strong>{len(buy)} of {len(ls)}</strong> versions we track · <a href="{DOTGRID_SLUG}/#{jump[store_id]}">live stock</a>{names}'
+    if "notebooktherapy" in link_only_ids:
+        nt_link = (f'<p><a href="{DOTGRID_SLUG}/#{jump["notebooktherapy"]}">Notebook Therapy on the tracker</a> '
+                   f'<span class="muted small">(link only: we don\'t check its stock, so no status is shown)</span></p>')
+    else:
+        nt_link = f'<p><a href="{DOTGRID_SLUG}/#{jump["notebooktherapy"]}">Live Notebook Therapy stock</a></p>'
+    checked_makers = [bare_shop_name(x["name"]) for x in DOTGRID_SHOPS if not x.get("link_only")]
+    unchecked_makers = [bare_shop_name(x["name"]) for x in DOTGRID_SHOPS if x.get("link_only")]
+    where_buy = (f'Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks '
+                 + (f"each one at the maker's own shop {CHECK_FREQ}." if not unchecked_makers else
+                    f"{names_and(checked_makers)} at each maker's own shop {CHECK_FREQ}. "
+                    f"{names_and(unchecked_makers)} {'is' if len(unchecked_makers) == 1 else 'are'} listed as a link only: we don't check {'its' if len(unchecked_makers) == 1 else 'their'} stock."))
     na = "Not listed on the product page"
     rows = [  # (row, A&O, Leuchtturm1917, Scribbles That Matter, Notebook Therapy), each cell (text, source keys)
         ("Paper weight", ("160gsm (Storybook also comes in kraft dot grid, 150gsm)", "ao ao2"), ("80 g/m² (the 120G edition is 120 gsm)", "lt lt120"),
@@ -2910,7 +3149,7 @@ def build_dotgrid_guide():
 <div class="table-wrap"><table class="stock compare">
 <thead><tr><th></th>{"".join(f"<th>{E(h)}</th>" for h, _, _ in DG_COLS)}</tr></thead>
 <tbody>{rows_html}</tbody></table></div>
-<p class="muted small">Stock in each column is what that maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop. Other shops that sell the same notebooks are on the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. Across the four makers: {E(dg_total)}. Across every shop: {E(dg_all)}.</p>
+<p class="muted small">Stock in each column is what that maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop. Other shops that sell the same notebooks are on the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. {'Across the four makers' if not unchecked_makers else 'Across the ' + {1: 'one maker', 2: 'two makers', 3: 'three makers'}.get(len(checked_makers), f'{len(checked_makers)} makers') + ' we check'}: {E(dg_total)}. Across every shop: {E(dg_all)}.</p>
 
 <h2>Who each one suits</h2>
 <h3>Archer and Olive: for markers, paint and lots of size choices</h3>
@@ -2923,11 +3162,11 @@ def build_dotgrid_guide():
 <p>Pick the Scribbles That Matter Dotted Journal Pro if you want the setup done. It comes with numbered pages, an index, a key page and a pen test page, two ribbon bookmarks, a pen loop and a 0.7 mm fineliner in the box {s("stm")}. A5 and B5 come in 160gsm or 120gsm, and B6 comes in 120gsm only {s("stm")}. The Pro has a plain matte cover; the Iconic is the same idea with an embossed cover {s("stm2")}. The page doesn't list a page count.</p>
 <p><a href="{DOTGRID_SLUG}/#{jump['scribbles']}">Live Scribbles That Matter stock</a></p>
 <h3>Notebook Therapy Tsuki: for a smaller book</h3>
-<p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we track too.</p>
-<p><a href="{DOTGRID_SLUG}/#{jump['notebooktherapy']}">Live Notebook Therapy stock</a></p>
+<p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we list too.</p>
+{nt_link}
 
 <h2>Where to buy</h2>
-<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
+<p>All four sell direct, and sizes and colors sell out often. {where_buy} <a href="#alerts">Sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 
@@ -4460,7 +4699,7 @@ def main():
     (SITE / "index.html").write_text(build_index())
     (SITE / HOBO_TRACKER).mkdir(parents=True, exist_ok=True)
     (SITE / HOBO_TRACKER / "index.html").write_text(build_hobo_tracker())
-    for fname, doc in (("hobonichi-2027/", build_hobonichi()), ("about/", build_about()), ("privacy/", build_privacy())):
+    for fname, doc in (("hobonichi-2027/", build_hobonichi()), ("about/", build_about()), ("privacy/", build_privacy()), ("terms/", build_terms())):
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for flat in LEGACY_FLAT_PAGES:  # pre-Nov-21 flat files; /x.html now 301s to /x/ (cloudflare/_redirects)

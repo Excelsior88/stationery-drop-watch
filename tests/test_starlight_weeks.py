@@ -26,6 +26,10 @@ URLS = {
     "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-tanakadaisuke-starlight-eng-tall-slim-jan-start",
     "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-tanakadaisuke-starlight",
     "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-starlight-english-tall-slim-jan-start",
+    "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-tanakadaisuke-starlight-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
+    "colorswatch": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-tanakadaisuke-starlight",  # added Nov 23, 2026 (new Hobonichi shops)
+    "minimaru": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-tanakadaisuke-starlight-4580812709897",  # added Nov 23, 2026 (Minimaru / Take Note)
+    "takenote": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-tanakadaisuke-starlight",  # added Nov 23, 2026 (Minimaru / Take Note)
 }
 
 
