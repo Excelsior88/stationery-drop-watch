@@ -300,7 +300,7 @@ def non_hobonichi_phrase():
 
 def organization():
     """Shared Organization JSON-LD. Locality only: no street address."""
-    return {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE,
+    return {"@type": "Organization", "name": "Stationery Drop Watch", "legalName": "Stationery Drop Watch LLC", "url": BASE,
             "description": f"Independent restock tracker for Hobonichi Techo 2027 planners and covers, plus {non_hobonichi_phrase()}. Statuses come straight from each shop's public product data.",
             "logo": BASE + "assets/brand/icon-512.png", "email": PUBLIC_EMAIL,
             "sameAs": [s[2] for s in SOCIALS],
@@ -570,6 +570,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <main id="content" class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
   <p class="foot-brand"><strong>Stationery Drop Watch</strong> checks {N_STORES} shops {CHECK_FREQ}.</p>
+  <p class="muted foot-legal">&copy; {dt.datetime.now(ET).year} Stationery Drop Watch LLC. All rights reserved.</p>
   <nav class="foot-nav" aria-label="Footer">{foot_nav}</nav>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="muted">{independent_note()}</p>
@@ -1525,7 +1526,7 @@ def build_privacy():
     body = f"""
 <article class="prose">
 {crumbs((fname, "Privacy"))}
-{eyebrow("Privacy", "updated Nov 22, 2026")}
+{eyebrow("Privacy", "updated Nov 23, 2026")}
 <h1>Privacy</h1>
 <p class="lede">What this site collects, who handles it, and how to reach us. In short: your email address if you sign up for alerts, plus page-view and performance statistics from Cloudflare Web Analytics. The site sets no cookies and runs no ad trackers.</p>
 <h2>Email alerts (Kit)</h2>
@@ -1540,6 +1541,7 @@ def build_privacy():
 <h2>Links to other sites</h2>
 <p>When you follow a link to a shop we track, or to Amazon, Etsy, or Teachers Pay Teachers for our own planners, journals, and printables, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
 <h2>Contact</h2>
+<p>This site is operated by Stationery Drop Watch LLC.</p>
 <p>Questions, or want your email address removed? Email {mailto_email()}.</p>
 <p>How the site may be used, including our ban on reselling, is covered in our <a href="terms/">Terms of Use</a>.</p>
 </article>"""
@@ -1557,7 +1559,7 @@ def build_terms():
 <h1>Terms of Use</h1>
 <p class="lede">These terms explain how you may use Stationery Drop Watch, what we do and don't promise, and what we ask of you in return. They are written to be read, so please take a few minutes with them.</p>
 <h2>1. Agreeing to these terms</h2>
-<p>Stationery Drop Watch ("Stationery Drop Watch", "we", "us" or "our") runs the website at stationerydropwatch.com, its restock trackers, its guides, and its email restock alerts (together, the "Service"). By visiting the site, signing up for alerts, or otherwise using the Service, you agree to these Terms of Use and to our <a href="privacy/">Privacy</a> page. If you do not agree, please do not use the Service.</p>
+<p>Stationery Drop Watch LLC, a Michigan limited liability company ("Stationery Drop Watch", "we", "us" or "our"), runs the website at stationerydropwatch.com, its restock trackers, its guides, and its email restock alerts (together, the "Service"). By visiting the site, signing up for alerts, or otherwise using the Service, you agree to these Terms of Use and to our <a href="privacy/">Privacy</a> page. If you do not agree, please do not use the Service.</p>
 <h2>2. Who may use the Service</h2>
 <p>You must be at least 13 years old to use the Service or sign up for email alerts. If you are under 18, or under the age of majority where you live, please use the Service only with the involvement of a parent or guardian, who agrees to these terms on your behalf. The Service does not require or offer user accounts.</p>
 <h2>3. What the Service is, and what it isn't</h2>
@@ -1594,7 +1596,7 @@ def build_terms():
 <p>Alerts are free. When you sign up, we send a confirmation link, and you are not added to the list until you click it. You will then receive restock emails for the trackers you choose, plus occasional updates when we add a tracker or release something new. Every email includes an unsubscribe link, and you can also ask to be removed by emailing {mailto_email()}.</p>
 <p>Alerts are a convenience. Delivery depends on our checker, our email provider, and your own email service, and alerts can be delayed, filtered as spam, or missed. How we handle your email address is explained on our <a href="privacy/">Privacy</a> page.</p>
 <h2>9. Our content</h2>
-<p>The site's text, guides, design, graphics, mascot, compiled stock data, and other original material are owned by Stationery Drop Watch or used with permission, and are protected by copyright and other laws. You may view and share links to our pages for your own personal, non-commercial use. Any other use, including copying or republishing our content or data, requires our prior written permission.</p>
+<p>The site's text, guides, design, graphics, mascot, compiled stock data, and other original material are owned by Stationery Drop Watch LLC or used with permission, and are protected by copyright and other laws. You may view and share links to our pages for your own personal, non-commercial use. Any other use, including copying or republishing our content or data, requires our prior written permission.</p>
 <h2>10. Feedback and suggestions</h2>
 <p>We welcome questions, corrections, and suggestions for shops to track. If you send us feedback or ideas, you agree that we may use them to improve the Service without any obligation or payment to you. Please do not send anything confidential.</p>
 <h2>11. Copyright and trademark concerns</h2>
@@ -1604,10 +1606,10 @@ def build_terms():
 <h2>13. Disclaimer of warranties</h2>
 <p>The Service is provided "as is" and "as available". To the fullest extent permitted by law, we make no warranties of any kind, express or implied, including warranties of accuracy, availability, merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the Service will be uninterrupted, timely, secure, or error-free.</p>
 <h2>14. Limitation of liability</h2>
-<p>To the fullest extent permitted by law, Stationery Drop Watch and its owner will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for any lost profits, lost purchases, missed restocks, or lost data, arising from or related to your use of, or inability to use, the Service, even if we were told such damages were possible.</p>
+<p>To the fullest extent permitted by law, Stationery Drop Watch LLC and its members and managers will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for any lost profits, lost purchases, missed restocks, or lost data, arising from or related to your use of, or inability to use, the Service, even if we were told such damages were possible.</p>
 <p>Because the Service is free, our total liability for any claim arising from or related to the Service is limited to fifty US dollars (US$50). Some jurisdictions do not allow certain of these limits, so some of them may not apply to you.</p>
 <h2>15. Indemnification and hold harmless</h2>
-<p>You agree to defend, indemnify, and hold harmless Stationery Drop Watch and its owner from and against any claims, demands, losses, liabilities, damages, costs, and expenses, including reasonable attorneys' fees, arising from or related to:</p>
+<p>You agree to defend, indemnify, and hold harmless Stationery Drop Watch LLC and its members and managers from and against any claims, demands, losses, liabilities, damages, costs, and expenses, including reasonable attorneys' fees, arising from or related to:</p>
 <ul>
 <li>your use or misuse of the Service;</li>
 <li>your violation of these terms or of any law or the rights of any third party;</li>
@@ -1648,6 +1650,7 @@ def build_about():
 <section class="couple" aria-labelledby="couple-h">
 <h2 id="couple-h">The couple behind Drop Watch</h2>
 <p>Drop Watch is run by Andrew Robinson. He built the tracker after seeing how frustrating it was for his partner, Arden, to keep up with planner restocks, and now they run it together. Stationery Drop Watch is built in Hamtramck, Michigan.</p>
+<p>Stationery Drop Watch is operated by Stationery Drop Watch LLC, a Michigan limited liability company.</p>
 </section>
 <h2>How it works</h2>
 <p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}. When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
@@ -1670,7 +1673,7 @@ def build_contact():
 {eyebrow("Contact", "Stationery Drop Watch")}
 <h1>Contact</h1>
 <p class="lede">Stationery Drop Watch checks planner, journal and limited-edition ink stock at official stores and independent shops, and writes down what each shop last reported.</p>
-<p>Andrew Robinson runs the site and can be reached at {shown}. Questions, corrections, or a shop we should track are welcome.</p>
+<p>Stationery Drop Watch LLC is run by Andrew Robinson and can be reached at {shown}. Questions, corrections, or a shop we should track are welcome.</p>
 <p class="small"><a href="about/">About</a> explains how the checks work. <a href="privacy/">Privacy</a> explains the email list.</p>
 </article>"""
     desc = ("How to reach Stationery Drop Watch with questions, corrections, or a shop to add to the stock trackers. "

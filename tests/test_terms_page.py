@@ -24,7 +24,7 @@ class TermsPageTests(unittest.TestCase):
     def test_owner_decisions_are_in_the_text(self):
         t = " ".join(self.text().split())
         self.assertIn("We prohibit anyone from using the Service to engage in reselling activities.", t)
-        self.assertIn("hold harmless Stationery Drop Watch and its owner", t)
+        self.assertIn("hold harmless Stationery Drop Watch LLC and its members and managers", t)
         self.assertIn("fifty US dollars (US$50)", t)
         self.assertIn("Wayne County, Michigan", t)
         self.assertIn("Eastern District of Michigan", t)

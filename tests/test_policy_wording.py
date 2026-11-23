@@ -112,7 +112,7 @@ class PolicyWordingTests(unittest.TestCase):
     def test_privacy_discloses_confirmation_tpt_and_github(self):
         doc = html_of(site.build_privacy())
         text = html.unescape(re.sub(r"<[^>]+>", " ", doc))
-        self.assertIn("updated Nov 22, 2026", text)
+        self.assertIn("updated Nov 23, 2026", text)
         self.assertEqual(site.STATIC_LASTMOD["privacy/"], "2026-11-22")
         self.assertIn("Cloudflare Web Analytics", text)
         self.assertIn("does not track individual end users across its customers", text)
