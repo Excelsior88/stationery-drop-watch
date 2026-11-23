@@ -2203,5 +2203,23 @@
   "url": "https://www.archerandolive.com/products/a5-soft-cover-refill-notebook-copy?variant=48885176271003",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-23T01:17:44+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks · Shirt Fabric: Graph Plaid",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-23T01:21:11+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Cozy Critters · TN dot grid · ships now",
+  "url": "https://www.archerandolive.com/products/cozy-critters-notebook?variant=49699389931675",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
