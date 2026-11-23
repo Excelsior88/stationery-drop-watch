@@ -519,7 +519,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     foot_items = list(NAV_TRACKERS) + [
         ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("sold-out-everywhere/", "Sold out everywhere"), ("shop/", "Shop"),
         ("follow/", "Follow us"),
-        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy")]
+        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy"), ("terms/", "Terms")]
     foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
@@ -642,7 +642,7 @@ def signup(kind="alerts", label=None, note=None, placement="top", kicker=TAGLINE
     <button type="submit">Notify me</button>
     <p class="signup-status" role="status" aria-live="polite" hidden></p>
   </form>
-  <p class="strip-note">{E(note)} Emails are sent via <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>. <a href="privacy/">Privacy</a></p>
+  <p class="strip-note">{E(note)} Emails are sent via <a href="https://kit.com" target="_blank" rel="noopener">Kit</a>. <a href="privacy/">Privacy</a> · <a href="terms/">Terms</a></p>
 </section>"""
 
 def crumbs(*trail):
@@ -1266,7 +1266,8 @@ HUB_TRACKERS = {  # one line per tracker card on the hub homepage
 }
 HUB_FAQ = ("How often do you check the shops?", "What do you track?",
            'What do "Not yet on sale" and "Couldn\'t check" mean?',
-           "How do restock alerts work?", "Which shops do you check?", "Do you sell planners?")
+           "How do restock alerts work?", "Which shops do you check?", "Do you sell planners?",
+           "Can I use alerts for reselling?")
 
 def hub_art(kind):
     """Small inline drawing in the existing palette. Not a retailer or manufacturer photo."""
@@ -1528,8 +1529,99 @@ def build_privacy():
 <p>When you follow a link to a shop we track, or to Amazon, Etsy, or Teachers Pay Teachers for our own planners, journals, and printables, that site has its own privacy policy. This site doesn't set cookies to credit those visits.</p>
 <h2>Contact</h2>
 <p>Questions, or want your email address removed? Email {mailto_email()}.</p>
+<p>How the site may be used, including our ban on reselling, is covered in our <a href="terms/">Terms of Use</a>.</p>
 </article>"""
     return page(fname, "Privacy", "How Stationery Drop Watch handles email signups, plus page-view stats from Cloudflare Web Analytics. No cookies set by the site, no ad trackers.", body, ld=(crumbs_ld((fname, "Privacy")),))
+
+TERMS_UPDATED = "Nov 23, 2026"
+
+def build_terms():
+    """Terms of Use: same template as Privacy. Owner-approved text (Nov 23, 2026), not legal advice."""
+    fname = "terms/"
+    body = f"""
+<article class="prose">
+{crumbs((fname, "Terms of Use"))}
+{eyebrow("Terms", "updated " + TERMS_UPDATED)}
+<h1>Terms of Use</h1>
+<p class="lede">These terms explain how you may use Stationery Drop Watch, what we do and don't promise, and what we ask of you in return. They are written to be read, so please take a few minutes with them.</p>
+<h2>1. Agreeing to these terms</h2>
+<p>Stationery Drop Watch ("Stationery Drop Watch", "we", "us" or "our") runs the website at stationerydropwatch.com, its restock trackers, its guides, and its email restock alerts (together, the "Service"). By visiting the site, signing up for alerts, or otherwise using the Service, you agree to these Terms of Use and to our <a href="privacy/">Privacy</a> page. If you do not agree, please do not use the Service.</p>
+<h2>2. Who may use the Service</h2>
+<p>You must be at least 13 years old to use the Service or sign up for email alerts. If you are under 18, or under the age of majority where you live, please use the Service only with the involvement of a parent or guardian, who agrees to these terms on your behalf. The Service does not require or offer user accounts.</p>
+<h2>3. What the Service is, and what it isn't</h2>
+<p>Stationery Drop Watch is a free, independent restock tracker. About every 30 minutes, an automated checker reads the public product data of most of the shops we list and records whether each listing can be bought at that time. Some shops are listed as "Link only", which means we link to them but don't check their stock, so no status is shown. We show those results on our trackers, link each listing to the shop's own product page, and, if you sign up, email you when something on the trackers you chose comes back in stock.</p>
+<p>We are an information service, not a store. We do not sell, hold, reserve, or ship any of the stationery we track, and we do not take orders or payments for it. Every purchase of a tracked item happens on the shop's own website.</p>
+<p>We separately sell planners, journals, and printables that we make ourselves. Those are listed on our <a href="shop/">Shop</a> page and are sold through Amazon, Etsy, and Teachers Pay Teachers, under those platforms' own terms.</p>
+<p>Stationery Drop Watch is not affiliated with, sponsored by, or endorsed by any brand or shop we track, unless we clearly say otherwise. Brand names, product names, logos, and trademarks shown on the site belong to their owners and are used only to identify the products we track.</p>
+<h2>4. No guarantee of stock, prices, or accuracy</h2>
+<p>Stock changes quickly, and our information reflects only what a shop reported at the time of our last check. It may already be out of date when you see it, and it may be wrong. A check can also fail, in which case we show "Couldn't check" rather than guess. "Not yet on sale" means a shop has a preview page up but is not yet taking orders.</p>
+<p>We do not guarantee that any item is in stock, that any price, edition, color, or size is correct, that any alert will arrive promptly or at all, or that you will be able to buy an item before it sells out. Always confirm availability, price, shipping, and other details on the shop's own page before you buy or make plans around it.</p>
+<h2>5. Third-party sites and purchases</h2>
+<p>Our links take you to websites we do not own or control, including the shops we track and Amazon, Etsy, and Teachers Pay Teachers. Those sites have their own terms and privacy policies, and we are not responsible for their content, products, pricing, availability, shipping, customer service, or conduct.</p>
+<p>Any purchase you make from a shop is a transaction between you and that shop. Questions about orders, payments, delivery, returns, refunds, or product quality should go to the shop you bought from.</p>
+<h2>6. Prohibited uses</h2>
+<p>Stationery Drop Watch exists to help individual people find planners, journals, and inks for their own use, and to give everyone a fair chance at a restock. <strong>We prohibit anyone from using the Service to engage in reselling activities.</strong></p>
+<p>Specifically, you may not use the site, its trackers, its alerts, its data, or its emails to:</p>
+<ul>
+<li>Buy tracked items for the purpose of reselling them, including scalping, flipping, or reselling at a markup on any marketplace or platform.</li>
+<li>Make bulk, automated, or bot-assisted purchases, including auto-checkout tools, purchasing scripts, or running many accounts or payment methods to get around a shop's purchase limits.</li>
+<li>Trigger, feed, or power any bot, script, or automated buying service.</li>
+<li>Sell, rent, share, or otherwise provide access to our alerts, stock information, or data, whether as a paid service, a "cook group", a private channel, or any other arrangement.</li>
+</ul>
+<p>You also may not:</p>
+<ul>
+<li>Scrape, crawl, or otherwise access the Service with automated tools, other than standard search engine indexing and ordinary web browsers used by a person.</li>
+<li>Copy, republish, redistribute, mirror, or build a product or service on our stock data, alerts, or content without our prior written permission.</li>
+<li>Interfere with or disrupt the Service, including by overloading it, probing or bypassing its security or anti-spam protections, or introducing malicious code.</li>
+<li>Abuse the email alerts, including signing up addresses you do not own or control, using fake or disposable addresses at scale, or attempting to automate signups.</li>
+<li>Use the Service in any way that is unlawful, misleading, or harmful to us, the shops we track, or other readers.</li>
+</ul>
+<h2>7. Our right to restrict or end access</h2>
+<p>We may, at our discretion and without notice, block access to the Service, remove an email address from our alerts, cancel alerts, or refuse service to anyone we reasonably believe has broken these terms, is reselling, or is using the Service in a way that harms others. We may also change, pause, or discontinue any part of the Service, including any tracker, shop, or alert, at any time. You may stop using the Service at any time, and you can unsubscribe from alerts whenever you like.</p>
+<h2>8. Email restock alerts</h2>
+<p>Alerts are free. When you sign up, we send a confirmation link, and you are not added to the list until you click it. You will then receive restock emails for the trackers you choose, plus occasional updates when we add a tracker or release something new. Every email includes an unsubscribe link, and you can also ask to be removed by emailing {mailto_email()}.</p>
+<p>Alerts are a convenience. Delivery depends on our checker, our email provider, and your own email service, and alerts can be delayed, filtered as spam, or missed. How we handle your email address is explained on our <a href="privacy/">Privacy</a> page.</p>
+<h2>9. Our content</h2>
+<p>The site's text, guides, design, graphics, mascot, compiled stock data, and other original material are owned by Stationery Drop Watch or used with permission, and are protected by copyright and other laws. You may view and share links to our pages for your own personal, non-commercial use. Any other use, including copying or republishing our content or data, requires our prior written permission.</p>
+<h2>10. Feedback and suggestions</h2>
+<p>We welcome questions, corrections, and suggestions for shops to track. If you send us feedback or ideas, you agree that we may use them to improve the Service without any obligation or payment to you. Please do not send anything confidential.</p>
+<h2>11. Copyright and trademark concerns</h2>
+<p>If you believe something on the site uses your copyrighted work or trademark without permission, email {mailto_email()} with a description of the work, where it appears on our site, and how to reach you. We review every request in good faith.</p>
+<h2>12. For shops and brands</h2>
+<p>Any shop or brand can ask us at any time to remove its products or shop from our trackers, or to switch to link only, by emailing {mailto_email()}. We will honor every such request as promptly as possible.</p>
+<h2>13. Disclaimer of warranties</h2>
+<p>The Service is provided "as is" and "as available". To the fullest extent permitted by law, we make no warranties of any kind, express or implied, including warranties of accuracy, availability, merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the Service will be uninterrupted, timely, secure, or error-free.</p>
+<h2>14. Limitation of liability</h2>
+<p>To the fullest extent permitted by law, Stationery Drop Watch and its owner will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for any lost profits, lost purchases, missed restocks, or lost data, arising from or related to your use of, or inability to use, the Service, even if we were told such damages were possible.</p>
+<p>Because the Service is free, our total liability for any claim arising from or related to the Service is limited to fifty US dollars (US$50). Some jurisdictions do not allow certain of these limits, so some of them may not apply to you.</p>
+<h2>15. Indemnification and hold harmless</h2>
+<p>You agree to defend, indemnify, and hold harmless Stationery Drop Watch and its owner from and against any claims, demands, losses, liabilities, damages, costs, and expenses, including reasonable attorneys' fees, arising from or related to:</p>
+<ul>
+<li>your use or misuse of the Service;</li>
+<li>your violation of these terms or of any law or the rights of any third party;</li>
+<li>any purchase you make from, or dispute you have with, a shop or other third-party site; and</li>
+<li>any resale, attempted resale, or other reselling activity connected to items, alerts, or data you obtained through the Service.</li>
+</ul>
+<h2>16. Changes to these terms</h2>
+<p>We may update these terms from time to time. When we do, we will change the "updated" date at the top of this page. If you keep using the Service after an update is posted, you accept the updated terms.</p>
+<h2>17. Events beyond our control</h2>
+<p>We are not responsible for any delay or failure in the Service caused by events beyond our reasonable control, including outages at our hosting, email, or other service providers, changes or outages at the shops we track, internet failures, or natural disasters.</p>
+<h2>18. Governing law and venue</h2>
+<p>These terms are governed by the laws of the State of Michigan, United States, without regard to its conflict-of-laws rules. Any dispute arising from or related to these terms or the Service will be brought only in the state courts located in Wayne County, Michigan, or the United States District Court for the Eastern District of Michigan, and you consent to the jurisdiction of those courts.</p>
+<h2>19. Users outside the United States</h2>
+<p>Stationery Drop Watch is run from Michigan, in the United States, and some of the shops we track are in other countries. If you use the Service from outside the United States, you do so on your own initiative and are responsible for following your local laws.</p>
+<h2>20. General terms</h2>
+<ul>
+<li><strong>Severability.</strong> If any part of these terms is found unenforceable, that part will be enforced to the fullest extent possible and the rest will remain in full effect.</li>
+<li><strong>No waiver.</strong> Our failure to enforce any provision is not a waiver of our right to enforce it later.</li>
+<li><strong>Assignment.</strong> You may not transfer your rights under these terms. We may transfer ours, for example to a company that operates the Service in the future.</li>
+<li><strong>Survival.</strong> The sections on prohibited uses, our content, disclaimers, limitation of liability, indemnification, and governing law continue to apply after your use of the Service ends.</li>
+<li><strong>Entire agreement.</strong> These terms, together with our <a href="privacy/">Privacy</a> page, are the entire agreement between you and us about the Service.</li>
+</ul>
+<h2>21. Contact</h2>
+<p>Questions about these terms? Email {mailto_email()}, or visit our <a href="contact/">Contact</a> page.</p>
+</article>"""
+    return page(fname, "Terms of Use", "The terms for using Stationery Drop Watch, a free restock tracker: information only, no reselling or bot buying, no guarantee of stock, and Michigan law.", body, ld=(crumbs_ld((fname, "Terms of Use")),))
 
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
@@ -2314,6 +2406,8 @@ FAQ = [
      "Sign up with your email and we'll send a confirmation link. Once you confirm, you'll get free restock emails for the trackers you pick: Hobonichi, dot grid journals and limited-edition inks, plus an occasional update when we add a tracker or release something new. "
      "Ink restocks also show on the inks page. "
      "You can unsubscribe anytime."),
+    ("Can I use alerts for reselling?",
+     "No. Stationery Drop Watch is for people buying for their own use. Our {terms} prohibit using the site, its alerts or its data for reselling, scalping or bot purchasing."),
 ]
 
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
@@ -2375,8 +2469,8 @@ def faq_block(only=None, sid="faq"):
         by_q = dict(answers)
         pairs = [(q, by_q[q]) for q in only]
     unchecked = link_only_clause()
-    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_brand_names()), shop=url_for("shop/"), unchecked=unchecked),
-           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_brand_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>', unchecked=E(unchecked))) for q, a in pairs]
+    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_brand_names()), shop=url_for("shop/"), unchecked=unchecked, terms="Terms of Use (" + url_for("terms/") + ")"),
+           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_brand_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>', unchecked=E(unchecked), terms='<a href="terms/">Terms of Use</a>')) for q, a in pairs]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}
@@ -2395,7 +2489,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22"}
+STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -4546,7 +4640,7 @@ def main():
     (SITE / "index.html").write_text(build_index())
     (SITE / HOBO_TRACKER).mkdir(parents=True, exist_ok=True)
     (SITE / HOBO_TRACKER / "index.html").write_text(build_hobo_tracker())
-    for fname, doc in (("hobonichi-2027/", build_hobonichi()), ("about/", build_about()), ("privacy/", build_privacy())):
+    for fname, doc in (("hobonichi-2027/", build_hobonichi()), ("about/", build_about()), ("privacy/", build_privacy()), ("terms/", build_terms())):
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for flat in LEGACY_FLAT_PAGES:  # pre-Nov-21 flat files; /x.html now 301s to /x/ (cloudflare/_redirects)
