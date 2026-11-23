@@ -58,10 +58,10 @@ class AvecAndCoversTests(unittest.TestCase):
         official = [p for sid, p in self.rows if sid == "1101" and re.match(r"(cover-a[56]|weeks-cover)-", p["canonical"])]
         self.assertGreaterEqual(len(official), 20)
         for p in official:
-            m = re.fullmatch(r"https://www\.1101\.com/store/techo/en/2027/pc/detail_cover/((?:oc|cc|wc)27_[a-z0-9]+)/", p["url"])
+            m = re.fullmatch(r"https://www\.1101\.com/store/techo/en/2027/pc/detail_cover/((?:oc|cc|wc)2[57]_[a-z0-9]+)/", p["url"])
             self.assertTrue(m, p["url"])
             self.assertEqual(p["source_key"], m.group(1))
-            want = {"cover-a6": "oc27", "cover-a5": "cc27", "weeks-cover": "wc27"}[re.match(r"(cover-a6|cover-a5|weeks-cover)", p["canonical"]).group(1)]
+            want = {"cover-a6": "oc2", "cover-a5": "cc27", "weeks-cover": "wc27"}[re.match(r"(cover-a6|cover-a5|weeks-cover)", p["canonical"]).group(1)]
             self.assertTrue(p["source_key"].startswith(want), p)
 
     def test_a5_covers_include_the_ranked_designs(self):

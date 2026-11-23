@@ -228,6 +228,23 @@
   {
    "store_id": "1101",
    "store": "Hobonichi Online Store (official)",
+   "canonical": "cover-a6-tragen-black",
+   "label": "A6 cover · TRAGEN: Black",
+   "type": "Cover",
+   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc25_tragen/",
+   "checked_at": "2026-11-23T06:56:03+00:00",
+   "status": "in_stock",
+   "method": "1101 items.json",
+   "available_variants": 1,
+   "total_variants": 1,
+   "title": "Tragen: Black A6 Original Size",
+   "error": null,
+   "first_seen": "2026-11-23T06:56:03+00:00",
+   "status_since": "2026-11-23T06:56:03+00:00"
+  },
+  {
+   "store_id": "1101",
+   "store": "Hobonichi Online Store (official)",
    "canonical": "weeks-starlight",
    "label": "Weeks · tanakadaisuke: Starlight",
    "type": "Weeks",
