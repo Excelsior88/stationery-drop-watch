@@ -3466,6 +3466,53 @@ SHOP_ETSY = [
          templates=["Spring", "Summer", "Autumn", "Winter", "Slip pocket"],
          templates_label="4 dashboards & slip pocket",
          inside="seasonal-dashboards"),
+    # Listed 2026-11-22. Same card as the other Etsy tip-ins: regular price and the shared
+    # sale note. Fit wording is from the listing description (FITS line).
+    dict(id="spin-lift-unfold", kind="insert", sale_confirmed=True, price="$7.99",
+         title="Spin, Lift & Unfold Interactive Tip-Ins",
+         img="assets/shop/spin-lift-unfold.webp", img_class="sheet", img_w=1800, img_h=1350,
+         url="https://www.etsy.com/listing/4623478927/interactive-planner-tip-ins-printable",
+         alt=("Spin, Lift & Unfold: five interactive tip-in sheets in a row, a Side-Quest Roulette card, "
+              "a Weather & Light flap card, a gatefold, an Overheard & Ephemera specimen card and a Future-Self Accordion sleeve. "
+              "The header reads \"five interactive tip-ins · 85 × 175 mm · fits 94 × 188 mm weekly planners\"."),
+         sub="Printable interactive tip-ins · personal use · instant download from Etsy",
+         hub_sub="Printable tip-ins",
+         blurb=("Five interactive tip-ins that move: spin a wheel, lift flaps, open a gatefold and pull out notes to your future self. "
+                "Each piece is 85 × 175 mm, including a 4 mm hinge strip, and fits 94 × 188 mm weekly planners. "
+                "A digital download for personal use."),
+         details=["Fits Hobonichi Weeks and Hobonichi Weeks Mega, and other narrow weekly planners with a cover of about 94 × 188 mm",
+                  "4 PDFs: US Letter and A4, each in color and grayscale. 10 pages in each PDF: print and cut guide, 7 printable sheets, assembly steps and an about page. A print guide (README) is in the download",
+                  "Full-length cut lines, dashed score lines, hatched glue zones and a 50 mm scale bar on every sheet. Print at 100% / actual size and check that each section of the scale bar measures 10 mm",
+                  "You will also need scissors or a trimmer, a craft knife and metal ruler, a scoring tool, glue or double-sided tape, washi tape, and one small flat paper brad or a knotted thread for the wheel",
+                  "Personal use only: don't share, resell, or redistribute the files or printed copies",
+                  "Digital download only. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+         templates=["Side-Quest Roulette", "Sensory Time Capsule", "What I Changed My Mind About",
+                    "Overheard & Ephemera", "Future-Self Accordion"],
+         templates_label="5 interactive tip-ins",
+         inside="spin-lift-unfold"),
+    dict(id="a5-cozy", kind="insert", sale_confirmed=True, price="$6.99",
+         title="A5 Cozy Planner Inserts",
+         img="assets/shop/a5-cozy-planner-inserts.webp", img_class="sheet", img_w=1800, img_h=1350,
+         url="https://www.etsy.com/listing/4623487808/a5-planner-inserts-printable-cozy",
+         alt=("A5 Cozy Planner Insert Set: three fanned A5 pages with soft watercolor-style art, a capybara at a cafe table, "
+              "a sleeping cat by a bookshelf and a bunny with happy mail. "
+              "The header reads \"printable · fits 148 × 210 mm (A5) · color + grayscale\"."),
+         sub="Printable A5 planner pages · personal use · instant download from Etsy",
+         hub_sub="Printable inserts",
+         blurb=("A cozy set of A5 planner pages with soft, original watercolor-style art: a capybara cafe, a sleeping cat by a bookshelf, "
+                "a pressed sakura and ginkgo bouquet and a bunny with happy mail. Print the pages you need, trim them and add them "
+                "to your planner, binder or notebook. A digital download for personal use."),
+         details=["Fits Hobonichi Techo Cousin (A5) and other A5 planners. Each page trims to 148 × 210 mm (5.83 × 8.27 in). Planner sizes vary, so please measure yours or test-print one page on plain paper first",
+                  "4 print PDFs, 10 sheets each: US Letter and A4, in color and grayscale. A short README with printing steps is in the download",
+                  "A 7 mm hinge strip on the binding edge is marked with a dashed line, for washi tape, glue or binder holes. No punch guide is printed",
+                  "Print at 100% / actual size with \"Fit to page\" and \"Shrink\" turned off. Each sheet has a 50 mm scale bar. Thin cut lines run edge to edge, no bleed",
+                  "Personal use only: don't share, resell, or redistribute the files or printed copies",
+                  "Digital download only. Returns and exchanges are not accepted. Not a Hobonichi product, and not affiliated with or endorsed by Hobonichi."],
+         templates=["Kissaten Capybara Cafe dashboard", "Cozy Neko Bookshelf dashboard", "Botanical reset dashboard",
+                    "Little Notes & Happy Mail dashboard", "Grid, dot grid & lines notes page", "Year in Pixels",
+                    "Weekly spread, left page", "Weekly spread, right page"],
+         templates_label="8 A5 pages",
+         inside="a5-cozy"),
 ]
 
 
@@ -3650,6 +3697,28 @@ SHOP_SAMPLES = {
                 "Seasonal Reset Dashboards print file: Spring and Summer, Autumn and Winter, the slip pocket template, and the no-fill edition for vellum.",
                 "The four dashboards, the slip pocket, and the no-fill edition, from the print file.", 2000, 2000),
     ]},
+    "spin-lift-unfold": {"class": " samples inserts", "note": "Sheets from the print file (US Letter, color), not a photograph of a printed copy.", "items": [
+        _sample("/assets/shop/inside/spin-roulette-color.webp",
+                "Spin, Lift & Unfold print file, sheet 1 of 7: No. 01 Side-Quest Roulette, the card with a cut-out window and quest log, and the printed quest wheel and blank wheel.",
+                "No. 01 Side-Quest Roulette. Sample of a color sheet.", 1000, 964),
+        _sample("/assets/shop/inside/spin-time-capsule-color.webp",
+                "Spin, Lift & Unfold print file, sheet 2 of 7: No. 02 Sensory Time Capsule, three lift-up flaps (Weather & Light, Soundtrack, Scent & Texture) and the base card for Week in Review, Small Win or Surprise, and Carry It Forward.",
+                "No. 02 Sensory Time Capsule. Sample of a color sheet.", 1000, 964),
+        _sample("/assets/shop/inside/spin-gatefold-color.webp",
+                "Spin, Lift & Unfold print file, sheet 3 of 7: No. 03 What I Changed My Mind About, the gatefold with Used to Think, The Upgraded Rule and The Plot Twist.",
+                "No. 03 What I Changed My Mind About, the gatefold. Sample of a color sheet.", 1000, 964),
+    ]},
+    "a5-cozy": {"class": " samples", "note": "Pages from the print file (US Letter, color), not photographs of a printed copy.", "items": [
+        _sample("/assets/shop/inside/a5-cozy-capybara-color.webp",
+                "A5 Cozy Planner Inserts print file: the Kissaten Capybara Cafe dashboard, Slow Mornings & Sweet Treats, with a capybara illustration and Currently savoring lines for sipping, reading, listening to and looking forward to.",
+                "Kissaten Capybara Cafe dashboard. Sample of a color page.", 700, 994),
+        _sample("/assets/shop/inside/a5-cozy-year-in-pixels-color.webp",
+                "A5 Cozy Planner Inserts print file: the Year in Pixels page, 12 months by 31 days, with a color key.",
+                "Year in Pixels. Sample of a color page.", 700, 994),
+        _sample("/assets/shop/inside/a5-cozy-weekly-left-color.webp",
+                "A5 Cozy Planner Inserts print file: the Weekly Rhythm page, with weekly dinners and prep, morning anchors, evening save-point and Sunday reset ritual.",
+                "Weekly spread, left page. Sample of a color page.", 700, 994),
+    ]},
 }
 
 import hashlib as _hl
@@ -3699,6 +3768,8 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
+    if any(e.get("id") in {"spin-lift-unfold", "a5-cozy"} and etsy_listing_url(e) for e in SHOP_ETSY):
+        return "2026-11-22"
     # Shop facts changed 2026-11-18 (Happy Mail & Washi Club and Seasonal Reset Dashboards).
     if any(e.get("id") in {"happy-mail", "seasonal-dashboards"} and etsy_listing_url(e) for e in SHOP_ETSY):
         return "2026-11-18"
