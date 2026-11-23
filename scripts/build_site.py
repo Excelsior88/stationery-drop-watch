@@ -535,7 +535,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     foot_items = list(NAV_TRACKERS) + [
         ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("sold-out-everywhere/", "Sold out everywhere"), ("shop/", "Shop"),
         ("follow/", "Follow us"),
-        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy"), ("terms/", "Terms")]
+        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy"), ("terms/", "Terms"), ("transparency/", "Transparency")]
     foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
@@ -1637,6 +1637,45 @@ def build_terms():
 </article>"""
     return page(fname, "Terms of Use", "The terms for using Stationery Drop Watch, a free restock tracker: information only, no reselling or bot buying, no guarantee of stock, and Michigan law.", body, ld=(crumbs_ld((fname, "Terms of Use")),))
 
+def build_transparency():
+    """Transparency page: businesses that asked us to remove or change information, and what we did.
+    Owner-approved mockup (Nov 23, 2026). Dates are US Eastern Time."""
+    fname = "transparency/"
+    def row(name, sub, asked, requested, done, stays, complied):
+        subhtml = f'<span class="sub">{sub}</span>' if sub else ""
+        return (f'<tr><th scope="row">{name}{subhtml}</th>\n'
+                f'<td data-label="What they asked for">{asked}</td>\n'
+                f'<td class="date" data-label="Date requested">{requested}</td>\n'
+                f'<td data-label="What we removed (and what stayed)">{done}<span class="stays"><b>Stayed:</b> {stays}</span></td>\n'
+                f'<td class="date" data-label="Date we complied">{complied}</td></tr>')
+    rows = "\n".join([
+        row("MIDORI*", "(a division of Designphil)", "Removal of all MIDORI products from the site.", "Nov 19, 2026",
+            "Every MIDORI listing, stock tracker row, restock alert and restock email.",
+            "a notice page explaining why these brands are no longer tracked.", "Nov 19, 2026"),
+        row("Traveler&rsquo;s Company*", "(a division of Designphil)", "Removal of all Traveler&rsquo;s Company products from the site.", "Nov 19, 2026",
+            "Every Traveler&rsquo;s Company listing, stock tracker row, restock alert and restock email.",
+            "a notice page explaining why these brands are no longer tracked.", "Nov 19, 2026"),
+        row("Kinokuniya Singapore", "", "Declined our request to check their stock.", "Nov 23, 2026",
+            "All stock checking and stock status for this shop.",
+            "a link to the shop, marked &ldquo;link only&rdquo;.", "Nov 23, 2026"),
+    ])
+    body = f"""
+<article class="prose">
+{crumbs((fname, "Transparency"))}
+{eyebrow("Transparency", "updated Nov 23, 2026")}
+<h1>Transparency</h1>
+<p class="lede">We value transparency, and we believe you have a right to know what is and is not on this site so you can make your own decisions. The businesses below have asked us to remove or change information on Stationery Drop Watch. We have listed each one here, with what they asked for, what we removed or changed, what remains, and when.</p>
+<div class="table-wrap"><table class="tp-table">
+<thead><tr><th scope="col">Brand or shop</th><th scope="col">What they asked for</th><th scope="col">Date requested</th><th scope="col">What we removed (and what stayed)</th><th scope="col">Date we complied</th></tr></thead>
+<tbody>
+{rows}
+</tbody></table></div>
+<p class="tp-foot">* Both requests came in a single email from Traveler&rsquo;s Company.</p>
+<p>Dates are US Eastern Time. If you run a shop or brand and would like something removed, write to {mailto_email()}.</p>
+</article>"""
+    desc = "Businesses that asked Stationery Drop Watch to remove or change information, what they asked for, what we removed, what stayed, and when."
+    return page(fname, "Transparency", desc, body, ld=(crumbs_ld((fname, "Transparency")),))
+
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
     body = f"""
@@ -2533,7 +2572,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23"}
+STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23", "transparency/": "2026-11-23"}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -4702,7 +4741,7 @@ def main():
     (SITE / "index.html").write_text(build_index())
     (SITE / HOBO_TRACKER).mkdir(parents=True, exist_ok=True)
     (SITE / HOBO_TRACKER / "index.html").write_text(build_hobo_tracker())
-    for fname, doc in (("hobonichi-2027/", build_hobonichi()), ("about/", build_about()), ("privacy/", build_privacy()), ("terms/", build_terms())):
+    for fname, doc in (("hobonichi-2027/", build_hobonichi()), ("about/", build_about()), ("privacy/", build_privacy()), ("terms/", build_terms()), ("transparency/", build_transparency())):
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for flat in LEGACY_FLAT_PAGES:  # pre-Nov-21 flat files; /x.html now 301s to /x/ (cloudflare/_redirects)
