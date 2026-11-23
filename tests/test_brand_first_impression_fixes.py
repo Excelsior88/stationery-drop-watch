@@ -98,7 +98,7 @@ class DotGridCopyAndOfficialTests(unittest.TestCase):
         phrase = site.dotgrid_where_checked()
         self.assertIn("Archer and Olive", phrase)
         self.assertIn("Scribbles That Matter", phrase)
-        self.assertIn("Notebook Therapy", phrase)
+        self.assertNotIn("Notebook Therapy", phrase)  # link-only since Nov 23, 2026: we don't check its store
         self.assertIn("on each maker's own store", phrase)
         self.assertIn("Leuchtturm1917 at its official US store and", phrase)
         self.assertIn("independent", phrase)

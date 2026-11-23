@@ -63,10 +63,10 @@ class NewHobonichiShopsTests(unittest.TestCase):
     def test_shop_totals_leave_out_link_only_shops(self):
         self.assertFalse(site.COUNT_LINK_ONLY_IN_SHOP_TOTALS)
         link_only = {s["id"] for s in self.cfg["stores"] if s.get("link_only")}
-        self.assertEqual(link_only, {"blesket", "milligram", "kinousa", "kinosg"})
+        self.assertEqual(link_only, {"blesket", "milligram", "kinousa", "kinosg", "laywines", "notebooktherapy"})
         checked = {s["id"] for s in self.cfg["stores"]
                    if s["products"] and s["platform"] in ("shopify", "hobonichi") and not s.get("link_only")}
-        self.assertEqual(len(checked), 27)
+        self.assertEqual(len(checked), 25)  # 27 until Laywine's and Notebook Therapy went link-only (Nov 23, 2026)
 
     def test_a_new_listing_is_a_first_observation_not_a_restock(self):
         rec = dict(checked_at="2026-11-23T09:00:00+00:00", status="in_stock", store_id="zakkajoy", store="Zakka Joy",
