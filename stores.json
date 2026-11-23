@@ -7078,6 +7078,719 @@
    ]
   },
   {
+   "id": "minimaru",
+   "name": "Minimaru",
+   "url": "https://minimaru.com/",
+   "country": "AU",
+   "platform": "shopify",
+   "indie": true,
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-english-original-book-a6-size-daily-jan-start-mon-start-4580812710381",
+     "source_title": "Hobonichi Techo 2027 English Original Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-english-cousin-book-a5-size-daily-jan-start-mon-start-4580812710428",
+     "source_title": "Hobonichi Techo 2027 English Cousin Book [A5 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "original-a6-jp",
+     "label": "Original A6 book (Japanese)",
+     "type": "Book",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-japanese-original-book-a6-size-daily-jan-start-mon-start-4580812710343",
+     "source_title": "Hobonichi Techo 2027 Japanese Original Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "original-a6-jp-one-piece",
+     "label": "Original A6 book (Japanese) · One Piece Edition",
+     "type": "Book",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-japanese-original-book-one-piece-edition-a6-size-daily-jan-start-mon-start-4580812710374",
+     "source_title": "Hobonichi Techo 2027 Japanese Original Book - One Piece Edition [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "planner-a6-en",
+     "label": "Planner A6 book (English)",
+     "type": "Book",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-english-planner-book-a6-size-daily-jan-start-mon-start-4580812710398",
+     "source_title": "Hobonichi Techo 2027 English Planner Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-colours-midnight-blue-4580812709750",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Colours: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-colours-canaria-yellow-4580812709729",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Colours: Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-moomin-at-the-table-4580812709842",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Moomin: At the Table"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-yumi-kitagishi-white-cat-wallpaper-4580812709781",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Yumi Kitagishi: White Cat Wallpaper"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-tanakadaisuke-starlight-4580812709897",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - tanakadaisuke: Starlight"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-colours-pink-sapphire-4580812709712",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Colours: Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-colours-sea-glass-4580812709743",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Colours: Sea Glass"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-v-a-series-welcome-to-the-v-a-4580812709880",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - V&A Series: Welcome to the V&A"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-v-a-series-leicester-4580812709873",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - V&A Series: Leicester"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-shirt-fabric-graph-plaid-4580812709941",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Shirt Fabric: Graph Plaid"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-paper-series-frosty-jade-4580812709972",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Paper Series: Frosty Jade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-liberty-fabrics-floral-remedy-4580812709934",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Liberty Fabrics: Floral Remedy"
+    },
+    {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-akiko-miyakoshi-once-in-spring-4580812709774",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Akiko Miyakoshi: Once, in Spring"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-hiroko-kubota-meteor-shower-in-the-light-blue-forest-4580812709767",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Hiroko Kubota: Meteor Shower in the Light Blue Forest"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-a5-hon-eng-slash-navy-4580812710305",
+     "source_title": "Hobonichi Techo 2027 A5 HON ENG - Slash (Navy)"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-a6-hon-eng-slash-navy-4580812710268",
+     "source_title": "Hobonichi Techo 2027 A6 HON ENG - Slash (Navy)"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-a5-hon-eng-bow-tie-sheep-sheep-sheep-4580812710336",
+     "source_title": "Hobonichi Techo 2027 A5 HON ENG - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-a6-hon-eng-bow-tie-sheep-sheep-sheep-4580812710299",
+     "source_title": "Hobonichi Techo 2027 A6 HON ENG - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-colours-midnight-blue-4580812710091",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA ENG - Colours: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-bow-tie-candy-dream-4580812710114",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA ENG - Bow & Tie: Candy Dream"
+    },
+    {
+     "canonical": "weeks-moomin-snufkin",
+     "label": "Weeks · Moomin: A Day in the Life of Snufkin",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-moomin-a-day-in-the-life-of-snufkin-4580812709859",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Moomin: A Day in the Life of Snufkin"
+    },
+    {
+     "canonical": "weeks-sheep",
+     "label": "Weeks · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-bow-tie-sheep-sheep-sheep-4580812709910",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "weeks-leather-forest",
+     "label": "Weeks · Leather: Forest Green",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-leather-forest-green-4580812709996",
+     "source_title": "Hobonichi Techo 2027 Weeks ENG - Leather: Forest Green"
+    },
+    {
+     "canonical": "weeks-mega-sea-glass",
+     "label": "Weeks Mega · Colors: Sea Glass",
+     "type": "Weeks Mega",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-colours-sea-glass-4580812710084",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA ENG - Colours: Sea Glass"
+    },
+    {
+     "canonical": "weeks-mega-canaria-yellow",
+     "label": "Weeks Mega · Colors: Canaria Yellow",
+     "type": "Weeks Mega",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-colours-canaria-yellow-4580812710060",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA ENG - Colours: Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-mega-poppy-red",
+     "label": "Weeks Mega · Colors: Poppy Red",
+     "type": "Weeks Mega",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-colours-poppy-red-4580812710077",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA ENG - Colours: Poppy Red"
+    },
+    {
+     "canonical": "weeks-mega-pink-sapphire",
+     "label": "Weeks Mega · Colors: Pink Sapphire",
+     "type": "Weeks Mega",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-colours-pink-sapphire-4580812710053",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA ENG - Colours: Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-mega-sheep",
+     "label": "Weeks Mega · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks Mega",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-bow-tie-sheep-sheep-sheep-4580812710107",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA ENG - Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "cover-a6-moomin",
+     "label": "A6 cover · Moomin: My Yard (Pale Mint)",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-moomin-my-yard-pale-mint-4580812708852",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Moomin: My Yard (Pale Mint)"
+    },
+    {
+     "canonical": "cover-a6-white-cat-house",
+     "label": "A6 cover · Yumi Kitagishi: White Cat House",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-yumi-kitagishi-white-cat-house-4580812708791",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Yumi Kitagishi: White Cat House"
+    },
+    {
+     "canonical": "cover-a6-tragen-black",
+     "label": "A6 cover · TRAGEN: Black",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-tragen-black-4582660490378",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Tragen: Black"
+    },
+    {
+     "canonical": "cover-a6-mina-felice",
+     "label": "A6 cover · mina perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-min-perhonen-felice-blue-4580812701884",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-akiko-miyakoshi-an-airport-at-night-4580812708784",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-v-a-series-strawberry-thief-4580812708876",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-yoshie-watanabe-petit-bloom-4580812708807",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-colours-bordeaux-teracotta-4580812708777",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Colours: Bordeaux Teracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-colours-blue-parasol-4580812708753",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Colours: Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-tanakadaisuke-white-handkerchief-diary-4580812708890",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-glow-chianti-4580812708968",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "cover-a6-natal-hello-new-day-camo",
+     "label": "A6 cover · Natal Design: Hello New Day! (Camo)",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-hello-new-day-camo-4580812708906",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Natal Design: Hello New Day! (Camo)"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a6-original-planner-cover-arts-science-wax-coating-kip-4580812708975",
+     "source_title": "Hobonichi Techo A6 Original Planner Cover - Arts&Science: Wax Coating Kip"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a5-cousins-planner-cover-yumi-kitagishi-white-cat-village-4580812709071",
+     "source_title": "Hobonichi Techo A5 Cousins Planner Cover - Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a5-cousins-planner-cover-v-a-series-blackthorn-4580812709156",
+     "source_title": "Hobonichi Techo A5 Cousins Planner Cover - V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a5-cousins-planner-cover-akiko-miyakoshi-an-airport-at-night-4580812709064",
+     "source_title": "Hobonichi Techo A5 Cousins Planner Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a5-cousins-planner-cover-colours-chiffon-greige-4580812709033",
+     "source_title": "Hobonichi Techo A5 Cousins Planner Cover - Colours: Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a5-cousins-planner-cover-colours-misty-cedar-4580812709057",
+     "source_title": "Hobonichi Techo A5 Cousins Planner Cover - Colours: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a5-cousins-planner-cover-colours-mango-latte-4580812709040",
+     "source_title": "Hobonichi Techo A5 Cousins Planner Cover - Colours: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a5-cousins-planner-cover-min-perhonen-felice-blue-4580812701914",
+     "source_title": "Hobonichi Techo A5 Cousins Planner Cover - minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a5-cousins-planner-cover-tanakadaisuke-white-handkerchief-diary-4580812709170",
+     "source_title": "Hobonichi Techo A5 Cousins Planner Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://minimaru.com/products/hobonichi-techo-a5-cousins-planner-cover-glow-chianti-4580812709248",
+     "source_title": "Hobonichi Techo A5 Cousins Planner Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-weeks-cover-alettone-sweets-4580812710138",
+     "source_title": "Hobonichi Techo Weeks Cover - Alettone: Sweets"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://minimaru.com/products/hobonichi-techo-weeks-cover-min-perhonen-felice-blue-4580812701945",
+     "source_title": "Hobonichi Techo Weeks Cover - minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://minimaru.com/products/hobonichi-techo-2027-japanese-cousin-avec-books-a5-size-daily-6-month-x-2-book-set-jan-start-mon-start-4580812710411",
+     "source_title": "Hobonichi Techo 2027 Japanese Cousin Avec Books [A5 size/Daily 6-month x 2 book set/Jan start/Mon start]"
+    }
+   ]
+  },
+  {
+   "id": "takenote",
+   "name": "Take Note",
+   "url": "https://takenotestore.ca/",
+   "country": "CA",
+   "platform": "shopify",
+   "indie": true,
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://takenotestore.ca/products/hobonichi-techo-2027-english-original-book-a6-size-daily-jan-start-mon-start",
+     "source_title": "Hobonichi Techo 2027 English Original Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://takenotestore.ca/products/hobonichi-techo-2027-english-cousin-book-a5-size-daily-jan-start-mon-start",
+     "source_title": "Hobonichi Techo 2027 English Cousin Book [A5 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "original-a6-jp",
+     "label": "Original A6 book (Japanese)",
+     "type": "Book",
+     "url": "https://takenotestore.ca/products/hobonichi-techo-2027-japanese-original-book-a6-size-daily-jan-start-mon-start",
+     "source_title": "Hobonichi Techo 2027 Japanese Original Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "planner-a6-en",
+     "label": "Planner A6 book (English)",
+     "type": "Book",
+     "url": "https://takenotestore.ca/products/hobonichi-techo-2027-english-planner-book-a6-size-daily-jan-start-mon-start",
+     "source_title": "Hobonichi Techo 2027 English Planner Book [A6 size/Daily/Jan start/Mon start]"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-colors-midnight-blue",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-moomin-at-the-table",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Moomin: At the Table"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-yumi-kitagishi-white-cat-wallpaper",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Yumi Kitagishi: White Cat Wallpaper"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-tanakadaisuke-starlight",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG tanakadaisuke: Starlight"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-colors-pink-sapphire",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Colors: Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-colors-sea-glass",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Colors: Sea Glass"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-v-a-series-welcome-to-the-v-a",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG V&A Series: Welcome to the V&A"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-v-a-series-leicester",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG V&A Series: Leicester"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-paper-series-frosty-jade",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Paper Series: Frosty Jade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-liberty-fabrics-floral-remedy",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Liberty Fabrics: Floral Remedy"
+    },
+    {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-akiko-miyakoshi-once-in-spring",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Akiko Miyakoshi: Once, in Spring"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-weeks-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi Cover Weeks beautiful people: Nothing to Hide (Yellow)"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-mega-eng-bow-tie-candy-dream",
+     "source_title": "Hobonichi 2027 Planner Weeks MEGA ENG Bow & Tie: Candy Dream"
+    },
+    {
+     "canonical": "weeks-moomin-snufkin",
+     "label": "Weeks · Moomin: A Day in the Life of Snufkin",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-moomin-a-day-in-the-life-of-snufkin",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Moomin: A Day in the Life of Snufkin"
+    },
+    {
+     "canonical": "weeks-sheep",
+     "label": "Weeks · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi 2027 Planner Weeks ENG Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "weeks-mega-sea-glass",
+     "label": "Weeks Mega · Colors: Sea Glass",
+     "type": "Weeks Mega",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-mega-eng-colors-sea-glass",
+     "source_title": "Hobonichi 2027 Planner Weeks MEGA ENG Colors: Sea Glass"
+    },
+    {
+     "canonical": "weeks-mega-poppy-red",
+     "label": "Weeks Mega · Colors: Poppy Red",
+     "type": "Weeks Mega",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-mega-eng-colors-poppy-red",
+     "source_title": "Hobonichi 2027 Planner Weeks MEGA ENG Colors: Poppy Red"
+    },
+    {
+     "canonical": "weeks-mega-sheep",
+     "label": "Weeks Mega · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks Mega",
+     "url": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-mega-eng-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi 2027 Planner Weeks MEGA ENG Bow & Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "cover-a6-moomin",
+     "label": "A6 cover · Moomin: My Yard (Pale Mint)",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-moomin-my-yard-pale-mint",
+     "source_title": "Hobonichi Cover A6 Moomin: My Yard (Pale Mint)"
+    },
+    {
+     "canonical": "cover-a6-white-cat-house",
+     "label": "A6 cover · Yumi Kitagishi: White Cat House",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-yumi-kitagishi-white-cat-house",
+     "source_title": "Hobonichi Cover A6 Yumi Kitagishi: White Cat House"
+    },
+    {
+     "canonical": "cover-a6-tragen-black",
+     "label": "A6 cover · TRAGEN: Black",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-planner-cover-tragen-black?variant=41332620755027",
+     "source_title": "Hobonichi Planner Cover Tragen Black A6",
+     "variant_id": 41332620755027
+    },
+    {
+     "canonical": "cover-a6-mina-felice",
+     "label": "A6 cover · mina perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Cover A6 minä perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a6-beautiful-people-green",
+     "label": "A6 cover · beautiful people: Nothing to Hide (Green)",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-beautiful-people-nothing-to-hide-green",
+     "source_title": "Hobonichi Cover A6 beautiful people: Nothing to Hide (Green)"
+    },
+    {
+     "canonical": "cover-a5-beautiful-people-pink",
+     "label": "A5 cover · beautiful people: Nothing to Hide (Pink)",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a5-beautiful-people-nothing-to-hide-pink",
+     "source_title": "Hobonichi Cover A5 beautiful people: Nothing to Hide (Pink)"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Cover A6 Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-v-a-series-strawberry-thief",
+     "source_title": "Hobonichi Cover A6 V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-yoshie-watanabe-petit-bloom",
+     "source_title": "Hobonichi Cover A6 Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-bordeaux-teracotta",
+     "source_title": "Hobonichi Cover A6 Bordeaux Teracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-blue-parasol",
+     "source_title": "Hobonichi Cover A6 Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a6-glow-chianti",
+     "source_title": "Hobonichi Cover A6 Glow: Chianti"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a5-yumi-kitagishi-white-cat-village",
+     "source_title": "Hobonichi Cover A5 Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a5-v-a-series-blackthorn",
+     "source_title": "Hobonichi Cover A5 V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a5-colors-misty-cedar",
+     "source_title": "Hobonichi Cover A5 Colors: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-moomin-my-yard-pink-gray",
+     "label": "A5 cover · Moomin: My Yard (Pink Gray)",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a5-moomin-my-yard-pink-gray",
+     "source_title": "Hobonichi Cover A5 Moomin: My Yard (Pink Gray)"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-a5-glow-chianti",
+     "source_title": "Hobonichi Cover A5 Glow: Chianti"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://takenotestore.ca/products/hobonichi-cover-weeks-tragen-bitter-plaid",
+     "source_title": "Hobonichi Cover Weeks Tragen: Bitter Plaid"
+    }
+   ]
+  },
+  {
    "id": "milligram",
    "name": "Milligram",
    "url": "https://milligram.com/",

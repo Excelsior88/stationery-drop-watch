@@ -102,7 +102,7 @@ class GuideAndShopListTests(unittest.TestCase):
     def test_dot_grid_guide_specs_and_detroit_date(self):
         raw = site.build_dotgrid_guide()[1]
         doc = html.unescape(raw)
-        self.assertIn("updated Nov 22, 2026", doc)
+        self.assertIn("updated Nov 23, 2026", doc)  # Nov 23: Notebook Therapy went link-only, guide reworded
         self.assertIn("as of Nov 20, 2026", doc)
         self.assertNotIn("Nov 4, 2026", doc)
         self.assertNotIn("dimensions not listed", doc)

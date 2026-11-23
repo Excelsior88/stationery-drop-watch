@@ -224,8 +224,9 @@ def names_and(n):
     return ", ".join(n[:-1]) + " and " + n[-1] if len(n) > 1 else "".join(n)
 
 def dotgrid_names():
-    """Store names as shown in shop lists, including an (official) mark when present."""
-    return names_and([s["name"] for s in DOTGRID_SHOPS])
+    """Store names as shown in shop lists, including an (official) mark when present.
+    Only shops we check: a link-only maker store (Notebook Therapy since Nov 23, 2026) is left out."""
+    return names_and([s["name"] for s in DOTGRID_SHOPS if not s.get("link_only")])
 
 def bare_shop_name(name):
     """Store name without a trailing (official) mark, for brand lists in prose."""
@@ -3012,13 +3013,27 @@ def build_dotgrid_guide():
     dg_total = count_line(guide_ls)
     dg_all = count_line(trk)
     jump = {sid: canons[0] for _, sid, canons in DG_COLS}  # tracker section ids are the canonical ids
+    link_only_ids = {x["id"] for x in stores["stores"] if x.get("link_only")}
     def avail(store_id, canons):
         ls = col_ls(store_id)
+        if store_id in link_only_ids:  # not checked: no stock claim, just where to find the listings
+            return f'Link only: we don\'t check this shop\'s stock · <a href="{DOTGRID_SLUG}/#{jump[store_id]}">listings</a>'
         if not ls:
             return f'<a href="{DOTGRID_SLUG}/#{jump[store_id]}">Live stock</a>'
         buy = [l["label"] for l in ls if l["status"] in BUYABLE]
         names = f'<br><span class="muted small">In stock: {E("; ".join(buy))}</span>' if buy else ""
         return f'<strong>{len(buy)} of {len(ls)}</strong> versions we track · <a href="{DOTGRID_SLUG}/#{jump[store_id]}">live stock</a>{names}'
+    if "notebooktherapy" in link_only_ids:
+        nt_link = (f'<p><a href="{DOTGRID_SLUG}/#{jump["notebooktherapy"]}">Notebook Therapy on the tracker</a> '
+                   f'<span class="muted small">(link only: we don\'t check its stock, so no status is shown)</span></p>')
+    else:
+        nt_link = f'<p><a href="{DOTGRID_SLUG}/#{jump["notebooktherapy"]}">Live Notebook Therapy stock</a></p>'
+    checked_makers = [bare_shop_name(x["name"]) for x in DOTGRID_SHOPS if not x.get("link_only")]
+    unchecked_makers = [bare_shop_name(x["name"]) for x in DOTGRID_SHOPS if x.get("link_only")]
+    where_buy = (f'Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks '
+                 + (f"each one at the maker's own shop {CHECK_FREQ}." if not unchecked_makers else
+                    f"{names_and(checked_makers)} at each maker's own shop {CHECK_FREQ}. "
+                    f"{names_and(unchecked_makers)} {'is' if len(unchecked_makers) == 1 else 'are'} listed as a link only: we don't check {'its' if len(unchecked_makers) == 1 else 'their'} stock."))
     na = "Not listed on the product page"
     rows = [  # (row, A&O, Leuchtturm1917, Scribbles That Matter, Notebook Therapy), each cell (text, source keys)
         ("Paper weight", ("160gsm (Storybook also comes in kraft dot grid, 150gsm)", "ao ao2"), ("80 g/m² (the 120G edition is 120 gsm)", "lt lt120"),
@@ -3088,7 +3103,7 @@ def build_dotgrid_guide():
 <div class="table-wrap"><table class="stock compare">
 <thead><tr><th></th>{"".join(f"<th>{E(h)}</th>" for h, _, _ in DG_COLS)}</tr></thead>
 <tbody>{rows_html}</tbody></table></div>
-<p class="muted small">Stock in each column is what that maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop. Other shops that sell the same notebooks are on the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. Across the four makers: {E(dg_total)}. Across every shop: {E(dg_all)}.</p>
+<p class="muted small">Stock in each column is what that maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop. Other shops that sell the same notebooks are on the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. {'Across the four makers' if not unchecked_makers else 'Across the ' + {1: 'one maker', 2: 'two makers', 3: 'three makers'}.get(len(checked_makers), f'{len(checked_makers)} makers') + ' we check'}: {E(dg_total)}. Across every shop: {E(dg_all)}.</p>
 
 <h2>Who each one suits</h2>
 <h3>Archer and Olive: for markers, paint and lots of size choices</h3>
@@ -3101,11 +3116,11 @@ def build_dotgrid_guide():
 <p>Pick the Scribbles That Matter Dotted Journal Pro if you want the setup done. It comes with numbered pages, an index, a key page and a pen test page, two ribbon bookmarks, a pen loop and a 0.7 mm fineliner in the box {s("stm")}. A5 and B5 come in 160gsm or 120gsm, and B6 comes in 120gsm only {s("stm")}. The Pro has a plain matte cover; the Iconic is the same idea with an embossed cover {s("stm2")}. The page doesn't list a page count.</p>
 <p><a href="{DOTGRID_SLUG}/#{jump['scribbles']}">Live Scribbles That Matter stock</a></p>
 <h3>Notebook Therapy Tsuki: for a smaller book</h3>
-<p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we track too.</p>
-<p><a href="{DOTGRID_SLUG}/#{jump['notebooktherapy']}">Live Notebook Therapy stock</a></p>
+<p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we list too.</p>
+{nt_link}
 
 <h2>Where to buy</h2>
-<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
+<p>All four sell direct, and sizes and colors sell out often. {where_buy} <a href="#alerts">Sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 

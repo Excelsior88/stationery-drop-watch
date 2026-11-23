@@ -36,6 +36,8 @@ URLS = {
         "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-colours-pink-sapphire-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
         "zakkajoy": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-pink-sapphire",  # added Nov 23, 2026 (new Hobonichi shops)
         "colorswatch": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-colors-pink-sapphire",  # added Nov 23, 2026 (new Hobonichi shops)
+        "minimaru": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-colours-pink-sapphire-4580812709712",  # added Nov 23, 2026 (Minimaru / Take Note)
+        "takenote": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-colors-pink-sapphire",  # added Nov 23, 2026 (Minimaru / Take Note)
     },
     SEA: {
         "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-weeks-colors-sea-glass",  # added Nov 19, 2026
@@ -53,6 +55,8 @@ URLS = {
         "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-sea-glass-english-tall-slim-jan-start",
         "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-colours-sea-glass-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
         "zakkajoy": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-sea-glass",  # added Nov 23, 2026 (new Hobonichi shops)
+        "minimaru": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-colours-sea-glass-4580812709743",  # added Nov 23, 2026 (Minimaru / Take Note)
+        "takenote": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-colors-sea-glass",  # added Nov 23, 2026 (Minimaru / Take Note)
     },
     WELCOME: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_vawelcome/",
@@ -72,6 +76,8 @@ URLS = {
         "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-v-a-series-welcome-to-the-v-a-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
         "zakkajoy": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-welcome-to-the-v-a",  # added Nov 23, 2026 (new Hobonichi shops)
         "colorswatch": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-welcome-to-the-v-and-a",  # added Nov 23, 2026 (new Hobonichi shops)
+        "minimaru": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-v-a-series-welcome-to-the-v-a-4580812709880",  # added Nov 23, 2026 (Minimaru / Take Note)
+        "takenote": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-v-a-series-welcome-to-the-v-a",  # added Nov 23, 2026 (Minimaru / Take Note)
     },
     LEICESTER: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_valeicester/",
@@ -90,6 +96,8 @@ URLS = {
         "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-leicester-english-tall-slim-jan-start",
         "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-v-a-series-leicester-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
         "colorswatch": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",  # added Nov 23, 2026 (new Hobonichi shops)
+        "minimaru": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-v-a-series-leicester-4580812709873",  # added Nov 23, 2026 (Minimaru / Take Note)
+        "takenote": "https://takenotestore.ca/products/hobonichi-2027-planner-weeks-eng-v-a-series-leicester",  # added Nov 23, 2026 (Minimaru / Take Note)
     },
 }
 KEYS = {PINK: "wb27_colorspsapphire", SEA: "wb27_colorssglass", WELCOME: "wb27_vawelcome", LEICESTER: "wb27_valeicester"}

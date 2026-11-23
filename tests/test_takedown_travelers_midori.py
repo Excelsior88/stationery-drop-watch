@@ -46,12 +46,12 @@ class CatalogTests(unittest.TestCase):
 
     def test_checked_shop_count_is_27_with_the_replacements(self):
         checked = {s["id"] for s in self.cfg["stores"] if s["products"] and s["platform"] in ("shopify", "hobonichi") and not s.get("link_only")}  # Nov 23: link-only shops are not checked
-        self.assertEqual(len(checked), 25)  # 27 until Laywine's and Notebook Therapy went link-only (Nov 23, 2026)
+        self.assertEqual(len(checked), 27)
         link_only = {s["id"] for s in self.cfg["stores"] if s.get("link_only")}
         self.assertTrue(NEW_STORES - link_only <= checked)  # Milligram is link-only since Nov 23
         self.assertTrue({"hunterpaper", "zakkajoy", "colorswatch", "greenstar"} <= checked)  # Nov 23 Hobonichi shops
         self.assertFalse(link_only & checked)
-        self.assertEqual(site.N_STORES, 25)
+        self.assertEqual(site.N_STORES, 27)
 
     def test_new_shops_track_only_products_we_already_track(self):
         canon = {c["id"] for c in self.cfg["canonical"]}
@@ -268,9 +268,9 @@ class SiteCopyTests(unittest.TestCase):
     def test_every_shop_total_on_the_home_page_is_27(self):
         home = html.unescape(site.build_index())
         totals = set(re.findall(r"\b(\d+) shops\b", re.sub(r"<[^>]+>", " ", home)))
-        self.assertIn("25", totals)  # 27 until Laywine's and Notebook Therapy went link-only (Nov 23, 2026)
-        self.assertIn("25 shops across all trackers", home)
-        self.assertIn("checks 25 shops", home)
+        self.assertIn("27", totals)
+        self.assertIn("27 shops across all trackers", home)
+        self.assertIn("checks 27 shops", home)
 
 
 if __name__ == "__main__":
