@@ -22,7 +22,8 @@ from urllib.parse import urlparse, urlunparse
 import requests
 
 ROOT = Path(__file__).resolve().parent.parent
-UA = "Mozilla/5.0 (compatible; StationeryDropWatch/0.1; restock tracker; +https://stationerydropwatch.com/; contact: admin@stationerydropwatch.com)"
+# "Agent/<name>" token: Laywine's Terms of Service section 14.4(a) asks automated agents to include it.
+UA = "Mozilla/5.0 (compatible; StationeryDropWatch/0.1; Agent/StationeryDropWatch; restock tracker; +https://stationerydropwatch.com/; contact: admin@stationerydropwatch.com)"
 DELAY = 2.5          # seconds between requests to one host
 TIMEOUT = 25
 # Product token in the User-Agent. A robots.txt group with this name is used
