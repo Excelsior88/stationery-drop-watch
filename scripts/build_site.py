@@ -71,6 +71,16 @@ LINK_ROWS = [dict(store_id=s["id"], store=s["name"], canonical=p.get("canonical"
                   **({"section": p["section"]} if p.get("section") else {}))
              for s in stores["stores"] if s.get("link_only") for p in s["products"]]
 LINK_LABEL = "Link only"
+MORE_INFO_LABEL = "More Information"
+MORE_INFO_HREF = "/transparency/"
+
+def status_badge(st):
+    """Status pill. A link-only pill gets a "More Information" link to /transparency/ immediately to its left
+    (owner t1866u, Nov 23, 2026). app.js statusBadge() does the same for rows it renders in the browser."""
+    if st == "link_only":
+        return (f'<span class="lo-wrap"><a class="more-info" href="{MORE_INFO_HREF}" aria-label="More information about link-only listings (Transparency page)">{MORE_INFO_LABEL}</a>'
+                f'<span class="badge link_only">{LINK_LABEL}</span></span>')
+    return f'<span class="badge {E(st)}">{STATUS.get(st, LINK_LABEL)}</span>'
 LINK_HINT = "Check stock at the shop"
 # One switch for the shop totals ("We check 27 shops"). False (Nov 23, 2026, owner t1796u) counts only shops the checker
 # actually requests, so link-only shops are never in "N shops". They still show on the trackers with their "Link only" label.
@@ -740,7 +750,7 @@ def link_status_rows(ls):
     rows = []
     for l in sorted(ls, key=lambda l: (l["store"], l["label"])):
         rows.append(f"""<tr class="link-only-row" data-store="{E(l['store_id'])}" data-status="link_only" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
-  <td><span class="badge link_only">{LINK_LABEL}</span><span class="sub">{LINK_HINT}</span></td></tr>""")
+  <td>{status_badge("link_only")}<span class="sub">{LINK_HINT}</span></td></tr>""")
     return "".join(rows)
 
 def link_note(ls):
@@ -919,7 +929,7 @@ def compare_product(ls):
         title = f'<span class="sub">{E(r["title"])}</span>' if r.get("title") and r["title"] not in (r.get("gn"), r.get("p")) else ""
         items.append(
             f'<li><span class="compare-shop"><a href="{E(r["u"])}" target="_blank" rel="noopener">{E(r["s"])}</a>{region}{variant}{title}</span>'
-            f'<span class="badge {E(r["st"])}">{STATUS.get(r["st"], LINK_LABEL)}</span>'
+            f'{status_badge(r["st"])}'
             + (f'<span class="official-note">{E(r["on"])}</span>' if r.get("on") and r.get("st") == "sold_out" else "") + '</li>')
     anchor = f' id="{E(h["g"])}"' if re.fullmatch(r"[A-Za-z][\w-]*", h.get("g") or "") else ""
     return f'''<article class="compare"{anchor}>
@@ -2912,7 +2922,7 @@ def _shop_table(ls, links=()):
     for sid in sorted(by, key=lambda s: (min(order[l["status"]] for l in by[s]), rank.get(s, 99))):
         items = "".join(
             f'<li><a href="{E(l["url"])}" rel="noopener" target="_blank">{E(canon.get(l.get("canonical") or "") or l.get("title") or l["label"])}</a> '
-            f'<span class="badge {E(l["status"])}">{E(STATUS.get(l["status"], LINK_LABEL))}</span></li>'
+            f'{status_badge(l["status"])}</li>'
             for l in sorted(by[sid], key=lambda l: (order[l["status"]], l["label"])))
         rows.append(f'<tr><td>{E(by[sid][0]["store"])}{region_tag(sid)}</td><td><ul class="wtb-items">{items}</ul></td></tr>')
     return f'''<div class="table-wrap"><table class="stock"><thead><tr><th>Shop</th><th>What we track there · status at last check</th></tr></thead>
@@ -4888,7 +4898,8 @@ def main():
         print(f"WARNING: og-image.png says {OG_SHOPS} shops but we check {N_STORES}; re-run scripts/brand/make_og.py")
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
-    shutil.copy(ROOT / "data/changes.json", SITE / "data/changes.json")
+    # Published feed: same filtering as the pages (takedowns, link-only shops), never the raw file.
+    (SITE / "data/changes.json").write_text(json.dumps(changes, indent=1, ensure_ascii=False))
     publish_ink_data()
     (SITE / "index.html").write_text(build_index())
     (SITE / HOBO_TRACKER).mkdir(parents=True, exist_ok=True)

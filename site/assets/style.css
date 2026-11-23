@@ -140,6 +140,14 @@ table.stock{width:100%;border-collapse:collapse;font-size:.93rem}
 .badge.sold_out{color:var(--st-soldout);background:var(--st-soldout-bg);border-color:var(--st-soldout-line)}
 .badge.sold_out::before{background:transparent;border:1.5px solid currentColor;box-sizing:border-box}
 .badge.link_only{color:var(--muted,#5b5663);background:transparent;border-color:currentColor;border-style:dotted;font-weight:500}
+.lo-wrap{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:4px 10px;max-width:100%}
+.lo-wrap .badge{margin-left:0}
+.more-info{font-family:var(--sans);font-size:.76rem;font-weight:500;line-height:1.2;color:var(--muted,#5b5663);text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.stock td a.more-info,.more-info{color:var(--accent-2);font-weight:500;text-decoration:underline;text-underline-offset:2px}
+.stock td a.more-info:hover,.more-info:hover{color:var(--accent);text-decoration-thickness:2px}
+.more-info:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:3px}
+.compare-shops .lo-wrap{margin-left:auto;flex-shrink:0}
+.wtb-items .lo-wrap{margin-left:.35rem}
 .badge.unknown{color:var(--st-unknown);background:var(--st-unknown-bg);border-color:var(--st-unknown-line);border-style:dashed}
 .empty-row td{text-align:center;color:var(--ink-2);padding:24px}
 details{margin-top:10px} summary{cursor:pointer}

@@ -26,6 +26,9 @@
     if (h === "faq" && !filt) location.replace("/#good-to-know" + location.search);
     else if (moved[h] || filt) location.replace("/hobonichi-restock-tracker/" + location.search + (moved[h] ? "#" + moved[h] : (h ? "#" + h : "#tracker")));
   }
+  const statusBadge = st => st === "link_only"
+    ? `<span class="lo-wrap"><a class="more-info" href="/transparency/" aria-label="More information about link-only listings (Transparency page)">More Information</a><span class="badge link_only">Link only</span></span>`
+    : `<span class="badge ${esc(st)}">${LABEL[st] || esc(st)}</span>`;
   const LABEL = { in_stock: "In stock", preorder: "Preorder", coming_soon: "Not yet on sale", sold_out: "Sold out", unknown: "Couldn't check", link_only: "Link only" };
 
   const groupSel = "details.fam-block, details.group-fold";
@@ -139,7 +142,7 @@
       const shops = new Set(ls.map(r => r.sid)).size;
       const bits = [esc(h.t), shops + " " + (shops === 1 ? "shop" : "shops")];
       if (h.dp) bits.push(`<a href="${esc(h.dp)}">Design page</a>`);
-      const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span> ` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}</span><span class="badge ${esc(r.st)}">${LABEL[r.st] || esc(r.st)}</span>${r.on && r.st === "sold_out" ? `<span class="official-note">${esc(r.on)}</span>` : ""}</li>`).join("");
+      const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span> ` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}</span>${statusBadge(r.st)}${r.on && r.st === "sold_out" ? `<span class="official-note">${esc(r.on)}</span>` : ""}</li>`).join("");
       return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${soldEverywhereNote(ls)}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
     }
     let honorHash = true;

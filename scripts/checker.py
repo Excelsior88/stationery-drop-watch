@@ -416,6 +416,8 @@ def note_transition(old, rec, changes):
     A first observation only sets first_seen. A later real status change is appended
     with no product, cover, or Weeks filter. Unknown reads do not become events.
     """
+    if rec.get("store_id") in link_only_ids():
+        return changes  # link-only shops never log restock events (owner t1866u, Nov 23, 2026)
     rec["first_seen"] = old.get("first_seen", rec["checked_at"]) if old else rec["checked_at"]
     rec["status_since"] = old.get("status_since") if old and old["status"] == rec["status"] else rec["checked_at"]
     if old and rec["status"] != "unknown" and old["status"] not in ("unknown", rec["status"]):
@@ -456,6 +458,8 @@ def main():
     link_only = [dict(id=s["id"], name=s["name"], url=s["url"], reason=s.get("link_only_reason")) for s in link_only_stores(cfg)]
     stock_f.write_text(json.dumps(dict(run_started=started, run_finished=now(), summary=summary,
                                        not_checked=blocked, link_only=link_only, products=results), indent=1, ensure_ascii=False))
+    lo = link_only_ids(cfg)
+    changes = [c for c in changes if c.get("store_id") not in lo]  # self-heals if a stale copy brings old link-only events back
     changes_f.write_text(json.dumps(changes, indent=1, ensure_ascii=False))
     ok = len(results) - summary["unknown"]
     print(f"checked {len(results)} products: {ok} classified, {summary['unknown']} failed -> {summary}")
