@@ -132,7 +132,7 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 98 + (1 if site.INK_LIVE else 0))  # (Nov 22: -2 retired Archer and Olive design pages) (Nov 22: +24 cover design pages) (Nov 22: the MIDORI notice now 301s to the Traveler notice, so one fewer URL) 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide, plus 3 Weeks design pages (Sheep Sheep Sheep x2, Leather Forest Green), plus the old Archer and Olive URL page, plus the limited ink tracker
+        self.assertEqual(len(mods), 99 + (1 if site.INK_LIVE else 0))  # (Nov 23: +1 Terms of Use page) (Nov 22: -2 retired Archer and Olive design pages) (Nov 22: +24 cover design pages) (Nov 22: the MIDORI notice now 301s to the Traveler notice, so one fewer URL) 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide, plus 3 Weeks design pages (Sheep Sheep Sheep x2, Leather Forest Green), plus the old Archer and Olive URL page, plus the limited ink tracker
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):
