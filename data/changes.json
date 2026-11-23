@@ -2194,5 +2194,59 @@
   "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-colors-midnight-blue",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-23T21:18:36+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "HON A5 · Slash (Navy)",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a5-slash-navy-english",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-23T21:18:38+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "HON A6 · Slash (Navy)",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-hon-2027-a6-slash-navy-english",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-23T21:19:36+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "A6 cover · Colors: Bordeaux Terracotta",
+  "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-colors-bordeaux-teracotta-a6",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-23T21:19:57+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-akiko-miyakoshi-an-airport-at-night-a5",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-23T21:20:13+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-cousin-cover-2027-tanakadaisuke-white-handkerchief-diary-a5",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-23T21:21:29+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Apothecary Shelf (Halloween 2026) · A5 black dot grid",
+  "url": "https://www.archerandolive.com/products/apothecary-shelf-notebook?variant=49143523967131",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
