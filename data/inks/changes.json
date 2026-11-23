@@ -20,5 +20,27 @@
   "from": "in_stock",
   "to": "sold_out",
   "ink_id": "sailor-advent-2026"
+ },
+ {
+  "at": "2026-11-23T22:45:58+00:00",
+  "store_id": "goldspot",
+  "store": "Goldspot Pens",
+  "label": "Ruby Taffeta",
+  "url": "https://goldspot.com/products/diamine-inkvent-teal-edition-chameleon-bottled-ink-in-ruby-taffeta-50-ml",
+  "section": "inks",
+  "from": "sold_out",
+  "to": "in_stock",
+  "ink_id": "diamine-inkvent-teal-singles"
+ },
+ {
+  "at": "2026-11-23T22:45:42+00:00",
+  "store_id": "penboutique",
+  "store": "Pen Boutique",
+  "label": "Diamine Inkvent Calendar 2026 (Burgundy Edition)",
+  "url": "https://www.penboutique.com/products/diamine-inkvent-inks-2026-calendar-burgundy-edition",
+  "section": "inks",
+  "from": "sold_out",
+  "to": "in_stock",
+  "ink_id": "diamine-inkvent-2026"
  }
 ]
