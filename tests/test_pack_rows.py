@@ -41,7 +41,7 @@ class PackRowsTests(unittest.TestCase):
         data = json.loads(re.search(r'<script id="stock-data" type="application/json">(.*?)</script>', html, re.S).group(1).replace("<\\/", "</"))
         self.assertIsInstance(data, dict)
         self.assertGreater(len(unpack(data)), 400)
-        self.assertLess(len(html), 600_000)  # raised from 420_000 when Avec and 20+ popular covers were added (gzip ~47 KB)
+        self.assertLess(len(html), 700_000)  # Nov 23, 2026: 700_000 after 95 rows from four new Hobonichi shops; raised from 420_000 when Avec and 20+ popular covers were added (gzip ~47 KB)
 
     def test_app_js_decodes_both_formats(self):
         js = (ROOT / "site/assets/app.js").read_text()

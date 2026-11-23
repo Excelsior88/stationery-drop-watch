@@ -29,6 +29,7 @@ A5_SHOPS = {
     "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-hon-a5-bow-tie-sheep-sheep-sheep",
     "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-original-a5-hon-planner-book-bow-tie-sheep-english-january-start-monday-start",
     "mlovewell": "https://www.mlovewell.com/products/2027-hobonichi-techo-hon-a5-english-hardcover-planner-book-bow-tie-sheep-sheep-sheep",
+    "hunterpaper": "https://hunterpaperco.com/products/hobonichi-techo-a5-hon-2027-bow-tie-sheep-sheep-sheep-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
 }
 
 A6_EN_SHOPS = {
@@ -43,6 +44,8 @@ A6_EN_SHOPS = {
     "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-hon-a6-bow-tie-sheep-sheep-sheep",
     "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-original-a6-hon-planner-book-bow-tie-sheep-english-january-start-monday-start",
     "mlovewell": "https://www.mlovewell.com/products/2027-hobonichi-techo-hon-a6-english-hardcover-planner-book-bow-tie-sheep-sheep-sheep",
+    "hunterpaper": "https://hunterpaperco.com/products/hobonichi-techo-a6-hon-2027-bow-tie-sheep-sheep-sheep-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
+    "zakkajoy": "https://zakkajoy.com/products/hobonichi-techo-a6-hon-2027-planner-bow-tie-sheep-sheep-sheep",  # added Nov 23, 2026 (new Hobonichi shops)
 }
 
 ONCE_SHOPS = {
@@ -59,6 +62,8 @@ ONCE_SHOPS = {
     "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-akiko-miyakoshi-once-in-spring",
     "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-once-in-spring-english-tall-slim-jan-start",
     "mlovewell": "https://www.mlovewell.com/products/2027-hobonichi-techo-english-weeks-akiko-miyakoshi-once-in-spring",
+    "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-akiko-miyakoshi-once-in-spring-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
+    "colorswatch": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-akiko-miyakoshi-once-in-spring",  # added Nov 23, 2026 (new Hobonichi shops)
 }
 
 METEOR_SHOPS = {
@@ -75,6 +80,9 @@ METEOR_SHOPS = {
     "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
     "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-meteor-shower-in-the-light-blue-forest-english-tall-slim-jan-start",
     "mlovewell": "https://www.mlovewell.com/products/2027-hobonichi-techo-english-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
+    "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-hiroko-kubota-meteor-shower-in-the-light-blue-forest-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
+    "zakkajoy": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-meteor-shower-in-the-light-blue-forest",  # added Nov 23, 2026 (new Hobonichi shops)
+    "colorswatch": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",  # added Nov 23, 2026 (new Hobonichi shops)
 }
 
 SKIPPED_NO_LISTING = {

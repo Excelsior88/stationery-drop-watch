@@ -6358,6 +6358,724 @@
    ]
   },
   {
+   "id": "hunterpaper",
+   "name": "Hunter Paper Co",
+   "url": "https://hunterpaperco.com/",
+   "country": "UK",
+   "platform": "shopify",
+   "indie": true,
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-2027-original-book-january-start-a6",
+     "source_title": "Hobonichi Techo 2027 Original Book (January Start) A6"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-2027-english-cousin-book-january-start-a5",
+     "source_title": "Hobonichi Techo 2027 English Cousin Book (January Start) A5"
+    },
+    {
+     "canonical": "planner-a6-en",
+     "label": "Planner A6 book (English)",
+     "type": "Book",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-2027-a6-english-planner-book-january-start",
+     "source_title": "Hobonichi Techo 2027 A6 English Planner Book (January Start)"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-colours-midnight-blue-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Colours: Midnight Blue (January Start)"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-colours-canaria-yellow-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Colours: Canaria Yellow (January Start)"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-moomin-at-the-table-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Moomin: At the Table (January Start)"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-yumi-kitagishi-white-cat-wallpaper-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Yumi Kitagishi: White Cat Wallpaper (January Start)"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-tanakadaisuke-starlight-january-start",
+     "source_title": "Hobonichi Weeks 2027 - tanakadaisuke: Starlight (January Start)"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-colours-pink-sapphire-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Colours: Pink Sapphire (January Start)"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-colours-sea-glass-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Colours: Sea Glass (January Start)"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-v-a-series-welcome-to-the-v-a-january-start",
+     "source_title": "Hobonichi Weeks 2027 - V&A Series: Welcome to the V&A (January Start)"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-v-a-series-leicester-january-start",
+     "source_title": "Hobonichi Weeks 2027 - V&A Series: Leicester (January Start)"
+    },
+    {
+     "canonical": "weeks-shirt-graph-plaid",
+     "label": "Weeks · Shirt Fabric: Graph Plaid",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-shirt-fabric-graph-plaid-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Shirt Fabric: Graph Plaid (January Start)"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-paper-series-frosty-jade-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Paper Series: Frosty Jade (January Start)"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-liberty-fabrics-floral-remedy-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Liberty Fabrics: Floral Remedy (January Start)"
+    },
+    {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-akiko-miyakoshi-once-in-spring-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Akiko Miyakoshi: Once, in Spring (January Start)"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-hiroko-kubota-meteor-shower-in-the-light-blue-forest-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Hiroko Kubota: Meteor Shower in the Light Blue Forest (January Start)"
+    },
+    {
+     "canonical": "weeks-beautiful-people-yellow",
+     "label": "Weeks cover · beautiful people: Nothing to Hide (Yellow)",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-cover-beautiful-people-nothing-to-hide-yellow",
+     "source_title": "Hobonichi Weeks Cover - beautiful people: Nothing to Hide (Yellow)"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-hon-2027-slash-navy-january-start",
+     "source_title": "Hobonichi Techo A5 HON 2027 - Slash: Navy (January Start)"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a6-hon-2027-slash-navy-january-start",
+     "source_title": "Hobonichi Techo A6 HON 2027 - Slash: Navy (January Start)"
+    },
+    {
+     "canonical": "hon-a5-sheep",
+     "label": "HON A5 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-hon-2027-bow-tie-sheep-sheep-sheep-january-start",
+     "source_title": "Hobonichi Techo A5 HON 2027 - Bow & Tie: Sheep Sheep Sheep (January Start)"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a6-hon-2027-bow-tie-sheep-sheep-sheep-january-start",
+     "source_title": "Hobonichi Techo A6 HON 2027 - Bow & Tie: Sheep Sheep Sheep (January Start)"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-mega-2027-colours-midnight-blue-january-start",
+     "source_title": "Hobonichi Weeks Mega 2027 - Colours: Midnight Blue (January Start)"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-mega-2027-bow-tie-candy-dream-january-start",
+     "source_title": "Hobonichi Weeks Mega 2027 - Bow & Tie: Candy Dream (January Start)"
+    },
+    {
+     "canonical": "weeks-moomin-snufkin",
+     "label": "Weeks · Moomin: A Day in the Life of Snufkin",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-moomin-a-day-in-the-life-of-snufkin-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Moomin: A Day in the Life of Snufkin (January Start)"
+    },
+    {
+     "canonical": "weeks-sheep",
+     "label": "Weeks · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-bow-tie-sheep-sheep-sheep-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Bow & Tie: Sheep Sheep Sheep (January Start)"
+    },
+    {
+     "canonical": "weeks-leather-forest",
+     "label": "Weeks · Leather: Forest Green",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-2027-leahter-forest-green-january-start",
+     "source_title": "Hobonichi Weeks 2027 - Leather: Forest Green (January Start)"
+    },
+    {
+     "canonical": "weeks-mega-sea-glass",
+     "label": "Weeks Mega · Colors: Sea Glass",
+     "type": "Weeks Mega",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-mega-2027-colours-sea-glass-january-start",
+     "source_title": "Hobonichi Weeks Mega 2027 - Colours: Sea Glass (January Start)"
+    },
+    {
+     "canonical": "weeks-mega-canaria-yellow",
+     "label": "Weeks Mega · Colors: Canaria Yellow",
+     "type": "Weeks Mega",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-mega-2027-colours-canaria-yellow-january-start",
+     "source_title": "Hobonichi Weeks Mega 2027 - Colours: Canaria Yellow (January Start)"
+    },
+    {
+     "canonical": "weeks-mega-poppy-red",
+     "label": "Weeks Mega · Colors: Poppy Red",
+     "type": "Weeks Mega",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-mega-2027-colours-poppy-red-january-start",
+     "source_title": "Hobonichi Weeks Mega 2027 - Colours: Poppy Red (January Start)"
+    },
+    {
+     "canonical": "weeks-mega-pink-sapphire",
+     "label": "Weeks Mega · Colors: Pink Sapphire",
+     "type": "Weeks Mega",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-mega-2027-colours-pink-sapphire-january-start",
+     "source_title": "Hobonichi Weeks Mega 2027 - Colours: Pink Sapphire (January Start)"
+    },
+    {
+     "canonical": "weeks-mega-sheep",
+     "label": "Weeks Mega · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks Mega",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-mega-2027-bow-tie-sheep-sheep-sheep-january-start",
+     "source_title": "Hobonichi Weeks Mega 2027 - Bow & Tie: Sheep Sheep Sheep (January Start)"
+    },
+    {
+     "canonical": "cover-a6-moomin",
+     "label": "A6 cover · Moomin: My Yard (Pale Mint)",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-moomin-my-yard-pale-mint",
+     "source_title": "Hobonichi A6 Cover - Moomin: My Yard (Pale Mint)"
+    },
+    {
+     "canonical": "cover-a6-white-cat-house",
+     "label": "A6 cover · Yumi Kitagishi: White Cat House",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-yumi-kitagishi-white-cat-house",
+     "source_title": "Hobonichi A6 Cover - Yumi Kitagishi: White Cat House"
+    },
+    {
+     "canonical": "cover-a6-tragen-black",
+     "label": "A6 cover · TRAGEN: Black",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-original-cover-tragen-black",
+     "source_title": "Hobonichi A6 Original Cover - Tragen: Black"
+    },
+    {
+     "canonical": "cover-a6-mina-felice",
+     "label": "A6 cover · mina perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi A6 Cover - mina perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a6-beautiful-people-green",
+     "label": "A6 cover · beautiful people: Nothing to Hide (Green)",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-beautiful-people-nothing-to-hide-green",
+     "source_title": "Hobonichi A6 Cover - beautiful people: Nothing to Hide (Green)"
+    },
+    {
+     "canonical": "cover-a5-beautiful-people-pink",
+     "label": "A5 cover · beautiful people: Nothing to Hide (Pink)",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-beautiful-people-nothing-to-hide-pink",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - beautiful people: Nothing to Hide (Pink)"
+    },
+    {
+     "canonical": "cover-a6-akiko-miyakoshi-airport",
+     "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi A6 Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a6-va-strawberry-thief",
+     "label": "A6 cover · V&A Series: Strawberry Thief",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-v-a-series-strawberry-thief",
+     "source_title": "Hobonichi A6 Cover - V&A Series: Strawberry Thief"
+    },
+    {
+     "canonical": "cover-a6-yoshie-watanabe-petit-bloom",
+     "label": "A6 cover · Yoshie Watanabe: Petit Bloom",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-yoshie-watanabe-petit-bloom",
+     "source_title": "Hobonichi A6 Cover - Yoshie Watanabe: Petit Bloom"
+    },
+    {
+     "canonical": "cover-a6-colors-bordeaux-terracotta",
+     "label": "A6 cover · Colors: Bordeaux Terracotta",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-colors-bordeaux-terracotta",
+     "source_title": "Hobonichi A6 Cover - Colors: Bordeaux Terracotta"
+    },
+    {
+     "canonical": "cover-a6-colors-blue-parasol",
+     "label": "A6 cover · Colors: Blue Parasol",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-colors-blue-parasol",
+     "source_title": "Hobonichi A6 Cover - Colors: Blue Parasol"
+    },
+    {
+     "canonical": "cover-a6-tanakadaisuke-handkerchief",
+     "label": "A6 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi A6 Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a6-glow-chianti",
+     "label": "A6 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-glow-chianti",
+     "source_title": "Hobonichi A6 Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "cover-a6-arts-science-wax-coating-kip",
+     "label": "A6 cover · Arts&Science: Wax Coating Kip",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-a6-cover-arts-science-wax-coating-kip",
+     "source_title": "Hobonichi A6 Cover - Arts&Science: Wax Coating Kip"
+    },
+    {
+     "canonical": "cover-a5-yumi-kitagishi-white-cat-village",
+     "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-yumi-kitagishi-white-cat-village",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Yumi Kitagishi: White Cat Village"
+    },
+    {
+     "canonical": "cover-a5-va-blackthorn",
+     "label": "A5 cover · V&A Series: Blackthorn",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-v-a-series-blackthorn",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - V&A Series: Blackthorn"
+    },
+    {
+     "canonical": "cover-a5-akiko-miyakoshi-airport",
+     "label": "A5 cover · Akiko Miyakoshi: An Airport at Night",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-akiko-miyakoshi-an-airport-at-night",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Akiko Miyakoshi: An Airport at Night"
+    },
+    {
+     "canonical": "cover-a5-colors-chiffon-greige",
+     "label": "A5 cover · Colors: Chiffon Greige",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-colours-chiffon-greige",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Colours: Chiffon Greige"
+    },
+    {
+     "canonical": "cover-a5-colors-misty-cedar",
+     "label": "A5 cover · Colors: Misty Cedar",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-colours-misty-cedar",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Colours: Misty Cedar"
+    },
+    {
+     "canonical": "cover-a5-colors-mango-latte",
+     "label": "A5 cover · Colors: Mango Latte",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-colours-mango-latte",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Colours: Mango Latte"
+    },
+    {
+     "canonical": "cover-a5-mina-perhonen-felice-blue",
+     "label": "A5 cover · minä perhonen: felice (Blue)",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - mina perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cover-a5-tanakadaisuke-handkerchief",
+     "label": "A5 cover · tanakadaisuke: White Handkerchief Diary",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-tanakadaisuke-white-handkerchief-diary",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - tanakadaisuke: White Handkerchief Diary"
+    },
+    {
+     "canonical": "cover-a5-glow-chianti",
+     "label": "A5 cover · Glow: Chianti",
+     "type": "Cover",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-a5-cousin-cover-glow-chianti",
+     "source_title": "Hobonichi Techo A5 Cousin Cover - Glow: Chianti"
+    },
+    {
+     "canonical": "weeks-cover-tragen-bitter-plaid",
+     "label": "Weeks cover · Tragen: Bitter Plaid",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-cover-tragen-bitter-plaid",
+     "source_title": "Hobonichi Weeks Cover - Tragen: Bitter Plaid"
+    },
+    {
+     "canonical": "weeks-cover-alettone-sweets",
+     "label": "Weeks cover · Alettone: Sweets",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-cover-alettone-sweets",
+     "source_title": "Hobonichi Weeks Cover - Alettone: Sweets"
+    },
+    {
+     "canonical": "weeks-cover-mina-perhonen-felice-blue",
+     "label": "Weeks cover · minä perhonen: felice (Blue)",
+     "type": "Weeks",
+     "url": "https://hunterpaperco.com/products/hobonichi-weeks-cover-mina-perhonen-felice-blue",
+     "source_title": "Hobonichi Weeks Cover - mina perhonen: felice (Blue)"
+    },
+    {
+     "canonical": "cousin-avec-a5-jp",
+     "label": "Cousin Avec A5 books, 2-book set (Japanese)",
+     "type": "Book",
+     "url": "https://hunterpaperco.com/products/hobonichi-techo-2027-japanese-a5-cousin-avec-books-january-start",
+     "source_title": "Hobonichi Techo 2027 Japanese A5 Cousin Avec Books (January Start)"
+    }
+   ]
+  },
+  {
+   "id": "zakkajoy",
+   "name": "Zakka Joy",
+   "url": "https://zakkajoy.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "original-a6-en",
+     "label": "Original A6 book (English)",
+     "type": "Book",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-2027-original-book",
+     "source_title": "Hobonichi Techo 2027 Original Book"
+    },
+    {
+     "canonical": "cousin-a5-en",
+     "label": "Cousin A5 book (English)",
+     "type": "Book",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-2027-cousin-book",
+     "source_title": "Hobonichi Techo 2027 Cousin Book"
+    },
+    {
+     "canonical": "weeks-midnight-blue",
+     "label": "Weeks · Colors: Midnight Blue",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-midnight-blue",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Midnight Blue"
+    },
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-canaria-yellow",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-moomin-table",
+     "label": "Weeks · Moomin: At the Table",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-moomin-at-the-table",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Moomin: At the Table"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-yumi-kitagishi-white-cat-wallpaper",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Yumi Kitagishi: White Cat Wallpaper"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-pink-sapphire",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-sea-glass",
+     "label": "Weeks · Colors: Sea Glass",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-sea-glass",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Sea Glass"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-welcome-to-the-v-a",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Welcome to the V&A"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-frosty-jade",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Frosty Jade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-liberty-fabrics-floral-remedy",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Liberty Fabrics: Floral Remedy"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-meteor-shower-in-the-light-blue-forest",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Meteor Shower in the Light Blue Forest"
+    },
+    {
+     "canonical": "hon-a6-sheep",
+     "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+     "type": "HON",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-a6-hon-2027-planner-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi Techo A6 Hon 2027 Planner, Bow + Tie: Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "weeks-moomin-snufkin",
+     "label": "Weeks · Moomin: A Day in the Life of Snufkin",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-moomin-a-day-in-the-life-of-snufkin",
+     "source_title": "Hobonichi Techo Weeks 2027 Planner, Moomin: A Day in the Life of Snufkin"
+    },
+    {
+     "canonical": "weeks-leather-forest",
+     "label": "Weeks · Leather: Forest Green",
+     "type": "Weeks",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-2027-weeks-leather-forest-green",
+     "source_title": "Hobonichi Techo 2027 Weeks Leather: Forest Green"
+    },
+    {
+     "canonical": "weeks-mega-canaria-yellow",
+     "label": "Weeks Mega · Colors: Canaria Yellow",
+     "type": "Weeks Mega",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-mega-2027-planner-canaria-yellow",
+     "source_title": "Hobonichi Techo Weeks Mega 2027 Planner, Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-mega-pink-sapphire",
+     "label": "Weeks Mega · Colors: Pink Sapphire",
+     "type": "Weeks Mega",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-mega-2027-planner-pink-sapphire",
+     "source_title": "Hobonichi Techo Weeks Mega 2027 Planner, Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-mega-sheep",
+     "label": "Weeks Mega · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks Mega",
+     "url": "https://zakkajoy.com/products/hobonichi-techo-weeks-mega-2027-planner-bow-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi Techo Weeks Mega 2027 Planner, Bow + Tie: Sheep Sheep Sheep"
+    }
+   ]
+  },
+  {
+   "id": "colorswatch",
+   "name": "ColorSwatch",
+   "url": "https://mycolorswatch.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "weeks-canaria-yellow",
+     "label": "Weeks · Colors: Canaria Yellow",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-colors-canaria-yellow",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors - Canaria Yellow"
+    },
+    {
+     "canonical": "weeks-white-cat",
+     "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-yumu-katagishi-white-cat-wallpaper",
+     "source_title": "Hobonichi Techo Weeks 2027 - Yumi Katagishi - White Cat Wallpaper"
+    },
+    {
+     "canonical": "weeks-starlight",
+     "label": "Weeks · tanakadaisuke: Starlight",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-tanakadaisuke-starlight",
+     "source_title": "Hobonichi Techo 2027 Weeks - Tanakadaisuke: Starlight"
+    },
+    {
+     "canonical": "weeks-pink-sapphire",
+     "label": "Weeks · Colors: Pink Sapphire",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-colors-pink-sapphire",
+     "source_title": "Hobonichi Techo Weeks 2027 - Colors - Pink Sapphire"
+    },
+    {
+     "canonical": "weeks-va-welcome",
+     "label": "Weeks · V&A: Welcome to the V&A",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-welcome-to-the-v-and-a",
+     "source_title": "Hobonichi Techo 2027 Weeks - V-A Series: Welcome to the V and A"
+    },
+    {
+     "canonical": "weeks-va-leicester",
+     "label": "Weeks · V&A: Leicester",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",
+     "source_title": "Hobonichi Techo 2027 Weeks - V-A Series: Leicester"
+    },
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-paper-series-frosty-jade",
+     "source_title": "Hobonichi Techo Weeks 2027 - Paper Series - Frosty Jade"
+    },
+    {
+     "canonical": "weeks-floral-remedy",
+     "label": "Weeks · Liberty Fabrics: Floral Remedy",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-liberty-fabrics-floral-remedy",
+     "source_title": "Hobonichi Techo 2027 Weeks - Liberty Fabrics: Floral Remedy"
+    },
+    {
+     "canonical": "weeks-once-in-spring",
+     "label": "Weeks · Akiko Miyakoshi: Once, in Spring",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-akiko-miyakoshi-once-in-spring",
+     "source_title": "Hobonichi Techo 2027 Weeks - Akiko Miyakoshi - Once, in spring"
+    },
+    {
+     "canonical": "weeks-meteor-shower",
+     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
+     "source_title": "Hobonichi Techo 2027 Weeks - Hiroko Kubota - Meteor Shower in the light blue forest"
+    },
+    {
+     "canonical": "hon-a5-slash-navy",
+     "label": "HON A5 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-hon-a5-slash-navy",
+     "source_title": "Hobonichi Techo 2027 HON - A5 - Slash (Navy)"
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-hon-a6-slash-navy",
+     "source_title": "Hobonichi Techo 2027 HON - A6 - Slash (Navy)"
+    },
+    {
+     "canonical": "weeks-mega-midnight-blue",
+     "label": "Weeks Mega · Colors: Midnight Blue",
+     "type": "Weeks Mega",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-mega-colors-midnight-blue",
+     "source_title": "Hobonichi Techo 2027 Weeks MEGA Colors: Midnight Blue"
+    },
+    {
+     "canonical": "weeks-mega-candy-dream",
+     "label": "Weeks Mega · Bow & Tie: Candy Dream",
+     "type": "Weeks Mega",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-mega-2027-bow-and-tie-candy",
+     "source_title": "Hobonichi Techo Weeks MEGA 2027 - Bow and Tie - Candy Dream"
+    },
+    {
+     "canonical": "weeks-sheep",
+     "label": "Weeks · Bow & Tie: Sheep Sheep Sheep",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-bow-and-tie-sheep-sheep-sheep",
+     "source_title": "Hobonichi Techo Weeks 2027 - Bow and Tie - Sheep Sheep Sheep"
+    },
+    {
+     "canonical": "weeks-leather-forest",
+     "label": "Weeks · Leather: Forest Green",
+     "type": "Weeks",
+     "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-leather-forest-green",
+     "source_title": "Hobonichi Techo Weeks 2027 - Leather - Forest Green"
+    }
+   ]
+  },
+  {
+   "id": "greenstar",
+   "name": "Greenstar Paperie",
+   "url": "https://www.greenstarpaperie.com/",
+   "country": "US",
+   "platform": "shopify",
+   "indie": true,
+   "cols": [
+    "hobonichi"
+   ],
+   "products": [
+    {
+     "canonical": "weeks-paper-frosty-jade",
+     "label": "Weeks · Paper Series: Frosty Jade",
+     "type": "Weeks",
+     "url": "https://www.greenstarpaperie.com/products/hobonichi-techo-2027-weeks-paper-series?variant=44373546107060",
+     "source_title": "Hobonichi Techo 2027 Weeks Paper Series · Jade",
+     "variant_id": 44373546107060
+    },
+    {
+     "canonical": "hon-a6-slash-navy",
+     "label": "HON A6 · Slash (Navy)",
+     "type": "HON",
+     "url": "https://www.greenstarpaperie.com/products/hobonichi-techo-hon-2027-a6-slash-navy",
+     "source_title": "Hobonichi Techo HON 2027 - A6 - Slash Navy"
+    }
+   ]
+  },
+  {
    "id": "milligram",
    "name": "Milligram",
    "url": "https://milligram.com/",
