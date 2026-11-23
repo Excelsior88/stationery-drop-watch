@@ -41,7 +41,7 @@ class AboutContactNameTests(unittest.TestCase):
     def test_contact_names_andrew_but_not_arden(self):
         _fname, doc = site.build_contact()
         text = plain(doc)
-        self.assertIn("Andrew Robinson runs the site and can be reached at", text)
+        self.assertIn("Stationery Drop Watch LLC is run by Andrew Robinson and can be reached at", text)
         self.assertIn("admin@stationerydropwatch.com", text)
         self.assertNotIn("Arden", text)
         self.assertNotIn("partner", text.lower())
