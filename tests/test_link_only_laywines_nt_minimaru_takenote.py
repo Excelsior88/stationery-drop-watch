@@ -77,6 +77,22 @@ class LinkOnlyAndNewShopsTests(unittest.TestCase):
         self.assertIn("link only: we don't check its stock", guide)
         self.assertIn("Notebook Therapy is listed as a link only: we don't check its stock.", guide)
 
+    def test_dot_grid_tracker_share_alt_and_design_pages_say_link_only(self):
+        import html
+        self.assertNotIn("Notebook Therapy,", site.OG_DOTGRID_ALT)
+        self.assertIn("Notebook Therapy is listed as a link only", site.OG_DOTGRID_ALT)
+        self.assertNotIn("Notebook Therapy", site.dotgrid_meta_desc())
+        group = next(g for g in site.GROUPS if g.get("section") == "dotgrid")
+        doc = html.unescape(site.build_group(group, {})[1])
+        self.assertNotIn("from Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy", doc)
+        for d in site.DESIGNS:
+            if d["slug"].startswith("notebook-therapy-"):
+                page = html.unescape(site.build_design(d)[1])
+                self.assertIn(": link only", page)
+                self.assertIn("we don't check its stock", page)
+                for bad in ("This page shows its stock", "Tracking started", "Recent restocks", "listings we track", "Statuses come from"):
+                    self.assertNotIn(bad, page, (d["slug"], bad))
+
 
 if __name__ == "__main__":
     unittest.main()

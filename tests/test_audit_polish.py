@@ -66,7 +66,7 @@ class AuditPolishTests(unittest.TestCase):
         self.assertIn("Archer and Olive", blurb)
         self.assertIn("Leuchtturm1917", blurb)
         self.assertIn("Scribbles That Matter", blurb)
-        self.assertIn("Notebook Therapy", blurb)
+        self.assertNotIn("Notebook Therapy", blurb)  # link-only since Nov 23, 2026: not among the makers we check
         self.assertIn("Archer and Olive refills", blurb)
         self.assertNotIn("We check", blurb)
         self.assertNotIn("official", blurb.lower())
