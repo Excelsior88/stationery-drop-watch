@@ -4241,9 +4241,12 @@ def ink_checked_line():
 
 def ink_color_table(ink, rows):
     """One row per color, one column per shop: for single bottles sold color by color."""
+    # A shop gets a column once it has a checked row, so a listing added since the last check
+    # never shows as "Not listed" before its first check.
+    have = {r["store_id"] for r in rows}
     shop_ids = []
     for l in ink["listings"]:
-        if l["store_id"] not in shop_ids:
+        if l["store_id"] not in shop_ids and l["store_id"] in have:
             shop_ids.append(l["store_id"])
     names = {s["id"]: s["name"] for s in stores["stores"]}
     colors = sorted({r.get("color") or r["label"] for r in rows}, key=str.lower)

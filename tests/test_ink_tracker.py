@@ -159,6 +159,33 @@ class PageTests(unittest.TestCase):
         self.assertIn(("limited-edition-fountain-pen-ink/", "Limited inks"), s.NAV_TRACKERS)
         self.assertIn("limited-edition-fountain-pen-ink/", s.build_sitemap())
 
+    def test_color_table_waits_for_a_shops_first_check(self):
+        """A shop added to inks.json gets a column only after its first check, never a column of "Not listed"."""
+        s = self.site
+        ink = {"id": "t", "listings": [{"store_id": "atlas", "url": "a", "color": "Red"},
+                                       {"store_id": "goldspot", "url": "g", "color": "Red"}]}
+        rows = [dict(store_id="atlas", store="Atlas Stationers", url="a", color="Red", label="Red", status="in_stock")]
+        html = s.ink_color_table(ink, rows)
+        self.assertIn("Atlas Stationers", html)
+        self.assertNotIn("Goldspot", html)
+        self.assertNotIn("Not listed", html)
+        rows.append(dict(store_id="goldspot", store="Goldspot Pens", url="g", color="Red", label="Red", status="sold_out"))
+        self.assertIn("Goldspot Pens", s.ink_color_table(ink, rows))
+
+    def test_teal_singles_listings_are_unique_colors_per_shop(self):
+        """Each Teal Edition 50ml colour appears at most once per shop, using the tracker's own colour names."""
+        cfg = json.loads((ROOT / "inks.json").read_text())
+        ink = next(i for i in cfg["inks"] if i["id"] == "diamine-inkvent-teal-singles")
+        names = {l["color"] for l in ink["listings"] if l["store_id"] == "atlas"}
+        self.assertEqual(len(names), 25)
+        seen = set()
+        for l in ink["listings"]:
+            self.assertIn(l["color"], names, l["url"])
+            self.assertNotIn((l["store_id"], l["color"]), seen, l["url"])
+            seen.add((l["store_id"], l["color"]))
+            if l.get("variant_id"):
+                self.assertIn(f"variant={l['variant_id']}", l["url"])
+
     def test_shop_count_is_union_not_sum(self):
         s = self.site
         ids = {p["store_id"] for p in s.stock["products"]} | {r["store_id"] for r in s.INK_ROWS}
