@@ -1676,6 +1676,157 @@ def build_transparency():
     desc = "Businesses that asked Stationery Drop Watch to remove or change information, what they asked for, what we removed, what stayed, and when."
     return page(fname, "Transparency", desc, body, ld=(crumbs_ld((fname, "Transparency")),))
 
+# Teachers Pay Teachers products page (/shop/teachers-pay-teachers/). Titles, grades, formats, page counts and
+# bundle membership are copied from each product's own TpT page (checked Nov 23, 2026, 15 products).
+# Page counts are the ones the TpT description states. No prices or availability anywhere on the page.
+TPT_PAGE_PATH = "shop/teachers-pay-teachers/"
+TPT_PAGE_DATE = "2026-11-23"
+TPT_PRODUCTS = [
+    dict(line='cp', bundle=False, slug='cute-pastel-calm-down-corner-kit',
+         title='Cute Pastel Calm Down Corner Kit | Kawaii Breathing Cards + Calm Choices SEL',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Calm-Down-Corner-Kit-Kawaii-Breathing-Cards-Calm-Choices-SEL-18381516',
+         grades='PreK-2', fmt='PDF', count='16 pages',
+         desc='A calm corner kit: corner signs, breathing cards, a My Calm Choices board, break passes, a timer card and a Body Check poster. Learners notice the feeling, choose a tool, set the timer, check the body and head back to learning.',
+         member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Feelings & Behavior Mini Bundle']),
+    dict(line='cp', bundle=False, slug='cute-pastel-classroom-labels',
+         title='Cute Pastel Classroom Labels | Editable Kawaii Supply Bin Labels with Pictures',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Labels-Editable-Kawaii-Supply-Bin-Labels-with-Pictures-18381372',
+         grades='PreK-2', fmt='PDF and editable PowerPoint', count='27 pages',
+         desc='Picture-and-word labels for supply bins, centers, cubbies and teacher toolboxes, with 45 supply labels, 14 center signs and 16 cubby and name labels. Every label page comes as a print-ready PDF and as an editable file.',
+         member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Routines & Visuals Mini Bundle']),
+    dict(line='cp', bundle=True, slug='cute-pastel-complete-classroom-bundle',
+         title='Cute Pastel Complete Classroom Bundle | Visual Schedule, Labels, SEL & Behavior',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Complete-Classroom-Bundle-Visual-Schedule-Labels-SEL-Behavior-18381628',
+         grades='PreK-2', fmt='', count='148 pages across 6 resources',
+         desc='Six matching Cute Pastel sets for a PreK-2 classroom: Visual Schedule Cards, First / Then & Now / Next Boards, Classroom Labels, Emotions & Feelings Check-In, Token Boards & Reward Charts and the Calm-Down Corner Kit.',
+         member_of=[]),
+    dict(line='cp', bundle=True, slug='cute-pastel-feelings-behavior-mini-bundle',
+         title='Cute Pastel Feelings & Behavior Mini Bundle | Emotions, Calm Corner & Tokens',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Feelings-Behavior-Mini-Bundle-Emotions-Calm-Corner-Tokens-18381659',
+         grades='PreK-2', fmt='', count='70 pages across 3 resources',
+         desc='Three matching Cute Pastel sets to help learners notice feelings, calm their bodies and celebrate good choices: Emotions & Feelings Check-In, Calm-Down Corner Kit and Token Boards & Reward Charts.',
+         member_of=[]),
+    dict(line='cp', bundle=False, slug='cute-pastel-feelings-check-in',
+         title='Cute Pastel Feelings Check-In Cards & Posters | Kawaii Emotions + Calm Down SEL',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Feelings-Check-In-Cards-Posters-Kawaii-Emotions-Calm-Down-SEL-18381465',
+         grades='PreK-2', fmt='PDF', count='16 pages',
+         desc='Helps little learners name their feelings and choose a calm-down strategy, with 24 feelings cards, 8 coping cards, a class check-in poster, a desk mat and a Calm Down Choices poster.',
+         member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Feelings & Behavior Mini Bundle']),
+    dict(line='cp', bundle=False, slug='cute-pastel-first-then-now-next',
+         title='Cute Pastel First Then & Now Next Boards | Kawaii Visual Supports + Reward Cards',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-First-Then-Now-Next-Boards-Kawaii-Visual-Supports-Reward-Cards-18381421',
+         grades='PreK-2', fmt='PDF', count='37 pages',
+         desc='First / Then and Now / Next boards with bold labels, a clear arrow and drop zones that show what comes next. Includes 12 boards, 3 reward boards, desk strips and 32 reward and behavior cards.',
+         member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Routines & Visuals Mini Bundle']),
+    dict(line='cp', bundle=True, slug='cute-pastel-routines-visuals-mini-bundle',
+         title='Cute Pastel Routines & Visuals Mini Bundle | Visual Schedule, First Then, Labels',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Routines-Visuals-Mini-Bundle-Visual-Schedule-First-Then-Labels-18381644',
+         grades='PreK-2', fmt='', count='78 pages across 3 resources',
+         desc='Three matching Cute Pastel sets to build clear, calm routines: Visual Schedule Cards, First / Then & Now / Next Boards and Classroom Labels.',
+         member_of=[]),
+    dict(line='cp', bundle=False, slug='cute-pastel-token-boards',
+         title='Cute Pastel Token Boards & Reward Charts | Kawaii Token Economy + Sticker Charts',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Token-Boards-Reward-Charts-Kawaii-Token-Economy-Sticker-Charts-18381481',
+         grades='PreK-2', fmt='PDF', count='38 pages',
+         desc='Token boards that start with 3 tokens and move up to 5 and 10, with sticker charts and punch cards that can fade the board or go home. Includes 18 token boards, 24 reward choice cards, 216 tokens, 6 sticker charts and 8 mini punch cards.',
+         member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Feelings & Behavior Mini Bundle']),
+    dict(line='cp', bundle=False, slug='cute-pastel-visual-schedule-cards',
+         title='Cute Pastel Visual Schedule Cards | 43 Kawaii Daily Routine Cards PreK–2 & SpEd',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Visual-Schedule-Cards-43-Kawaii-Daily-Routine-Cards-PreK2-SpEd-18381500',
+         grades='PreK-2', fmt='PDF', count='14 pages',
+         desc='43 visual schedule cards from Arrival to Dismissal, each pairing a clear picture with a bold label and a color-coded border. Cards are 3.75 x 5 in, 4 per page, with a bonus blank card.',
+         member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Routines & Visuals Mini Bundle']),
+    dict(line='cp', bundle=False, slug='cute-pastel-visual-schedule-free-starter',
+         title='Cute Pastel Visual Schedule Cards FREE Starter Pack | 6 Kawaii Routine Cards',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Visual-Schedule-Cards-FREE-Starter-Pack-6-Kawaii-Routine-Cards-18381694',
+         grades='PreK-2', fmt='PDF', count='4 pages',
+         desc='Six Cute Pastel visual schedule cards (Lunch, Art, Music, Reading, Recess and Bathroom) plus a blank card, in the same size, style and print quality as the full Visual Schedule Cards set.',
+         member_of=[]),
+    dict(line='lu', bundle=False, slug='level-up-2027-student-planner',
+         title='Level Up 2027 Student Planner | Video Game Theme Printable Planner Grades 2-5',
+         url='https://www.teacherspayteachers.com/Product/Level-Up-2027-Student-Planner-Video-Game-Theme-Printable-Planner-Grades-2-5-18365192',
+         grades='2-5', fmt='PDF', count='170 pages',
+         desc='A printable planner for 2027 where every month is a new Level with its own world, Main Quests, Side Quests and a Boss Battle. Dated 2027, Monday start; students plan their week, color their habits and earn XP up to Level 12.',
+         member_of=['Level Up! Bundle']),
+    dict(line='lu', bundle=True, slug='level-up-bundle',
+         title='Level Up! Bundle | Video Game Planner, Goals, Review & Classroom Kit',
+         url='https://www.teacherspayteachers.com/Product/Level-Up-Bundle-Video-Game-Planner-Goals-Review-Classroom-Kit-18365866',
+         grades='2-5', fmt='PDF', count='',
+         desc='The complete Level Up! set in one download: the 2027 Student Planner, Goal Setting Quest Pack, End of Year & Summer Review Packet and Classroom Quest Kit, all in the same original pixel-art video game world.',
+         member_of=[]),
+    dict(line='lu', bundle=False, slug='level-up-classroom-quest-kit',
+         title='Level Up Classroom Quest Kit | Video Game Reading Log, XP Chart & Brag Tags',
+         url='https://www.teacherspayteachers.com/Product/Level-Up-Classroom-Quest-Kit-Video-Game-Reading-Log-XP-Chart-Brag-Tags-18365332',
+         grades='2-5', fmt='PDF', count='21 pages',
+         desc='Students earn XP for reading, homework, kindness and teamwork and climb the rank ladder from Rookie to Legend. Includes a reading quest log and map, brag tags, certificates and a pennant banner.',
+         member_of=['Level Up! Bundle']),
+    dict(line='lu', bundle=False, slug='level-up-end-of-year-review',
+         title='Level Up End of Year Review Packet | Video Game Theme Summer Review Puzzles',
+         url='https://www.teacherspayteachers.com/Product/Level-Up-End-of-Year-Review-Packet-Video-Game-Theme-Summer-Review-Puzzles-18365295',
+         grades='2-5', fmt='PDF', count='31 pages',
+         desc='A review packet where students travel through 5 worlds of 4 challenges each: a word search, a math power-up, a maze and a logic grid. Includes a Level Map progress tracker and a 4-page answer key.',
+         member_of=['Level Up! Bundle']),
+    dict(line='lu', bundle=False, slug='level-up-goal-setting-quest-pack',
+         title='Level Up Goal Setting Quest Pack | Video Game Theme Goal & Habit Trackers',
+         url='https://www.teacherspayteachers.com/Product/Level-Up-Goal-Setting-Quest-Pack-Video-Game-Theme-Goal-Habit-Trackers-18365256',
+         grades='2-5', fmt='PDF', count='18 pages, plus a low-ink version',
+         desc='Students pick a big goal (their Boss Challenge), break it into quest steps, earn XP as they practice and level up when they reach it. Includes habit trackers, a Quest Map, XP trackers and 12 achievement badges.',
+         member_of=['Level Up! Bundle']),
+]
+TPT_LINES = (("lu", "Level Up!", "Pixel-art, video-game classroom printables for grades 2-5. Original pixel art, no characters from real games."),
+             ("cp", "Cute Pastel", "Kawaii picture supports for PreK-2 and special education: visual schedules, First / Then boards, labels, feelings and calm-down tools, and token boards."))
+
+def build_tpt_page():
+    """Low-prominence index of every product in our Teachers Pay Teachers store, with cover cards and plain TpT links."""
+    fname = TPT_PAGE_PATH
+    def asset(slug, w):
+        return f"assets/tpt/{slug}-{w}.webp"
+    def card(p):
+        facts = [f"Grades {p['grades']}"]
+        if p["fmt"]:
+            facts.append(p["fmt"])
+        if p["count"]:
+            facts.append(p["count"])
+        fl = "".join(f"<li>{E(f)}</li>" for f in facts)
+        mem = ""
+        if p["member_of"]:
+            mem = '<p class="small"><b>Part of:</b> ' + "; ".join(E(m) for m in p["member_of"]) + ".</p>"
+        kind = "Bundle" if p["bundle"] else "Resource"
+        return (f'<li><article class="shop-card" id="{p["slug"]}">'
+                f'<div class="shop-img"><img src="{asset(p["slug"], 600)}" srcset="{asset(p["slug"], 300)} 300w, {asset(p["slug"], 600)} 600w" sizes="(max-width:600px) 240px, 150px" '
+                f'width="600" height="600" alt="Cover image of {E(p["title"])}" loading="lazy" decoding="async"></div>'
+                f'<div><p class="eyebrow">{kind}</p><h3>{E(p["title"])}</h3><ul>{fl}</ul>'
+                f'<p>{E(p["desc"])}</p>{mem}'
+                f'<a class="btn" href="{E(p["url"])}" rel="noopener" target="_blank">View on Teachers Pay Teachers</a></div></article></li>')
+    sections = ""
+    for key, name, blurb in TPT_LINES:
+        items = [p for p in TPT_PRODUCTS if p["line"] == key]
+        bundles = [p for p in items if p["bundle"]]
+        singles = [p for p in items if not p["bundle"]]
+        sections += f'<h2 id="{key}">{E(name)}</h2><p class="muted">{E(blurb)}</p>'
+        if bundles:
+            sections += '<h3 class="tpt-sub">Bundles</h3><ul class="shop-list">' + "".join(card(p) for p in bundles) + "</ul>"
+        sections += '<h3 class="tpt-sub">Individual resources</h3><ul class="shop-list">' + "".join(card(p) for p in singles) + "</ul>"
+    n = len(TPT_PRODUCTS)
+    body = f"""
+<article class="prose shop shop-wide">
+{crumbs(("shop/", "Shop"), (fname, "Teachers Pay Teachers"))}
+{eyebrow("Shop", "Teachers Pay Teachers")}
+<h1>Our Teachers Pay Teachers resources</h1>
+<p class="lede">All {n} printable classroom resources in the Stationery Drop Watch store on Teachers Pay Teachers, in two lines: Level Up! (video-game theme, grades 2-5) and Cute Pastel (PreK-2 and special education).</p>
+<p class="muted">Each card links to the product's own Teachers Pay Teachers page. Titles, grades, formats and page counts are copied from those pages. For current price and availability, check the Teachers Pay Teachers page. You can also <a href="{E(TPT_STORE)}" rel="noopener" target="_blank">see the whole store on Teachers Pay Teachers</a>, or go back to <a href="shop/">our shop</a>.</p>
+{sections}
+</article>"""
+    def prod_ld(p):
+        return {"@type": "Product", "name": p["title"], "url": p["url"],
+                "image": BASE + asset(p["slug"], 600), "description": p["desc"]}
+    items_ld = {"@context": "https://schema.org", "@type": "ItemList", "name": "Stationery Drop Watch on Teachers Pay Teachers",
+                "numberOfItems": n,
+                "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": prod_ld(p)} for i, p in enumerate(TPT_PRODUCTS)]}
+    title = "Teachers Pay Teachers resources: Level Up! and Cute Pastel"
+    desc = f"All {n} classroom printables in our Teachers Pay Teachers store: Level Up! planner and sets for grades 2-5, and Cute Pastel visual supports for PreK-2."
+    return fname, page(fname, title, desc, body, ld=(crumbs_ld(("shop/", "Shop"), (fname, "Teachers Pay Teachers")), items_ld))
+
 def build_about():
     n_checked = N_STORES  # same count as the FAQ and footer: shops the checker actually checks
     body = f"""
@@ -2572,7 +2723,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23", "transparency/": "2026-11-23"}
+STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23", "transparency/": "2026-11-23", TPT_PAGE_PATH: TPT_PAGE_DATE}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -4056,7 +4207,7 @@ def shop_lastmod():
         return "2026-11-18"
     # Shop facts changed 2026-11-17 (Teachers Pay Teachers section is two collection cards).
     if SHOP_TPT:
-        return "2026-11-17"
+        return "2026-11-23"  # Nov 23: link to the Teachers Pay Teachers page
     # Shop facts changed 2026-11-13 (The Holiday Planner Pages listing).
     if any(e.get("id") == "holiday-planner" and etsy_listing_url(e) for e in SHOP_ETSY):
         return "2026-11-13"
@@ -4352,6 +4503,7 @@ def build_shop():
 <h2 id="classroom-printables">Classroom printables on Teachers Pay Teachers</h2>
 <p class="muted">{E(tpt_intro)}</p>
 <ul class="shop-list">{tpt}</ul>
+<p class="tpt-all"><a href="{TPT_PAGE_PATH}">See all our Teachers Pay Teachers resources</a></p>
 </article>"""
     return fname, page(fname, title, desc, body, ld=(crumbs_ld((fname, "Shop")),))
 
@@ -4744,6 +4896,9 @@ def main():
     for fname, doc in (("hobonichi-2027/", build_hobonichi()), ("about/", build_about()), ("privacy/", build_privacy()), ("terms/", build_terms()), ("transparency/", build_transparency())):
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
+    _tpt_fname, _tpt_doc = build_tpt_page()
+    (SITE / _tpt_fname).mkdir(parents=True, exist_ok=True)
+    (SITE / _tpt_fname / "index.html").write_text(_tpt_doc)
     for flat in LEGACY_FLAT_PAGES:  # pre-Nov-21 flat files; /x.html now 301s to /x/ (cloudflare/_redirects)
         (SITE / flat).unlink(missing_ok=True)
     (SITE / "404.html").write_text(build_404())

@@ -655,3 +655,6 @@ table.stock.compare thead th{vertical-align:top}
  .tp-table td.date{white-space:normal}
  .tp-table tbody th{font-size:1.05rem;padding-top:0}
 }
+
+.tpt-sub{margin:1.2em 0 .6em;font-size:1.05rem}
+.tpt-all{margin-top:1.4rem}
