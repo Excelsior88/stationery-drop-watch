@@ -224,8 +224,9 @@ def names_and(n):
     return ", ".join(n[:-1]) + " and " + n[-1] if len(n) > 1 else "".join(n)
 
 def dotgrid_names():
-    """Store names as shown in shop lists, including an (official) mark when present."""
-    return names_and([s["name"] for s in DOTGRID_SHOPS])
+    """Store names as shown in shop lists, including an (official) mark when present.
+    Only shops we check: a link-only maker store (Notebook Therapy since Nov 23, 2026) is left out."""
+    return names_and([s["name"] for s in DOTGRID_SHOPS if not s.get("link_only")])
 
 def bare_shop_name(name):
     """Store name without a trailing (official) mark, for brand lists in prose."""
@@ -233,6 +234,18 @@ def bare_shop_name(name):
 
 def dotgrid_brand_names():
     return names_and([bare_shop_name(s["name"]) for s in DOTGRID_SHOPS])
+
+def dotgrid_checked_brand_names():
+    """Brands whose own store we check. A link-only maker (Notebook Therapy since Nov 23, 2026) is left out."""
+    return names_and([bare_shop_name(s["name"]) for s in DOTGRID_SHOPS if not s.get("link_only")])
+
+def dotgrid_link_only_clause():
+    """'Notebook Therapy is listed as a link only: we don't check its stock.' or '' when every maker is checked."""
+    lo = [bare_shop_name(s["name"]) for s in DOTGRID_SHOPS if s.get("link_only")]
+    if not lo:
+        return ""
+    one = len(lo) == 1
+    return f"{names_and(lo)} {'is' if one else 'are'} listed as {'a link only' if one else 'links only'}: we don't check {'its' if one else 'their'} stock."
 
 def _dotgrid_coverage():
     """Maker-only brand names, mixed-coverage phrases, and independent-shop counts."""
@@ -261,7 +274,7 @@ def dotgrid_meta_desc():
     n = leuchtturm_independent_count()
     shops = "shop" if n == 1 else "shops"
     return (
-        f"Are {dotgrid_brand_names()} in stock? Official stores, "
+        f"Are {dotgrid_checked_brand_names()} in stock right now? Official stores, "
         f"plus {n} independent {shops} for Leuchtturm1917."
     )
 
@@ -440,7 +453,8 @@ OG_ALT = ("Stationery Drop Watch: Never miss a stationery restock. "
           + (f"We check {OG_SHOPS} shops for you: " if OG_SHOPS else "Restock tracker for ")
           + f"Hobonichi Techo 2027, dot grid journals and limited-edition inks, checked {CHECK_FREQ}. Clip, the paper clip mascot, holds a magnifying glass.")
 OG_DOTGRID = BASE + "assets/brand/og-dotgrid.png"  # same script; used on the dot grid journaling page
-OG_DOTGRID_ALT = "Stationery Drop Watch: dot grid journal restock tracker for Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy, checked " + CHECK_FREQ
+OG_DOTGRID_ALT = ("Stationery Drop Watch: dot grid journal restock tracker for " + dotgrid_checked_brand_names() + ", checked " + CHECK_FREQ
+                  + ("." + " " + dotgrid_link_only_clause() if dotgrid_link_only_clause() else ""))
 CONTENT_LASTMOD = "2026-11-12"  # floor for pages whose HTML changed in the Nov 12 refresh
 X_HANDLE = "@stationerydrop"
 LOCAL_LINK = re.compile(r'\b(href|src|srcset)="(?!https?:|mailto:|#|/|\.\./|data:)([^"]*)"')
@@ -1335,7 +1349,7 @@ def build_index():
         name, line = HUB_TRACKERS[k]
         if k == "dotgrid":
             # Short homepage blurb only. Official-store / independent-shop detail stays on the hub.
-            line = f"Flagship notebooks from {dotgrid_brand_names()}, plus Archer and Olive refills."
+            line = f"Flagship notebooks from {dotgrid_checked_brand_names()}, plus Archer and Olive refills."
         bits = [f"{N_SEC[k]} shops"]
         if st["preorder"]:
             bits.append(f'{st["preorder"]} on preorder')
@@ -1722,11 +1736,12 @@ GROUPS = [
                "To compare paper weight, pages and size across the four brands, see <a href=\"best-dot-grid-journals/\">best dot grid journals compared</a>.",
          # The Archer and Olive page keeps the old URL (AO_SLUG) and links back here.
          # The title, heading, nav, and breadcrumb name every maker we check.
-         title=f"Dot grid journal restock tracker: {dotgrid_brand_names()}",
+         title=f"Dot grid journal restock tracker: {dotgrid_checked_brand_names()}",
          desc=dotgrid_meta_desc(),
          og_image=OG_DOTGRID, og_alt=OG_DOTGRID_ALT,
          intro="Popular dot grid journals and limited editions sell out, and every brand only posts its own restocks. "
-               f"We track a focused set of flagship dot grid notebooks from {dotgrid_brand_names()}, size by size and color by color, plus Archer and Olive's dot grid refills. {dotgrid_where_checked()} "
+               f"We track a focused set of flagship dot grid notebooks from {dotgrid_checked_brand_names()}, size by size and color by color, plus Archer and Olive's dot grid refills. {dotgrid_where_checked()} "
+               + (dotgrid_link_only_clause() + " " if dotgrid_link_only_clause() else "") +
                "This page covers those dot grid notebooks and refills, not pens or other paper, and Hobonichi and our other sections have their own pages."),
     # Archer and Olive only. Keeps the old tracker URL, links to the four-brand tracker (DOTGRID_SLUG).
     dict(slug=AO_SLUG, short="Archer and Olive", product="Archer and Olive dot grid journal", section="dotgrid", aux=True,
@@ -2346,21 +2361,46 @@ def build_design(d, oe=None):
               + (f'<li><a href="{HOBO_TRACKER}#tracker">Hobonichi tracker (every listing)</a></li>' if sec == "hobonichi" else f'<li><a href="{parent["slug"]}/#tracker">Every listing on the {E(parent["short"])} page</a></li>'))
     intro = (f'{E(design_about(d))} This page shows its stock at every shop we track, checked {CHECK_FREQ}. '
              f'For every design, see the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a>.')
+    eyebrow_html = eyebrow(ey, nshops(shops), f"checked {CHECK_FREQ}")
+    facts_html = hero_facts(ls)
+    restock_card = f'<section class="card"><h2>Recent restocks</h2>{restock_html}</section>'
+    if not ls and lsl:
+        # Every shop that lists this design is link-only (Notebook Therapy since Nov 23, 2026): no stock claim at all.
+        lo_shops = names_and(sorted({l["store"] for l in lsl}))
+        one = len({l["store_id"] for l in lsl}) == 1
+        h1 = f'{d["full"]}: link only'
+        eyebrow_html = eyebrow(ey, "link only", "stock not checked")
+        intro = (f'{E(design_about(d))} We list it as a link only: we don\'t check its stock at {E(lo_shops)}, so no status is shown. '
+                 f'Open the shop\'s page to see what it has. For the designs we do check, see the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a>.')
+        facts_html = ""
+        restock_card = ""
+        table = (f'<section class="card group-sec" id="stock"><h2>Where to find it</h2>{list_filter(lsl, "Shop name")}<div class="table-wrap"><table class="stock">'
+                 f'<thead><tr><th>Shop</th><th>Status</th></tr></thead><tbody>{link_status_rows(lsl)}</tbody></table></div>{link_note(lsl)}'
+                 f'<p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p></section>')
+        lo_answer = (f"We don't check. {lo_shops} {'is' if one else 'are'} listed as {'a link only' if one else 'links only'}, so no status is shown. "
+                     "Open the shop's page to see what it has.")
+        qa = [(f'Is {d["full"]} in stock?', lo_answer),
+              (f'Where can I buy {d["full"]}?', f"{lo_shops} {'sells' if one else 'sell'} it. The link above opens {'the shop' if one else 'each shop'}'s own page. We don't check {'its' if one else 'their'} stock.")]
+        faq_html = '<section class="card faq" id="faq"><h2>Questions</h2>' + "".join(
+            f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in qa) + "</section>"
+        faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
+        sources_html = f'<section class="card" id="sources"><h2>Shop links</h2>{extra_html}</section>' if extra_html else ""
     body = f"""
 <div class="product-page">
 {crumbs(*hub_trail(parent), (parent["slug"] + "/", parent["short"]), (fname, d["name"]))}
 <section class="hero hero-compact">
-  {eyebrow(ey, nshops(shops), f"checked {CHECK_FREQ}")}
+  {eyebrow_html}
   <h1>{E(h1)}</h1>
   <p class="lede">{intro}</p>
   {thanks}
-  {hero_facts(ls)}
+  {facts_html}
   {signup_for(section=sec)}
 </section>
 <div class="layout">
   <div class="main-col">
     <div class="m-lead">{table}</div>
-    <section class="card"><h2>Recent restocks</h2>{restock_html}</section>
+    {restock_card}
     {faq_html}
     {sources_html}
   </div>
@@ -2371,12 +2411,15 @@ def build_design(d, oe=None):
 </div>
 {signup_for(section=sec, placement="bottom")}
 </div>"""
-    items = {"@context": "https://schema.org", "@type": "ItemList", "name": h1.replace(" restock tracker", "") + ": listings we track",
+    items = {"@context": "https://schema.org", "@type": "ItemList", "name": h1.replace(" restock tracker", "").replace(": link only", "") + (": listings we track" if ls or not lsl else ": shop links (stock not checked)"),
              "numberOfItems": len(ls), "itemListElement": [
                  {"@type": "ListItem", "position": i + 1, "name": f"{l.get('title') or l['label']} at {l['store']}", "url": l["url"]}
                  for i, l in enumerate(sorted(ls, key=lambda l: l["store"]))]}
     title = design_seo_title(d)
     desc = design_seo_desc(d, shops)
+    if not ls and lsl:
+        title = f'{d["name"]} · link only'
+        desc = f"{d['name']}: we list it as a link only and don't check its stock. Open the shop's own page to see what it has."[:DESC_LIMIT]
     return fname, page(fname, title, desc, body, ld=(crumbs_ld(*hub_trail(parent), (parent["slug"] + "/", parent["short"]), (fname, d["name"])), items, faq_ld),
                        og_image=parent.get("og_image", OG_IMAGE), og_alt=parent.get("og_alt", OG_ALT))
 
@@ -2409,7 +2452,7 @@ FAQ = [
 ]
 
 FAQ_TRACKS = {  # one sentence per live section for "What do you track?"
-    "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color, plus Archer and Olive's dot grid refills.",
+    "dotgrid": "On a separate dot grid journals page, we track a focused set of flagship dot grid notebooks from {dg}, size by size and color by color, plus Archer and Olive's dot grid refills.{dg_lo}",
 }
 
 HOBO_NOTE_Q = "Where are launch dates and how restocks usually go?"
@@ -2467,8 +2510,8 @@ def faq_block(only=None, sid="faq"):
         by_q = dict(answers)
         pairs = [(q, by_q[q]) for q in only]
     unchecked = link_only_clause()
-    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_brand_names()), shop=url_for("shop/"), unchecked=unchecked, terms="Terms of Use (" + url_for("terms/") + ")"),
-           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_brand_names())), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>', unchecked=E(unchecked), terms='<a href="terms/">Terms of Use</a>')) for q, a in pairs]
+    qa = [(q, a.format(n=n, nh=N_HOBO, secs=secs, tracks=tracks.format(dg=dotgrid_checked_brand_names(), dg_lo=(" " + dotgrid_link_only_clause() if dotgrid_link_only_clause() else "")), shop=url_for("shop/"), unchecked=unchecked, terms="Terms of Use (" + url_for("terms/") + ")"),
+           E(a).format(n=n, nh=N_HOBO, secs=E(secs), tracks=E(tracks.format(dg=dotgrid_checked_brand_names(), dg_lo=(" " + dotgrid_link_only_clause() if dotgrid_link_only_clause() else ""))), shop=f'<a href="shop/">{E(SHOP_NAME.lower())}</a>', unchecked=E(unchecked), terms='<a href="terms/">Terms of Use</a>')) for q, a in pairs]
     html_ = "".join(f"<details class=\"faq-item\"><summary>{E(q)}</summary><p>{h}</p></details>" for q, a, h in qa)
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a, h in qa]}
@@ -2571,7 +2614,7 @@ GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin 
                 VS_SLUG + "/": "Size, weight, daily vs weekly layout and pages for the three most popular Hobonichi books, from Hobonichi's own specs, and who each one suits.",
                 JAN_APR_SLUG + "/": "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1.",
                 "hobonichi-2027/": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources.",
-                DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock.",
+                DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock where we check it.",
                 "holiday-stationery-gift-guide-2026/": "Hobonichi, Leuchtturm1917, Archer and Olive and other dot grid gifts, each with live stock from our last check, plus planners and printables we make."}  # last copy change on the guide pages (sitemap lastmod floor)
 H_SRC = {  # official Hobonichi pages used for product facts
     "orig": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6 (2027), specifications"),
@@ -2599,7 +2642,7 @@ def design_index_block():
         ds = [d for d in DESIGNS if next(g_sec(g) for g in GROUPS if g["slug"] == d["parent"]) == k]
         if ds:
             out.append(f'<h3>{E(t)}</h3><ul class="link-list">' + "".join(
-                f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)))}</span></li>' for d in ds) + "</ul>")
+                f'<li><a href="{design_fname(d)}">{E(d["full"])}</a> <span class="muted small">· {E(count_line(design_listings(d)) if design_listings(d) or not link_listings(d["match"]) else "link only, stock not checked")}</span></li>' for d in ds) + "</ul>")
     return f'<section class="card" id="design-pages"><h2>Restock pages for single designs</h2><p class="muted small">{len(DESIGNS)} pages, one per planner or journal design we track. Counts come from the same checks as the trackers.</p>{"".join(out)}</section>'
 
 def _fmt_head(icon, label):
@@ -3012,13 +3055,27 @@ def build_dotgrid_guide():
     dg_total = count_line(guide_ls)
     dg_all = count_line(trk)
     jump = {sid: canons[0] for _, sid, canons in DG_COLS}  # tracker section ids are the canonical ids
+    link_only_ids = {x["id"] for x in stores["stores"] if x.get("link_only")}
     def avail(store_id, canons):
         ls = col_ls(store_id)
+        if store_id in link_only_ids:  # not checked: no stock claim, just where to find the listings
+            return f'Link only: we don\'t check this shop\'s stock · <a href="{DOTGRID_SLUG}/#{jump[store_id]}">listings</a>'
         if not ls:
             return f'<a href="{DOTGRID_SLUG}/#{jump[store_id]}">Live stock</a>'
         buy = [l["label"] for l in ls if l["status"] in BUYABLE]
         names = f'<br><span class="muted small">In stock: {E("; ".join(buy))}</span>' if buy else ""
         return f'<strong>{len(buy)} of {len(ls)}</strong> versions we track · <a href="{DOTGRID_SLUG}/#{jump[store_id]}">live stock</a>{names}'
+    if "notebooktherapy" in link_only_ids:
+        nt_link = (f'<p><a href="{DOTGRID_SLUG}/#{jump["notebooktherapy"]}">Notebook Therapy on the tracker</a> '
+                   f'<span class="muted small">(link only: we don\'t check its stock, so no status is shown)</span></p>')
+    else:
+        nt_link = f'<p><a href="{DOTGRID_SLUG}/#{jump["notebooktherapy"]}">Live Notebook Therapy stock</a></p>'
+    checked_makers = [bare_shop_name(x["name"]) for x in DOTGRID_SHOPS if not x.get("link_only")]
+    unchecked_makers = [bare_shop_name(x["name"]) for x in DOTGRID_SHOPS if x.get("link_only")]
+    where_buy = (f'Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks '
+                 + (f"each one at the maker's own shop {CHECK_FREQ}." if not unchecked_makers else
+                    f"{names_and(checked_makers)} at each maker's own shop {CHECK_FREQ}. "
+                    f"{names_and(unchecked_makers)} {'is' if len(unchecked_makers) == 1 else 'are'} listed as a link only: we don't check {'its' if len(unchecked_makers) == 1 else 'their'} stock."))
     na = "Not listed on the product page"
     rows = [  # (row, A&O, Leuchtturm1917, Scribbles That Matter, Notebook Therapy), each cell (text, source keys)
         ("Paper weight", ("160gsm (Storybook also comes in kraft dot grid, 150gsm)", "ao ao2"), ("80 g/m² (the 120G edition is 120 gsm)", "lt lt120"),
@@ -3088,7 +3145,7 @@ def build_dotgrid_guide():
 <div class="table-wrap"><table class="stock compare">
 <thead><tr><th></th>{"".join(f"<th>{E(h)}</th>" for h, _, _ in DG_COLS)}</tr></thead>
 <tbody>{rows_html}</tbody></table></div>
-<p class="muted small">Stock in each column is what that maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop. Other shops that sell the same notebooks are on the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. Across the four makers: {E(dg_total)}. Across every shop: {E(dg_all)}.</p>
+<p class="muted small">Stock in each column is what that maker's own shop said at our last check, {asof}. Each count covers every dot grid listing we track at that shop. Other shops that sell the same notebooks are on the <a href="{DOTGRID_SLUG}/">dot grid tracker</a>. {'Across the four makers' if not unchecked_makers else 'Across the ' + {1: 'one maker', 2: 'two makers', 3: 'three makers'}.get(len(checked_makers), f'{len(checked_makers)} makers') + ' we check'}: {E(dg_total)}. Across every shop: {E(dg_all)}.</p>
 
 <h2>Who each one suits</h2>
 <h3>Archer and Olive: for markers, paint and lots of size choices</h3>
@@ -3101,11 +3158,11 @@ def build_dotgrid_guide():
 <p>Pick the Scribbles That Matter Dotted Journal Pro if you want the setup done. It comes with numbered pages, an index, a key page and a pen test page, two ribbon bookmarks, a pen loop and a 0.7 mm fineliner in the box {s("stm")}. A5 and B5 come in 160gsm or 120gsm, and B6 comes in 120gsm only {s("stm")}. The Pro has a plain matte cover; the Iconic is the same idea with an embossed cover {s("stm2")}. The page doesn't list a page count.</p>
 <p><a href="{DOTGRID_SLUG}/#{jump['scribbles']}">Live Scribbles That Matter stock</a></p>
 <h3>Notebook Therapy Tsuki: for a smaller book</h3>
-<p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we track too.</p>
-<p><a href="{DOTGRID_SLUG}/#{jump['notebooktherapy']}">Live Notebook Therapy stock</a></p>
+<p>Pick the Tsuki 160GSM if you want thick 160 GSM paper in a book you'll finish sooner. It's 135 × 195 mm with 128 pages, gilded edges, a 5 mm light grey dot grid, a back pocket with a sticker sheet and an elastic band {s("nt")}. The product page doesn't mention page numbers, an index or bookmarks. Notebook Therapy also releases limited-edition Tsuki designs, which we list too.</p>
+{nt_link}
 
 <h2>Where to buy</h2>
-<p>All four sell direct, and sizes and colors sell out often. Our <a href="{DOTGRID_SLUG}/">dot grid journal tracker</a> checks each one at the maker's own shop {CHECK_FREQ}. <a href="#alerts">Sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
+<p>All four sell direct, and sizes and colors sell out often. {where_buy} <a href="#alerts">Sign up above</a> for free restock emails for the trackers you pick. You can unsubscribe anytime. More guides are on the <a href="guides/">guides page</a>.</p>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
 

@@ -139,5 +139,6 @@ class DotGridCopyAndOfficialTests(unittest.TestCase):
         self.assertIn("Notebook Therapy (official)", text)
         # Brand lists in the lede stay uncluttered.
         lede = re.search(r'<p class="lede">(.*?)</p>', doc, re.S).group(1)
-        self.assertIn("Archer and Olive, Leuchtturm1917, Scribbles That Matter and Notebook Therapy", html.unescape(lede))
+        self.assertIn("Archer and Olive, Leuchtturm1917 and Scribbles That Matter", html.unescape(lede))  # makers we check
+        self.assertIn("Notebook Therapy is listed as a link only: we don't check its stock.", html.unescape(lede))  # since Nov 23, 2026
         self.assertNotIn("(official)", lede)

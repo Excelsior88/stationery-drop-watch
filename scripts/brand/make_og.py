@@ -102,5 +102,5 @@ sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import build_site  # noqa: E402  (module import only: reads the data files, writes nothing)
 default_card("og-image.png", build_site.N_STORES)
 card("og-dotgrid.png", [("Dot grid journal restock tracker", f1, INK, 66),
-                        ("Archer and Olive · Leuchtturm1917 · Scribbles That Matter · Notebook Therapy", f3, INK2, 40),
+                        (" · ".join(build_site.bare_shop_name(x["name"]) for x in build_site.DOTGRID_SHOPS if not x.get("link_only")), f3, INK2, 40),  # makers we check (Notebook Therapy is link-only since Nov 23, 2026)
                         ("Size by size, color by color · " + FREQ, f3, TERRA, 0)])

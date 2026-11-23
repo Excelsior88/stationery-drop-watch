@@ -205,7 +205,7 @@ class PageTests(unittest.TestCase):
         data = json.loads(re.search(r'<script id="stock-data" type="application/json">(.*?)</script>', doc, re.S).group(1).replace("<\\/", "</"))
         rows = data if isinstance(data, list) else [dict(zip(data["k"], [data["d"][k][v] if v is not None and k in data["d"] else v for k, v in zip(data["k"], r)])) for r in data["r"]]
         link = [r for r in rows if r["sid"] in LINK_ONLY_IDS]
-        self.assertEqual(len(link), 135 - sum(1 for r in site.LINK_ROWS if site.section_of(r) != "hobonichi"))
+        self.assertEqual(len(link), 135 - sum(1 for r in site.LINK_ROWS if site.section_of(r) != "hobonichi"))  # 108 + Laywine's 22 + Notebook Therapy 5 (Nov 23)
         for r in link:
             self.assertEqual(r["st"], "link_only")
             for k in ("at", "since", "va", "tv", "on"):
