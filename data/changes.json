@@ -2266,5 +2266,41 @@
   "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128957059227",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-23T14:20:32+00:00",
+  "store_id": "hunterpaper",
+  "store": "Hunter Paper Co",
+  "label": "Planner A6 book (English)",
+  "url": "https://hunterpaperco.com/products/hobonichi-techo-2027-a6-english-planner-book-january-start",
+  "from": "preorder",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-23T14:21:43+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Storybook in Plum · B5 dot grid",
+  "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146782363",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-23T14:21:43+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Storybook in Plum · 8x8 dot grid",
+  "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146815131",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-23T14:21:43+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Storybook in Plum · B6 dot grid",
+  "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636147011739",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
