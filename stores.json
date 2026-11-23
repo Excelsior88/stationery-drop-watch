@@ -4090,6 +4090,8 @@
    "url": "https://usa.kinokuniya.com/",
    "country": "US",
    "platform": "shopify",
+   "link_only": true,
+   "link_only_reason": "Link only until the shop gives written permission to check stock. We do not request this shop's pages.",
    "indie": false,
    "cols": [
     "hobonichi-techo"
@@ -4404,6 +4406,8 @@
    "url": "https://kinokuniya.com.sg/",
    "country": "SG",
    "platform": "shopify",
+   "link_only": true,
+   "link_only_reason": "Link only until the shop gives written permission to check stock. We do not request this shop's pages.",
    "indie": false,
    "cols": [
     "hobonichi-techo"
@@ -4466,6 +4470,8 @@
    "url": "https://blesket.com/",
    "country": "CA",
    "platform": "shopify",
+   "link_only": true,
+   "link_only_reason": "Link only until the shop gives written permission to check stock. We do not request this shop's pages.",
    "indie": true,
    "sitemap": "blesket.com",
    "cols": [
@@ -6357,6 +6363,8 @@
    "url": "https://milligram.com/",
    "country": "AU",
    "platform": "shopify",
+   "link_only": true,
+   "link_only_reason": "Link only until the shop gives written permission to check stock. We do not request this shop's pages.",
    "indie": true,
    "products": [
     {

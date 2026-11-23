@@ -29,6 +29,7 @@ Pens and other paper are not tracked.
     cd site && python3 -m http.server 8000
 
 - `stores.json`: tracked retailers and product URLs (first built by build_stores.py, now edited by hand). A product with a Leuchtturm1917, Archer and Olive, Scribbles That Matter or Notebook Therapy canonical (or a store with a `"brand"`) is dot grid; the rest are Hobonichi. The checker copies `section` into `data/stock.json` and `data/changes.json`, so alerts can link the right page. A section page is built only once it has listings.
+- Link-only shops: a store with `"link_only": true` (Blesket, Milligram, Kinokuniya USA and Kinokuniya Singapore, until each gives written permission) is never requested. The checker skips it and a network guard (`GuardedSession`) refuses any request to its host, ink discovery skips it, and `new_in_stock.py` and `build_site.py` drop its rows and events. Its listings render as plain links with a neutral "Link only" label. To turn a shop back on, delete its `link_only` and `link_only_reason` lines in `stores.json`. `COUNT_LINK_ONLY_IN_SHOP_TOTALS` in `scripts/build_site.py` decides whether link-only shops are included in the "N shops" copy (True keeps 27).
 - `content/editor_picks.json`: the "From the editor" house ad. Add another object to `books` to show a second book.
 - TODOs: grep for `TODO` / `data-todo` (newsletter form action).
 - The checker only reports what stores return. Failed checks show as "Couldn't check" and are never guessed.

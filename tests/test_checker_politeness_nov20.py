@@ -84,7 +84,7 @@ class FetchCacheTests(unittest.TestCase):
                      {"label": "Songbird", "type": "Dot grid notebook", "canonical": "ao-songbird-blue",
                       "url": "https://www.archerandolive.com/products/songbird", "variant_id": 33},
                  ]}
-        with patch.object(checker.requests, "Session", Session), patch.object(checker, "DELAY", 0):
+        with patch.object(checker, "GuardedSession", Session), patch.object(checker, "DELAY", 0):
             rows = checker.check_shopify_store(store)
         js_calls = [u for u in calls if u.endswith(".js")]
         self.assertEqual(js_calls, [
@@ -117,7 +117,7 @@ class FetchCacheTests(unittest.TestCase):
                      {"label": "A", "type": "Weeks", "url": "https://www.baum-kuchen.net/products/weeks?variant=1", "variant_id": 1},
                      {"label": "B", "type": "Weeks", "url": "https://www.baum-kuchen.net/products/weeks?variant=2", "variant_id": 2},
                  ]}
-        with patch.object(checker.requests, "Session", Session), patch.object(checker, "DELAY", 0):
+        with patch.object(checker, "GuardedSession", Session), patch.object(checker, "DELAY", 0):
             rows = checker.check_shopify_store(store)
         self.assertEqual(sum(u.endswith("/weeks.js") for u in calls), 1)
         self.assertTrue(all(r["status"] == "unknown" and "TimeoutError" in r["error"] for r in rows))
@@ -166,17 +166,17 @@ class ApexHistoryTests(unittest.TestCase):
     def test_www_row_is_the_same_listing_and_creates_no_event(self):
         tmp = Path(tempfile.mkdtemp())
         (tmp / "data").mkdir()
-        www = "https://www.milligram.com/products/hobonichi-2027-techo-original-planner-book"
-        apex = "https://milligram.com/products/hobonichi-2027-techo-original-planner-book"
+        www = "https://www.goldspot.com/products/hobonichi-2027-techo-original-planner-book"
+        apex = "https://goldspot.com/products/hobonichi-2027-techo-original-planner-book"
         seen = "2026-11-19T23:34:02+00:00"
-        stores = {"stores": [{"id": "milligram", "name": "Milligram", "platform": "shopify",
-                              "url": "https://milligram.com/", "products": [
+        stores = {"stores": [{"id": "goldspot", "name": "Goldspot Pens", "platform": "shopify",
+                              "url": "https://goldspot.com/", "products": [
                                   {"canonical": "planner-a6-en", "label": "Planner A6 book (English)",
                                    "type": "Book", "url": apex, "source_title": "Planner"}]}]}
         (tmp / "stores.json").write_text(json.dumps(stores))
         (tmp / "data" / "stock.json").write_text(json.dumps({"products": [{
             "url": www, "status": "in_stock", "first_seen": seen, "status_since": seen,
-            "label": "Planner A6 book (English)", "store_id": "milligram"}]}))
+            "label": "Planner A6 book (English)", "store_id": "goldspot"}]}))
         (tmp / "data" / "changes.json").write_text("[]")
         js = _product("Planner", [{"id": 1, "title": "Default Title", "available": True}])
 
@@ -190,7 +190,7 @@ class ApexHistoryTests(unittest.TestCase):
                 return _Resp(js)
 
         with patch.object(checker, "ROOT", tmp), patch.object(checker, "DELAY", 0), \
-                patch.object(checker.requests, "Session", Session):
+                patch.object(checker, "GuardedSession", Session):
             checker.main()
         row = json.loads((tmp / "data" / "stock.json").read_text())["products"][0]
         changes = json.loads((tmp / "data" / "changes.json").read_text())
@@ -203,7 +203,7 @@ class ApexHistoryTests(unittest.TestCase):
         js["available"] = False
         js["variants"][0]["available"] = False
         with patch.object(checker, "ROOT", tmp), patch.object(checker, "DELAY", 0), \
-                patch.object(checker.requests, "Session", Session):
+                patch.object(checker, "GuardedSession", Session):
             checker.main()
         row = json.loads((tmp / "data" / "stock.json").read_text())["products"][0]
         changes = json.loads((tmp / "data" / "changes.json").read_text())

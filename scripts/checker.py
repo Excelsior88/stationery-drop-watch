@@ -35,6 +35,50 @@ APEX_HOSTS = {
     "www.cultpens.com": "cultpens.com",
     "www.goldspot.com": "goldspot.com",
 }
+
+
+# ---- link-only shops -----------------------------------------------------------------------------
+# A store with "link_only": true in stores.json is never requested: no listing check, no robots.txt, no
+# /meta.json, no ink scan, no sitemap or discovery fetch. Its product rows stay on the site as plain links
+# (build_site.py) with no status. To turn a shop back on after it gives written permission, delete its
+# "link_only" and "link_only_reason" lines in stores.json. Nothing else needs to change.
+class LinkOnlyHostError(RuntimeError):
+    """Raised before any network request to a link-only shop's host."""
+
+def link_only_stores(cfg):
+    return [s for s in cfg.get("stores", []) if s.get("link_only")]
+
+def link_only_ids(cfg=None):
+    cfg = cfg or json.loads((ROOT / "stores.json").read_text())
+    return {s["id"] for s in link_only_stores(cfg)}
+
+def _host_variants(url):
+    host = (urlparse(url).hostname or "").lower()
+    if not host:
+        return set()
+    bare = host[4:] if host.startswith("www.") else host
+    return {bare, "www." + bare}
+
+def link_only_hosts(cfg=None):
+    """Every hostname (with and without www) of every link-only shop, from its shop URL and its listing URLs."""
+    cfg = cfg or json.loads((ROOT / "stores.json").read_text())
+    hosts = set()
+    for s in link_only_stores(cfg):
+        hosts |= _host_variants(s["url"])
+        for p in s.get("products", []):
+            hosts |= _host_variants(p["url"])
+    return hosts
+
+LINK_ONLY_HOSTS = link_only_hosts()
+
+class GuardedSession(requests.Session):
+    """requests.Session whose every send, redirect hops included, refuses a link-only host."""
+    def send(self, request, **kwargs):
+        host = (urlparse(request.url).hostname or "").lower()
+        if host in LINK_ONLY_HOSTS:
+            raise LinkOnlyHostError(f"{host} is link-only: no requests are made to it")
+        return super().send(request, **kwargs)
+
 PREORDER_RX = re.compile(r"pre[- ]?order|preorder", re.I)
 # "coming soon" / "order starts" mean the shop is not taking orders yet.
 # "preview" alone does not: Wonder Pens leaves PREVIEW in titles after launch,
@@ -156,8 +200,10 @@ class Host:
     A cache hit does not wait out the host delay and does not retry an error.
     """
     def __init__(self, base):
+        if (urlparse(base).hostname or "").lower() in LINK_ONLY_HOSTS:
+            raise LinkOnlyHostError(f"{base} is link-only: no requests are made to it")
         self.base = base
-        self.s = requests.Session()
+        self.s = GuardedSession()
         self.s.headers["User-Agent"] = UA
         self.last = 0.0
         self.cache = {}
@@ -385,6 +431,7 @@ def note_transition(old, rec, changes):
 
 
 def check_store(store):
+    if store.get("link_only"): return []  # link-only: not requested at all (see LINK_ONLY_HOSTS)
     if store["platform"] == "shopify": return check_shopify_store(store)
     if store["platform"] == "hobonichi": return check_hobonichi(store)
     return []  # blocked / robots-disallowed stores are link-only
@@ -405,8 +452,9 @@ def main():
         note_transition(prev.get(canonical_stock_url(r["url"])), r, changes)
     summary = {k: sum(1 for r in results if r["status"] == k) for k in ("in_stock", "preorder", "coming_soon", "sold_out", "unknown")}
     blocked = [dict(id=s["id"], name=s["name"], url=s["url"], reason=s.get("note")) for s in cfg["stores"] if s["platform"] not in ("shopify", "hobonichi")]
+    link_only = [dict(id=s["id"], name=s["name"], url=s["url"], reason=s.get("link_only_reason")) for s in link_only_stores(cfg)]
     stock_f.write_text(json.dumps(dict(run_started=started, run_finished=now(), summary=summary,
-                                       not_checked=blocked, products=results), indent=1, ensure_ascii=False))
+                                       not_checked=blocked, link_only=link_only, products=results), indent=1, ensure_ascii=False))
     changes_f.write_text(json.dumps(changes, indent=1, ensure_ascii=False))
     ok = len(results) - summary["unknown"]
     print(f"checked {len(results)} products: {ok} classified, {summary['unknown']} failed -> {summary}")

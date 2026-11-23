@@ -2,9 +2,11 @@
 Pool = product sitemap URLs containing 'hobonichi/techo' + '2027' (discover_*.json)
      + Shopify collection JSON (/collections/<slug>/products.json) for titles.
 Each selected URL is then verified live via /products/<handle>.js (HTTP 200)."""
-import json, re, time, glob, requests
+import json, re, time, glob, sys, requests
+sys.path.insert(0, "scripts")
+from checker import GuardedSession  # refuses any request to a link-only shop (stores.json "link_only")
 UA="Mozilla/5.0 (compatible; DropWatchBot/0.1; +local-dev)"
-S=requests.Session(); S.headers["User-Agent"]=UA
+S=GuardedSession(); S.headers["User-Agent"]=UA
 
 CANON=[ # (id, label, type, regex over "handle title")
  ("original-a6-en","Original A6 book (English)","Book", r"(original|a6[- ]planner|a6-size).*(english|eng)|english.*original.*book|english original"),

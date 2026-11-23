@@ -26,7 +26,7 @@
     if (h === "faq" && !filt) location.replace("/#good-to-know" + location.search);
     else if (moved[h] || filt) location.replace("/hobonichi-restock-tracker/" + location.search + (moved[h] ? "#" + moved[h] : (h ? "#" + h : "#tracker")));
   }
-  const LABEL = { in_stock: "In stock", preorder: "Preorder", coming_soon: "Not yet on sale", sold_out: "Sold out", unknown: "Couldn't check" };
+  const LABEL = { in_stock: "In stock", preorder: "Preorder", coming_soon: "Not yet on sale", sold_out: "Sold out", unknown: "Couldn't check", link_only: "Link only" };
 
   const groupSel = "details.fam-block, details.group-fold";
   function bindGroupToggle(btn, root) {
@@ -72,7 +72,7 @@
         return row;
       });
     })();
-    const order = { in_stock: 0, preorder: 1, coming_soon: 2, sold_out: 3, unknown: 4 };
+    const order = { in_stock: 0, preorder: 1, coming_soon: 2, sold_out: 3, unknown: 4, link_only: 5 };
     rows.sort((a, b) => (order[a.st] - order[b.st]) || a.s.localeCompare(b.s));
     const $ = id => document.getElementById(id);
     const f = {};
@@ -108,19 +108,24 @@
       const nShops = ls => new Set(ls.map(r => r.sid)).size;
       return [...groups.values()].sort((a, b) => (best(a) - best(b)) || (nShops(b) - nShops(a)) || a[0].gn.localeCompare(b[0].gn));
     }
-    function tally(ls) {
+    function tally(all) {
+      // Link-only listings are never counted as checked or in stock.
+      const ls = all.filter(r => r.st !== "link_only");
       const n = ls.length;
       const unk = ls.filter(r => r.st === "unknown").length;
       const inn = ls.filter(r => r.st === "in_stock").length;
-      if (!n) return "No listings";
+      if (!n) return all.length ? "Link only, we don't check stock" : "No listings";
       if (unk === n) return n === 1 ? "couldn't check this listing" : "couldn't check these " + n + " listings";
       if (unk) return inn + " of " + (n - unk) + " checked listings in stock · " + unk + " couldn't be checked";
       return inn + " of " + n + " listings in stock";
     }
-    function shopTally(ls) {
+    function shopTally(all) {
+      const ls = all.filter(r => r.st !== "link_only");
+      const links = new Set(all.filter(r => r.st === "link_only").map(r => r.sid)).size;
+      if (!ls.length) return tally(all);
       const shops = new Set(ls.map(r => r.sid)).size;
       const inShops = new Set(ls.filter(r => r.st === "in_stock").map(r => r.sid)).size;
-      return tally(ls) + " · " + inShops + " of " + shops + " " + (shops === 1 ? "shop" : "shops") + " in stock";
+      return tally(ls) + " · " + inShops + " of " + shops + " " + (shops === 1 ? "shop" : "shops") + " in stock" + (links ? " · " + links + " " + (links === 1 ? "shop" : "shops") + " link only" : "");
     }
     function soldEverywhereNote(ls) {
       if (!ls.length || ls.some(r => r.st !== "sold_out")) return "";
@@ -205,7 +210,7 @@
       }
       box.innerHTML = html;
       if (honorHash) openHashTarget(false);
-      $("count").textContent = `Showing ${n} of ${out.length} matching listings in ${groups.length} ${groups.length === 1 ? "product" : "products"} (${rows.length} tracked)`;
+      $("count").textContent = `Showing ${n} of ${out.length} matching listings in ${groups.length} ${groups.length === 1 ? "product" : "products"} (${rows.filter(r => r.st !== "link_only").length} tracked${rows.some(r => r.st === "link_only") ? ", " + rows.filter(r => r.st === "link_only").length + " link only" : ""})`;
       const toggleBtn = document.querySelector("#tracker [data-group-toggle]") || document.querySelector("[data-group-toggle]");
       bindGroupToggle(toggleBtn, box.closest("#tracker") || document);
     }

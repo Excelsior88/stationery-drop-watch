@@ -94,10 +94,13 @@ class ShareImageAltTests(unittest.TestCase):
 class ShopCountDefinitionTests(unittest.TestCase):
     def test_sitewide_total_is_distinct_stores_not_the_sum_of_sections(self):
         products = site.stock["products"]
-        distinct = {p["store_id"] for p in products}
+        # Link-only shops are counted too while COUNT_LINK_ONLY_IN_SHOP_TOTALS is True (the wording owner chose to keep).
+        extra = {r["store_id"] for r in site.LINK_ROWS} if site.COUNT_LINK_ONLY_IN_SHOP_TOTALS else set()
+        distinct = {p["store_id"] for p in products} | extra
         self.assertEqual(site.N_STORES, len(distinct))
         self.assertEqual(site.N_HOBO, site.N_SEC["hobonichi"])
-        self.assertEqual(site.N_HOBO, len({p["store_id"] for p in products if site.section_of(p) == "hobonichi"}))
+        self.assertEqual(site.N_HOBO, len({p["store_id"] for p in products if site.section_of(p) == "hobonichi"}
+                                          | {r["store_id"] for r in site.LINK_ROWS if site.section_of(r) == "hobonichi"} & extra))
         self.assertGreaterEqual(sum(site.N_SEC.values()), site.N_STORES)
         # Current catalog overlaps (a shop can sell more than one brand). The total must not add those twice.
         self.assertGreater(sum(site.N_SEC.values()), site.N_STORES)

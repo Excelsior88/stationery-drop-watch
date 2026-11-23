@@ -139,6 +139,7 @@ table.stock{width:100%;border-collapse:collapse;font-size:.93rem}
 .badge.coming_soon{color:var(--st-coming);background:var(--st-coming-bg);border-color:var(--st-coming-line)}
 .badge.sold_out{color:var(--st-soldout);background:var(--st-soldout-bg);border-color:var(--st-soldout-line)}
 .badge.sold_out::before{background:transparent;border:1.5px solid currentColor;box-sizing:border-box}
+.badge.link_only{color:var(--muted,#5b5663);background:transparent;border-color:currentColor;border-style:dotted;font-weight:500}
 .badge.unknown{color:var(--st-unknown);background:var(--st-unknown-bg);border-color:var(--st-unknown-line);border-style:dashed}
 .empty-row td{text-align:center;color:var(--ink-2);padding:24px}
 details{margin-top:10px} summary{cursor:pointer}
