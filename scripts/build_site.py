@@ -2569,7 +2569,11 @@ def redirect_page(target):
 </body></html>
 """
 
-ROBOTS = f"""User-agent: *
+ROBOTS = f"""# Stationery Drop Watch is for personal shopping only.
+# Using this site or its data for reselling, bulk buying,
+# or automated purchasing is not allowed.
+# See {BASE}terms/
+User-agent: *
 Allow: /
 
 Sitemap: {BASE}sitemap.xml
