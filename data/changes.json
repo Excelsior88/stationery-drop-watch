@@ -2257,5 +2257,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-23T13:21:23+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Songbird in Blue · letter dot grid",
+  "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128957059227",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
