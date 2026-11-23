@@ -22,9 +22,10 @@ import ink_tracker  # noqa: E402
 import new_in_stock  # noqa: E402
 import build_site as site  # noqa: E402
 
-LINK_ONLY_IDS = {"blesket", "milligram", "kinousa", "kinosg"}
+LINK_ONLY_IDS = {"blesket", "milligram", "kinousa", "kinosg", "laywines", "notebooktherapy"}  # Laywine's and Notebook Therapy since Nov 23 (terms ban automated access)
 BLOCKED = {"blesket.com", "www.blesket.com", "milligram.com", "www.milligram.com",
-           "usa.kinokuniya.com", "kinokuniya.com.sg", "www.kinokuniya.com.sg"}
+           "usa.kinokuniya.com", "kinokuniya.com.sg", "www.kinokuniya.com.sg",
+           "laywines.com", "www.laywines.com", "notebooktherapy.com", "www.notebooktherapy.com"}
 STORES = json.loads((ROOT / "stores.json").read_text())
 
 
@@ -64,7 +65,7 @@ def run_with_recorder(fn):
 
 
 class FlagTests(unittest.TestCase):
-    def test_exactly_the_four_shops_are_flagged(self):
+    def test_exactly_the_six_shops_are_flagged(self):
         self.assertEqual({s["id"] for s in STORES["stores"] if s.get("link_only")}, LINK_ONLY_IDS)
         self.assertEqual(checker.link_only_ids(), LINK_ONLY_IDS)
 
@@ -124,7 +125,8 @@ class NoRequestTests(unittest.TestCase):
         # Prior data with live rows for the four shops, as on the first run after the switch.
         prior = [dict(store_id=sid, store=sid, label="old", type="Book", url=f"https://{h}/products/old", status="in_stock",
                       first_seen="2026-11-01T00:00:00+00:00", status_since="2026-11-01T00:00:00+00:00", checked_at="2026-11-23T00:00:00+00:00")
-                 for sid, h in (("blesket", "blesket.com"), ("milligram", "milligram.com"), ("kinousa", "usa.kinokuniya.com"), ("kinosg", "kinokuniya.com.sg"))]
+                 for sid, h in (("blesket", "blesket.com"), ("milligram", "milligram.com"), ("kinousa", "usa.kinokuniya.com"), ("kinosg", "kinokuniya.com.sg"),
+                                ("laywines", "laywines.com"), ("notebooktherapy", "notebooktherapy.com"))]
         (tmp / "data" / "stock.json").write_text(json.dumps({"products": prior}))
         (tmp / "data" / "changes.json").write_text("[]")
         with patch.object(checker, "ROOT", tmp):
@@ -203,7 +205,7 @@ class PageTests(unittest.TestCase):
         data = json.loads(re.search(r'<script id="stock-data" type="application/json">(.*?)</script>', doc, re.S).group(1).replace("<\\/", "</"))
         rows = data if isinstance(data, list) else [dict(zip(data["k"], [data["d"][k][v] if v is not None and k in data["d"] else v for k, v in zip(data["k"], r)])) for r in data["r"]]
         link = [r for r in rows if r["sid"] in LINK_ONLY_IDS]
-        self.assertEqual(len(link), 108 - sum(1 for r in site.LINK_ROWS if site.section_of(r) != "hobonichi"))
+        self.assertEqual(len(link), 135 - sum(1 for r in site.LINK_ROWS if site.section_of(r) != "hobonichi"))
         for r in link:
             self.assertEqual(r["st"], "link_only")
             for k in ("at", "since", "va", "tv", "on"):

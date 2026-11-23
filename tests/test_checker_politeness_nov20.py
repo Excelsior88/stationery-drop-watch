@@ -293,12 +293,10 @@ class CatalogFixTests(unittest.TestCase):
         self.assertEqual(row["label"], "Planner A6 book (English)")
         originals = [p for p in lay["products"] if p.get("canonical") == "original-a6-en"]
         self.assertEqual(originals, [])
-        saved = next(p for p in self.stock["products"] if p["url"] == LAY)
-        self.assertEqual(saved["canonical"], "planner-a6-en")
-        self.assertEqual(saved["label"], "Planner A6 book (English)")
-        self.assertEqual(saved["status"], "in_stock")
-        self.assertEqual(saved["first_seen"], OLD)
-        self.assertEqual(saved["status_since"], OLD)
+        # Laywine's is link-only since Nov 23, 2026 (its terms ban automated access): the listing stays as a plain
+        # link and the checker writes no stock row for it, so there is no status or history to keep.
+        self.assertTrue(lay.get("link_only"))
+        self.assertEqual([p for p in self.stock["products"] if p["url"] == LAY and p.get("status") != "link_only"], [])
         self.assertEqual([c for c in self.changes if c["url"] == LAY], [])
 
 

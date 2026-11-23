@@ -239,6 +239,8 @@ def _dotgrid_coverage():
     only, mixed, counts = [], [], {}
     listings = section_products("dotgrid")
     for s in DOTGRID_SHOPS:
+        if s.get("link_only"):
+            continue  # not checked (Notebook Therapy since Nov 23, 2026): never "We check ... on each maker's own store"
         canons = {p.get("canonical") for p in s.get("products") or [] if p.get("canonical")}
         shops = {p["store_id"] for p in listings if p.get("canonical") in canons}
         name = bare_shop_name(s["name"])

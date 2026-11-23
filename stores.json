@@ -2612,6 +2612,8 @@
    "url": "https://laywines.com/",
    "country": "CA",
    "platform": "shopify",
+   "link_only": true,
+   "link_only_reason": "Link only until the shop gives written permission to check stock. We do not request this shop's pages.",
    "indie": true,
    "sitemap": "laywines",
    "cols": [
@@ -8210,6 +8212,8 @@
    "url": "https://notebooktherapy.com/",
    "country": "UK",
    "platform": "shopify",
+   "link_only": true,
+   "link_only_reason": "Link only until the shop gives written permission to check stock. We do not request this shop's pages.",
    "indie": true,
    "brand": "notebooktherapy",
    "note": "Notebook Therapy's own store (Tsuki bullet journals). Checked per variant; limited editions often sell out.",
