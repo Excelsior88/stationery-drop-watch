@@ -9,5 +9,16 @@
   "from": "in_stock",
   "to": "sold_out",
   "ink_id": "diamine-inkvent-2026"
+ },
+ {
+  "at": "2026-11-23T00:23:08+00:00",
+  "store_id": "penboutique",
+  "store": "Pen Boutique",
+  "label": "Sailor x Pentel 2026 Advent Calendar, Keep the Sparkle",
+  "url": "https://www.penboutique.com/products/sailor-pentel-2026-advent-calendar-keep-the-sparkle",
+  "section": "inks",
+  "from": "in_stock",
+  "to": "sold_out",
+  "ink_id": "sailor-advent-2026"
  }
 ]
