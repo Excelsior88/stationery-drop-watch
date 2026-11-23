@@ -33,6 +33,9 @@ URLS = {
         "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-colors-pink-sapphire-eng-tall-slim-jan-start-planner",
         "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-colors-pink-sapphire",
         "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-pink-sapphire-english-tall-slim-jan-start",
+        "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-colours-pink-sapphire-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
+        "zakkajoy": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-pink-sapphire",  # added Nov 23, 2026 (new Hobonichi shops)
+        "colorswatch": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-colors-pink-sapphire",  # added Nov 23, 2026 (new Hobonichi shops)
     },
     SEA: {
         "dromgooles": "https://www.dromgooles.com/products/hobonichi-2027-weeks-colors-sea-glass",  # added Nov 19, 2026
@@ -48,6 +51,8 @@ URLS = {
         "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-colors-sea-glass-eng-tall-slim-jan-start-planner",
         "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-colors-sea-glass",
         "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-sea-glass-english-tall-slim-jan-start",
+        "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-colours-sea-glass-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
+        "zakkajoy": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-sea-glass",  # added Nov 23, 2026 (new Hobonichi shops)
     },
     WELCOME: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_vawelcome/",
@@ -64,6 +69,9 @@ URLS = {
         "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-v-a-series-welcome-to-the-v-a-eng-tall-slim-jan-start",
         "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-v-a-series-welcome-to-the-v-a",
         "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-welcome-to-the-v-a-english-tall-slim-jan-start",
+        "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-v-a-series-welcome-to-the-v-a-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
+        "zakkajoy": "https://zakkajoy.com/products/hobonichi-techo-weeks-2027-planner-welcome-to-the-v-a",  # added Nov 23, 2026 (new Hobonichi shops)
+        "colorswatch": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-welcome-to-the-v-and-a",  # added Nov 23, 2026 (new Hobonichi shops)
     },
     LEICESTER: {
         "1101": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_valeicester/",
@@ -80,6 +88,8 @@ URLS = {
         "blesket": "https://blesket.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester-eng-tall-slim-jan-start-planner",
         "journalshop": "https://www.thejournalshop.com/products/hobonichi-2027-weeks-v-a-series-leicester",
         "buchan": "https://www.buchanst.com/products/hobonichi-techo-2027-weeks-wallet-planner-book-leicester-english-tall-slim-jan-start",
+        "hunterpaper": "https://hunterpaperco.com/products/hobonichi-weeks-2027-v-a-series-leicester-january-start",  # added Nov 23, 2026 (new Hobonichi shops)
+        "colorswatch": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",  # added Nov 23, 2026 (new Hobonichi shops)
     },
 }
 KEYS = {PINK: "wb27_colorspsapphire", SEA: "wb27_colorssglass", WELCOME: "wb27_vawelcome", LEICESTER: "wb27_valeicester"}

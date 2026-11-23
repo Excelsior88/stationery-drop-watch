@@ -15,7 +15,7 @@ AVEC = "cousin-avec-a5-jp"
 OFFICIAL_AVEC = "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_avec/"
 YOSEKA_AVEC = "https://yosekastationery.com/products/hobonichi-techo-cousin-avec-2027-a5"
 AVEC_SHOPS = {"1101", "atlas", "blesket", "buchan", "dromgooles", "jennibick", "journalshop", "kinousa",
-              "laywines", "milligram", "mlovewell", "papermouse", "penboutique", "yoseka"}
+              "laywines", "milligram", "mlovewell", "papermouse", "penboutique", "yoseka"} | {'hunterpaper'}  # Nov 23, 2026: new Hobonichi shops
 FORBIDDEN = re.compile(r"midori|traveler|designphil|milligram:", re.I)
 
 

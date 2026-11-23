@@ -72,9 +72,9 @@ LINK_ROWS = [dict(store_id=s["id"], store=s["name"], canonical=p.get("canonical"
              for s in stores["stores"] if s.get("link_only") for p in s["products"]]
 LINK_LABEL = "Link only"
 LINK_HINT = "Check stock at the shop"
-# One switch for the shop totals ("We check 27 shops"). True keeps the count exactly as before this change (the four
-# link-only shops still counted). False counts only shops the checker actually requests (27 becomes 23 everywhere).
-COUNT_LINK_ONLY_IN_SHOP_TOTALS = True
+# One switch for the shop totals ("We check 27 shops"). False (Nov 23, 2026, owner t1796u) counts only shops the checker
+# actually requests, so link-only shops are never in "N shops". They still show on the trackers with their "Link only" label.
+COUNT_LINK_ONLY_IN_SHOP_TOTALS = False
 
 # Limited-edition ink tracker (scripts/ink_tracker.py). Its rows live in data/inks/, apart from stock.json, so
 # they never reach the Hobonichi or dot grid pages, the restock feeds or the drop-alert webhook. A page shows
@@ -1359,12 +1359,8 @@ def build_index():
   <h3>Limited-edition inks</h3><p>{E(INK_HUB_LINE)}</p>
   <p class="hub-count"><b>{ist["in_stock"]}</b> of {len(INK_ROWS)} listings in stock <span class="muted small">{E(" · ".join(ibits))}</span></p>
   <span class="hub-go">View tracker</span></a></li>""")
-    # Third card: the takedown notice. Same card and button as the trackers; no counts or stock badges.
-    # The line is verbatim phrases from TAKEDOWN_NOTICE, including the Nov 20 lines.
-    cards.append(f"""<li class="hub-card hub-notice"><a href="{TN_SLUG}/">
-  <span class="hub-art">{hub_art("notice")}</span>
-  <h3>{E(TAKEDOWN_HEADING)}</h3><p>{E(HOME_NOTICE_LINE)}</p>
-  <span class="hub-go">Read the notice</span></a></li>""")
+    # The takedown notice card left the homepage on Nov 23, 2026 (owner t1797u). The notice page itself stays live at
+    # /{TN_SLUG}/, in the sitemap, and linked from the gift guide.
     sec_of_url = {p["url"]: section_of(p) for p in prods}
     restocks = [c for c in changes if c["url"] in sec_of_url and is_restock_event(c)]
     restocks.sort(key=lambda c: c["at"], reverse=True)
