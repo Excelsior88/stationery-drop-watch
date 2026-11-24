@@ -79,6 +79,7 @@ jobs:
             # main and the site is rebuilt there, so JSON is never merged or rebased.
             results=$(mktemp -d)
             cp data/stock.json data/changes.json "$results/"
+            cp data/robots-blocks.json "$results/" 2>/dev/null || true
             mkdir -p "$results/inks"
             cp data/inks/stock.json data/inks/changes.json data/inks/retired.json "$results/inks/" 2>/dev/null || true
             for i in 1 2 3 4 5; do
@@ -98,6 +99,7 @@ jobs:
               git fetch --no-tags --depth=1 origin main
               git reset --hard origin/main
               cp "$results/stock.json" "$results/changes.json" data/
+              if [ -f "$results/robots-blocks.json" ]; then cp "$results/robots-blocks.json" data/; fi
               if ls "$results/inks/"*.json >/dev/null 2>&1; then mkdir -p data/inks && cp "$results/inks/"*.json data/inks/; fi
               python scripts/build_site.py
               if ! python scripts/status_changed.py; then

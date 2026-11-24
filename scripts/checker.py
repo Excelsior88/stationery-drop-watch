@@ -182,6 +182,10 @@ class Robots:
         # A named group is used on its own, even when it has no rules.
         return named if saw_named else star
 
+    def rules_text(self, user_agent):
+        """The Allow/Disallow lines that apply to user_agent, one per line (for the robots-block record)."""
+        return "\n".join(f"{'Allow' if allow else 'Disallow'}: {pattern}" for allow, pattern in self._rules_for(user_agent))
+
     def allowed(self, user_agent, url):
         path = _robots_path(url)
         best_len, best_allow = -1, True
@@ -192,6 +196,87 @@ class Robots:
             if length > best_len or (length == best_len and allow):
                 best_len, best_allow = length, allow
         return best_allow
+
+# ---- robots.txt blocks -----------------------------------------------------------------------------
+# When a shop's robots.txt starts disallowing our checker, data/robots-blocks.json keeps a dated record
+# (first_detected, last_seen, sample URLs, the robots.txt text and the rules that applied to us). It is NOT
+# published: build_site.py copies only named files into site/data/. Each new block or clear is also an
+# "events" entry with review "pending" for the CEO, who asks the owner about a Transparency entry.
+# Nothing is emailed or posted, and the Transparency page is never edited from here.
+ROBOTS_DISALLOWED = "disallowed by robots.txt"
+ROBOTS_BLOCKS_FILE = ROOT / "data" / "robots-blocks.json"
+ROBOTS_SNAPSHOT_MAX = 20000   # characters of robots.txt kept per record
+ROBOTS_SAMPLE_URLS = 5
+_robots_lock = threading.Lock()
+ROBOTS_HITS = {}              # this run: host base -> {"urls": [...], "robots_txt": str, "rules": str}
+
+def note_robots_block(host, url):
+    with _robots_lock:
+        hit = ROBOTS_HITS.setdefault(host.base, {"urls": [], "robots_txt": getattr(host, "robots_text", "")[:ROBOTS_SNAPSHOT_MAX],
+                                                 "rules": host.robots.rules_text(UA)[:ROBOTS_SNAPSHOT_MAX]})
+        if url not in hit["urls"] and len(hit["urls"]) < ROBOTS_SAMPLE_URLS:
+            hit["urls"].append(url)
+
+def store_host_base(store):
+    return "https://www.1101.com" if store.get("platform") == "hobonichi" else store["url"].rstrip("/")
+
+def robots_blocked_now(stores, results, hits):
+    """store_id -> this run's block facts, for every checked store with at least one robots-disallowed row."""
+    rows = {}
+    for r in results:
+        rows.setdefault(r["store_id"], []).append(r)
+    out = {}
+    for st in stores:
+        mine = rows.get(st["id"], [])
+        bad = [r for r in mine if ROBOTS_DISALLOWED in (r.get("error") or "")]
+        if not bad:
+            continue
+        hit = hits.get(store_host_base(st), {})
+        out[st["id"]] = {"store": st["name"], "url": st["url"], "scope": "whole store" if len(bad) == len(mine) else "some listings",
+                         "blocked_listings": len(bad), "checked_listings": len(mine),
+                         "sample_urls": (hit.get("urls") or [r["url"] for r in bad])[:ROBOTS_SAMPLE_URLS],
+                         "robots_txt": hit.get("robots_txt", ""), "rules_for_us": hit.get("rules", "")}
+    return out
+
+def update_robots_blocks(doc, blocked, checked_ids, at):
+    """Pure: the next robots-blocks document. A new block (or a block after a clear) adds an entry and a
+    pending event; a block that continues only moves last_seen (and the counts); a checked store whose rows are
+    all allowed again is marked cleared with a pending event. Stores not checked this run are left alone."""
+    doc = json.loads(json.dumps(doc or {}))
+    doc.setdefault("_note", "Not published. Written by scripts/checker.py. events[].review: pending until the CEO has asked the owner about a Transparency entry; then set it to the decision.")
+    blocks, events = doc.setdefault("blocks", {}), doc.setdefault("events", [])
+    for sid, b in blocked.items():
+        cur = blocks.get(sid)
+        if cur and cur.get("status") == "blocked":
+            cur.update(last_seen=at, scope=b["scope"], blocked_listings=b["blocked_listings"], checked_listings=b["checked_listings"])
+            continue
+        entry = {"store_id": sid, "store": b["store"], "url": b["url"], "status": "blocked", "first_detected": at, "last_seen": at,
+                 "cleared_at": None, "scope": b["scope"], "blocked_listings": b["blocked_listings"], "checked_listings": b["checked_listings"],
+                 "sample_urls": b["sample_urls"], "robots_txt_at_detection": b["robots_txt"], "rules_for_us_at_detection": b["rules_for_us"]}
+        if cur and cur.get("cleared_at"):
+            entry["previously_cleared_at"] = cur["cleared_at"]
+        blocks[sid] = entry
+        events.append({"at": at, "kind": "blocked", "store_id": sid, "store": b["store"], "scope": b["scope"],
+                       "sample_urls": b["sample_urls"], "review": "pending"})
+    for sid, cur in blocks.items():
+        if cur.get("status") == "blocked" and sid in checked_ids and sid not in blocked:
+            cur.update(status="cleared", cleared_at=at)
+            events.append({"at": at, "kind": "cleared", "store_id": sid, "store": cur.get("store"), "review": "pending"})
+    return doc
+
+def write_robots_blocks(stores, results, at, path=None):
+    path = path or ROBOTS_BLOCKS_FILE
+    try:
+        old = json.loads(path.read_text()) if path.exists() else {}
+        checked = {s["id"] for s in stores if not s.get("link_only") and s.get("platform") in ("shopify", "hobonichi")}
+        blocked = robots_blocked_now(stores, results, dict(ROBOTS_HITS))
+        new = update_robots_blocks(old, blocked, checked, at)
+        if new != old or not path.exists():
+            path.write_text(json.dumps(new, indent=1, ensure_ascii=False) + "\n")
+        for e in new["events"][len(old.get("events", [])):]:
+            print(f"::warning::robots.txt {e['kind']}: {e['store']} ({e['store_id']}) - see data/robots-blocks.json")
+    except Exception as exc:  # never let the record stop a stock check
+        print(f"robots-blocks record skipped: {type(exc).__name__}: {exc}")
 
 class Host:
     """Per-host session, robots.txt, rate limit, and a per-run fetch cache.
@@ -214,6 +299,7 @@ class Host:
         except Exception:
             lines = []
         self.robots = Robots(lines)
+        self.robots_text = "\n".join(lines)
 
     def allowed(self, url):
         return self.robots.allowed(UA, url)
@@ -226,7 +312,8 @@ class Host:
                 raise hit
             return hit
         if check_robots and not self.allowed(url):
-            raise PermissionError("disallowed by robots.txt")
+            note_robots_block(self, url)
+            raise PermissionError(ROBOTS_DISALLOWED)
         wait = self.last + DELAY - time.time()
         if wait > 0:
             time.sleep(wait)
@@ -461,6 +548,7 @@ def main():
     lo = link_only_ids(cfg)
     changes = [c for c in changes if c.get("store_id") not in lo]  # self-heals if a stale copy brings old link-only events back
     changes_f.write_text(json.dumps(changes, indent=1, ensure_ascii=False))
+    write_robots_blocks(cfg["stores"], results, now())
     ok = len(results) - summary["unknown"]
     print(f"checked {len(results)} products: {ok} classified, {summary['unknown']} failed -> {summary}")
     for r in results:
