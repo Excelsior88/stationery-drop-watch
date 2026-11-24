@@ -77,6 +77,7 @@ class TurnstileSignupTests(unittest.TestCase):
     def test_box_has_turnstile_honeypot_and_status(self):
         doc = site.signup()
         self.assertIn('class="cf-turnstile"', doc)
+        self.assertIn('data-size="flexible"', doc)
         self.assertIn(f'data-sitekey="{site.TURNSTILE_SITEKEY}"', doc)
         self.assertIn('name="website"', doc)  # honeypot
         self.assertIn('class="signup-status"', doc)
@@ -87,6 +88,7 @@ class TurnstileSignupTests(unittest.TestCase):
         self.assertNotRegex(src, r"0x4[A-Za-z0-9_-]{20,}")
         self.assertIn("env.TURNSTILE_SECRET", src)
         self.assertIn("env.KIT_API_KEY", src)
+        self.assertIn('verdict.hostname !== "stationerydropwatch.com"', src)
 
     def test_privacy_names_turnstile(self):
         doc = (ROOT / "site/privacy/index.html").read_text()

@@ -286,7 +286,9 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .follow-card .btn{margin-top:auto;text-align:center}
 @media (max-width:600px){.follow-list{grid-template-columns:1fr}.follow-card .btn{display:block;width:100%;box-sizing:border-box}}
 
-/* Header "Trackers" menu (details/summary, so it opens by click, tap, Enter or Space with no JS) */
+/* Header "Trackers" menu (details/summary, so it opens by click, tap, Enter or Space with no JS).
+   The wrapper is a div.site-nav, so it needs the flex layout that `nav` used to give it. */
+div.site-nav{display:flex;flex-wrap:wrap;gap:4px}
 .site-nav{align-items:center}
 /* Header: the four trackers as plain links, then the rest; both groups wrap, nothing is hidden */
 .site-nav{row-gap:4px}
