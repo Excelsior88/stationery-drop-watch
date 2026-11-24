@@ -586,6 +586,10 @@ table.stock.compare thead th{vertical-align:top}
 .foot-nav a,.foot-follow a{position:relative;display:inline-flex;align-items:center;padding:0;background:none;border-radius:0;color:var(--ink-2);font-family:var(--sans);font-size:inherit;text-decoration:none}
 .foot-nav a::before,.foot-follow a::before{content:"";position:absolute;left:50%;top:50%;width:100%;min-width:44px;height:44px;transform:translate(-50%,-50%)}
 .foot-nav a:hover,.foot-follow a:hover{background:none;color:var(--accent)}
+/* Footer nav links look like links: underlined in the link colour (accent-2, 5.6:1 on paper-2); hover/focus go to ink (12:1) */
+.foot-nav a{color:var(--accent-2);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.foot-nav a:hover{color:var(--ink);text-decoration-thickness:2px}
+.foot-nav a:focus-visible{color:var(--ink);text-decoration-thickness:2px;outline:2px solid var(--ink);outline-offset:2px;border-radius:2px}
 .foot-follow{margin:0}
 .foot-badge{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 .foot-badge a{display:inline-block;line-height:0;max-width:100%}

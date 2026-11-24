@@ -1762,13 +1762,13 @@ CHECKER_TOKEN = re.search(r'^ROBOTS_TOKEN = "([^"]+)"', _CHECKER_SRC, re.M).grou
 
 def build_for_shops():
     fname = FOR_SHOPS_SLUG + "/"
-    title = "For shops"
+    title = "For shops and brands"
     robots_name = "StationeryDropWatch"
     assert robots_name.lower() == CHECKER_TOKEN, "robots.txt example must match checker ROBOTS_TOKEN"
     body = f"""
 <article class="prose">
 {crumbs((fname, title))}
-{eyebrow("For shops", "updated Nov 24, 2026")}
+{eyebrow("For shops and brands", "updated Nov 24, 2026")}
 <h1>For shops and brands</h1>
 <p class="lede">Stationery Drop Watch is a free restock tracker for people who buy planners, journals and inks for themselves. If you run a shop, this page explains exactly what our checker does on your site, what it doesn't do, and how you stay in control.</p>
 
