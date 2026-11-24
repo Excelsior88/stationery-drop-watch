@@ -10,9 +10,13 @@ https://:version.:project.pages.dev/*
 # Referrer-Policy: strict-origin-when-cross-origin (checked live Nov 22, 2026), so they are not repeated here.
 # Pages Functions (including /api/subscribe) do not receive these headers. That fallback page uses an inline <style>,
 # which this report-only policy would flag; leave the function response alone.
-# CSP is report-only. Origins below are the ones pages, site/assets/app.js, and site/assets/style.css actually load:
-# same-origin documents, styles, fonts, images, and the signup fetch, plus Turnstile's script and challenge frame
-# (https://challenges.cloudflare.com). No cloudflareinsights.com: Web Analytics is not loaded.
+# CSP is report-only. Origins below are the ones pages, site/assets/app.js, and site/assets/style.css actually load,
+# plus Cloudflare's edge-injected Web Analytics beacon:
+# same-origin documents, styles, fonts, images, and the signup fetch, Turnstile's script and challenge frame
+# (https://challenges.cloudflare.com), and https://static.cloudflareinsights.com for beacon.min.js.
+# The injected script URL is versioned (beacon.min.js/v…), so script-src allows that host, not only one file path.
+# Automatic injection POSTs to this site at /cdn-cgi/rum, which connect-src 'self' already allows.
+# https://cloudflareinsights.com is only the manual-snippet reporting host (Cloudflare Web Analytics FAQ), so it is not added.
 # style-src-attr allows the three format-icon custom properties (--iw/--ih) on the comparison SVGs. style-src stays
 # 'self', so a <style> block on an HTML page is still reported. script-src hashes the filter forms' onsubmit="return false"
 # (sha256 of that source, with 'unsafe-hashes') so those pages do not report an inline-handler violation.
@@ -20,7 +24,7 @@ https://:version.:project.pages.dev/*
   Strict-Transport-Security: max-age=31536000
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://challenges.cloudflare.com 'unsafe-hashes' 'sha256-GZIcz60Uwd6wT3vaYke/atSr53TehbYAPepOa3d03Vw='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com 'unsafe-hashes' 'sha256-GZIcz60Uwd6wT3vaYke/atSr53TehbYAPepOa3d03Vw='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
 
 # Cache. HTML stays on Pages' default (public, max-age=0, must-revalidate), which is right for a page that changes every
 # ~30 minutes. The stylesheet and scripts are linked as ?v=<content hash>, so each URL never changes and can be cached for a year.

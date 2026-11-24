@@ -166,6 +166,7 @@ button:hover,.btn:hover{background:var(--accent-2);color:#fff}
 .signup-strip input[type=email]{flex:1 1 200px}
 .signup-strip button{flex:0 0 auto}
 .signup-strip .strip-note{margin:6px 0 0;font-size:.8rem;color:var(--ink-2)}
+.signup-strip .strip-agree{margin:8px 0 0;font:400 .8rem/1.45 var(--sans);color:var(--ink-2);overflow-wrap:break-word}
 .signup-strip-bottom{margin:28px 0 8px}
 @media (max-width:420px){.signup-strip button{flex:1 1 100%}}
 
@@ -688,3 +689,14 @@ table.stock.compare thead th{vertical-align:top}
 
 .tpt-sub{margin:1.2em 0 .6em;font-size:1.05rem}
 .tpt-all{margin-top:1.4rem}
+/* Terms: collapsed jump list, and a quiet callout for the warranty and liability sections. */
+.prose h2[id]{scroll-margin-top:5.5rem}
+.terms-jump{margin:0 0 1.25em;padding:8px 14px 10px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.terms-jump>summary{font:600 .95rem/1.4 var(--sans);color:var(--ink)}
+.terms-jump ol{margin:.45em 0 .15em;padding-left:1.35em;columns:2;column-gap:1.75em}
+.terms-jump li{break-inside:avoid;margin:.15em 0;font:400 .9rem/1.45 var(--sans)}
+.terms-jump a{text-decoration:underline;text-underline-offset:2px}
+.terms-callout{margin:1.5em 0;padding:2px 16px 4px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;box-shadow:0 2px 0 var(--line),0 12px 30px -24px rgba(60,40,20,.35)}
+.terms-callout h2{margin-top:.85em}
+.terms-callout strong{font-weight:700;color:var(--ink)}
+@media (max-width:640px){.terms-jump ol{columns:1}}

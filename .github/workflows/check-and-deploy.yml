@@ -15,7 +15,7 @@ on:
 
 permissions:
   contents: write    # commit data/ changes
-  pages: write       # deploy to GitHub Pages
+  pages: write       # upload the site artifact Cloudflare Pages deploys
   id-token: write
 
 # One checker at a time on main. Do not cancel in-progress runs: they may
@@ -132,21 +132,13 @@ jobs:
             --data @/tmp/ping.json)
           echo "Webhook responded HTTP $code"
 
+      # Site artifact for "Deploy to Cloudflare Pages" (download name: github-pages).
+      # GitHub Pages is not published from this workflow. The old publish step only updated
+      # excelsior88.github.io/stationery-drop-watch/, which 301-redirects to stationerydropwatch.com.
+      # That step did not build this artifact, and neither this workflow nor cloudflare-pages.yml
+      # reads a GitHub Pages deployment. configure-pages stays because the artifact upload expects
+      # it, and Cloudflare deploys this artifact.
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
           path: site
-
-  deploy:
-    # Backup only: the live site is served by Cloudflare Pages (cloudflare-pages.yml).
-    # A failed GitHub Pages deploy must not mark the run as failed or send failure emails.
-    needs: check
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    timeout-minutes: 12
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v5

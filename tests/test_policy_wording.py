@@ -22,7 +22,6 @@ TRACK_HOBO = "Hobonichi Techo 2027: the Original A6 and Cousin A5 books, the Eng
 HUB_HOBO = "Original A6, Cousin A5, the English Planner A6, HON, Weeks, Weeks Mega and covers, at the official store and independent shops."
 SELL_TPT = "Classroom printables are on Teachers Pay Teachers."
 OUTBOUND = "When you follow a link to a shop we track, or to Amazon, Etsy, or Teachers Pay Teachers for our own planners, journals, and printables, that site has its own privacy policy."
-GITHUB = "The source code, the checker, and a backup copy of the site are hosted on GitHub (GitHub Pages)."
 
 
 def html_of(built):
@@ -122,7 +121,9 @@ class PolicyWordingTests(unittest.TestCase):
         self.assertIn("we only add the address to the list after you click the link", text)
         self.assertIn("We use it only to send restock alerts for the trackers you chose and occasional site updates.", text)
         self.assertIn(OUTBOUND, text)
-        self.assertIn(GITHUB, text)
+        self.assertIn("The site is hosted on Cloudflare Pages.", text)
+        self.assertNotIn("GitHub Pages", text)
+        self.assertNotIn("backup copy of the site", text)
         self.assertNotIn("Amazon or Etsy for our own planners and journals,", text)
         self.assertNotIn("the alerts and occasional updates you signed up for", text)
 

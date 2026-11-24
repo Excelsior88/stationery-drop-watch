@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import build_site as site  # noqa: E402
 
 CSP = (
-    "default-src 'self'; script-src 'self' https://challenges.cloudflare.com 'unsafe-hashes' 'sha256-GZIcz60Uwd6wT3vaYke/atSr53TehbYAPepOa3d03Vw='; "
+    "default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com 'unsafe-hashes' 'sha256-GZIcz60Uwd6wT3vaYke/atSr53TehbYAPepOa3d03Vw='; "
     "style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; "
     "connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; "
     "base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
@@ -108,7 +108,9 @@ class CloudflareHeadersTests(unittest.TestCase):
     def test_report_only_policy_permissions_and_font_cache(self):
         self.assertIn(f"Content-Security-Policy-Report-Only: {CSP}", self.headers)
         csp_line = next(line for line in self.headers.splitlines() if "Content-Security-Policy-Report-Only:" in line)
-        self.assertNotIn("cloudflareinsights", csp_line)
+        self.assertIn("https://static.cloudflareinsights.com", csp_line)
+        self.assertNotIn("https://cloudflareinsights.com", csp_line)
+        self.assertIn("connect-src 'self'", csp_line)
         self.assertIn("Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()", self.headers)
         font = self.headers.split("/assets/fonts/*", 1)[1].split("/assets/", 1)[0]
         self.assertIn("Cache-Control: public, max-age=2592000", font)

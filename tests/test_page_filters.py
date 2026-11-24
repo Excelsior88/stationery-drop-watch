@@ -185,9 +185,16 @@ class PageFilterMarkupTests(unittest.TestCase):
                 self.assertIn("Emails are sent via", note, name)
                 self.assertIn("Kit", note, name)
                 self.assertNotIn("Buttondown", note, name)
-                self.assertIn("Privacy", note, name)
+                self.assertNotIn("Privacy", note, name)
                 self.assertNotIn("multiple emails a day", note, name)
                 self.assertNotRegex(note, r"\d+ emails a day")
+            agrees = re.findall(r'class="strip-agree">(.*?)</p>', doc)
+            self.assertEqual(len(agrees), len(notes), name)
+            for agree in agrees:
+                self.assertIn("By signing up, you agree to our", agree)
+                self.assertIn('href="/terms/"', agree)
+                self.assertIn('href="/privacy/"', agree)
+                self.assertIn("Privacy notice", agree)
             forms = re.findall(
                 r'<form class="signup-form kit-signup-form" action="([^"]+)" method="post" data-turnstile="1">(.*?)</form>',
                 doc, flags=re.S)
