@@ -214,7 +214,7 @@ class PageFilterMarkupTests(unittest.TestCase):
             tracked, checked, _ = site.shop_sets(ls)
             name, doc = site.build_group(g)
             self.assertIn(f"{site.nshops(len(tracked))} ·", doc.split("<h1>")[0], name)
-            self.assertIn(f"{len(checked)} of {site.nshops(len(tracked))} checked", doc, name)
+            self.assertIn(site.shops_checked_phrase(tracked, checked), doc, name)
             unk = sum(1 for l in ls if l["status"] == "unknown")
             self.assertIn(f'<div class="unk"><b>{unk}</b><span>couldn\'t check this run</span></div>', doc, name)
         for d in site.DESIGNS:
@@ -224,7 +224,7 @@ class PageFilterMarkupTests(unittest.TestCase):
             tracked, checked, _ = site.shop_sets(ls)
             doc = next(doc for n, doc in self.docs if n == site.design_fname(d))
             self.assertIn(f"{site.nshops(len(tracked))} ·", doc.split("<h1>")[0], d["slug"])
-            self.assertIn(f"{len(checked)} of {site.nshops(len(tracked))} checked", doc, d["slug"])
+            self.assertIn(site.shops_checked_phrase(tracked, checked), doc, d["slug"])
             unk = sum(1 for l in ls if l["status"] == "unknown")
             self.assertIn(f'<div class="unk"><b>{unk}</b><span>couldn\'t check this run</span></div>', doc, d["slug"])
 

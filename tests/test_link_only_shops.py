@@ -216,7 +216,7 @@ class PageTests(unittest.TestCase):
     def test_in_stock_tally_ignores_link_only_rows(self):
         rows = [dict(st="link_only", sid="blesket", s="Blesket Canada"), dict(st="in_stock", sid="goulet", s="Goulet")]
         self.assertEqual(site.shop_tally([dict(r, g="x", gn="x", u="u") for r in rows]),
-                         "1 of 1 listings in stock · 1 of 1 shop in stock · 1 shop link only")
+                         "In stock at Goulet · 1 shop link only")  # one checked shop is named (PR #113)
         self.assertEqual(site.shop_tally([rows[0]]), "Link only, we don't check stock")
 
     def test_hero_and_totals_count_only_checked_listings(self):
