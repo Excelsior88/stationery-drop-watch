@@ -84,11 +84,13 @@ jobs:
           DEPLOY_RUN_UPDATED_AT: ${{ github.event.workflow_run.updated_at }}
         run: python scripts/require_fresh_pages_artifact.py accept artifact/artifact.tar out
 
-      - name: Add Cloudflare-only config (_redirects, _headers)
+      - name: Add Cloudflare-only config (_redirects, _headers, security.txt)
         if: success() && steps.gate.outputs.enabled == 'true'
         run: |
           cp cloudflare/_redirects cloudflare/_headers out/
-          test -f out/index.html && test -f out/404.html && test -f out/data/stock.json
+          # security.txt lives here, not in site/: the Pages artifact drops dot-folders such as .well-known/.
+          mkdir -p out/.well-known && cp cloudflare/security.txt out/.well-known/security.txt
+          test -f out/index.html && test -f out/404.html && test -f out/data/stock.json && test -f out/.well-known/security.txt
           ls -la out
 
       - uses: actions/setup-node@v7

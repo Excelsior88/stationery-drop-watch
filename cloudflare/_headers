@@ -48,3 +48,10 @@ https://:version.:project.pages.dev/*
   Cache-Control: public, max-age=86400
 /assets/shop/*
   Cache-Control: public, max-age=86400
+
+# Public stock feed: no cross-origin reads. Pages sends Access-Control-Allow-Origin: * on every static file by default
+# (checked live Nov 24, 2026). Our own pages never fetch this file (site/assets/app.js loads only search-index.json, and
+# same-origin fetches don't need CORS). The drop-alert routine reads it server-side, where CORS doesn't apply.
+# Detach rules must come after the broader rule, so this block stays at the end of the file.
+/data/stock.json
+  ! Access-Control-Allow-Origin
