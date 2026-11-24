@@ -546,7 +546,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     foot_items = list(NAV_TRACKERS) + [
         ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("sold-out-everywhere/", "Sold out everywhere"), ("shop/", "Shop"),
         ("follow/", "Follow us"),
-        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy"), ("terms/", "Terms"), ("transparency/", "Transparency")]
+        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy"), ("terms/", "Terms"), ("transparency/", "Transparency"), ("for-shops/", "For shops")]
     foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
@@ -751,8 +751,8 @@ def link_status_rows(ls):
     """Table rows for link-only listings: the shop's own page, no status and no check time."""
     rows = []
     for l in sorted(ls, key=lambda l: (l["store"], l["label"])):
-        rows.append(f"""<tr class="link-only-row" data-store="{E(l['store_id'])}" data-status="link_only" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
-  <td>{status_badge("link_only")}<span class="sub">{LINK_HINT}</span></td></tr>""")
+        rows.append(f"""<tr class="link-only-row" data-store="{E(l['store_id'])}" data-status="link_only" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])} <span class="sub">{E(l.get('title') or l['label'])}</span></td>
+  <td>{status_badge("link_only")} <span class="sub">{LINK_HINT}</span></td></tr>""")
     return "".join(rows)
 
 def link_note(ls):
@@ -1225,7 +1225,7 @@ def restock_feed(events, extra="", feed_id="restocks", limit=None):
     <label><input type="radio" name="{fid}-view" class="restock-in"> In stock now</label>
   </div>
   <ol class="feed">{items}</ol>
-  <p class="feed-empty muted small">None of these are in stock now.</p>
+  <p class="feed-empty muted small" hidden>None of these are in stock now.</p>
 </div>"""
 
 def build_hobo_tracker():
@@ -1749,6 +1749,61 @@ def build_transparency():
     desc = "Businesses that asked Stationery Drop Watch to remove or change information, what they asked for, what we removed, what stayed, and when."
     return page(fname, "Transparency", desc, body, ld=(crumbs_ld((fname, "Transparency")),))
 
+# For shops page (/for-shops/): what our checker does on a shop's site, in plain words, for shop owners
+# deciding whether to let us check their stock. Every claim is read from the code at build time or is a
+# standing site rule: the User-Agent and per-shop delay come from scripts/checker.py, the check frequency is
+# CHECK_FREQ, link-only shops are never requested (checker LINK_ONLY_HOSTS), and shop links carry no affiliate tag.
+FOR_SHOPS_SLUG = "for-shops"
+FOR_SHOPS_DATE = "2026-11-24"
+_CHECKER_SRC = (ROOT / "scripts/checker.py").read_text()
+CHECKER_UA = re.search(r'^UA = "([^"]+)"', _CHECKER_SRC, re.M).group(1)
+CHECKER_DELAY = re.search(r'^DELAY = ([0-9.]+)', _CHECKER_SRC, re.M).group(1)
+CHECKER_TOKEN = re.search(r'^ROBOTS_TOKEN = "([^"]+)"', _CHECKER_SRC, re.M).group(1)
+
+def build_for_shops():
+    fname = FOR_SHOPS_SLUG + "/"
+    title = "For shops"
+    robots_name = "StationeryDropWatch"
+    assert robots_name.lower() == CHECKER_TOKEN, "robots.txt example must match checker ROBOTS_TOKEN"
+    body = f"""
+<article class="prose">
+{crumbs((fname, title))}
+{eyebrow("For shops", "updated Nov 24, 2026")}
+<h1>For shops and brands</h1>
+<p class="lede">Stationery Drop Watch is a free restock tracker for people who buy planners, journals and inks for themselves. If you run a shop, this page explains exactly what our checker does on your site, what it doesn't do, and how you stay in control.</p>
+
+<h2>What we do</h2>
+<ul>
+<li>We check {CHECK_FREQ}. Each check reads the same public product information your shop already shows every visitor: whether a product or option is available, and the product title.</li>
+<li>Every listing links straight to your own product page, so readers buy from you, on your site, at your price.</li>
+<li>Our links carry no affiliate tag and no referral code. We don't charge shops anything, and we don't take a cut of any sale.</li>
+</ul>
+
+<h2>How our checker behaves on your site</h2>
+<ul>
+<li><strong>It says who it is.</strong> Every request identifies itself with this User-Agent, including a link back to us and an email address:<br><code>{E(CHECKER_UA)}</code></li>
+<li><strong>It follows your robots.txt.</strong> It reads your robots.txt before checking. If you add a group for <code>{robots_name}</code>, that group is followed ahead of the general <code>*</code> rules.</li>
+<li><strong>It goes slowly.</strong> It makes one request at a time to your shop and waits at least {CHECKER_DELAY} seconds between requests.</li>
+<li><strong>It asks only for what we track.</strong> In each check that's about one request per product page we track, plus a small request for your store's currency setting. Two listings on the same product page share one request. For limited inks we also read your shop's own pre-order and coming-soon lists, and once a day your public product list, to spot new limited inks.</li>
+<li><strong>It never shops.</strong> It doesn't log in, add to cart, reserve stock or check out.</li>
+</ul>
+
+<h2>Why this can't power checkout bots</h2>
+<p>A status on our site is only as fresh as our last check, which is often half an hour old, sometimes more. Checkout bots work in seconds, so a page that updates {CHECK_FREQ} is no use to them. Our <a href="terms/#prohibited-uses">Terms</a> also forbid using the site, its alerts or its data for reselling, bulk or automated buying, or to feed any bot or buying service.</p>
+
+<h2>You're in control</h2>
+<ul>
+<li><strong>Link only.</strong> We can list your shop as a plain link with no stock checks. Once your shop is link only, our checker sends your site no requests at all.</li>
+<li><strong>Removal.</strong> We'll remove your products or your whole shop from our trackers on request (see section 12 of our <a href="terms/#for-shops-and-brands">Terms</a>). Our <a href="transparency/">Transparency</a> page lists every request like this, and what we changed.</li>
+<li><strong>Block us yourself.</strong> Adding these two lines to your robots.txt stops our checks from the next check on:<br><code>User-agent: {robots_name}</code><br><code>Disallow: /</code></li>
+</ul>
+
+<h2>Want to be tracked, or have a question?</h2>
+<p>If you'd like us to check your stock, or you'd like to talk about how we do it, email {mailto_email()}.</p>
+</article>"""
+    desc = "How our checker treats your shop: a named User-Agent, robots.txt respected, slow requests, no affiliate tags, and link only or removal on request."
+    return fname, page(fname, title, desc, body, ld=(crumbs_ld((fname, title)),))
+
 # Teachers Pay Teachers products page (/shop/teachers-pay-teachers/). Titles, grades, formats, page counts and
 # bundle membership are copied from each product's own TpT page (checked Nov 23, 2026, 15 products).
 # Page counts are the ones the TpT description states. No prices or availability anywhere on the page.
@@ -2069,11 +2124,11 @@ def status_rows(ls, oe=None):
     rows = []
     for l in sorted(ls, key=lambda l: (order.get(l["status"], 9), l["store"])):
         since = l.get("status_since")
-        since_html = f'<span class="sub">since {time_tag(since)}</span>' if since and l["status"] != "unknown" else ""
+        since_html = f' <span class="sub">since {time_tag(since)}</span>' if since and l["status"] != "unknown" else ""
         note = official_note(l)
         if note:
-            since_html += f'<span class="sub official-note">{E(note)}</span>'
-        rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])}<span class="sub">{E(l.get('title') or l['label'])}</span></td>
+            since_html += f' <span class="sub official-note">{E(note)}</span>'
+        rows.append(f"""<tr data-store="{E(l['store_id'])}" data-status="{E(l['status'])}" data-size="{E(listing_size(l))}" data-lang="{E(listing_language(l))}" data-country="{E(REGION.get(l['store_id'], ''))}"><td><a href="{E(l['url'])}" rel="noopener" target="_blank">{E(l['store'])}</a>{region_tag(l['store_id'])} <span class="sub">{E(l.get('title') or l['label'])}</span></td>
   <td><span class="badge {E(l['status'])}">{E(STATUS[l['status']])}</span>{since_html}</td></tr>""")
     return "".join(rows)
 
@@ -2620,7 +2675,7 @@ def build_design(d, oe=None):
             f'<span class="muted small">{E(x["note"])}</span></li>' for x in extra_links)
         extra_html = f'<p class="muted small">Not checked</p><ul class="link-list">{items}</ul>'
     sources_html = f"""<section class="card" id="sources"><h2>Sources</h2>
-  <p class="muted small">Statuses come from each shop's own public product page, read by our checker at the time shown. The raw data for every check is public: <a href="data/stock.json">stock.json</a>.</p>
+  <p class="muted small">Statuses come from each shop's own public product page, read by our checker at the time shown. Each status links to the shop's own page, so you can confirm it there.</p>
   <ul class="link-list">{sources}</ul>{extra_html}</section>""" if ls or extra_links else ""
     sibs = "".join(f'<li><a href="{design_fname(x)}">{E(x["name"])}</a></li>' for x in designs_of(d["parent"]) if x is not d)
     others = (f'<li><a href="{parent["slug"]}/">All {E(parent["short"])} designs</a></li>' + sibs
@@ -2796,7 +2851,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23", "transparency/": "2026-11-23", TPT_PAGE_PATH: TPT_PAGE_DATE}
+STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23", "transparency/": "2026-11-23", TPT_PAGE_PATH: TPT_PAGE_DATE, FOR_SHOPS_SLUG + "/": FOR_SHOPS_DATE}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
@@ -3720,7 +3775,7 @@ def build_gift_guide():
     faq_html = "".join(f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq)
     src_items = "".join(f'<li id="src-{k}"><a href="{u}"{"" if u == "shop/" else " rel=\"noopener\" target=\"_blank\""}>{E(t)}</a>, {E(b)}.</li>'
                         for k, (u, t, b) in GIFT_SRC.items())
-    src_items += f'<li id="src-stock"><a href="data/stock.json">Live stock data</a>, Stationery Drop Watch, last check {asof}.</li>'
+    src_items += f'<li id="src-stock">Stationery Drop Watch restock trackers (<a href="{HOBO_TRACKER}">Hobonichi</a>, <a href="{DOTGRID_SLUG}/">dot grid</a>), last check {asof}.</li>'
     printables = [e for e in etsy_listings() if e.get("id") == "holiday-planner"]
     hp = printables[0] if printables else None
     hp_html = (f'<li><strong>The Holiday Planner Pages,</strong> our printable: ten undated pages in three sizes, including a Gift Tracker, Holiday Budget and December Countdown. '
@@ -4672,7 +4727,7 @@ def build_sold_out():
 {signup()}
 {secs}
 {note}
-<p class="muted small">"Sold out" is exactly what each shop's public product data said. "Not yet on sale" means the shop has a preview page up but isn't taking orders. The raw data is public: <a href="data/stock.json">stock.json</a>.</p>
+<p class="muted small">"Sold out" is exactly what each shop's public product data said. "Not yet on sale" means the shop has a preview page up but isn't taking orders. Always confirm on the shop's page before you plan around it.</p>
 </article>"""
     return fname, page(fname, f"Sold out everywhere: {count} to watch",
                        "Items no shop we track has in stock or on preorder, with a link to each item's restock page. Updated about every 30 minutes.",
@@ -4941,6 +4996,23 @@ def build_takedown_notice(slug, noindex=False):
     return fname, page(fname, TAKEDOWN_HEADING, TAKEDOWN_DESC, body,
                        ld=(crumbs_ld((fname, TAKEDOWN_HEADING)),), og_type="article", noindex=noindex)
 
+# Public site/data/stock.json: the checker's data/stock.json minus fields no page or reader needs.
+# Kept: everything the drop-alert routine reads from the LIVE file (status, status_since, checked_at, url,
+# label, type, store_id, store, canonical, title, first_seen, price fields, official_note, and "method",
+# which the alert gate uses to spot a variant row whose URL lost its ?variant= id). Dropped: the checker's
+# per-row error text and its variant counts. The full file stays in data/ for the build, tests and checker.
+PUBLIC_STOCK_DROP = ("error", "available_variants", "total_variants")
+
+def public_stock(raw):
+    out = {k: v for k, v in raw.items() if k != "products"}
+    out["products"] = [{k: v for k, v in row.items() if k not in PUBLIC_STOCK_DROP} for row in raw.get("products") or []]
+    return out
+
+def publish_stock_data():
+    raw = json.loads((ROOT / "data/stock.json").read_text())
+    (SITE / "data/stock.json").write_text(json.dumps(public_stock(raw), indent=1, ensure_ascii=False) + "\n")
+
+
 def publish_ink_data():
     """Ink status and changes for the drop-alert routine (it reads the LIVE site data): site/data/inks/{stock,changes}.json.
     Pending finds ("hidden": true) are never published."""
@@ -5154,7 +5226,7 @@ def main():
     if OG_SHOPS is not None and OG_SHOPS != N_STORES:
         print(f"WARNING: og-image.png says {OG_SHOPS} shops but we check {N_STORES}; re-run scripts/brand/make_og.py")
     (SITE / "data").mkdir(parents=True, exist_ok=True)
-    shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
+    publish_stock_data()
     (SITE / "data" / "search-index.json").write_text(
         json.dumps(search_index(), ensure_ascii=False, separators=(",", ":")) + "\n")
     # Published feed: same filtering as the pages (takedowns, link-only shops), never the raw file.
@@ -5166,6 +5238,9 @@ def main():
     for fname, doc in (("hobonichi-2027/", build_hobonichi()), ("about/", build_about()), ("privacy/", build_privacy()), ("terms/", build_terms()), ("transparency/", build_transparency())):
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
+    _fs_fname, _fs_doc = build_for_shops()
+    (SITE / _fs_fname).mkdir(parents=True, exist_ok=True)
+    (SITE / _fs_fname / "index.html").write_text(_fs_doc)
     _tpt_fname, _tpt_doc = build_tpt_page()
     (SITE / _tpt_fname).mkdir(parents=True, exist_ok=True)
     (SITE / _tpt_fname / "index.html").write_text(_tpt_doc)
