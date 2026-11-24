@@ -32,6 +32,8 @@ https://:version.:project.pages.dev/*
 /assets/local-time.js
   Cache-Control: public, max-age=31536000, immutable
 # Font files keep stable names (not content-hashed), so cache them for 30 days and do not mark them immutable.
+# data/search-index.json stays on Pages' default, same as HTML and data/stock.json. The index is rebuilt
+# with the site about every 30 minutes, so it must not get this 30-day font cache.
 /assets/fonts/*
   Cache-Control: public, max-age=2592000
 /assets/brand/*

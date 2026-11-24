@@ -446,4 +446,189 @@
       });
     });
   }
+  // A shop link from homepage search lands on the ink tracker with ?store=. Hide the other inks.
+  const inkNote = document.getElementById("ink-store-note");
+  if (inkNote) {
+    const sid = new URLSearchParams(location.search).get("store");
+    if (sid) {
+      const tracker = inkNote.closest("#tracker") || document;
+      let shown = 0;
+      tracker.querySelectorAll("details.group-fold").forEach(card => {
+        const hit = (card.getAttribute("data-stores") || "").split(/\s+/).includes(sid);
+        card.hidden = !hit;
+        if (hit) { card.open = true; shown += 1; }
+      });
+      tracker.querySelectorAll("h2.shop-head").forEach(head => {
+        let el = head.nextElementSibling, vis = false;
+        while (el && !(el.classList && el.classList.contains("shop-head"))) {
+          if (el.matches && el.matches("details.group-fold") && !el.hidden) vis = true;
+          el = el.nextElementSibling;
+        }
+        head.hidden = !vis;
+      });
+      inkNote.hidden = false;
+      inkNote.textContent = shown ? "Showing inks this shop lists." : "This shop has no ink on the tracker.";
+    }
+  }
+  // find-item: homepage search. The index is fetched only from focus or input, never on load.
+  const findInput = document.getElementById("find-q");
+  if (findInput) {
+    const findForm = document.getElementById("find-form");
+    const findList = document.getElementById("find-list");
+    const findCount = document.getElementById("find-count");
+    let findData = null;
+    let findIndexP = null;
+    let active = -1;
+    const fold = s => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const loadFindIndex = () => {
+      if (!findIndexP) {
+        findIndexP = fetch("/data/search-index.json").then(r => {
+          if (!r.ok) throw new Error("search index");
+          return r.json();
+        }).then(data => { findData = data; return data; });
+      }
+      return findIndexP;
+    };
+    const say = msg => { if (findCount.textContent !== msg) findCount.textContent = msg; };
+    const fail = () => { if (findInput.value.trim()) say("The item list didn't load. Search still opens the Hobonichi tracker."); };
+    const options = () => [...findList.querySelectorAll('[role="option"]')];
+    const closeList = () => {
+      findList.hidden = true;
+      findInput.setAttribute("aria-expanded", "false");
+      findInput.removeAttribute("aria-activedescendant");
+      active = -1;
+      options().forEach(el => el.setAttribute("aria-selected", "false"));
+    };
+    const setActive = i => {
+      const opts = options();
+      if (!opts.length) return;
+      if (i < 0) i = opts.length - 1;
+      if (i >= opts.length) i = 0;
+      opts.forEach((el, n) => el.setAttribute("aria-selected", n === i ? "true" : "false"));
+      active = i;
+      findInput.setAttribute("aria-activedescendant", opts[i].id);
+      if (opts[i].scrollIntoView) opts[i].scrollIntoView({ block: "nearest" });
+    };
+    const activeLink = () => {
+      if (active < 0 || findList.hidden) return "";
+      const el = document.getElementById("find-opt-" + active);
+      return el ? el.href : "";
+    };
+    const tokensOf = q => fold(q).split(/[^a-z0-9]+/).filter(Boolean);
+    const hayOf = item => fold([item.n, item.q || "", (item.sh || []).map(i => findData.shops[i].n).join(" "), findData.trackers[item.t].l].join(" "));
+    const generalUrl = raw => {
+      if (!findData) return "";
+      const query = fold(raw.trim());
+      const tokens = tokensOf(raw);
+      if (query.length < 2 || !tokens.length) return "";
+      const shops = findData.shops.filter(shop => fold(shop.n).includes(query) && tokens.every(t => fold(shop.n).includes(t)));
+      if (shops.length === 1 && shops[0].p.length) {
+        const rank = { h: 0, d: 1, i: 2 };
+        const pages = shops[0].p.slice().sort((a, b) => (b.c - a.c) || (rank[a.t] - rank[b.t]));
+        return pages[0].u;
+      }
+      const hits = findData.items.filter(item => tokens.every(t => hayOf(item).includes(t)));
+      if (!hits.length) return "";
+      const counts = {};
+      hits.forEach(item => { counts[item.t] = (counts[item.t] || 0) + 1; });
+      const best = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || (a === "h" ? -1 : 1))[0];
+      if (best === "i") return hits.find(item => item.t === "i").u;
+      return findData.trackers[best].u + "?q=" + encodeURIComponent(raw.trim());
+    };
+    const render = () => {
+      if (!findData) return;
+      const raw = findInput.value.trim();
+      const query = fold(raw);
+      const tokens = tokensOf(raw);
+      findList.replaceChildren();
+      active = -1;
+      findInput.removeAttribute("aria-activedescendant");
+      if (query.length < 2 || !tokens.length) { closeList(); say(""); return; }
+      const shopRows = [];
+      findData.shops.forEach(shop => {
+        const name = fold(shop.n);
+        if (!tokens.every(t => name.includes(t))) return;
+        shop.p.forEach(page => shopRows.push({ n: shop.n, t: page.t, s: page.s, u: page.u }));
+      });
+      const rank = { h: 0, d: 1, i: 2 };
+      shopRows.sort((a, b) => (fold(a.n).startsWith(query) ? 0 : 1) - (fold(b.n).startsWith(query) ? 0 : 1)
+        || fold(a.n).localeCompare(fold(b.n)) || (rank[a.t] - rank[b.t]));
+      const itemRows = findData.items.map(item => {
+        const name = fold(item.n);
+        const hay = hayOf(item);
+        if (!tokens.every(t => hay.includes(t))) return null;
+        let score = 30;
+        if (name === query) score = 100;
+        else if (name.startsWith(query)) score = 80;
+        else if (tokens.every(t => name.includes(t))) score = 60;
+        return { n: item.n, t: item.t, s: item.s, u: item.u, score };
+      }).filter(Boolean).sort((a, b) => b.score - a.score || a.n.localeCompare(b.n));
+      const rows = shopRows.slice(0, 3).concat(itemRows.slice(0, Math.max(0, 8 - Math.min(shopRows.length, 3))));
+      if (!rows.length) { closeList(); say("No matches"); return; }
+      rows.forEach((row, i) => {
+        const link = document.createElement("a");
+        link.href = row.u;
+        link.id = "find-opt-" + i;
+        link.setAttribute("role", "option");
+        link.setAttribute("aria-selected", "false");
+        const name = document.createElement("span");
+        name.className = "find-name";
+        name.textContent = row.n;
+        const tag = document.createElement("span");
+        tag.className = "find-tag";
+        tag.textContent = findData.trackers[row.t].l;
+        const sum = document.createElement("span");
+        sum.className = "find-sum";
+        sum.textContent = row.s;
+        link.append(name, tag, sum);
+        findList.append(link);
+      });
+      findList.hidden = false;
+      findInput.setAttribute("aria-expanded", "true");
+      say(rows.length === 1 ? "1 match" : rows.length + " matches");
+    };
+    findInput.addEventListener("focus", () => { loadFindIndex().then(render).catch(fail); });
+    findInput.addEventListener("input", () => { loadFindIndex().then(render).catch(fail); });
+    findInput.addEventListener("keydown", e => {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        if (findList.hidden || !options().length) return;
+        e.preventDefault();
+        setActive(active + (e.key === "ArrowDown" ? 1 : -1));
+      } else if (e.key === "Escape") {
+        if (!findList.hidden) { e.preventDefault(); closeList(); }
+        else if (findInput.value) { findInput.value = ""; say(""); }
+      } else if (e.key === "Enter" && activeLink()) {
+        e.preventDefault();
+        location.href = activeLink();
+      }
+    });
+    findList.addEventListener("pointerover", e => {
+      const opt = e.target.closest && e.target.closest('[role="option"]');
+      if (!opt || !findList.contains(opt)) return;
+      const n = Number(opt.id.slice("find-opt-".length));
+      if (!Number.isNaN(n)) setActive(n);
+    });
+    findForm.addEventListener("submit", e => {
+      const picked = activeLink();
+      if (picked) { e.preventDefault(); location.href = picked; return; }
+      if (!findIndexP) return;
+      e.preventDefault();
+      const raw = findInput.value;
+      findIndexP.then(() => {
+        location.href = generalUrl(raw) || findForm.action + (raw.trim() ? "?q=" + encodeURIComponent(raw.trim()) : "");
+      }).catch(() => {
+        location.href = findForm.action + (raw.trim() ? "?q=" + encodeURIComponent(raw.trim()) : "");
+      });
+    });
+    document.addEventListener("pointerdown", e => { if (!findForm.contains(e.target)) closeList(); });
+    document.addEventListener("keydown", e => {
+      const typing = e.target && e.target.closest && e.target.closest("input, textarea, select, [contenteditable='true']");
+      if (typing) return;
+      const slash = e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey;
+      const palette = (e.metaKey || e.ctrlKey) && !e.altKey && (e.key === "k" || e.key === "K");
+      if (!slash && !palette) return;
+      e.preventDefault();
+      findInput.focus();
+    });
+  }
 })();
