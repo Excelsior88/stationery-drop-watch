@@ -693,6 +693,80 @@ table.stock.compare thead th{vertical-align:top}
 
 .tpt-sub{margin:1.2em 0 .6em;font-size:1.05rem}
 .tpt-all{margin-top:1.4rem}
+/* Lamy release calendar (/lamy-special-edition-release-calendar/): compact rows, owner-approved Nov 23, 2026. */
+.lamy-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 10px}
+.lamy-stats>div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;box-shadow:0 1px 0 var(--line)}
+.lamy-stats b{display:block;font:600 1.7rem/1.1 var(--serif)}
+.lamy-stats span{font-size:.82rem;color:var(--ink-2)}
+.lamy-stats .s-up b{color:var(--st-preorder)}.lamy-stats .s-rel b{color:var(--st-instock)}.lamy-stats .s-shop b{color:var(--mustard)}
+.lamy-panel{margin:18px 0}
+.lamy-panel h2{margin:0}
+.lamy-filters{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:end}
+.lamy-filters label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.lamy-filters input[type=search],.lamy-filters select{display:block;width:100%;margin-top:4px;font:1rem var(--sans);padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);min-height:44px}
+.lamy-filters input:focus,.lamy-filters select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.lamy-filters .lamy-chk{display:flex;align-items:center;gap:8px;min-height:44px;font-size:.95rem;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink);white-space:nowrap}
+.lamy-chk input{width:20px;height:20px;margin:0;accent-color:var(--accent)}
+.lamy-count{margin:8px 2px 0}
+.lamy-sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:.4em}
+.lamy-entry{border:1px solid var(--line);border-radius:10px;background:#fff;margin:8px 0;overflow:hidden;display:grid;grid-template-columns:92px 1fr}
+.lamy-entry[hidden]{display:none}
+.lamy-when{background:var(--paper-2);border-right:1px solid var(--line);padding:8px 10px;display:flex;flex-direction:column;justify-content:center}
+.lamy-when .lbl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);line-height:1.2}
+.lamy-when .d{font:600 1.2rem/1.1 var(--serif)}
+.lamy-when .y{font-size:.82rem;line-height:1.2;color:var(--ink-2)}
+.lamy-when.tba .d{color:var(--st-coming)}
+.lamy-body{padding:8px 14px 6px;min-width:0}
+.lamy-titlerow{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px}
+.lamy-body h3{font-size:1.15rem;margin:0}
+.lamy-tags{display:flex;flex-wrap:wrap;gap:4px}
+.lamy-tag{font-size:.68rem;font-weight:700;letter-spacing:.04em;padding:1px 7px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--ink-2)}
+.lamy-tag.lim{background:var(--st-coming-bg);border-color:var(--st-coming-line);color:var(--st-coming)}
+.lamy-desc{margin:2px 0 0;font-size:.92rem;line-height:1.4;color:var(--ink-2);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden}
+.lamy-rowline{display:flex;flex-wrap:wrap;align-items:center;gap:0 12px}
+.lamy-shops{margin:0;flex:0 1 auto}
+.lamy-shops[open]{flex-basis:100%}
+.lamy-shops>summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:4px 10px 4px 6px;margin-left:-6px;border-radius:10px;font-size:.9rem}
+.lamy-shops>summary::-webkit-details-marker{display:none}
+.lamy-shops>summary::before{content:"";flex:none;width:8px;height:8px;border-right:2px solid var(--accent-2);border-bottom:2px solid var(--accent-2);transform:rotate(-45deg);transition:transform .15s;margin:0 4px 0 6px}
+.lamy-shops[open]>summary::before{transform:rotate(45deg)}
+.lamy-shops>summary:hover{background:var(--paper-2)}
+.lamy-shops>summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.lamy-shops .sl-t{font-weight:700;color:var(--ink)}.lamy-shops .sl-s{color:var(--ink-2)}
+.lamy-shoplist{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px;padding:0;list-style:none}
+.lamy-shoplist li{margin:0;display:inline-flex;align-items:center;gap:4px}
+.lamy-shop{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;min-height:36px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--accent-2);font-size:.9rem;font-weight:600;text-decoration:underline;text-decoration-color:rgba(158,63,41,.35);text-underline-offset:3px}
+.lamy-shop:hover{border-color:var(--accent);background:#fff;color:var(--accent)}
+.lamy-shop small{font-weight:400;font-size:.76rem}
+.lamy-shop.out{background:var(--st-soldout-bg);border-color:var(--st-soldout-line);color:var(--st-soldout);font-weight:400}
+.lamy-shop.hit{border-color:var(--accent);box-shadow:0 0 0 2px rgba(193,85,59,.2)}
+.lamy-shop.maker{min-height:30px;padding:2px 10px;font-size:.85rem;background:#fff;border:1.5px solid var(--ink);color:var(--ink);text-decoration:none}
+.lamy-shop.maker:hover{background:var(--paper-2)}
+.lamy-src{margin:0 0 0 auto;font-size:.8rem;color:var(--ink-2)}
+.lamy-older{margin:18px 0 0;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.lamy-older>summary{cursor:pointer;list-style:none;padding:12px 16px;min-height:48px;display:flex;align-items:center;gap:10px;font:600 1.15rem var(--serif);border-radius:12px}
+.lamy-older>summary::-webkit-details-marker{display:none}
+.lamy-older>summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(-45deg);transition:transform .15s;margin-right:4px}
+.lamy-older[open]>summary::before{transform:rotate(45deg)}
+.lamy-older>summary:hover{background:var(--paper-2)}
+.lamy-older .sum-n{font:400 .88rem var(--sans);color:var(--ink-2)}
+.lamy-older>.lamy-list,.lamy-older>.lamy-nomatch{margin:0 14px 10px}
+@media (max-width:760px){
+  .lamy-stats{grid-template-columns:repeat(2,1fr)}
+  .lamy-filters{grid-template-columns:1fr 1fr}
+  .lamy-filters .f-q,.lamy-filters .lamy-chk{grid-column:1/-1}
+  .lamy-entry{grid-template-columns:1fr}
+  .lamy-when{flex-direction:row;align-items:baseline;gap:6px;padding:4px 12px;border-right:0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .lamy-body{padding:8px 12px 4px}
+  .lamy-desc{-webkit-line-clamp:2}
+  .lamy-shops{flex-basis:100%}
+  .lamy-shops>summary,.lamy-shop{min-height:44px}
+  .lamy-shop.maker{min-height:44px}
+  .lamy-shop.maker small{display:none}
+  .lamy-rowline{gap:0 8px;padding-bottom:6px}
+  .lamy-older>summary{flex-wrap:wrap;gap:2px 10px}
+  .lamy-older .sum-n{flex-basis:100%;padding-left:20px}
+}
 /* Terms: collapsed jump list, and a quiet callout for the warranty and liability sections.
    Anchor headings clear the sticky masthead: 8.5rem while it is two rows, 5.5rem from 900px
    down, where the masthead collapses to a single row. */

@@ -632,3 +632,71 @@
     });
   }
 })();
+
+// Lamy release calendar: search, line, shop and in-stock filters over every list. A shop or in-stock filter opens the
+// matching cards' shop lists and highlights the matching shop; any match in Older releases opens that fold.
+(function () {
+  const root = document.getElementById("lamy-cal");
+  if (!root) return;
+  const panel = document.getElementById("lamy-filters");
+  const q = document.getElementById("lamy-q"), line = document.getElementById("lamy-line");
+  const shop = document.getElementById("lamy-shop"), inst = document.getElementById("lamy-instock");
+  const older = document.getElementById("lamy-older"), count = document.getElementById("lamy-count");
+  const lists = ["lamy-up-list", "lamy-rel-list", "lamy-older-list"].map(id => document.getElementById(id)).filter(Boolean);
+  const all = [].slice.call(root.querySelectorAll(".lamy-entry"));
+  if (!panel || !q) return;
+  panel.hidden = false;
+  const P = new URLSearchParams(location.search);
+  if (P.get("q")) q.value = P.get("q");
+  if (P.get("shop") && shop.querySelector('option[value="' + CSS.escape(P.get("shop")) + '"]')) shop.value = P.get("shop");
+  if (inst && P.get("instock")) inst.checked = true;
+  let wasActive = false;
+  function matches(el, words, ln, sh, st) {
+    if (ln && el.dataset.line !== ln) return false;
+    const shops = (el.dataset.shops || "").split(" ").filter(Boolean);
+    const inStock = (el.dataset.instock || "").split(" ").filter(Boolean);
+    if (sh === "lamy-us") { if (!el.querySelector(".lamy-shop.maker")) return false; if (st && !inStock.length) return false; }
+    else if (sh && st) { if (inStock.indexOf(sh) < 0) return false; }
+    else if (sh) { if (shops.indexOf(sh) < 0) return false; }
+    else if (st && !inStock.length) return false;
+    const hay = el.dataset.q || "";
+    return words.every(w => hay.indexOf(w) >= 0);
+  }
+  function render() {
+    const words = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const ln = line.value, sh = shop.value, st = !!(inst && inst.checked);
+    const active = !!(words.length || ln || sh || st);
+    let shown = 0, olderHits = 0;
+    all.forEach(el => {
+      const ok = matches(el, words, ln, sh, st);
+      el.hidden = !ok;
+      if (ok) { shown++; if (older && older.contains(el)) olderHits++; }
+      const det = el.querySelector(".lamy-shops");
+      if (det && (sh || st)) det.open = ok;
+      else if (det && wasActive && !active) det.open = false;
+      el.querySelectorAll(".lamy-shoplist li").forEach(li => {
+        const a = li.querySelector(".lamy-shop");
+        const hit = ok && ((sh && li.dataset.store === sh) || (!sh && st && li.dataset.status === "in_stock")) && (!st || li.dataset.status === "in_stock");
+        if (a) a.classList.toggle("hit", !!hit);
+      });
+      const mk = el.querySelector(".lamy-shop.maker");
+      if (mk) mk.classList.toggle("hit", ok && sh === "lamy-us");
+    });
+    lists.forEach(list => {
+      const sec = list.parentElement;
+      const none = sec.querySelector(":scope > .lamy-nomatch");
+      const items = list.querySelectorAll(".lamy-entry");
+      const vis = [].filter.call(items, el => !el.hidden).length;
+      if (none) none.hidden = !(active && items.length && !vis);
+    });
+    if (older) {
+      if (active && olderHits) older.open = true;
+      else if (wasActive && !active) older.open = false;
+    }
+    wasActive = active;
+    count.textContent = active ? shown + " of " + all.length + " releases shown" : all.length + " releases";
+  }
+  [q, line, shop, inst].filter(Boolean).forEach(el => el.addEventListener("input", render));
+  [line, shop, inst].filter(Boolean).forEach(el => el.addEventListener("change", render));
+  render();
+})();
