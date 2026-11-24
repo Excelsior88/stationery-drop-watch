@@ -30,8 +30,9 @@ class WorkflowNode24Tests(unittest.TestCase):
             "actions/setup-python@v7",
             "actions/configure-pages@v6",
             "actions/upload-pages-artifact@v5",
-            "actions/deploy-pages@v5",
         ])
+        self.assertNotIn("deploy", self.check["jobs"])
+        self.assertNotIn("uses: actions/deploy-pages", (ROOT / ".github/workflows/check-and-deploy.yml").read_text())
         self.assertEqual(self._uses(self.cf), [
             "actions/checkout@v7",
             "actions/download-artifact@v8",

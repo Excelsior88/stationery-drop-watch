@@ -40,7 +40,8 @@ class TermsPageTests(unittest.TestCase):
         self.assertIn('<a href="/privacy/">Privacy</a><a href="/terms/">Terms</a>', foot)
         self.assertIn('Terms of Use</a>', foot.split("<footer")[0])
         home = site.build_index()
-        self.assertIn('Privacy</a> · <a href="/terms/">Terms</a></p>', home)
+        self.assertIn('By signing up, you agree to our <a href="/terms/">Terms</a> (personal use only, no reselling or bots) and <a href="/privacy/">Privacy notice</a>.</p>', home)
+        self.assertIn('href="/terms/#prohibited-uses"', home)
         self.assertIn("Can I use alerts for reselling?", home)
         self.assertIn(site.url_for("terms/"), site.build_sitemap())
 

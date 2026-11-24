@@ -8,7 +8,7 @@ import build_site as site
 EXPECTED = """# Stationery Drop Watch is for personal shopping only.
 # Using this site or its data for reselling, bulk buying,
 # or automated purchasing is not allowed.
-# See https://stationerydropwatch.com/terms/
+# See https://stationerydropwatch.com/terms/#prohibited-uses
 User-agent: *
 Allow: /
 

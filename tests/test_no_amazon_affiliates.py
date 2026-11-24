@@ -41,8 +41,9 @@ class NoAmazonAffiliateTests(unittest.TestCase):
             "btn-amz",
             "rel=\"sponsored",
         )
+        allowed = "we don't use affiliate links on stationery drop watch."
         for name, doc in self.pages:
-            low = doc.lower()
+            low = doc.lower().replace(allowed, "")
             for needle in banned:
                 self.assertNotIn(needle.lower(), low, f"{name} still has {needle!r}")
 
