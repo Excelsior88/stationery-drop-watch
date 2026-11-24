@@ -89,7 +89,9 @@ export async function onRequest(context) {
   if (ip) vf.set("remoteip", ip);
   let verdict;
   try { verdict = await (await fetch(SITEVERIFY, { method: "POST", body: vf })).json(); } catch (_) { return reply(request, 502, false, MSG.upstream); }
-  if (!verdict || !verdict.success) return reply(request, 400, false, MSG.check);
+  // siteverify success is not enough: the token must have been issued for this host.
+  // A token minted on any other hostname (including a pages.dev preview) is rejected the same way as a failed check.
+  if (!verdict || verdict.success !== true || verdict.hostname !== "stationerydropwatch.com") return reply(request, 400, false, MSG.check);
 
   try {
     const created = await kit(env, "/subscribers", { email_address: email, state: "inactive" });

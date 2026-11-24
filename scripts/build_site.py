@@ -539,9 +539,10 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     rest = "".join(nav_a(h, t) for h, t in NAV) + nav_a("shop/", "Shop")
     nav_inner = f'<span class="nav-trackers">{trk}</span><span class="nav-rest">{rest}</span>'
     # Desktop shows the bar. Narrow screens use a Menu disclosure, which opens without JavaScript.
+    # The wrapper is a div, not a nav: the bar and the menu are separate landmarks, never nested.
     nav = (f'<nav class="site-nav site-nav-bar" aria-label="Main">{nav_inner}</nav>'
            f'<details class="nav-menu"><summary>Menu</summary>'
-           f'<nav class="site-nav site-nav-panel" aria-label="Main">{nav_inner}</nav></details>')
+           f'<nav class="site-nav site-nav-panel" aria-label="Menu">{nav_inner}</nav></details>')
     foot_items = list(NAV_TRACKERS) + [
         ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("sold-out-everywhere/", "Sold out everywhere"), ("shop/", "Shop"),
         ("follow/", "Follow us"),
@@ -575,7 +576,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
 <a class="skip" href="#content">Skip to content</a>
 <header class="masthead"><div class="wrap">
   <a class="brand" href="index.html" aria-label="Stationery Drop Watch home"><picture><source media="(max-width:340px)" srcset="assets/brand/icon.svg"><img class="brand-logo" src="assets/brand/logo.svg" alt="Stationery Drop Watch" width="248" height="44"></picture></a>
-  <nav class="site-nav" aria-label="Main">{nav}</nav>
+  <div class="site-nav">{nav}</div>
 </div></header>
 <main id="content" class="wrap">{body}</main>
 <footer class="foot"><div class="wrap">
@@ -584,7 +585,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
   <nav class="foot-nav" aria-label="Footer">{foot_nav}</nav>
   <p class="muted">Statuses come straight from each store's public product data at the time shown. Always confirm on the store's page before you plan around it.</p>
   <p class="muted">{independent_note()}</p>
-  <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="50" loading="lazy"></a> <a href="/privacy/"><picture><source type="image/webp" srcset="/assets/badges/zero-cookies-badge_v1_300x126.webp 1x, /assets/badges/zero-cookies-badge_v1_600x252.webp 2x"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></picture></a> <picture><source type="image/webp" srcset="/assets/badges/made-in-hamtramck_v2_300x100.webp 300w, /assets/badges/made-in-hamtramck_v2_900x300.webp 900w" sizes="150px"><img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="50" loading="lazy"></picture></p>
+  <p class="foot-badge"><a href="https://www.saashub.com/stationery-drop-watch?utm_source=badge&utm_campaign=badge&utm_content=stationery-drop-watch&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener"><img class="badge-saashub" src="/assets/badges/saashub_v2_150x50.png" srcset="/assets/badges/saashub_v2_150x50.png 1x, /assets/badges/saashub_v2_300x100.png 2x" alt="Stationery Drop Watch on SaaSHub" width="150" height="63" loading="lazy"></a> <a href="/privacy/"><picture><source type="image/webp" srcset="/assets/badges/zero-cookies-badge_v1_300x126.webp 1x, /assets/badges/zero-cookies-badge_v1_600x252.webp 2x"><img class="badge-zero-cookies" src="/assets/badges/zero-cookies-badge_v1_300x126.png" srcset="/assets/badges/zero-cookies-badge_v1_300x126.png 1x, /assets/badges/zero-cookies-badge_v1_600x252.png 2x" alt="Zero cookies: this site sets no cookies" width="150" height="63" loading="lazy"></picture></a> <picture><source type="image/webp" srcset="/assets/badges/made-in-hamtramck_v2_300x100.webp 300w, /assets/badges/made-in-hamtramck_v2_900x300.webp 900w" sizes="150px"><img class="badge-hamtramck" src="/assets/badges/made-in-hamtramck_v2_300x100.png" srcset="/assets/badges/made-in-hamtramck_v2_300x100.png 300w, /assets/badges/made-in-hamtramck_v2_900x300.png 900w" sizes="150px" alt="Made in Hamtramck, MI" width="150" height="63" loading="lazy"></picture></p>
 </div></footer>
 <script src="assets/local-time.js?v={ASSET_V['local-time.js']}" defer></script>
 <script src="assets/app.js?v={ASSET_V['app.js']}" defer></script>
@@ -665,7 +666,7 @@ def signup(kind="alerts", label=None, note=None, placement="top", kicker=TAGLINE
     <input id="{eid}" type="email" name="email_address" placeholder="you@example.com" required autocomplete="email">
     <fieldset class="strip-trackers"><legend>Email me about</legend>{boxes}</fieldset>
     <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <div class="cf-turnstile" data-sitekey="{TURNSTILE_SITEKEY}" data-appearance="interaction-only" data-theme="light"></div>
+    <div class="cf-turnstile" data-sitekey="{TURNSTILE_SITEKEY}" data-appearance="interaction-only" data-theme="light" data-size="flexible"></div>
     <button type="submit">Notify me</button>
     <p class="signup-status" role="status" aria-live="polite" hidden></p>
   </form>

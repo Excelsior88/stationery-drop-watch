@@ -7,11 +7,17 @@ const fn = await import(pathToFileURL(path.resolve(import.meta.dirname, "../site
 let calls = [];
 let state = "inactive";
 let turnstileOk = true;
+// null omits hostname (a siteverify body with no hostname field). Any other string is sent as verdict.hostname.
+let turnstileHostname = "stationerydropwatch.com";
 globalThis.fetch = async (url, init) => {
   url = String(url);
   calls.push({ url, init });
   const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json" } });
-  if (url.includes("siteverify")) return json({ success: turnstileOk });
+  if (url.includes("siteverify")) {
+    const verdict = { success: turnstileOk };
+    if (turnstileHostname !== null) verdict.hostname = turnstileHostname;
+    return json(verdict);
+  }
   if (url.endsWith("/v4/subscribers")) return json({ subscriber: { id: 7, state, email_address: "a@b.co" } }, 201);
   if (url.includes("/v4/forms/10225471/subscribers/7")) return json({ subscriber: { id: 7 } }, 201);
   if (/\/v4\/tags\/\d+\/subscribers\/7/.test(url)) return json({ subscriber: { id: 7 } }, 201);
@@ -24,7 +30,7 @@ const post = (fields, headers = {}) => {
   return fn.onRequest({ env, request: new Request("https://stationerydropwatch.com/api/subscribe", { method: "POST", body: f, headers: { accept: "application/json", ...headers } }) });
 };
 const base = [["email_address", "A@B.co"], ["tags[]", "26280763"], ["tags[]", "26280765"], ["cf-turnstile-response", "tok"]];
-const reset = () => { calls = []; state = "inactive"; turnstileOk = true; };
+const reset = () => { calls = []; state = "inactive"; turnstileOk = true; turnstileHostname = "stationerydropwatch.com"; };
 
 // happy path: siteverify, create inactive, add to form, tag twice
 reset();
@@ -50,6 +56,16 @@ reset(); r = await post([["email_address", "a@b.co"], ["tags[]", "26280763"]]); 
 reset(); turnstileOk = false; r = await post(base); assert.equal(r.status, 400); assert.equal(calls.length, 1);
 reset(); r = await post([...base, ["website", "http://spam"]]); assert.equal(r.status, 200); assert.equal(calls.length, 0);
 
+// Turnstile hostname: stationerydropwatch.com succeeds; missing or any other host is the same rejection as a failed check, and Kit is not called.
+reset(); turnstileHostname = "stationerydropwatch.com"; r = await post(base); j = await r.json();
+assert.equal(r.status, 200); assert.equal(j.ok, true); assert.ok(calls.some(c => c.url.includes("/v4/subscribers")));
+reset(); turnstileHostname = null; r = await post(base); j = await r.json();
+assert.equal(r.status, 400); assert.equal(j.ok, false); assert.match(j.message, /anti-spam check/); assert.equal(calls.length, 1);
+reset(); turnstileHostname = ""; r = await post(base); j = await r.json();
+assert.equal(r.status, 400); assert.equal(j.ok, false); assert.match(j.message, /anti-spam check/); assert.equal(calls.length, 1);
+reset(); turnstileHostname = "www.stationerydropwatch.com"; r = await post(base); assert.equal(r.status, 400); assert.equal(calls.length, 1);
+reset(); turnstileHostname = "stationery-drop-watch.pages.dev"; r = await post(base); assert.equal(r.status, 400); assert.equal(calls.length, 1);
+
 // already active: no form add, no tag changes
 reset(); state = "active"; r = await post(base); assert.equal(r.status, 200); assert.equal(calls.length, 2);
 
@@ -67,7 +83,7 @@ assert.equal(r.status, 400); assert.match(await r.text(), /Stationery Drop Watch
 
 // Kit failure -> friendly 502, no secrets leaked
 reset(); const real = globalThis.fetch;
-globalThis.fetch = async (u) => String(u).includes("siteverify") ? new Response(JSON.stringify({ success: true })) : new Response("{}", { status: 500 });
+globalThis.fetch = async (u) => String(u).includes("siteverify") ? new Response(JSON.stringify({ success: true, hostname: "stationerydropwatch.com" })) : new Response("{}", { status: 500 });
 r = await post(base); j = await r.json(); assert.equal(r.status, 502); assert.equal(j.ok, false); assert.ok(!JSON.stringify(j).includes("X-Kit"));
 globalThis.fetch = real;
 
