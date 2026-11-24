@@ -904,8 +904,17 @@ def shop_tally(ls):
         return "Link only, we don't check stock"
     shops = len({r["sid"] for r in chk})
     in_shops = len({r["sid"] for r in chk if r["st"] == "in_stock"})
-    word = "shop" if shops == 1 else "shops"
-    return f"{in_stock_tally([r['st'] for r in chk])} · {in_shops} of {shops} {word} in stock{link_bit}"
+    if shops == 1:  # one checked shop: name it instead of "N of 1 shop in stock"
+        shop = chk[0]["s"]
+        if in_shops:
+            phrase = f"In stock at {shop}"
+        elif all(r["st"] == "unknown" for r in chk):
+            phrase = f"Couldn't check {shop} this run"
+        else:
+            phrase = f"Not in stock at {shop}"
+        lead = f"{phrase} · {in_stock_tally([r['st'] for r in chk])}" if len(chk) > 1 else phrase
+        return f"{lead}{link_bit}"
+    return f"{in_stock_tally([r['st'] for r in chk])} · {in_shops} of {shops} shops in stock{link_bit}"
 
 def official_note(l):
     """Optional note from Hobonichi's own feed (checker.hobonichi_note), only on sold-out official rows.
@@ -2665,6 +2674,12 @@ def build_design(d, oe=None):
                    if shops == 1 else f" We couldn't check {names(unk)} this run, so we don't know their status.")
     a2 = (f"We track it at {shops} {'shop' if shops == 1 else 'shops'}: {names(ls)}. Each name in the table above opens that shop's own listing."
           if ls else "No shop we check lists it right now.")
+    lo = sorted({l["store"] for l in lsl})
+    if lo and ls:  # link-only rows are in the table and Store filter above, so the answer names them too
+        one = len(lo) == 1
+        who = lo[0] if one else ", ".join(lo[:-1]) + " and " + lo[-1]
+        a2 += (f" We also link to {who} (link only, so check stock on the shop's page)." if one else
+               f" We also link to {who} (links only, so check stock on each shop's page).")
     vers = sorted({(l.get("title") or l["label"]) for l in ls})
     a_v = (f"We track {len(ls)} {'listing' if len(ls) == 1 else 'listings'}. In {"the shop's" if shops == 1 else "each shop's"} own words: " + "; ".join(vers) + "." if ls else "None right now.")
     qa = [(f'Is {d["full"]} in stock?', a1),
