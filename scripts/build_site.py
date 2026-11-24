@@ -110,6 +110,47 @@ INK_SLUG = "limited-edition-fountain-pen-ink"
 INK_NAV = "Limited inks"
 INK_LIVE = bool(INK_ROWS)
 
+# Lamy special and limited edition release calendar (lamy.json, owner-approved design Nov 23, 2026). A resource page, not a
+# restock tracker: it is not in NAV_TRACKERS or the tracker count, and no script requests any shop for it. Pens, dates,
+# sources and shop URLs are entered by hand from pages someone opened. A stock status shows only when the existing checker
+# already reports that exact URL (data/stock.json or the ink rows); otherwise the shop is a plain link with no status.
+# Only shops listed in lamy.json "shops" (each with authorization evidence) may be linked. No Amazon or affiliate links.
+LAMY_CFG = json.loads((ROOT / "lamy.json").read_text()) if (ROOT / "lamy.json").exists() else {"pens": [], "shops": {}}
+LAMY_SLUG = "lamy-special-edition-release-calendar"
+LAMY_NAV = "Lamy releases"
+LAMY_LIVE = bool(LAMY_CFG.get("pens"))
+LAMY_LATEST_MAX = int(LAMY_CFG.get("latest_max", 20))
+LAMY_OLDER_MAX = int(LAMY_CFG.get("older_max", 50))
+_LAMY_BANNED_HOSTS = re.compile(r"amazon\.|amzn\.|a\.co/|[?&]tag=|[?&](aff|affiliate|ref)=|skimlinks|awin|shareasale|rakuten", re.I)
+
+def lamy_validate(cfg):
+    """Refuse to build a calendar that links a shop without authorization evidence, an unknown or link-only-by-rule shop,
+    an Amazon or affiliate URL, or a Designphil brand."""
+    known = {s["id"]: s for s in stores["stores"]}
+    for sid, info in cfg.get("shops", {}).items():
+        if sid not in known:
+            raise SystemExit(f"lamy.json: shop {sid!r} is not in stores.json")
+        if info.get("evidence") not in ("own_site", "owner_list"):
+            raise SystemExit(f"lamy.json: shop {sid!r} has no authorization evidence")
+    blob = json.dumps(cfg).lower()
+    for word in ("midori", "traveler", "designphil"):
+        if word in blob:
+            raise SystemExit(f"lamy.json: contains {word!r}")
+    for p in cfg.get("pens", []):
+        urls = [l["url"] for l in p.get("listings", [])] + [s[1] for s in p.get("sources", [])] + ([p["lamy_us_url"]] if p.get("lamy_us_url") else [])
+        for u in urls:
+            if _LAMY_BANNED_HOSTS.search(u):
+                raise SystemExit(f"lamy.json: {p['id']}: Amazon or affiliate URL {u}")
+        for l in p.get("listings", []):
+            if l["store_id"] not in cfg.get("shops", {}):
+                raise SystemExit(f"lamy.json: {p['id']}: {l['store_id']} is not an authorized Lamy shop in lamy.json")
+        if p.get("lamy_us_url") and not p["lamy_us_url"].startswith("https://www.lamy.com/en-us/"):
+            raise SystemExit(f"lamy.json: {p['id']}: Lamy US link must be on www.lamy.com/en-us/")
+        for k in ("official_date", "first_listed"):
+            if p.get(k):
+                dt.date.fromisoformat(p[k])
+lamy_validate(LAMY_CFG)
+
 # Canonical products from other brands (e.g. Archer and Olive).
 OTHER_BRAND = {c["id"] for c in stores["canonical"] if c.get("brand")}
 CANON_SECTION = {c["id"]: c["section"] for c in stores["canonical"] if c.get("section")}
@@ -535,6 +576,8 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
             attrs += " aria-current=page"
         return f'<a href="{h}"{attrs}>{E(t)}</a>'
     trk = "".join(nav_a(h, t) for h, t in NAV_TRACKERS)
+    if LAMY_LIVE:  # the Lamy release calendar sits beside the trackers but is not one (not in NAV_TRACKERS or the count)
+        trk += nav_a(LAMY_SLUG + "/", LAMY_NAV)
     # Trackers lead. Shop is a separate link at the end of the rest of the nav, not a fifth tracker.
     rest = "".join(nav_a(h, t) for h, t in NAV) + nav_a("shop/", "Shop")
     nav_inner = f'<span class="nav-trackers">{trk}</span><span class="nav-rest">{rest}</span>'
@@ -543,7 +586,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     nav = (f'<nav class="site-nav site-nav-bar" aria-label="Main">{nav_inner}</nav>'
            f'<details class="nav-menu"><summary>Menu</summary>'
            f'<nav class="site-nav site-nav-panel" aria-label="Menu">{nav_inner}</nav></details>')
-    foot_items = list(NAV_TRACKERS) + [
+    foot_items = list(NAV_TRACKERS) + ([(LAMY_SLUG + "/", LAMY_NAV)] if LAMY_LIVE else []) + [
         ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("sold-out-everywhere/", "Sold out everywhere"), ("shop/", "Shop"),
         ("follow/", "Follow us"),
         ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy"), ("terms/", "Terms"), ("transparency/", "Transparency"), ("for-shops/", "For shops and brands")]
@@ -1450,7 +1493,7 @@ def build_index():
   {signup(kicker=None)}
   {find_bar()}
   {trust_strip(prods + (INK_ROWS if INK_LIVE else []))}
-  <p class="small section-switch">More on the site: <a href="hobonichi-2027/">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a class="nobr" href="sold-out-everywhere/">Sold out everywhere</a>.</p>
+  <p class="small section-switch">More on the site: <a href="hobonichi-2027/">2027 calendar</a> · {f'<a href="{LAMY_SLUG}/">Lamy release calendar</a> · ' if LAMY_LIVE else ""}<a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a class="nobr" href="sold-out-everywhere/">Sold out everywhere</a>.</p>
 </section>
 
 <section class="hub-trackers" id="trackers" aria-labelledby="trackers-h">
@@ -2845,6 +2888,8 @@ def faq_block(only=None, sid="faq"):
     # The Sailor x Pentel advent box (ink tracker) includes "limited edition writing instruments" (Yoseka's listing).
     pens_txt = ("We don't track pens on their own, though the Sailor x Pentel advent box on the ink tracker includes writing instruments."
                 if INK_LIVE and any(r.get("ink_id") == "sailor-advent-2026" for r in INK_ROWS) else "We don't track pens.")
+    if LAMY_LIVE:
+        pens_txt += " Our Lamy release calendar lists Lamy's special and limited edition pens and the authorized shops that sell them, without stock checks."
     answers = []
     for q, a in FAQ:
         a = a.replace("@@COVERS@@", covers_txt).replace("@@PENS@@", pens_txt)
@@ -2889,6 +2934,8 @@ def build_sitemap():
     urls += [(url_for(design_fname(d)), design_lastmod(d)) for d in DESIGNS]
     if INK_LIVE:
         urls.append((url_for(INK_SLUG + "/"), ink_lastmod()))
+    if LAMY_LIVE:
+        urls.append((url_for(LAMY_SLUG + "/"), lamy_lastmod()))
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG,)]  # the indexed takedown notices
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
@@ -2938,7 +2985,7 @@ def build_404():
 {eyebrow("404", "page not found")}
 <h1>This page sold out. Or it never existed.</h1>
 <p class="lede">The link may be old or mistyped. Every tracker is still here and checked {CHECK_FREQ}.</p>
-<p><a class="btn" href="{HOBO_TRACKER}">Go to the Hobonichi tracker</a> {" ".join([f'<a class="btn-ghost" href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE] + ([f'<a class="btn-ghost" href="{INK_SLUG}/">{E(INK_NAV)}</a>'] if INK_LIVE else []))}</p>
+<p><a class="btn" href="{HOBO_TRACKER}">Go to the Hobonichi tracker</a> {" ".join([f'<a class="btn-ghost" href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a>' for k in LIVE] + ([f'<a class="btn-ghost" href="{INK_SLUG}/">{E(INK_NAV)}</a>'] if INK_LIVE else []) + ([f'<a class="btn-ghost" href="{LAMY_SLUG}/">{E(LAMY_NAV)}</a>'] if LAMY_LIVE else []))}</p>
 <section class="card"><h2>Restock pages</h2>
   <p class="eyebrow">Hobonichi Techo 2027</p><ul class="link-list"><li><a href="{HOBO_TRACKER}">Hobonichi tracker</a></li>{hobo}</ul>
 {"".join(f'  <p class="eyebrow">{E(SECTIONS[k]["foot"])}</p><ul class="link-list"><li><a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["nav"])}</a> <span class="muted small">· {E(shop_names(k))}</span></li></ul>' + chr(10) for k in LIVE)}{f'  <p class="eyebrow">Limited-edition fountain pen ink</p><ul class="link-list"><li><a href="{INK_SLUG}/">{E(INK_NAV)}</a> <span class="muted small">· {E(ink_shop_names())}</span></li></ul>' + chr(10) if INK_LIVE else ""}
@@ -4973,6 +5020,178 @@ def build_inks():
     return fname, page(fname, "Limited-edition fountain pen ink tracker", desc, body,
                        ld=(crumbs_ld((fname, INK_NAV)), items, faq_ld))
 
+# --- Lamy special and limited edition release calendar ------------------------------------------------
+def lamy_split(pens, today, latest_max=None, older_max=None):
+    """(upcoming, latest, older). A pen is released on its official date, or, when Lamy gave none, on the day the first
+    of our shops listed it. Everything else is upcoming (dated first, then TBA). Latest holds the newest latest_max;
+    Older holds up to older_max more; anything past that is dropped from the page."""
+    latest_max = LAMY_LATEST_MAX if latest_max is None else latest_max
+    older_max = LAMY_OLDER_MAX if older_max is None else older_max
+    def rel(p):
+        if p.get("official_date"):
+            return p["official_date"] if dt.date.fromisoformat(p["official_date"]) <= today else None
+        if p.get("first_listed") and dt.date.fromisoformat(p["first_listed"]) <= today:
+            return p["first_listed"]
+        return None
+    released = [p for p in pens if rel(p)]
+    upcoming = [p for p in pens if not rel(p)]
+    released.sort(key=lambda p: (rel(p), p["name"].lower()), reverse=True)
+    upcoming.sort(key=lambda p: (p.get("official_date") is None, p.get("official_date") or "", p["name"].lower()))
+    return upcoming, released[:latest_max], released[latest_max:latest_max + older_max]
+
+def lamy_today():
+    return dt.datetime.now(ET).date()
+
+def lamy_status_index():
+    """URL -> status, only from rows the existing checkers already publish. Link-only shops never get a status."""
+    idx = {}
+    for r in stock["products"] + INK_ROWS:
+        if r.get("store_id") in LINK_ONLY or r.get("status") not in STATUS:
+            continue
+        idx[r["url"]] = r["status"]
+    return idx
+
+def lamy_shop_name(sid):
+    return next((s["name"] for s in stores["stores"] if s["id"] == sid), sid)
+
+def lamy_date_block(p, upcoming):
+    if upcoming:
+        if p.get("official_date"):
+            d = dt.date.fromisoformat(p["official_date"])
+            return (f'<div class="lamy-when"><span class="lbl">Release date</span><span class="d">{d.strftime("%b")} {d.day}</span>'
+                    f'<span class="y">{d.year}</span></div>')
+        return '<div class="lamy-when tba"><span class="lbl">Release date</span><span class="d">TBA</span><span class="y">not announced</span></div>'
+    if p.get("official_date"):
+        d, lbl, tip = dt.date.fromisoformat(p["official_date"]), "Released", "Lamy's release date"
+    else:
+        d, lbl, tip = dt.date.fromisoformat(p["first_listed"]), "First listed", f"First day one of these shops listed it ({lamy_shop_name(p['first_listed_store'])}). Not an official Lamy date."
+    return (f'<div class="lamy-when" title="{E(tip)}"><span class="lbl">{lbl}</span><span class="d">{d.strftime("%b")} {d.day}</span>'
+            f'<span class="y">{d.year}</span></div>')
+
+def lamy_card(p, statuses, upcoming=False):
+    ls = sorted(p.get("listings", []), key=lambda l: lamy_shop_name(l["store_id"]).lower())
+    known = [(l, statuses.get(l["url"])) for l in ls]
+    n_in = sum(st == "in_stock" for _, st in known)
+    any_known = any(st for _, st in known)
+    tags = f'<span class="lamy-tag">{E(p["line"])}</span><span class="lamy-tag{" lim" if "imited" in p["kind"] else ""}">{E(p["kind"])}</span>'
+    if p.get("qty"):
+        tags += f'<span class="lamy-tag lim">{E(p["qty"])}</span>'
+    items = []
+    for l, st in known:
+        sid = l["store_id"]
+        badge = f' <small>{E(STATUS[st].lower())}</small>' if st else ""
+        out = " out" if st == "sold_out" else ""
+        items.append(f'<li data-store="{E(sid)}" data-status="{E(st or "")}"><a class="lamy-shop{out}" href="{E(l["url"])}" rel="noopener" target="_blank">'
+                     f'{E(lamy_shop_name(sid))}{badge}</a>{region_tag(sid)}</li>')
+    summary = f'<span class="sl-t">Sold at {nshops(len(ls))}</span>' + (f'<span class="sl-s"> · {n_in} in stock</span>' if any_known else "")
+    shops_html = (f'<details class="lamy-shops"><summary>{summary}</summary>'
+                  f'<ul class="lamy-shoplist" aria-label="Shops selling {E(p["name"])}">{"".join(items)}</ul></details>') if ls else '<span class="sl-s muted small">No shop has listed it yet</span>'
+    us = (f'<a class="lamy-shop maker" href="{E(p["lamy_us_url"])}" rel="noopener" target="_blank">Lamy US store <small>maker, link only</small></a>'
+          if p.get("lamy_us_url") else "")
+    src = ('<span class="lamy-src">Source: ' + ", ".join(f'<a href="{E(u)}" rel="noopener" target="_blank">{E(t)}</a>' for t, u in p.get("sources", [])) + "</span>")
+    hay = " ".join([p["name"], p["line"], p["kind"], p.get("qty", ""), p.get("desc", "")] + [lamy_shop_name(l["store_id"]) for l in ls]
+                   + (["Lamy US store"] if p.get("lamy_us_url") else [])).lower()
+    instock_ids = " ".join(l["store_id"] for l, st in known if st == "in_stock")
+    return f"""<article class="lamy-entry" id="pen-{E(p['id'])}" data-line="{E(p['line'])}" data-shops="{E(' '.join(l['store_id'] for l in ls))}" data-instock="{E(instock_ids)}" data-q="{E(hay)}">
+  {lamy_date_block(p, upcoming)}<div class="lamy-body"><div class="lamy-titlerow"><h3>{E(p['name'])}</h3><span class="lamy-tags">{tags}</span></div>
+  <p class="lamy-desc">{E(p.get('desc', ''))}</p>
+  <div class="lamy-rowline">{shops_html}{us}{src}</div></div>
+</article>"""
+
+LAMY_INTRO = ("Lamy's special and limited edition pens, newest first, with the date each one came out and the authorized shops "
+              "that sell it. Open a shop to go straight to that pen on the shop's own site.")
+
+def lamy_lastmod():
+    return latest(LAMY_CFG.get("verified"), *[p.get("first_listed") for p in LAMY_CFG["pens"]], *[p.get("official_date") for p in LAMY_CFG["pens"]])
+
+def build_lamy(today=None):
+    fname = LAMY_SLUG + "/"
+    today = today or lamy_today()
+    pens = LAMY_CFG["pens"]
+    upcoming, newest, older = lamy_split(pens, today)
+    statuses = lamy_status_index()
+    shown = upcoming + newest + older
+    any_status = any(statuses.get(l["url"]) for p in shown for l in p.get("listings", []))
+    lines = sorted({p["line"] for p in shown}, key=str.lower)
+    shop_ids = sorted({l["store_id"] for p in shown for l in p.get("listings", [])}, key=lambda s: lamy_shop_name(s).lower())
+    shop_opts = "".join(f'<option value="{E(s)}">{E(lamy_shop_name(s))}</option>' for s in shop_ids)
+    if any(p.get("lamy_us_url") for p in shown):
+        shop_opts += '<option value="lamy-us">Lamy US store</option>'
+    line_opts = "".join(f'<option value="{E(l)}">{E(l)}</option>' for l in lines)
+    instock = ('<label class="lamy-chk"><input type="checkbox" id="lamy-instock"> In stock only</label>' if any_status else "")
+    reviewed = dt.date.fromisoformat(LAMY_CFG.get("verified") or today.isoformat())
+    reviewed_txt = f'{reviewed.strftime("%b")} {reviewed.day}, {reviewed.year}'
+    up_html = ("".join(lamy_card(p, statuses, upcoming=True) for p in upcoming) if upcoming else
+               f'<div class="empty lamy-empty-up"><p><strong>No upcoming Lamy special or limited editions are confirmed right now.</strong></p>'
+               f'<p>A pen shows up here only once Lamy or one of these shops has published it. If there is no date yet, it says TBA. Last reviewed {reviewed_txt}.</p></div>')
+    rel_html = "".join(lamy_card(p, statuses) for p in newest) or '<div class="empty"><p>No releases yet.</p></div>'
+    older_n = (f"{len(older)} older, up to {LAMY_OLDER_MAX}" if older else f"None yet. When release {LAMY_LATEST_MAX + 1} arrives, the oldest moves here.")
+    older_html = "".join(lamy_card(p, statuses) for p in older) or '<div class="empty"><p>Nothing here yet.</p></div>'
+    year = today.year
+    n_year = sum(1 for p in newest + older if (p.get("official_date") or p["first_listed"]).startswith(str(year)))
+    n_lim = sum(1 for p in shown if p.get("qty"))
+    shops = LAMY_CFG["shops"]
+    linked = names_and([lamy_shop_name(s) for s in sorted(shops, key=lambda s: lamy_shop_name(s).lower())])
+    stock_note = ("Stock shows only where our regular checker already covers that exact listing."
+                  if any_status else "We don't check stock for this calendar, so there's no in-stock label here. Confirm on the shop's page before you plan around it.")
+    body = f"""
+<div class="product-page" id="lamy-cal">
+{crumbs((fname, LAMY_NAV))}
+<section class="hero">
+  {eyebrow("Lamy special and limited editions", "release calendar", f"last reviewed {reviewed_txt}")}
+  <h1>Lamy special and limited edition release calendar</h1>
+  <p class="lede">{E(LAMY_INTRO)}</p>
+  <div class="lamy-stats">
+    <div class="s-up"><b>{len(upcoming)}</b><span>upcoming, confirmed</span></div>
+    <div class="s-rel"><b>{n_year}</b><span>released in {year}</span></div>
+    <div class="s-shop"><b>{len(shop_ids)}</b><span>authorized shops linked</span></div>
+    <div><b>{n_lim}</b><span>limited-quantity editions</span></div>
+  </div>
+  {also_tracked(fname)}
+</section>
+
+<section class="card lamy-panel lamy-filter-panel" id="lamy-filters" aria-label="Search and filter" hidden>
+  <form class="lamy-filters" role="search" onsubmit="return false">
+    <label class="f-q">Search pens<input id="lamy-q" type="search" placeholder="Try pine, safari, bog oak or Goulet" autocomplete="off" spellcheck="false"></label>
+    <label>Line<select id="lamy-line"><option value="">All lines</option>{line_opts}</select></label>
+    <label>Shop<select id="lamy-shop"><option value="">All shops</option>{shop_opts}</select></label>
+    {instock}
+  </form>
+  <p class="lamy-count muted small" id="lamy-count" role="status" aria-live="polite"></p>
+</section>
+
+<section class="card lamy-panel" id="upcoming" aria-labelledby="lamy-up-h">
+  <div class="lamy-sec-h"><h2 id="lamy-up-h">Upcoming releases</h2><span class="small muted">Confirmed by Lamy or a shop page</span></div>
+  <div class="lamy-list" id="lamy-up-list">{up_html}</div>
+  <div class="empty lamy-nomatch" hidden><p>No upcoming releases match.</p></div>
+</section>
+
+<section class="card lamy-panel" id="released" aria-labelledby="lamy-rel-h">
+  <div class="lamy-sec-h"><h2 id="lamy-rel-h">Latest releases</h2><span class="small muted">The {LAMY_LATEST_MAX} newest, newest first</span></div>
+  <div class="lamy-list" id="lamy-rel-list">{rel_html}</div>
+  <div class="empty lamy-nomatch" hidden><p>No latest releases match. Try fewer words or clear a filter.</p></div>
+  <details class="lamy-older" id="lamy-older"><summary><span class="sum-t">Older releases</span> <span class="sum-n" id="lamy-older-n">{E(older_n)}</span></summary>
+    <div class="lamy-list" id="lamy-older-list">{older_html}</div>
+    <div class="empty lamy-nomatch" hidden><p>No older releases match.</p></div>
+  </details>
+</section>
+
+<section class="card"><h2>How this calendar works</h2>
+  <p>We link only to shops that are authorized Lamy retailers: {E(linked)}. Lamy's own US store is linked on the pens it sells; it's the maker's store and we never check it. Other shops may sell these pens too.</p>
+  <p>"First listed" is the first day one of these shops put the pen up for sale. It is not an official Lamy date. When Lamy publishes a release date, we show that date instead. Upcoming pens move into Latest releases on their release date, or on the day the first shop lists them.</p>
+  <p>{E(stock_note)} Each pen links to where its details come from.</p>
+  {region_legend(shop_ids)}
+</section>
+</div>"""
+    items = {"@context": "https://schema.org", "@type": "ItemList", "name": "Lamy special and limited edition releases",
+             "numberOfItems": len(shown), "itemListElement": [
+                 {"@type": "ListItem", "position": i + 1, "name": p["name"], "url": url_for(fname) + "#pen-" + p["id"]}
+                 for i, p in enumerate(shown)]}
+    desc = ("Lamy special and limited edition pens: new safari, AL-star, studio, scala and LAMY 2000 editions, "
+            "when each came out, and authorized shops that sell them.")
+    return fname, page(fname, "Lamy special and limited edition release calendar", desc, body,
+                       ld=(crumbs_ld((fname, LAMY_NAV)), items))
+
 # --- Traveler's Company and MIDORI takedown notice ----------------------------------------------------
 # Owner-approved wording (Nov 19, 2026, with two lines added Nov 20, 2026).
 # Do not edit a word of the earlier paragraphs. The Nov 20 lines are the owner's exact words.
@@ -5289,6 +5508,10 @@ def main():
     if INK_LIVE:
         fname, doc = build_inks()
         check_none_claim(fname, doc)
+        (SITE / fname).mkdir(parents=True, exist_ok=True)
+        (SITE / fname / "index.html").write_text(doc)
+    if LAMY_LIVE:
+        fname, doc = build_lamy()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
     for build in (build_where_to_buy, build_vs, build_january_april, build_dotgrid_guide, build_gift_guide, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):

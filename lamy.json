@@ -1,0 +1,575 @@
+{
+ "about": "Lamy special and limited edition release calendar (/lamy-special-edition-release-calendar/). Built by scripts/build_site.py. Nothing here is fetched automatically: pens, dates, sources and shop URLs are entered by hand after opening each page. Stock status shows only when the existing checker already reports that exact URL in data/stock.json; otherwise no status. Only shops in 'shops' may be linked; each needs authorization evidence. No Amazon or affiliate links.",
+ "verified": "2026-11-24",
+ "latest_max": 20,
+ "older_max": 50,
+ "lamy_us_store": {
+  "name": "Lamy US store",
+  "url": "https://www.lamy.com/en-us/",
+  "note": "Lamy's own store. Link only: we never request it."
+ },
+ "shops": {
+  "goulet": {
+   "evidence": "own_site",
+   "url": "https://www.gouletpens.com/blogs/fountain-pen-blog/hall-of-fame-2-lamy-2000",
+   "quote": "Since becoming an authorized LAMY retailer in 2011"
+  },
+  "goldspot": {
+   "evidence": "own_site",
+   "url": "https://goldspot.com/pages/about-us",
+   "quote": "Goldspot Pens is a fully-Authorized Retailer (general statement; Lamy is one of its brands)"
+  },
+  "yoseka": {
+   "evidence": "owner_list",
+   "url": "https://yosekastationery.com/pages/brand-warranties",
+   "quote": "as an authorized retailers for many brands we represent (general; LAMY warranty steps listed on the same page)"
+  },
+  "penboutique": {
+   "evidence": "owner_list"
+  },
+  "dromgooles": {
+   "evidence": "owner_list"
+  },
+  "cultpens": {
+   "evidence": "owner_list"
+  }
+ },
+ "pens": [
+  {
+   "id": "bog-oak",
+   "name": "LAMY 2000 bog oak Set",
+   "line": "LAMY 2000",
+   "kind": "Limited anniversary edition",
+   "qty": "Limited to 1,966 numbered pieces",
+   "desc": "Brushed stainless steel with a stabilized bog oak center, 14 ct gold nib and piston filler, sold as a set with a notebook. Marks 60 years of the LAMY 2000.",
+   "official_date": null,
+   "first_listed": "2026-11-03",
+   "first_listed_store": "goldspot",
+   "lamy_us_url": "https://www.lamy.com/en-us/p/lamy-2000-bog-oak-set-limited-anniversary-edition",
+   "sources": [
+    [
+     "Lamy US store page",
+     "https://www.lamy.com/en-us/p/lamy-2000-bog-oak-set-limited-anniversary-edition"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-2000-fountain-pen-set-in-bog-oak-14k-gold",
+     "listed": "2026-11-03"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-2000-fountain-pen-bog-oak-60th-anniversary-limited-edition-gift-set",
+     "listed": "2026-11-03"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/lamy-2000-fountain-pen-bog-oak-medium",
+     "listed": "2026-11-03"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-2000-fountain-pen-gift-set-bog-oak-limited-edition",
+     "listed": "2026-11-03"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-2000-fountain-pen-bog-oak-limited-anniversary-edition-set",
+     "listed": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "id": "scala-pearl",
+   "name": "LAMY scala pearl",
+   "line": "LAMY scala",
+   "kind": "Limited special edition",
+   "qty": "Set limited to 1,500 pieces",
+   "desc": "Stainless steel with a pearl lacquer finish and a Z 55 gold nib. The set adds a converter, a bottle of T 53 ruby ink and cartridges.",
+   "official_date": null,
+   "first_listed": "2026-10-13",
+   "first_listed_store": "goldspot",
+   "lamy_us_url": "https://www.lamy.com/en-us/p/lamy-scala-pearl-limited-special-edition",
+   "sources": [
+    [
+     "Lamy US store page",
+     "https://www.lamy.com/en-us/p/lamy-scala-pearl-limited-special-edition"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-scala-fountain-pen-in-pearl-limited-edition-fine",
+     "listed": "2026-10-13"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-scala-pearl-fountain-pen-limited-edition",
+     "listed": "2026-10-13"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/lamy-scala-fountain-pen-pearl-fine",
+     "listed": "2026-10-13"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-scala-fountain-pen-pearl-limited-edition",
+     "listed": "2026-10-15"
+    }
+   ]
+  },
+  {
+   "id": "studio-petrol",
+   "name": "LAMY studio petrol",
+   "line": "LAMY studio",
+   "kind": "Special edition",
+   "qty": "",
+   "desc": "Matte deep petrol finish with the studio's propeller-shaped clip. Fountain pen, ballpoint and rollerball.",
+   "official_date": null,
+   "first_listed": "2026-09-07",
+   "first_listed_store": "goldspot",
+   "lamy_us_url": null,
+   "sources": [
+    [
+     "Lamy post on LinkedIn",
+     "https://www.linkedin.com/posts/c-josef-lamy-gmbh_tiefes-petrol-klare-form-die-neue-special-activity-7503432716529516545-3Rfr"
+    ],
+    [
+     "Lamy new arrivals",
+     "https://www.lamy.com/en-gb/new-arrivals"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-studio-fountain-pen-in-petrol-special-edition",
+     "listed": "2026-09-07"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-studio-fountain-pen-petrol-special-edition",
+     "listed": "2026-09-08"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/lamy-studio-fountain-pen-petrol",
+     "listed": "2026-09-08"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-studio-fountain-pen-petrol-special-edition",
+     "listed": "2026-09-08"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/lamy-studio-fountain-pen-petrol",
+     "listed": "2026-09-08"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-studio-fountain-pen-petrol-special-edition",
+     "listed": "2026-09-21"
+    }
+   ]
+  },
+  {
+   "id": "safari-meteora",
+   "name": "LAMY safari meteora",
+   "line": "LAMY safari",
+   "kind": "Special edition",
+   "qty": "",
+   "desc": "Purple textured grip and body with a matching purple cap and finial, black clip.",
+   "official_date": null,
+   "first_listed": "2026-07-14",
+   "first_listed_store": "penboutique",
+   "lamy_us_url": null,
+   "sources": [
+    [
+     "Lamy new arrivals",
+     "https://www.lamy.com/en-gb/new-arrivals"
+    ],
+    [
+     "Goulet product page",
+     "https://www.gouletpens.com/products/lamy-safari-fountain-pen-meteora-special-edition"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-safari-fountain-pen-meteora-special-edition",
+     "listed": "2026-07-14"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-safari-fountain-pen-meteora-special-edition",
+     "listed": "2026-07-14"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/lamy-safari-fountain-pen-meteora-special-edition",
+     "listed": "2026-07-14"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-safari-fountain-pen-meteora-special-edition-2026",
+     "listed": "2026-07-15"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-safari-fountain-pen-in-meteora",
+     "listed": "2026-07-16"
+    }
+   ]
+  },
+  {
+   "id": "safari-meteorite",
+   "name": "LAMY safari meteorite",
+   "line": "LAMY safari",
+   "kind": "Special edition",
+   "qty": "",
+   "desc": "Black textured grip and body with a matching black cap, finial and clip.",
+   "official_date": null,
+   "first_listed": "2026-07-13",
+   "first_listed_store": "goldspot",
+   "lamy_us_url": null,
+   "sources": [
+    [
+     "Lamy new arrivals",
+     "https://www.lamy.com/en-gb/new-arrivals"
+    ],
+    [
+     "Goulet product page",
+     "https://www.gouletpens.com/products/lamy-safari-fountain-pen-meteorite-special-edition"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-safari-fountain-pen-in-meteorite",
+     "listed": "2026-07-13"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/lamy-safari-fountain-pen-meteorite-special-edition",
+     "listed": "2026-07-13"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-safari-fountain-pen-meteorite-special-edition",
+     "listed": "2026-07-14"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-safari-fountain-pen-meteorite-special-edition",
+     "listed": "2026-07-14"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/lamy-safari-fountain-pen-meteorite-special-edition",
+     "listed": "2026-07-14"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-safari-fountain-pen-meteorite-special-edition-2026",
+     "listed": "2026-07-15"
+    }
+   ]
+  },
+  {
+   "id": "al-star-rollerskate",
+   "name": "LAMY AL-star rollerskate",
+   "line": "LAMY AL-star",
+   "kind": "Special edition",
+   "qty": "",
+   "desc": "Bright pink anodized aluminum with a translucent blue grip and blue trim. Second AL-star release of 2026.",
+   "official_date": null,
+   "first_listed": "2026-06-02",
+   "first_listed_store": "goldspot",
+   "lamy_us_url": null,
+   "sources": [
+    [
+     "Lamy new arrivals",
+     "https://www.lamy.com/en-gb/new-arrivals"
+    ],
+    [
+     "Goulet special edition history",
+     "https://www.gouletpens.com/blogs/fountain-pen-blog/lamy-al-star-special-edition-history"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-al-star-fountain-pen-in-rollerskate",
+     "listed": "2026-06-02"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-al-star-fountain-pen-rollerskate-special-edition",
+     "listed": "2026-06-02"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-al-star-fountain-pen-rollerskate-special-edition",
+     "listed": "2026-06-02"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/lamy-al-star-fountain-pen-rollerskate-special-edition",
+     "listed": "2026-06-02"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-al-star-fountain-pen-rollerskate-special-edition-2026",
+     "listed": "2026-06-10"
+    }
+   ]
+  },
+  {
+   "id": "al-star-disco",
+   "name": "LAMY AL-star disco",
+   "line": "LAMY AL-star",
+   "kind": "Special edition",
+   "qty": "",
+   "desc": "Bright green anodized aluminum with a translucent pink grip and pink trim. Second AL-star release of 2026.",
+   "official_date": null,
+   "first_listed": "2026-06-02",
+   "first_listed_store": "goldspot",
+   "lamy_us_url": null,
+   "sources": [
+    [
+     "Lamy new arrivals",
+     "https://www.lamy.com/en-gb/new-arrivals"
+    ],
+    [
+     "Goulet special edition history",
+     "https://www.gouletpens.com/blogs/fountain-pen-blog/lamy-al-star-special-edition-history"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-al-star-fountain-pen-in-disco",
+     "listed": "2026-06-02"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-al-star-fountain-pen-disco-special-edition",
+     "listed": "2026-06-02"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-al-star-fountain-pen-disco-special-edition",
+     "listed": "2026-06-02"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/lamy-al-star-fountain-pen-disco-special-edition",
+     "listed": "2026-06-02"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-al-star-fountain-pen-disco-special-edition-2026",
+     "listed": "2026-06-10"
+    }
+   ]
+  },
+  {
+   "id": "safari-neon-pink",
+   "name": "LAMY safari neon pink",
+   "line": "LAMY safari",
+   "kind": "Special edition",
+   "qty": "",
+   "desc": "Neon pink with a matching clip and a translucent grip. Fountain pen, rollerball and ballpoint.",
+   "official_date": null,
+   "first_listed": "2026-05-12",
+   "first_listed_store": "goldspot",
+   "lamy_us_url": null,
+   "sources": [
+    [
+     "StationeryNews, May 8, 2026",
+     "https://www.stationerynews.net/lamy-launches-neon-special-edition-safari/"
+    ],
+    [
+     "Lamy new arrivals",
+     "https://www.lamy.com/en-gb/new-arrivals"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-safari-fountain-pen-in-neon-pink",
+     "listed": "2026-05-12"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/lamy-safari-fountain-pen-neon-pink-special-edition",
+     "listed": "2026-05-12"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-safari-fountain-pen-neon-pink-special-edition",
+     "listed": "2026-05-12"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-safari-fountain-pen-neonpink-special-edition",
+     "listed": "2026-05-12"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-safari-fountain-pen-neon-pink-special-edition-2026",
+     "listed": "2026-05-18"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/lamy-safari-fountain-pen-neonpink-special-edition",
+     "listed": "2026-06-05"
+    }
+   ]
+  },
+  {
+   "id": "safari-neon-yellow",
+   "name": "LAMY safari neon yellow",
+   "line": "LAMY safari",
+   "kind": "Special edition",
+   "qty": "",
+   "desc": "Neon yellow with a black clip and a translucent grip. Fountain pen, rollerball and ballpoint.",
+   "official_date": null,
+   "first_listed": "2026-05-12",
+   "first_listed_store": "goldspot",
+   "lamy_us_url": null,
+   "sources": [
+    [
+     "StationeryNews, May 8, 2026",
+     "https://www.stationerynews.net/lamy-launches-neon-special-edition-safari/"
+    ],
+    [
+     "Lamy new arrivals",
+     "https://www.lamy.com/en-gb/new-arrivals"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-safari-fountain-pen-in-neon-yellow",
+     "listed": "2026-05-12"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/lamy-safari-fountain-pen-neon-yellow-special-edition",
+     "listed": "2026-05-12"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-safari-fountain-pen-neon-yellow-special-edition",
+     "listed": "2026-05-12"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-safari-fountain-pen-neonyellow-special-edition",
+     "listed": "2026-05-12"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-safari-fountain-pen-neon-yellow-special-edition-2026",
+     "listed": "2026-05-18"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/lamy-safari-fountain-pen-neonyellow-special-edition",
+     "listed": "2026-06-05"
+    }
+   ]
+  },
+  {
+   "id": "al-star-pine",
+   "name": "LAMY AL-star pine",
+   "line": "LAMY AL-star",
+   "kind": "Special edition",
+   "qty": "",
+   "desc": "Forest green anodized aluminum with dark green trim and a translucent green grip. First AL-star release of 2026.",
+   "official_date": null,
+   "first_listed": "2026-02-02",
+   "first_listed_store": "goldspot",
+   "lamy_us_url": null,
+   "sources": [
+    [
+     "Lamy new arrivals",
+     "https://www.lamy.com/en-gb/new-arrivals"
+    ],
+    [
+     "Goulet special edition history",
+     "https://www.gouletpens.com/blogs/fountain-pen-blog/lamy-al-star-special-edition-history"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-al-star-fountain-pen-in-pine",
+     "listed": "2026-02-02"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-al-star-fountain-pen-pine-special-edition-2026",
+     "listed": "2026-02-12"
+    }
+   ]
+  },
+  {
+   "id": "al-star-flamingo",
+   "name": "LAMY AL-star flamingo",
+   "line": "LAMY AL-star",
+   "kind": "Special edition",
+   "qty": "",
+   "desc": "Pink anodized aluminum with pink trim and a translucent pink grip. First AL-star release of 2026.",
+   "official_date": null,
+   "first_listed": "2026-01-30",
+   "first_listed_store": "penboutique",
+   "lamy_us_url": null,
+   "sources": [
+    [
+     "Lamy new arrivals",
+     "https://www.lamy.com/en-gb/new-arrivals"
+    ],
+    [
+     "Goulet special edition history",
+     "https://www.gouletpens.com/blogs/fountain-pen-blog/lamy-al-star-special-edition-history"
+    ]
+   ],
+   "listings": [
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/lamy-al-star-fountain-pen-flamingo-special-edition",
+     "listed": "2026-01-30"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/lamy-al-star-fountain-pen-flamingo",
+     "listed": "2026-01-30"
+    },
+    {
+     "store_id": "goldspot",
+     "url": "https://goldspot.com/products/lamy-al-star-fountain-pen-in-flamingo",
+     "listed": "2026-02-02"
+    },
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/lamy-al-star-fountain-pen-flamingo-special-edition",
+     "listed": "2026-02-03"
+    },
+    {
+     "store_id": "goulet",
+     "url": "https://www.gouletpens.com/products/lamy-al-star-fountain-pen-flamingo-special-edition",
+     "listed": "2026-02-03"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/lamy-al-star-fountain-pen-flamingo-special-edition-2026",
+     "listed": "2026-02-12"
+    }
+   ]
+  }
+ ]
+}

@@ -60,7 +60,8 @@ class InkPageSignupTests(unittest.TestCase):
     def test_every_tracker_design_and_guide_page_has_a_box_or_alerts_link(self):
         import glob
         skip = ("contact/", "privacy/", "terms/", "transparency/", "for-shops/", "shop/teachers-pay-teachers/", "travelers-company-limited-edition/", "travelers-notebook-regular-vs-passport-vs-card-size/",
-                "midori-md-limited-edition/")
+                "midori-md-limited-edition/",
+                "lamy-special-edition-release-calendar/")  # no signup on the Lamy calendar until the owner picks one (no Lamy Kit tag)
         for f in glob.glob(str(ROOT / "site/**/index.html"), recursive=True):
             rel = f.split("/site/", 1)[1]
             if rel.startswith(skip):
