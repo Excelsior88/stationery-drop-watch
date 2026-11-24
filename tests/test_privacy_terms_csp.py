@@ -139,6 +139,15 @@ class TermsPageStructureTests(unittest.TestCase):
         self.assertNotIn("text-transform", block)
         self.assertNotIn("uppercase", block)
 
+    def test_section_anchors_clear_the_sticky_masthead(self):
+        css = (ROOT / "site/assets/style.css").read_text()
+        block = css.split("/* Terms:", 1)[1]
+        desktop = block.split("@media (max-width:900px)", 1)[0]
+        self.assertIn(".prose h2[id]{scroll-margin-top:8.5rem}", desktop)
+        self.assertNotIn("scroll-margin-top:5.5rem", desktop)
+        self.assertIn("@media (max-width:900px){.prose h2[id]{scroll-margin-top:5.5rem}}", block)
+        self.assertIn("@media (max-width:900px){\n  .masthead .wrap{flex-wrap:nowrap", css)
+
     def test_prohibited_uses_is_linked_from_the_homepage_faq_and_robots(self):
         home = site.build_index()
         self.assertIn('href="/terms/#prohibited-uses"', home)
