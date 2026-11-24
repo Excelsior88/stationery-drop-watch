@@ -2320,5 +2320,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/oc27_colorsbparasol/",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-24T10:51:07+00:00",
+  "store_id": "presentandcorrect",
+  "store": "Present & Correct",
+  "label": "Cousin A5 book (English)",
+  "url": "https://www.presentandcorrect.com/products/hobonochi-techo-original-cousin?variant=56552188772731",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
