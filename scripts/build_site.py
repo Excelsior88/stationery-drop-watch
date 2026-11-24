@@ -1347,6 +1347,21 @@ def trust_strip(prods):
   <img class="clip" src="assets/brand/clip.webp" width="360" height="539" alt="Clip, the Stationery Drop Watch paper clip, checking stock" loading="lazy" decoding="async">
 </div>'''
 
+def find_bar():
+    """Compact homepage search. Without JavaScript the form opens the Hobonichi tracker search.
+    With JavaScript, app.js loads the search index on focus and shows matches under the field."""
+    return """<div class="find-bar">
+  <form class="find-form" id="find-form" action="/hobonichi-restock-tracker/" method="get" role="search" aria-label="Find my item">
+    <label id="find-label" for="find-q">Find my item</label>
+    <div class="find-row">
+      <input id="find-q" type="search" name="q" placeholder="Planner, dot grid, ink, or shop" autocomplete="off" enterkeyhint="search" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="find-list" aria-autocomplete="list" aria-haspopup="listbox">
+      <button type="submit">Search</button>
+    </div>
+    <p id="find-count" class="find-count" role="status" aria-live="polite"></p>
+    <ul id="find-list" class="find-list" role="listbox" aria-label="Matching items" hidden></ul>
+  </form>
+</div>"""
+
 def build_index():
     """Hub homepage: hero and signup, the four trackers, recent restocks from every tracker, guides, FAQ.
     Our own products are not on this page. The header and footer Shop links go to /shop."""
@@ -1416,6 +1431,7 @@ def build_index():
   <p class="suggest">Know the moment your planner, journal or ink is back.</p>
   <p class="lede">We check official stores and independent shops for sold-out Hobonichi planners, dot grid journals and limited-edition inks, and tell you when they come back.</p>
   {signup(kicker=None)}
+  {find_bar()}
   {trust_strip(prods + (INK_ROWS if INK_LIVE else []))}
   <p class="small section-switch">More on the site: <a href="hobonichi-2027/">2027 calendar</a> · <a href="guides/">Guides</a> · <a href="shop/">Shop</a> · <a class="nobr" href="sold-out-everywhere/">Sold out everywhere</a>.</p>
 </section>
@@ -4726,7 +4742,8 @@ def ink_card(ink):
     <tbody>{status_rows(rows)}</tbody>
   </table></div>
   <p class="muted small">Open a shop's name to go straight to its listing.</p>'''
-    return f"""<details class="card group-fold" id="ink-{E(ink['id'])}">
+    sids = " ".join(dict.fromkeys(r["store_id"] for r in rows))
+    return f"""<details class="card group-fold" id="ink-{E(ink['id'])}" data-stores="{E(sids)}">
   <summary><h3 class="fam-name">{E(ink['name'])}</h3><span class="fam-meta">{meta}</span></summary>
   <section class="group-sec">
   {kind}{note}
@@ -4807,6 +4824,7 @@ def build_inks():
     <section class="card"><h2>Recent restocks</h2>{ink_restock_html()}</section>
     {soon_html}
     <div id="tracker">
+    <p id="ink-store-note" class="muted small" hidden></p>
     {group_toggle_html()}{''.join(parts)}
     </div>
     {retired_html}
@@ -4892,6 +4910,198 @@ def publish_ink_data():
         (out / "changes.json").write_text(json.dumps(changes, indent=1, ensure_ascii=False) + "\n")
 
 
+_SEARCH_TRACKERS = (
+    ("h", "Hobonichi", "/" + HOBO_TRACKER),
+    ("d", "Dot grid", "/" + DOTGRID_SLUG + "/"),
+    ("i", "Limited inks", "/" + INK_SLUG + "/"),
+)
+_SEARCH_WORD = re.compile(r"[a-z0-9]+")
+_SEARCH_STOP = {"a", "an", "the", "and", "of", "for", "to", "in", "on", "with", "or"}
+_SEARCH_BANNED = re.compile(r"midori|designphil|travell?er'?s\s+company", re.I)
+_SEARCH_BULLET = re.compile(r"\bbullet\s+journals?\b", re.I)
+
+
+def _search_public(text):
+    """Search copy says dot grid. A maker's own 'Bullet Journal' name is not repeated here."""
+    text = _SEARCH_BULLET.sub("dot grid", text or "")
+    return re.sub(r"\s{2,}", " ", text).strip()
+
+
+def _search_fold(text):
+    import unicodedata
+    text = unicodedata.normalize("NFD", text or "")
+    return "".join(c for c in text if unicodedata.category(c) != "Mn").lower()
+
+
+def _search_extra(name, blobs):
+    have = set(_SEARCH_WORD.findall(_search_fold(name)))
+    out, seen = [], set()
+    for blob in blobs:
+        for word in _SEARCH_WORD.findall(_search_fold(blob or "")):
+            if len(word) < 2 or word in have or word in seen or word in _SEARCH_STOP:
+                continue
+            seen.add(word)
+            out.append(word)
+    return " ".join(out)
+
+
+def _search_summary(checked):
+    """Same sentence as the product page. No checked rows means the listing is link-only."""
+    if not checked:
+        return "Link only, we don't check stock"
+    return count_line(checked).capitalize()
+
+
+def _search_group(sample):
+    for g in GROUPS:
+        if g.get("aux"):
+            continue
+        if g["match"](sample):
+            return g
+    return None
+
+
+def _search_anchor(cid):
+    return re.sub(r"[^A-Za-z0-9]+", "-", cid).strip("-") or "other"
+
+
+def search_index():
+    """Static homepage index: one record per active canonical item and each live ink.
+
+    Counts use count_line on the listings the destination page shows. Link-only shops are
+    searchable and are never included in an in-stock or checked total."""
+    from urllib.parse import quote
+    names = {s["id"]: s["name"] for s in stores["stores"]}
+    canon = {c["id"]: c for c in stores["canonical"]}
+    design_by = {design_fname(d): d for d in DESIGNS}
+    track = {key: (label, url) for key, label, url in _SEARCH_TRACKERS}
+
+    checked_by = {"h": {}, "d": {}, "i": {}}
+    link_by = {"h": {}, "d": {}}
+
+    def stash(bucket, row, link=False):
+        dest = link_by if link else checked_by
+        dest[bucket].setdefault(row["store_id"], []).append(row)
+
+    for row in stock["products"]:
+        stash("d" if section_of(row) == "dotgrid" else "h", row)
+    for row in LINK_ROWS:
+        stash("d" if section_of(row) == "dotgrid" else "h", row, link=True)
+    for row in INK_ROWS:
+        stash("i", row)
+
+    shop_ids = [s["id"] for s in stores["stores"]
+                if any(s["id"] in checked_by[key] or s["id"] in link_by.get(key, {}) for key in ("h", "d", "i"))]
+    shop_at = {sid: i for i, sid in enumerate(shop_ids)}
+    shops = []
+    for sid in shop_ids:
+        pages = []
+        for key in ("h", "d", "i"):
+            rows = checked_by[key].get(sid, [])
+            links = link_by.get(key, {}).get(sid, [])
+            if not rows and not links:
+                continue
+            _, base = track[key]
+            pages.append({"t": key, "u": f"{base}?store={quote(sid)}", "s": _search_summary(rows), "c": len(rows)})
+        shops.append({"i": sid, "n": names.get(sid, sid), "p": pages})
+
+    by_canon = {}
+    for row in stock["products"]:
+        cid = row.get("canonical")
+        if cid:
+            by_canon.setdefault(cid, {"checked": [], "link": []})["checked"].append(row)
+    for row in LINK_ROWS:
+        cid = row.get("canonical")
+        if cid:
+            by_canon.setdefault(cid, {"checked": [], "link": []})["link"].append(row)
+    order = [c["id"] for c in stores["canonical"] if c["id"] in by_canon]
+    order += [cid for cid in by_canon if cid not in order]
+
+    def shop_refs(rows):
+        refs, seen = [], set()
+        for row in rows:
+            sid = row["store_id"]
+            if sid in shop_at and sid not in seen:
+                seen.add(sid)
+                refs.append(shop_at[sid])
+        return refs
+
+    items = []
+    for cid in order:
+        bucket = by_canon[cid]
+        checked, links = bucket["checked"], bucket["link"]
+        sample = (checked or links)[0]
+        label = canon.get(cid, {}).get("label") or sample.get("label") or cid
+        if _SEARCH_BANNED.search(label) or _SEARCH_BANNED.search(cid):
+            continue
+        group = _search_group(sample)
+        fname = design_page_for(checked or links)
+        design = design_by.get(fname) if fname else None
+        if design:
+            page_rows = design_listings(design)
+            # The design page's stock line counts every checked listing on that page, including a
+            # sibling canonical that shares the page. Link-only pages have no checked total.
+            summary = count_line(page_rows).capitalize() if page_rows else "Link only, we don't check stock"
+            url = "/" + design_fname(design)
+        elif group:
+            summary = _search_summary(checked)
+            url = f"/{group['slug']}/#{_search_anchor(cid)}"
+        else:
+            key = "d" if section_of(sample) == "dotgrid" else "h"
+            summary = _search_summary(checked)
+            url = f"{track[key][1]}?product={quote(cid)}#tracker"
+        if design:
+            name = design["name"]
+            short = (group or {}).get("short") or ""
+            if group and g_sec(group) == "hobonichi" and short and short.lower() not in _search_public(name).lower():
+                name = f"{short} · {name}"
+        else:
+            name = label
+        name = _search_public(name)
+        if _SEARCH_BANNED.search(name) or _SEARCH_BANNED.search(url):
+            continue
+        blobs = [_search_public(label), sample.get("type") or ""]
+        if design:
+            blobs.append(design.get("full") or "")
+        if group:
+            blobs.extend((group.get("short") or "", group.get("product") or ""))
+        blobs.extend(listing_size(p) for p in checked + links)
+        blobs.extend(listing_language(p) for p in checked + links)
+        blobs.extend(sorted({(p.get("label") or "") for p in checked + links}))
+        extra = _search_extra(name, blobs)
+        extra = " ".join(w for w in extra.split() if w != "bullet" and not _SEARCH_BANNED.search(w))
+        item = {"id": cid, "n": name, "t": "d" if section_of(sample) == "dotgrid" else "h",
+                "s": summary, "u": url, "sh": shop_refs(checked + links)}
+        if extra:
+            item["q"] = extra
+        items.append(item)
+
+    if INK_LIVE:
+        brands = {key: info.get("name") or "" for key, info in INK_CFG.get("brands", {}).items()}
+        for ink in INK_CFG["inks"]:
+            if ink["id"] in INK_RETIRED:
+                continue
+            rows = [r for r in INK_ROWS if r["ink_id"] == ink["id"]]
+            if not rows or _SEARCH_BANNED.search(ink.get("name") or ""):
+                continue
+            colors = sorted({r.get("color") or "" for r in rows if r.get("color")})
+            extra = _search_extra(ink["name"], [_search_public(ink.get("kind") or ""), _search_public(ink.get("note") or ""),
+                                                brands.get(ink.get("brand"), ""), *colors])
+            extra = " ".join(w for w in extra.split() if w != "bullet" and not _SEARCH_BANNED.search(w))
+            item = {"id": ink["id"], "n": _search_public(ink["name"]), "t": "i", "s": count_line(rows).capitalize(),
+                    "u": f"/{INK_SLUG}/#ink-{ink['id']}", "sh": shop_refs(rows)}
+            if extra:
+                item["q"] = extra
+            items.append(item)
+
+    live_keys = [key for key, _, _ in _SEARCH_TRACKERS if key != "i" or INK_LIVE]
+    return {
+        "trackers": {key: {"l": track[key][0], "u": track[key][1]} for key in live_keys},
+        "shops": shops,
+        "items": items,
+    }
+
+
 def main():
     if shop_preview() and SITE.resolve() == (ROOT / "site").resolve():
         raise SystemExit("Refusing to write a shop preview into site/. Set DROPWATCH_SITE_OUT to another directory.")
@@ -4899,6 +5109,8 @@ def main():
         print(f"WARNING: og-image.png says {OG_SHOPS} shops but we check {N_STORES}; re-run scripts/brand/make_og.py")
     (SITE / "data").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / "data/stock.json", SITE / "data/stock.json")
+    (SITE / "data" / "search-index.json").write_text(
+        json.dumps(search_index(), ensure_ascii=False, separators=(",", ":")) + "\n")
     # Published feed: same filtering as the pages (takedowns, link-only shops), never the raw file.
     (SITE / "data/changes.json").write_text(json.dumps(changes, indent=1, ensure_ascii=False))
     publish_ink_data()
