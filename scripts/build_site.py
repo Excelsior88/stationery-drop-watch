@@ -1056,6 +1056,13 @@ def shop_sets(ls):
     buying = {l["store_id"] for l in ls if l["status"] in BUYABLE}
     return tracked, checked, buying
 
+def shops_checked_phrase(tracked, checked):
+    """The shop part of the hero check line. "3 of 4 shops checked"; with one shop, "1 shop checked",
+    or, if that one shop's check failed, a plain sentence saying so."""
+    if len(tracked) == 1:
+        return "1 shop checked" if checked else "the one shop we track couldn't be checked this run"
+    return f"{len(checked)} of {nshops(len(tracked))} checked"
+
 def hero_facts(ls):
     """Status tiles and the line under them, from this page's listings only.
     A zero stays on the tile. Every page shows the same five tiles."""
@@ -1068,7 +1075,7 @@ def hero_facts(ls):
     <div><b>{s["coming_soon"]}</b><span>not yet on sale</span></div>
     <div class="unk"><b>{s["unknown"]}</b><span>couldn't check this run</span></div>
   </div>
-  <p class="muted small hero-check">Last check: {time_tag(stock["run_finished"])} · {len(ls) - s["unknown"]} of {len(ls)} listings checked successfully · {len(checked_shops)} of {nshops(len(tracked))} checked.</p>'''
+  <p class="muted small hero-check">Last check: {time_tag(stock["run_finished"])} · {len(ls) - s["unknown"]} of {len(ls)} listings checked successfully · {shops_checked_phrase(tracked, checked_shops)}.</p>'''
 
 def also_tracked(here):
     """The other trackers, in the same place on every tracker hero."""
@@ -2643,16 +2650,23 @@ def build_design(d, oe=None):
         chk = len({l["store_id"] for l in ls if l["status"] != "unknown"})
         of = f"{nshops(chk)} we could check" if unk else nshops(shops)
         if not buy:
-            a1 = (f"Not at the shops we track. At the last check ({when}) none of the {of} had it in stock or on preorder." if chk > 1 else
-                  f"Not at the shops we track. At the last check ({when}) the {'one shop we could check' if unk else 'one shop we track'} didn't have it in stock or on preorder.")
+            if shops == 1:
+                a1 = f"No. At the last check ({when}) {names(ls)} didn't have it in stock or on preorder."
+            else:
+                a1 = (f"Not at the shops we track. At the last check ({when}) none of the {of} had it in stock or on preorder." if chk > 1 else
+                      f"Not at the shops we track. At the last check ({when}) the {'one shop we could check' if unk else 'one shop we track'} didn't have it in stock or on preorder.")
+        elif shops == 1:
+            avail = ("in stock" if any(l["status"] == "in_stock" for l in buy) else "on preorder")
+            a1 = f"Yes, {avail} at {names(buy)} at the last check ({when}). Stock can change within minutes, so confirm on the shop's page."
         else:
             a1 = f"Yes, at {len({l['store_id'] for l in buy})} of {of} at the last check ({when}): {names(buy)}. Stock can change within minutes, so confirm on the shop's page."
         if unk:
-            a1 += f" We couldn't check {names(unk)} this run, so we don't know their status."
+            a1 += (f" We couldn't check {nshops(len(unk), 'listing')} at {names(unk)} this run, so we don't know {'its' if len(unk) == 1 else 'their'} status."
+                   if shops == 1 else f" We couldn't check {names(unk)} this run, so we don't know their status.")
     a2 = (f"We track it at {shops} {'shop' if shops == 1 else 'shops'}: {names(ls)}. Each name in the table above opens that shop's own listing."
           if ls else "No shop we check lists it right now.")
     vers = sorted({(l.get("title") or l["label"]) for l in ls})
-    a_v = (f"We track {len(ls)} {'listing' if len(ls) == 1 else 'listings'}. In each shop's own words: " + "; ".join(vers) + "." if ls else "None right now.")
+    a_v = (f"We track {len(ls)} {'listing' if len(ls) == 1 else 'listings'}. In {"the shop's" if shops == 1 else "each shop's"} own words: " + "; ".join(vers) + "." if ls else "None right now.")
     qa = [(f'Is {d["full"]} in stock?', a1),
           (f'Which sizes and versions of {d["full"]} do you track?', a_v),
           (f'Where can I buy {d["full"]}?', a2),
@@ -4795,7 +4809,7 @@ def ink_hero_facts(ls):
     <div><b>{s["coming_soon"]}</b><span>not yet on sale</span></div>
     <div class="unk"><b>{s["unknown"]}</b><span>couldn't check this run</span></div>
   </div>
-  <p class="muted small hero-check">{last}{len(ls) - s["unknown"]} of {len(ls)} listings checked successfully · {len(checked_shops)} of {nshops(len(tracked))} checked.</p>'''
+  <p class="muted small hero-check">{last}{len(ls) - s["unknown"]} of {len(ls)} listings checked successfully · {shops_checked_phrase(tracked, checked_shops)}.</p>'''
 
 def ink_checked_line():
     return f'checked {time_tag(INK_STOCK["run_finished"])}' if INK_STOCK.get("run_finished") else ""
