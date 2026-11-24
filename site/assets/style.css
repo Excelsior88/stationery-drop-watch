@@ -689,8 +689,11 @@ table.stock.compare thead th{vertical-align:top}
 
 .tpt-sub{margin:1.2em 0 .6em;font-size:1.05rem}
 .tpt-all{margin-top:1.4rem}
-/* Terms: collapsed jump list, and a quiet callout for the warranty and liability sections. */
-.prose h2[id]{scroll-margin-top:5.5rem}
+/* Terms: collapsed jump list, and a quiet callout for the warranty and liability sections.
+   Anchor headings clear the sticky masthead: 8.5rem while it is two rows, 5.5rem from 900px
+   down, where the masthead collapses to a single row. */
+.prose h2[id]{scroll-margin-top:8.5rem}
+@media (max-width:900px){.prose h2[id]{scroll-margin-top:5.5rem}}
 .terms-jump{margin:0 0 1.25em;padding:8px 14px 10px;background:var(--card);border:1px solid var(--line);border-radius:12px}
 .terms-jump>summary{font:600 .95rem/1.4 var(--sans);color:var(--ink)}
 .terms-jump ol{margin:.45em 0 .15em;padding-left:1.35em;columns:2;column-gap:1.75em}
