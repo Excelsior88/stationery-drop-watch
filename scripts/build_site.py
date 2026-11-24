@@ -546,7 +546,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     foot_items = list(NAV_TRACKERS) + [
         ("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar"), ("sold-out-everywhere/", "Sold out everywhere"), ("shop/", "Shop"),
         ("follow/", "Follow us"),
-        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy"), ("terms/", "Terms"), ("transparency/", "Transparency"), ("for-shops/", "For shops")]
+        ("about/", "About"), ("/#good-to-know", "FAQ"), ("contact/", "Contact"), ("privacy/", "Privacy"), ("terms/", "Terms"), ("transparency/", "Transparency"), ("for-shops/", "For shops and brands")]
     foot_nav = "".join(f'<a href="{h}">{E(t)}</a>' for h, t in foot_items)
     ld_html = "".join(jsonld(x) for x in ld)
     doc = f"""<!doctype html>
