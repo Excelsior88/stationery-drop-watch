@@ -2293,5 +2293,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-24T07:51:19+00:00",
+  "store_id": "minimaru",
+  "store": "Minimaru",
+  "label": "Weeks · Colors: Sea Glass",
+  "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-colours-sea-glass-4580812709743",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
