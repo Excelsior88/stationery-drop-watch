@@ -99,7 +99,7 @@ class ForShopsTests(unittest.TestCase):
 
     def test_listed_in_footer_and_sitemap(self):
         self.assertEqual(self.fname, "for-shops/")
-        self.assertIn('href="/for-shops/">For shops</a>', self.doc)
+        self.assertIn('href="/for-shops/">For shops and brands</a>', self.doc)
         self.assertIn("https://stationerydropwatch.com/for-shops/", site.build_sitemap())
 
     def test_copy_rules(self):
