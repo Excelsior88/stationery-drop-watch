@@ -2284,5 +2284,14 @@
   "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-24T02:16:01+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks · Shirt Fabric: Graph Plaid",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_shirtfplaid/",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
