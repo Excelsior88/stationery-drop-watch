@@ -67,13 +67,13 @@ class SearchIndexTests(unittest.TestCase):
 
     def test_covers_every_active_canonical_and_live_ink(self):
         keys = {item["t"] for item in self.idx["items"]}
-        self.assertEqual(keys, {"h", "d", "i"})
-        self.assertEqual(set(self.idx["trackers"]), {"h", "d", "i"})
+        self.assertEqual(keys, {"h", "d", "i", "p"})
+        self.assertEqual(set(self.idx["trackers"]), {"h", "d", "i", "p"})
         self.assertEqual(
             {key: self.idx["trackers"][key]["l"] for key in ("h", "d", "i")},
             {"h": "Hobonichi", "d": "Dot grid", "i": "Limited inks"})
         active = {p["canonical"] for p in site.stock["products"] + site.LINK_ROWS if p.get("canonical")}
-        got = {item["id"] for item in self.idx["items"] if item["t"] != "i"}
+        got = {item["id"] for item in self.idx["items"] if item["t"] not in ("i", "p")}
         self.assertEqual(got, active)
         self.assertGreaterEqual(sum(item["t"] == "h" for item in self.idx["items"]), 1)
         self.assertGreaterEqual(sum(item["t"] == "d" for item in self.idx["items"]), 1)

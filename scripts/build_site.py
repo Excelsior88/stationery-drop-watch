@@ -2030,7 +2030,7 @@ def build_about():
 <p>Stationery Drop Watch is operated by Stationery Drop Watch LLC, a Michigan limited liability company.</p>
 </section>
 <h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}. When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
+<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}.{f' Separately, our <a href="{LAMY_SLUG}/">Lamy release calendar</a> lists Lamy&#x27;s special and limited edition pens, when each was first listed, and the authorized shops that sell them. It is not a tracker, and we don&#x27;t check stock on those links.' if LAMY_LIVE else ''} When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <p>Clip, the paper clip with the magnifying glass on our <a href="index.html">home page</a>, is the site's mascot.</p>
 <h2>Contact</h2>
@@ -3943,6 +3943,16 @@ def build_gift_guide():
     return fname, doc
 
 
+LAMY_SEE_ALSO_TAIL = "Lamy's special and limited edition pens, when each was first listed, and the authorized shops that sell them."
+
+
+def lamy_see_also():
+    """Guides index pointer to the Lamy release calendar. A line, not a guide card: GUIDES and the guide count stay as they are."""
+    if not LAMY_LIVE:
+        return ""
+    return f'<p class="small section-switch lamy-see-also">See also: <a href="{LAMY_SLUG}/">Lamy release calendar</a>, {E(LAMY_SEE_ALSO_TAIL)}</p>'
+
+
 def build_guides_index():
     fname = "guides/"
     items = "".join(f'<li><a href="{h}"><strong>{E(t)}</strong></a><br><span class="muted">{E(GUIDE_BLURBS[h])}</span></li>' for h, t in GUIDES)
@@ -3954,6 +3964,7 @@ def build_guides_index():
 <p class="lede">Short, sourced guides to help you choose and find stationery that sells out. Live stock on the guides comes from the same checks as the tracker, {CHECK_FREQ}.</p>
 {signup()}
 <ul class="guide-list">{items}</ul>
+{lamy_see_also()}
 {design_index_block()}
 </article>"""
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
@@ -5327,6 +5338,27 @@ def _search_group(sample):
     return None
 
 
+def lamy_search_item():
+    """One homepage search entry for the Lamy release calendar. Pen names, lines and editions are in
+    its search words, so 'lamy', 'bog oak' or 'pine' find it. No shops and no stock line: we don't check those links."""
+    pens = [p for p in LAMY_CFG.get("pens", []) if not _SEARCH_BANNED.search(p.get("name") or "")]
+    if not LAMY_LIVE or not pens:
+        return None
+    n = len(pens)
+    name = "Lamy release calendar"
+    blobs = ["Lamy releases", "special limited edition pen pens fountain"]
+    for p in pens:
+        blobs.extend((p.get("name") or "", p.get("line") or "", p.get("kind") or ""))
+    extra = _search_extra(name, blobs)
+    extra = " ".join(w for w in extra.split() if w != "bullet" and not _SEARCH_BANNED.search(w))
+    item = {"id": "lamy-release-calendar", "n": name, "t": "p",
+            "s": f"{n} special and limited edition {'pen' if n == 1 else 'pens'}, no stock checks",
+            "u": "/" + LAMY_SLUG + "/", "sh": []}
+    if extra:
+        item["q"] = extra
+    return item
+
+
 def _search_anchor(cid):
     return re.sub(r"[^A-Za-z0-9]+", "-", cid).strip("-") or "other"
 
@@ -5460,9 +5492,15 @@ def search_index():
                 item["q"] = extra
             items.append(item)
 
-    live_keys = [key for key, _, _ in _SEARCH_TRACKERS if key != "i" or INK_LIVE]
+    trackers = {key: {"l": track[key][0], "u": track[key][1]} for key in
+                [key for key, _, _ in _SEARCH_TRACKERS if key != "i" or INK_LIVE]}
+    lamy = lamy_search_item()
+    if lamy:
+        # Not a tracker: "p" only gives the result its tag ("Lamy releases") and the Enter-key page.
+        trackers["p"] = {"l": LAMY_NAV, "u": "/" + LAMY_SLUG + "/"}
+        items.append(lamy)
     return {
-        "trackers": {key: {"l": track[key][0], "u": track[key][1]} for key in live_keys},
+        "trackers": trackers,
         "shops": shops,
         "items": items,
     }
