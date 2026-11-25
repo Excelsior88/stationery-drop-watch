@@ -11,8 +11,8 @@ https://:version.:project.pages.dev/*
 # Security headers for the live site. Cloudflare Pages already sends X-Content-Type-Options: nosniff and
 # Referrer-Policy: strict-origin-when-cross-origin (checked live Nov 22, 2026), so they are not repeated here.
 # Pages Functions (including /api/subscribe) do not receive these headers. That fallback page uses an inline <style>,
-# which this report-only policy would flag; leave the function response alone.
-# CSP is report-only. Origins below are the ones pages, site/assets/app.js, and site/assets/style.css actually load,
+# which this policy would block; leave the function response alone (Functions never get these headers).
+# CSP is enforced (it was report-only until Nov 25, 2026). Origins below are the ones pages, site/assets/app.js, and site/assets/style.css actually load,
 # plus Cloudflare's edge-injected Web Analytics beacon:
 # same-origin documents, styles, fonts, images, and the signup fetch, Turnstile's script and challenge frame
 # (https://challenges.cloudflare.com), and https://static.cloudflareinsights.com for beacon.min.js.
@@ -31,7 +31,7 @@ https://:version.:project.pages.dev/*
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   ! Access-Control-Allow-Origin
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com 'unsafe-hashes' 'sha256-GZIcz60Uwd6wT3vaYke/atSr53TehbYAPepOa3d03Vw='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com 'unsafe-hashes' 'sha256-GZIcz60Uwd6wT3vaYke/atSr53TehbYAPepOa3d03Vw='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
 
 # Cache. HTML stays on Pages' default (public, max-age=0, must-revalidate), which is right for a page that changes every
 # ~30 minutes. The stylesheet and scripts are linked as ?v=<content hash>, so each URL never changes and can be cached for a year.
