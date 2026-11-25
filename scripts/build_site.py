@@ -12,6 +12,19 @@ ET = ZoneInfo("America/New_York")
 DETROIT = ZoneInfo("America/Detroit")
 E = html.escape
 
+# Links that go into page data and data/search-index.json must be https:// or a same-site path ("/x", never "//host").
+# site/assets/app.js applies the same rule (safeHref) when it renders them; this catches bad store data at build time.
+_SAFE_HREF = re.compile(r"^(?:https://|/(?![/\\]))", re.I)
+
+
+def safe_href(url, where=""):
+    """Return url if it is https:// or a same-site path, else "#" with a build warning (never fail the 30-minute build)."""
+    u = str(url or "").strip()
+    if _SAFE_HREF.match(u):
+        return u
+    print(f"WARNING: unsafe link replaced with '#'{' (' + where + ')' if where else ''}: {u[:120]!r}")
+    return "#"
+
 # Amazon links on this site are only for the owner's own planners and journals on /shop.
 # Those stay as plain amazon.com/dp/<ASIN> URLs with no Associates tag.
 _ASIN = re.compile(r"/(?:dp|gp/product|gp/aw/d)/([A-Z0-9]{10})")
@@ -1077,7 +1090,7 @@ def tracker_rows(prods, out_everywhere=None, links=()):
     for p in prods:
         famn, fam = listing_family(p)
         rows.append(dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st=p["status"],
-                 u=p["url"], at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
+                 u=safe_href(p["url"], p.get("store_id", "")), at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
                  va=p.get("available_variants"), tv=p.get("total_variants"),
                  sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99)))
         note = official_note(p)
@@ -1090,7 +1103,7 @@ def tracker_rows(prods, out_everywhere=None, links=()):
     for p in links:  # link-only listings: no status time, no variant counts (keys left out on purpose)
         famn, fam = listing_family(p)
         r = dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st="link_only",
-                 u=p["url"], title=p.get("title") or "", sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99))
+                 u=safe_href(p["url"], p.get("store_id", "")), title=p.get("title") or "", sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99))
         dp = design_page_for([p])
         if dp:
             r["dp"] = "/" + pretty(dp)
@@ -1443,10 +1456,10 @@ def build_index():
         if st["unknown"]:
             bits.append(f'{st["unknown"]} couldn\'t be checked')
         # in_stock is status == "in_stock" only. unknown is not counted as in stock.
-        cards.append(f"""<li class="hub-card"><a href="{href[k]}">
+        cards.append(f"""<li class="hub-card"><a href="{href[k]}" aria-labelledby="hub-h-{k}" aria-describedby="hub-c-{k}">
   <span class="hub-art">{hub_art(k)}</span>
-  <h3>{E(name)}</h3><p>{E(line)}</p>
-  <p class="hub-count"><b>{st["in_stock"]}</b> of {len(ps)} listings in stock <span class="muted small">{E(" · ".join(bits))}</span></p>
+  <h3 id="hub-h-{k}">{E(name)}</h3><p>{E(line)}</p>
+  <p class="hub-count" id="hub-c-{k}"><b>{st["in_stock"]}</b> of {len(ps)} listings in stock <span class="muted small">{E(" · ".join(bits))}</span></p>
   <span class="hub-go">View tracker</span></a></li>""")
     if INK_LIVE:
         ist = {x: sum(r["status"] == x for r in INK_ROWS) for x in STATUS}
@@ -1457,10 +1470,10 @@ def build_index():
             ibits.append(f'{ist["coming_soon"]} not yet on sale')
         if ist["unknown"]:
             ibits.append(f'{ist["unknown"]} couldn\'t be checked')
-        cards.append(f"""<li class="hub-card"><a href="{INK_SLUG}/">
+        cards.append(f"""<li class="hub-card"><a href="{INK_SLUG}/" aria-labelledby="hub-h-inks" aria-describedby="hub-c-inks">
   <span class="hub-art">{hub_art("inks")}</span>
-  <h3>Limited-edition inks</h3><p>{E(INK_HUB_LINE)}</p>
-  <p class="hub-count"><b>{ist["in_stock"]}</b> of {len(INK_ROWS)} listings in stock <span class="muted small">{E(" · ".join(ibits))}</span></p>
+  <h3 id="hub-h-inks">Limited-edition inks</h3><p>{E(INK_HUB_LINE)}</p>
+  <p class="hub-count" id="hub-c-inks"><b>{ist["in_stock"]}</b> of {len(INK_ROWS)} listings in stock <span class="muted small">{E(" · ".join(ibits))}</span></p>
   <span class="hub-go">View tracker</span></a></li>""")
     # The takedown notice card left the homepage on Nov 23, 2026 (owner t1797u). The notice page itself stays live at
     # /{TN_SLUG}/, in the sitemap, and linked from the gift guide.
@@ -5499,6 +5512,13 @@ def search_index():
         # Not a tracker: "p" only gives the result its tag ("Lamy releases") and the Enter-key page.
         trackers["p"] = {"l": LAMY_NAV, "u": "/" + LAMY_SLUG + "/"}
         items.append(lamy)
+    for item in items:
+        item["u"] = safe_href(item["u"], "search item " + str(item.get("id")))
+    for shop in shops:
+        for page in shop.get("p", []):
+            page["u"] = safe_href(page["u"], "search shop " + str(shop.get("i")))
+    for tr in trackers.values():
+        tr["u"] = safe_href(tr["u"], "search tracker")
     return {
         "trackers": trackers,
         "shops": shops,

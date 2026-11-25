@@ -31,10 +31,14 @@ https://:version.:project.pages.dev/*
 # Other assets keep stable file names, so one day. (Pages default for them today is 4 hours.)
 /assets/style.css
   Cache-Control: public, max-age=31536000, immutable
+# Pages serves .js as "application/javascript" with no charset (checked live Nov 25, 2026), so a browser tab that opens
+# the file on its own may guess the wrong encoding. Pages lets _headers override its default Content-Type.
 /assets/app.js
   Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/javascript; charset=utf-8
 /assets/local-time.js
   Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/javascript; charset=utf-8
 # Font files keep stable names (not content-hashed), so cache them for 30 days and do not mark them immutable.
 # data/search-index.json stays on Pages' default, same as HTML and data/stock.json. The index is rebuilt
 # with the site about every 30 minutes, so it must not get this 30-day font cache.
@@ -49,9 +53,11 @@ https://:version.:project.pages.dev/*
 /assets/shop/*
   Cache-Control: public, max-age=86400
 
-# Public stock feed: no cross-origin reads. Pages sends Access-Control-Allow-Origin: * on every static file by default
-# (checked live Nov 24, 2026). Our own pages never fetch this file (site/assets/app.js loads only search-index.json, and
-# same-origin fetches don't need CORS). The drop-alert routine reads it server-side, where CORS doesn't apply.
+# No cross-origin reads of anything on the site. Pages sends Access-Control-Allow-Origin: * on every static file by
+# default (checked live Nov 24 and Nov 25, 2026: HTML, /data/*.json, /assets/*). Nothing needs it: our pages fetch only
+# same-origin files (search-index.json), same-origin fetches and same-origin font preloads don't need CORS, <img> and
+# <a> links from other sites don't need it, and the drop-alert routine, Relay and the checker read the site server-side,
+# where CORS doesn't apply. Pages Functions (/api/subscribe) never sent it. /data/stock.json was detached on Nov 24.
 # Detach rules must come after the broader rule, so this block stays at the end of the file.
-/data/stock.json
+/*
   ! Access-Control-Allow-Origin

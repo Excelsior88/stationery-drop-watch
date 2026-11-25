@@ -58,6 +58,9 @@
     sync();
     return sync;
   }
+  // Links built from data only ever point at https:// pages or same-site paths ("/x", never "//host").
+  // Anything else (javascript:, data:, http:, protocol-relative) becomes "#". build_site.py checks the same rule.
+  const safeHref = u => { const s = String(u ?? "").trim(); return /^(?:https:\/\/|\/(?![\/\\]))/i.test(s) ? s : "#"; };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const dataEl = document.getElementById("stock-data");
   if (dataEl) {
@@ -90,7 +93,7 @@
     readParams();
     const PAGE = 15; let limit = PAGE;
     const more = document.getElementById("more");
-    more.addEventListener("click", () => { limit += 1e9; render(); });
+    if (more) more.addEventListener("click", () => { limit += 1e9; render(); });
     let filterTimer = 0;
     const syncUrl = (push) => {
       const p = new URLSearchParams();
@@ -119,7 +122,7 @@
       const inn = ls.filter(r => r.st === "in_stock").length;
       if (!n) return all.length ? "Link only, we don't check stock" : "No listings";
       if (unk === n) return n === 1 ? "couldn't check this listing" : "couldn't check these " + n + " listings";
-      if (unk) return inn + " of " + (n - unk) + " checked listings in stock · " + unk + " couldn't be checked";
+      if (unk) return inn + " of " + (n - unk) + " checked listings in stock \u00b7 " + unk + " couldn't be checked";
       return inn + " of " + n + " listings in stock";
     }
     function shopTally(all) {
@@ -128,7 +131,7 @@
       if (!ls.length) return tally(all);
       const shops = new Set(ls.map(r => r.sid)).size;
       const inShops = new Set(ls.filter(r => r.st === "in_stock").map(r => r.sid)).size;
-      return tally(ls) + " · " + inShops + " of " + shops + " " + (shops === 1 ? "shop" : "shops") + " in stock" + (links ? " · " + links + " " + (links === 1 ? "shop" : "shops") + " link only" : "");
+      return tally(ls) + " \u00b7 " + inShops + " of " + shops + " " + (shops === 1 ? "shop" : "shops") + " in stock" + (links ? " \u00b7 " + links + " " + (links === 1 ? "shop" : "shops") + " link only" : "");
     }
     function soldEverywhereNote(ls) {
       if (!ls.length || ls.some(r => r.st !== "sold_out")) return "";
@@ -141,9 +144,9 @@
       const anchor = h.c && /^[A-Za-z][\w-]*$/.test(h.c) ? ` id="${esc(h.c)}"` : "";
       const shops = new Set(ls.map(r => r.sid)).size;
       const bits = [esc(h.t), shops + " " + (shops === 1 ? "shop" : "shops")];
-      if (h.dp) bits.push(`<a href="${esc(h.dp)}">Design page</a>`);
-      const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span> ` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}</span>${statusBadge(r.st)}${r.on && r.st === "sold_out" ? `<span class="official-note">${esc(r.on)}</span>` : ""}</li>`).join("");
-      return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(h.dp)}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" · ")}</p>${soldEverywhereNote(ls)}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
+      if (h.dp) bits.push(`<a href="${esc(safeHref(h.dp))}">Design page</a>`);
+      const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(safeHref(r.u))}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span> ` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}</span>${statusBadge(r.st)}${r.on && r.st === "sold_out" ? `<span class="official-note">${esc(r.on)}</span>` : ""}</li>`).join("");
+      return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(safeHref(h.dp))}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" \u00b7 ")}</p>${soldEverywhereNote(ls)}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
     }
     let honorHash = true;
     const filtersActive = () => Object.values(f).some(el => (el.value || "").trim() !== "");
@@ -164,12 +167,14 @@
       if (scroll) revealHash(el);
     }
     function render() {
-      const q = f.q.value.trim().toLowerCase();
+      const box = $("rows");
+      if (!box) return;
+      const q = f.q ? f.q.value.trim().toLowerCase() : "";
       const out = rows.filter(r =>
-        (!f.product.value || (f.product.value === "__other" ? !r.c : r.c === f.product.value)) &&
+        (!f.product || !f.product.value || (f.product.value === "__other" ? !r.c : r.c === f.product.value)) &&
         (!f.type || !f.type.value || r.t === f.type.value) &&
-        (!f.store.value || r.sid === f.store.value) &&
-        (!f.status.value || r.st === f.status.value) &&
+        (!f.store || !f.store.value || r.sid === f.store.value) &&
+        (!f.status || !f.status.value || r.st === f.status.value) &&
         (!f.size || !f.size.value || (r.sz || "") === f.size.value) &&
         (!f.lang || !f.lang.value || (r.lg || "") === f.lang.value) &&
         (!f.country || !f.country.value || (r.rg || "") === f.country.value) &&
@@ -179,9 +184,10 @@
       if (hasFam && limit === PAGE) limit = 1e9;
       const shownGroups = []; let n = 0;
       for (const g of groups) { if (n >= limit) break; shownGroups.push(g); n += g.length; }
-      more.hidden = n >= out.length;
-      more.textContent = `Show all ${out.length} listings`;
-      const box = $("rows");
+      if (more) {
+        more.hidden = n >= out.length;
+        more.textContent = `Show all ${out.length} listings`;
+      }
       let html;
       if (!shownGroups.length) {
         html = box.tagName === "TBODY"
@@ -213,7 +219,8 @@
       }
       box.innerHTML = html;
       if (honorHash) openHashTarget(false);
-      $("count").textContent = `Showing ${n} of ${out.length} matching listings in ${groups.length} ${groups.length === 1 ? "product" : "products"} (${rows.filter(r => r.st !== "link_only").length} tracked${rows.some(r => r.st === "link_only") ? ", " + rows.filter(r => r.st === "link_only").length + " link only" : ""})`;
+      const countEl = $("count");
+      if (countEl) countEl.textContent = `Showing ${n} of ${out.length} matching listings in ${groups.length} ${groups.length === 1 ? "product" : "products"} (${rows.filter(r => r.st !== "link_only").length} tracked${rows.some(r => r.st === "link_only") ? ", " + rows.filter(r => r.st === "link_only").length + " link only" : ""})`;
       const toggleBtn = document.querySelector("#tracker [data-group-toggle]") || document.querySelector("[data-group-toggle]");
       bindGroupToggle(toggleBtn, box.closest("#tracker") || document);
     }
@@ -525,15 +532,15 @@
       if (shops.length === 1 && shops[0].p.length) {
         const rank = { h: 0, d: 1, i: 2 };
         const pages = shops[0].p.slice().sort((a, b) => (b.c - a.c) || (rank[a.t] - rank[b.t]));
-        return pages[0].u;
+        return safeHref(pages[0].u);
       }
       const hits = findData.items.filter(item => tokens.every(t => hayOf(item).includes(t)));
       if (!hits.length) return "";
       const counts = {};
       hits.forEach(item => { counts[item.t] = (counts[item.t] || 0) + 1; });
       const best = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || (a === "h" ? -1 : 1))[0];
-      if (best === "i") return hits.find(item => item.t === "i").u;
-      return findData.trackers[best].u + "?q=" + encodeURIComponent(raw.trim());
+      if (best === "i") return safeHref(hits.find(item => item.t === "i").u);
+      return safeHref(findData.trackers[best].u) + "?q=" + encodeURIComponent(raw.trim());
     };
     const render = () => {
       if (!findData) return;
@@ -567,7 +574,7 @@
       if (!rows.length) { closeList(); say("No matches"); return; }
       rows.forEach((row, i) => {
         const link = document.createElement("a");
-        link.href = row.u;
+        link.href = safeHref(row.u);
         link.id = "find-opt-" + i;
         link.setAttribute("role", "option");
         link.setAttribute("aria-selected", "false");
