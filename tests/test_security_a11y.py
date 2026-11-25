@@ -105,9 +105,10 @@ class CloudflareHeadersTests(unittest.TestCase):
     def setUp(self):
         self.headers = (ROOT / "cloudflare" / "_headers").read_text()
 
-    def test_report_only_policy_permissions_and_font_cache(self):
-        self.assertIn(f"Content-Security-Policy-Report-Only: {CSP}", self.headers)
-        csp_line = next(line for line in self.headers.splitlines() if "Content-Security-Policy-Report-Only:" in line)
+    def test_enforced_policy_permissions_and_font_cache(self):
+        self.assertIn(f"  Content-Security-Policy: {CSP}", self.headers)
+        self.assertNotIn("Content-Security-Policy-Report-Only", self.headers)
+        csp_line = next(line for line in self.headers.splitlines() if line.strip().startswith("Content-Security-Policy:"))
         self.assertIn("https://static.cloudflareinsights.com", csp_line)
         self.assertNotIn("https://cloudflareinsights.com", csp_line)
         self.assertIn("connect-src 'self'", csp_line)

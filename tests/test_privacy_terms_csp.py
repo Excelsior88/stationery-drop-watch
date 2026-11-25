@@ -31,7 +31,7 @@ class CspHeaderTests(unittest.TestCase):
     def setUp(self):
         self.headers = (ROOT / "cloudflare" / "_headers").read_text()
         self.csp = next(line.strip() for line in self.headers.splitlines()
-                        if "Content-Security-Policy-Report-Only:" in line)
+                        if line.strip().startswith("Content-Security-Policy:"))
 
     def test_beacon_script_host_and_tight_connect_src(self):
         script = re.search(r"script-src [^;]+", self.csp).group(0)
