@@ -2455,5 +2455,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_chianti/",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-25T03:47:42+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "A5 cover · Glow: Chianti",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_chianti/",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
