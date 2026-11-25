@@ -2410,5 +2410,32 @@
   "url": "https://bobodesignstudio.com/products/hobonichi-techo-2027-mega-weeks-bow-tie-candy-dream",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-25T02:17:43+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "Weeks · Leather: Forest Green",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_classicfgreen/",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-25T02:17:43+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "A5 cover · Glow: Chianti",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_chianti/",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-25T02:19:45+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "A5 cover · Yumi Kitagishi: White Cat Village",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-a5-cousin-cover-only-yumi-kitagishi-white-cat-village",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
