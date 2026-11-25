@@ -454,14 +454,21 @@
     });
   }
   // A shop link from homepage search lands on the ink tracker with ?store=. Hide the other inks.
+  // A search from the homepage lands here with ?q=: show only the inks whose words (data-q) contain every search word.
   const inkNote = document.getElementById("ink-store-note");
   if (inkNote) {
-    const sid = new URLSearchParams(location.search).get("store");
-    if (sid) {
+    const params = new URLSearchParams(location.search);
+    const sid = params.get("store");
+    const inkQ = (params.get("q") || "").trim().slice(0, 100);
+    const inkFold = s => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const inkWords = inkFold(inkQ).split(/[^a-z0-9]+/).filter(Boolean);
+    if (sid || inkWords.length) {
       const tracker = inkNote.closest("#tracker") || document;
       let shown = 0;
       tracker.querySelectorAll("details.group-fold").forEach(card => {
-        const hit = (card.getAttribute("data-stores") || "").split(/\s+/).includes(sid);
+        const hay = inkFold(card.getAttribute("data-q") || card.textContent);
+        const hit = (!sid || (card.getAttribute("data-stores") || "").split(/\s+/).includes(sid))
+          && inkWords.every(w => hay.includes(w));
         card.hidden = !hit;
         if (hit) { card.open = true; shown += 1; }
       });
@@ -474,7 +481,15 @@
         head.hidden = !vis;
       });
       inkNote.hidden = false;
-      inkNote.textContent = shown ? "Showing inks this shop lists." : "This shop has no ink on the tracker.";
+      if (inkWords.length) {
+        inkNote.textContent = shown ? `Showing inks that match "${inkQ}". ` : `No ink on the tracker matches "${inkQ}". `;
+        const all = document.createElement("a");
+        all.href = location.pathname + "#tracker";
+        all.textContent = "Show all inks";
+        inkNote.append(all);
+      } else {
+        inkNote.textContent = shown ? "Showing inks this shop lists." : "This shop has no ink on the tracker.";
+      }
     }
   }
   // find-item: homepage search. The index is fetched only from focus or input, never on load.
@@ -521,6 +536,8 @@
       const el = document.getElementById("find-opt-" + active);
       return el ? el.href : "";
     };
+    // Result order when scores tie: trackers first, then Lamy releases, then guides.
+    const TYPE_RANK = { h: 0, d: 1, i: 2, p: 3, g: 4 };
     const tokensOf = q => fold(q).split(/[^a-z0-9]+/).filter(Boolean);
     const hayOf = item => fold([item.n, item.q || "", (item.sh || []).map(i => findData.shops[i].n).join(" "), findData.trackers[item.t].l].join(" "));
     const generalUrl = raw => {
@@ -530,16 +547,16 @@
       if (query.length < 2 || !tokens.length) return "";
       const shops = findData.shops.filter(shop => fold(shop.n).includes(query) && tokens.every(t => fold(shop.n).includes(t)));
       if (shops.length === 1 && shops[0].p.length) {
-        const rank = { h: 0, d: 1, i: 2 };
-        const pages = shops[0].p.slice().sort((a, b) => (b.c - a.c) || (rank[a.t] - rank[b.t]));
+        const pages = shops[0].p.slice().sort((a, b) => (b.c - a.c) || ((TYPE_RANK[a.t] ?? 9) - (TYPE_RANK[b.t] ?? 9)));
         return safeHref(pages[0].u);
       }
       const hits = findData.items.filter(item => tokens.every(t => hayOf(item).includes(t)));
       if (!hits.length) return "";
       const counts = {};
       hits.forEach(item => { counts[item.t] = (counts[item.t] || 0) + 1; });
-      const best = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || (a === "h" ? -1 : 1))[0];
-      if (best === "i") return safeHref(hits.find(item => item.t === "i").u);
+      const best = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || (TYPE_RANK[a] ?? 9) - (TYPE_RANK[b] ?? 9))[0];
+      // Guides have no search box: Enter opens the best-matching guide. Everything else opens its page filtered by ?q=.
+      if (best === "g") return safeHref(hits.find(item => item.t === "g").u);
       return safeHref(findData.trackers[best].u) + "?q=" + encodeURIComponent(raw.trim());
     };
     const render = () => {
@@ -557,9 +574,8 @@
         if (!tokens.every(t => name.includes(t))) return;
         shop.p.forEach(page => shopRows.push({ n: shop.n, t: page.t, s: page.s, u: page.u }));
       });
-      const rank = { h: 0, d: 1, i: 2 };
       shopRows.sort((a, b) => (fold(a.n).startsWith(query) ? 0 : 1) - (fold(b.n).startsWith(query) ? 0 : 1)
-        || fold(a.n).localeCompare(fold(b.n)) || (rank[a.t] - rank[b.t]));
+        || fold(a.n).localeCompare(fold(b.n)) || ((TYPE_RANK[a.t] ?? 9) - (TYPE_RANK[b.t] ?? 9)));
       const itemRows = findData.items.map(item => {
         const name = fold(item.n);
         const hay = hayOf(item);
@@ -569,7 +585,7 @@
         else if (name.startsWith(query)) score = 80;
         else if (tokens.every(t => name.includes(t))) score = 60;
         return { n: item.n, t: item.t, s: item.s, u: item.u, score };
-      }).filter(Boolean).sort((a, b) => b.score - a.score || a.n.localeCompare(b.n));
+      }).filter(Boolean).sort((a, b) => b.score - a.score || ((TYPE_RANK[a.t] ?? 9) - (TYPE_RANK[b.t] ?? 9)) || a.n.localeCompare(b.n));
       const rows = shopRows.slice(0, 3).concat(itemRows.slice(0, Math.max(0, 8 - Math.min(shopRows.length, 3))));
       if (!rows.length) { closeList(); say("No matches"); return; }
       rows.forEach((row, i) => {
@@ -706,4 +722,16 @@
   [q, line, shop, inst].filter(Boolean).forEach(el => el.addEventListener("input", render));
   [line, shop, inst].filter(Boolean).forEach(el => el.addEventListener("change", render));
   render();
+  // Search results link to a pen's card (#pen-<id>). A card in Older releases is inside a closed fold: open it, then scroll.
+  const openPenHash = () => {
+    let id = "";
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) { return; }
+    const el = id && document.getElementById(id);
+    if (!el || !root.contains(el)) return;
+    if (older && older.contains(el) && !older.open) older.open = true;
+    if (el.hidden) { q.value = ""; render(); }
+    el.scrollIntoView({ block: "start" });
+  };
+  openPenHash();
+  window.addEventListener("hashchange", openPenHash);
 })();
