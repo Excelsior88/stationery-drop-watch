@@ -58,9 +58,14 @@ class HubCardsAndHeaders(unittest.TestCase):
             self.assertTrue(m and f'id="{m.group(1)}"' in html, c)
 
     def test_no_cors_header_on_static_files(self):
-        tail = HEADERS[HEADERS.rindex("\n/*\n"):]
-        self.assertIn("! Access-Control-Allow-Origin", tail)
+        # Pages keeps one rule per pattern: a second "/*" block replaced the first live on Nov 25, 2026.
+        self.assertEqual(re.findall(r"(?m)^/\*$", HEADERS), ["/*"])
+        root = HEADERS.split("\n/*\n", 1)[1].split("\n\n", 1)[0]
+        self.assertIn("! Access-Control-Allow-Origin", root)
+        self.assertIn("Strict-Transport-Security:", root)
         self.assertNotRegex(HEADERS, r"(?m)^\s+Access-Control-Allow-Origin:")
+        patterns = re.findall(r"(?m)^(\S+)$", HEADERS)
+        self.assertEqual(len(patterns), len(set(patterns)), "each URL pattern may appear only once")
 
     def test_hsts_covers_subdomains_without_preload(self):
         line = next(l for l in HEADERS.splitlines() if l.strip().startswith("Strict-Transport-Security:"))
