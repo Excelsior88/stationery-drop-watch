@@ -2482,5 +2482,32 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_sunsun/",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-25T14:17:44+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "A5 cover · Glow: Chianti",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/cc27_chianti/",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-25T14:21:33+00:00",
+  "store_id": "leuchtturm-us",
+  "store": "Leuchtturm1917 US (official)",
+  "label": "Hardcover Medium (A5) · dotted · Black",
+  "url": "https://www.leuchtturm1917.us/products/hardcover-notebook?variant=48072862597365",
+  "from": "sold_out",
+  "to": "in_stock"
+ },
+ {
+  "at": "2026-11-25T14:21:33+00:00",
+  "store_id": "leuchtturm-us",
+  "store": "Leuchtturm1917 US (official)",
+  "label": "Hardcover Medium (A5) · dotted · Navy",
+  "url": "https://www.leuchtturm1917.us/products/hardcover-notebook?variant=48072862990581",
+  "from": "sold_out",
+  "to": "in_stock"
  }
 ]
