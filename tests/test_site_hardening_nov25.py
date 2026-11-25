@@ -62,6 +62,11 @@ class HubCardsAndHeaders(unittest.TestCase):
         self.assertIn("! Access-Control-Allow-Origin", tail)
         self.assertNotRegex(HEADERS, r"(?m)^\s+Access-Control-Allow-Origin:")
 
+    def test_hsts_covers_subdomains_without_preload(self):
+        line = next(l for l in HEADERS.splitlines() if l.strip().startswith("Strict-Transport-Security:"))
+        self.assertIn("max-age=31536000; includeSubDomains", line)
+        self.assertNotIn("preload", line)
+
     def test_js_charset(self):
         for path in ("/assets/app.js", "/assets/local-time.js"):
             block = HEADERS[HEADERS.index(path + "\n"):].split("\n/", 1)[0]

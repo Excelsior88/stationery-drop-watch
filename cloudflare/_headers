@@ -6,6 +6,8 @@ https://:project.pages.dev/*
 https://:version.:project.pages.dev/*
   X-Robots-Tag: noindex
 
+# HSTS covers subdomains (checked Nov 25, 2026: www redirects to the apex over HTTPS, media is an R2 custom domain that
+# serves HTTPS; every other name is a DNS-only mail record). Not on the preload list: that is hard to undo and needs the owner's yes.
 # Security headers for the live site. Cloudflare Pages already sends X-Content-Type-Options: nosniff and
 # Referrer-Policy: strict-origin-when-cross-origin (checked live Nov 22, 2026), so they are not repeated here.
 # Pages Functions (including /api/subscribe) do not receive these headers. That fallback page uses an inline <style>,
@@ -21,7 +23,7 @@ https://:version.:project.pages.dev/*
 # 'self', so a <style> block on an HTML page is still reported. script-src hashes the filter forms' onsubmit="return false"
 # (sha256 of that source, with 'unsafe-hashes') so those pages do not report an inline-handler violation.
 /*
-  Strict-Transport-Security: max-age=31536000
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com 'unsafe-hashes' 'sha256-GZIcz60Uwd6wT3vaYke/atSr53TehbYAPepOa3d03Vw='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
