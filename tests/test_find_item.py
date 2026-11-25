@@ -67,13 +67,13 @@ class SearchIndexTests(unittest.TestCase):
 
     def test_covers_every_active_canonical_and_live_ink(self):
         keys = {item["t"] for item in self.idx["items"]}
-        self.assertEqual(keys, {"h", "d", "i", "p"})
-        self.assertEqual(set(self.idx["trackers"]), {"h", "d", "i", "p"})
+        self.assertEqual(keys, {"h", "d", "i", "p", "g"})
+        self.assertEqual(set(self.idx["trackers"]), {"h", "d", "i", "p", "g"})
         self.assertEqual(
             {key: self.idx["trackers"][key]["l"] for key in ("h", "d", "i")},
             {"h": "Hobonichi", "d": "Dot grid", "i": "Limited inks"})
         active = {p["canonical"] for p in site.stock["products"] + site.LINK_ROWS if p.get("canonical")}
-        got = {item["id"] for item in self.idx["items"] if item["t"] not in ("i", "p")}
+        got = {item["id"] for item in self.idx["items"] if item["t"] not in ("i", "p", "g")}
         self.assertEqual(got, active)
         self.assertGreaterEqual(sum(item["t"] == "h" for item in self.idx["items"]), 1)
         self.assertGreaterEqual(sum(item["t"] == "d" for item in self.idx["items"]), 1)
@@ -106,7 +106,7 @@ class SearchIndexTests(unittest.TestCase):
                 rows = [r for r in site.INK_ROWS if r["ink_id"] == item["id"]]
                 self.assertEqual(item["s"], site.count_line(rows).capitalize(), item["id"])
                 self.assertTrue(item["u"].endswith("#ink-" + item["id"]))
-            elif "#" in item["u"]:
+            elif item["t"] in ("h", "d") and "#" in item["u"]:
                 rows = [p for p in site.stock["products"] if p.get("canonical") == item["id"]]
                 expected = site.count_line(rows).capitalize() if rows else LINK_ONLY
                 self.assertEqual(item["s"], expected, item["id"])
@@ -201,7 +201,7 @@ class HomepageSearchMarkupTests(unittest.TestCase):
         self.assertIn('role="listbox"', self.bar)
         self.assertIn('aria-live="polite"', self.bar)
         self.assertIn('action="/hobonichi-restock-tracker/" method="get"', self.bar)
-        self.assertIn("Planner, dot grid, ink, or shop", self.bar)
+        self.assertIn("Planner, dot grid, ink, Lamy pen, guide or shop", self.bar)
         self.assertNotIn("bullet", self.bar.lower())
         self.assertNotIn("midori", self.bar.lower())
         self.assertNotIn("traveler", self.bar.lower())
