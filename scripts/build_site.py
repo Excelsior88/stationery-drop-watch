@@ -3846,7 +3846,8 @@ def build_gift_guide():
     # Our own products: the list prices /shop shows (we set them), and the shared Etsy price line.
     own_rows = [("Our 2027 Planner, Blush or for Men, A5 paperback",
                  AMAZON_LIST_PRICES.get("B0HRTLMZ1M") if AMAZON_LIST_PRICES.get("B0HRTLMZ1M") == AMAZON_LIST_PRICES.get("B0HRTTCH4D") else None),
-                ("Our Habit & Mood Tracker Journal", AMAZON_LIST_PRICES.get("B0HQ5TLDK3")),
+                ("Our Habit & Mood Tracker Journal, A5 or 6x9 paperback",
+                 AMAZON_LIST_PRICES.get("B0HSTYDQ8K") if AMAZON_LIST_PRICES.get("B0HSTYDQ8K") == AMAZON_LIST_PRICES.get("B0HQ5TLDK3") else None),
                 ("Our Reading Journal", AMAZON_LIST_PRICES.get("B0HQ5X3C7D")),
                 ("Level Up! My 2027 Planner, paperback", AMAZON_LIST_PRICES.get("B0HQW8273V"))]
     own = [f'<tr><td><a href="shop/">{E(n)}</a></td><td><span class="muted small">Ours; not stock-checked</span></td><td>'
@@ -3934,7 +3935,7 @@ def build_gift_guide():
 <ul class="picks">
   <li><strong>2027 Planners, Blush and for Men:</strong> the A5 editions are under <a href="#journaling">For someone new to journaling</a>. For Men also comes as an {gift_own("B0HP9PXSR1", "8.5 × 11 Sunday-start paperback")}.</li>
   <li><strong>Level Up! My 2027 Planner,</strong> for a child aged 7 to 11: a kids planner that plays like a video game, with a Reading Quest Log, Trophy Room and Coin Bank; 8.5 × 11 in. {gift_own("B0HQW8273V", "Paperback on Amazon")}{lu_etsy}</li>
-  <li><strong>Undated journals:</strong> {gift_own("B0HQ5TLDK3", "Habit & Mood Tracker Journal")} (6 × 9 in, 166 pages) · {gift_own("B0HQ5X3C7D", "Reading Journal")} (7 × 10 in, 152 pages).</li>
+  <li><strong>Undated journals:</strong> {gift_own("B0HSTYDQ8K", "Habit & Mood Tracker Journal")} (A5, 168 pages; also available in {gift_own("B0HQ5TLDK3", "6 × 9 in")}, 166 pages) · {gift_own("B0HQ5X3C7D", "Reading Journal")} (7 × 10 in, 152 pages).</li>
 </ul>
 
 <section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
@@ -4232,14 +4233,17 @@ SHOP_TPT = [
 # (07:57 AM ET / America/Detroit; both In Stock). Owner asked to show $14.99 on both cards.
 # B0HQW8273V (Level Up! paperback) was $19.99 in the buy box and Paperback swatch on its Amazon page
 # on 2026-11-16 (11:48 AM ET). Owner approved showing it in the same format as the other cards.
+# B0HSTYDQ8K (Habit & Mood Tracker Journal, A5 paperback) was $14.99 in the buy box on its Amazon page
+# on 2026-11-25 (about 10:55 AM ET), the same as the 6x9 edition it replaces on /shop.
 AMAZON_LIST_PRICES = {"B0HPBDNS7F": "$19.99", "B0HQ5TLDK3": "$14.99", "B0HQ5X3C7D": "$16.99",
                       "B0HP9PXSR1": "$14.99", "B0HRTLMZ1M": "$14.99", "B0HRTTCH4D": "$14.99",
-                      "B0HQW8273V": "$19.99"}
-SHOP_LABELS = {"B0HRTLMZ1M": "2027 Planner, Blush", "B0HQ5TLDK3": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
+                      "B0HQW8273V": "$19.99", "B0HSTYDQ8K": "$14.99"}
+SHOP_LABELS = {"B0HRTLMZ1M": "2027 Planner, Blush", "B0HSTYDQ8K": "Habit & Mood Tracker Journal", "B0HQ5X3C7D": "Reading Journal",
                "B0HRTTCH4D": "2027 Planner for Men", "B0HQW8273V": "Level Up! My 2027 Planner"}
-SHOP_ORDER = ("B0HRTLMZ1M", "B0HQ5TLDK3", "B0HQ5X3C7D", "B0HRTTCH4D", "B0HQW8273V")
-# Optional note under the detail bullets. The 8.5x11 editions remain linked notes on
-# the A5 cards, not featured cards of their own. Link text matches the owner-approved phrasing.
+SHOP_ORDER = ("B0HRTLMZ1M", "B0HSTYDQ8K", "B0HQ5X3C7D", "B0HRTTCH4D", "B0HQW8273V")
+# Optional note under the detail bullets. The 8.5x11 planners and the 6x9 Habit & Mood Tracker
+# remain linked notes on the A5 cards, not featured cards of their own. Link text matches the
+# owner-approved phrasing ("Also available in 6x9" is the owner's wording, Nov 25).
 SHOP_ALSO = {
     "B0HRTLMZ1M": {
         "before": "Also comes in ",
@@ -4250,6 +4254,11 @@ SHOP_ALSO = {
         "before": "Also comes in ",
         "link_text": "8.5x11 paperback, Sunday start",
         "url": "https://www.amazon.com/dp/B0HP9PXSR1",
+    },
+    "B0HSTYDQ8K": {
+        "before": "Also available in ",
+        "link_text": "6x9 paperback",
+        "url": "https://www.amazon.com/dp/B0HQ5TLDK3",
     },
 }
 ETSY_PRICE = ("$6.99", "25% off all listings, Cyber sale Nov 23 to Dec 1")
@@ -4284,6 +4293,8 @@ SHOP_INSIDE = {
     "B0HPBDNS7F": [("monthly-calendar-goals-spread-p6-7", "January calendar and Goals & Priorities, pages 6-7"),
                    ("weekly-spread-p12-13", "Weekly spread, Jan 3 to 9, pages 12-13")],
     "B0HQ5TLDK3": [("habit-and-mood-tracker-spread-p6-7", "Habit tracker and mood tracker, pages 6-7"),
+                   ("weekly-checkin-spread-p8-9", "Weekly check-in, pages 8-9")],
+    "B0HSTYDQ8K": [("habit-and-mood-tracker-spread-p6-7", "Habit tracker and mood tracker, pages 6-7"),
                    ("weekly-checkin-spread-p8-9", "Weekly check-in, pages 8-9")],
     "B0HQ5X3C7D": [("genre-tracker-books-read-log-spread-p12-13", "Genre tracker and books-read log, pages 12-13"),
                    ("book-review-spread-p24-25", "Book review pages, pages 24-25")],
