@@ -1818,7 +1818,6 @@ def build_transparency():
         orow("Laywine&rsquo;s", "Nov 23, 2026", "Waiting for reply"),
         orow("Milligram", "Nov 23, 2026", "Waiting for reply"),
         orow("Notebook Therapy", "Nov 23, 2026", "Waiting for reply"),
-        orow("Kinokuniya Singapore", "Nov 23, 2026", "Replied Nov 23, 2026: declined. Stays link only (see the table above)."),
     ])
     body = f"""
 <article class="prose">
