@@ -2509,5 +2509,14 @@
   "url": "https://www.leuchtturm1917.us/products/hardcover-notebook?variant=48072862990581",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-25T16:29:07+00:00",
+  "store_id": "leuchtturm-us",
+  "store": "Leuchtturm1917 (official)",
+  "label": "Hardcover Medium (A5) · dotted · Black",
+  "url": "https://www.leuchtturm1917.us/products/hardcover-notebook?variant=48072862597365",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
