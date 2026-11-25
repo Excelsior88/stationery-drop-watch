@@ -130,5 +130,53 @@ class PageTests(unittest.TestCase):
         self.assertEqual(site.N_STORES, 27)
 
 
+class LamyMentionTests(unittest.TestCase):
+    """About, Guides and homepage search point to the calendar (owner yes, Nov 24, 2026)."""
+
+    ABOUT = ("Separately, our <a href=\"/lamy-special-edition-release-calendar/\">Lamy release calendar</a> lists "
+             "Lamy&#x27;s special and limited edition pens, when each was first listed, and the authorized shops that sell them. "
+             "It is not a tracker, and we don&#x27;t check stock on those links.")
+
+    def test_about_how_it_works_sentence(self):
+        html = site.build_about()
+        self.assertIn(self.ABOUT, html)
+        self.assertLess(html.index("dealer list)."), html.index("Separately, our"))
+        self.assertLess(html.index("Separately, our"), html.index("When a sold-out"))
+
+    def test_guides_see_also_line_keeps_the_guide_count(self):
+        _, html = site.build_guides_index()
+        self.assertIn('See also: <a href="/lamy-special-edition-release-calendar/">Lamy release calendar</a>, '
+                      "Lamy&#x27;s special and limited edition pens, when each was first listed, and the authorized shops that sell them.",
+                      html)
+        self.assertIn(f"{len(site.GUIDES)} guides", html)
+        self.assertEqual(len(site.GUIDES), 6)
+        self.assertNotIn(site.LAMY_SLUG, [h.strip("/") for h, _ in site.GUIDES])
+        self.assertNotIn(site.LAMY_SLUG, html[html.index('<ul class="guide-list">'):html.index("</ul>", html.index('<ul class="guide-list">'))])
+
+    def test_search_finds_the_calendar_for_lamy_and_pen_names(self):
+        from test_find_item import hits
+        idx = site.search_index()
+        item = next(i for i in idx["items"] if i["id"] == "lamy-release-calendar")
+        self.assertEqual(item["n"], "Lamy release calendar")
+        self.assertEqual(item["u"], f"/{site.LAMY_SLUG}/")
+        self.assertEqual(item["s"], f"{len(site.LAMY_CFG['pens'])} special and limited edition pens, no stock checks")
+        self.assertEqual(item["sh"], [])
+        self.assertEqual(idx["trackers"]["p"], {"l": "Lamy releases", "u": f"/{site.LAMY_SLUG}/"})
+        for q in ("lamy", "bog oak", "pine", "safari", "al-star", "scala pearl"):
+            self.assertIn("lamy-release-calendar", [i["id"] for i in hits(idx, q)], q)
+        low = json.dumps(item).lower()
+        for word in ("midori", "traveler", "designphil", "bullet", "amazon"):
+            self.assertNotIn(word, low)
+
+    def test_no_search_entry_without_pens(self):
+        old = site.LAMY_LIVE
+        try:
+            site.LAMY_LIVE = False
+            self.assertIsNone(site.lamy_search_item())
+            self.assertEqual(site.lamy_see_also(), "")
+        finally:
+            site.LAMY_LIVE = old
+
+
 if __name__ == "__main__":
     unittest.main()
