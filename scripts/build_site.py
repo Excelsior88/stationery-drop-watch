@@ -1427,7 +1427,7 @@ def find_bar():
   <form class="find-form" id="find-form" action="/hobonichi-restock-tracker/" method="get" role="search" aria-label="Find my item">
     <label id="find-label" for="find-q">Find my item</label>
     <div class="find-row">
-      <input id="find-q" type="search" name="q" placeholder="Planner, dot grid, ink, or shop" autocomplete="off" enterkeyhint="search" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="find-list" aria-autocomplete="list" aria-haspopup="listbox">
+      <span class="find-field"><input id="find-q" type="search" name="q" placeholder="Planner, dot grid, ink, Lamy pen, guide or shop" autocomplete="off" enterkeyhint="search" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="find-list" aria-autocomplete="list" aria-haspopup="listbox" aria-keyshortcuts="/ Control+K Meta+K"><kbd class="find-kbd" aria-hidden="true">/</kbd></span>
       <button type="submit">Search</button>
     </div>
     <p id="find-count" class="find-count" role="status" aria-live="polite"></p>
@@ -4928,6 +4928,16 @@ def ink_color_table(ink, rows):
             f'<tbody>{"".join(body)}</tbody></table></div>'
             '<p class="muted small">Open a status to go straight to that shop\'s listing.</p>')
 
+def ink_search_words(ink, rows):
+    """Words the ink page's ?q= filter matches (app.js): the same name, kind, note, brand, colors and shops the homepage
+    search index uses for this ink, so a search that found the ink on the homepage also finds it on this page."""
+    brand = (INK_CFG.get("brands", {}).get(ink.get("brand")) or {}).get("name") or ""
+    colors = sorted({r.get("color") or "" for r in rows if r.get("color")})
+    shops = sorted({r.get("store") or "" for r in rows})
+    words = " ".join([_search_public(ink.get("name") or ""), _search_public(ink.get("kind") or ""), _search_public(ink.get("note") or ""), brand, *colors, *shops])
+    return " ".join(w for w in _search_fold(words).split() if not _SEARCH_BANNED.search(w))
+
+
 def ink_card(ink):
     rows = [r for r in INK_ROWS if r["ink_id"] == ink["id"]]
     if not rows:
@@ -4944,7 +4954,7 @@ def ink_card(ink):
   </table></div>
   <p class="muted small">Open a shop's name to go straight to its listing.</p>'''
     sids = " ".join(dict.fromkeys(r["store_id"] for r in rows))
-    return f"""<details class="card group-fold" id="ink-{E(ink['id'])}" data-stores="{E(sids)}">
+    return f"""<details class="card group-fold" id="ink-{E(ink['id'])}" data-stores="{E(sids)}" data-q="{E(ink_search_words(ink, rows))}">
   <summary><h3 class="fam-name">{E(ink['name'])}</h3><span class="fam-meta">{meta}</span></summary>
   <section class="group-sec">
   {kind}{note}
@@ -5372,6 +5382,57 @@ def lamy_search_item():
     return item
 
 
+def lamy_pen_search_items():
+    """One homepage search entry per pen shown on the Lamy release calendar, linking to that pen's card (#pen-<id>).
+    Same pens the page shows (lamy_split). The line under the name is the pen's kind and its date, as on its card."""
+    if not LAMY_LIVE:
+        return []
+    upcoming, newest, older = lamy_split(LAMY_CFG.get("pens", []), lamy_today())
+    items = []
+    for p in upcoming + newest + older:
+        name = _search_public(p.get("name") or "")
+        if not name or _SEARCH_BANNED.search(name):
+            continue
+        if p in upcoming:
+            when = ("Release date " + _search_date(p["official_date"])) if p.get("official_date") else "Release date TBA"
+        elif p.get("official_date"):
+            when = "Released " + _search_date(p["official_date"])
+        else:
+            when = "First listed " + _search_date(p["first_listed"])
+        bits = [x for x in (p.get("kind"), p.get("qty")) if x]
+        item = {"id": "lamy-" + p["id"], "n": name, "t": "p", "s": " · ".join(bits + [when]),
+                "u": f"/{LAMY_SLUG}/#pen-{p['id']}", "sh": []}
+        extra = _search_extra(name, ["Lamy releases", "special limited edition pen pens fountain", p.get("line") or "",
+                                     p.get("kind") or "", p.get("qty") or ""])
+        extra = " ".join(w for w in extra.split() if w != "bullet" and not _SEARCH_BANNED.search(w))
+        if extra:
+            item["q"] = extra
+        items.append(item)
+    return items
+
+
+def _search_date(iso):
+    d = dt.date.fromisoformat(iso)
+    return f"{d.strftime('%b')} {d.day}, {d.year}"
+
+
+def guide_search_items():
+    """One homepage search entry per guide in GUIDES, with its /guides/ blurb as the line under the name."""
+    items = []
+    for h, t in GUIDES:
+        name = _search_public(t)
+        blurb = _search_public(GUIDE_BLURBS.get(h, ""))
+        if _SEARCH_BANNED.search(name) or _SEARCH_BANNED.search(blurb):
+            continue
+        item = {"id": "guide-" + h.strip("/"), "n": name, "t": "g", "s": blurb, "u": "/" + h, "sh": []}
+        extra = _search_extra(name, ["guide guides", blurb])
+        extra = " ".join(w for w in extra.split() if w != "bullet" and not _SEARCH_BANNED.search(w))
+        if extra:
+            item["q"] = extra
+        items.append(item)
+    return items
+
+
 def _search_anchor(cid):
     return re.sub(r"[^A-Za-z0-9]+", "-", cid).strip("-") or "other"
 
@@ -5512,6 +5573,12 @@ def search_index():
         # Not a tracker: "p" only gives the result its tag ("Lamy releases") and the Enter-key page.
         trackers["p"] = {"l": LAMY_NAV, "u": "/" + LAMY_SLUG + "/"}
         items.append(lamy)
+        items.extend(lamy_pen_search_items())
+    guides = guide_search_items()
+    if guides:
+        # Not a tracker either: "g" gives guide results their tag ("Guides").
+        trackers["g"] = {"l": "Guides", "u": "/guides/"}
+        items.extend(guides)
     for item in items:
         item["u"] = safe_href(item["u"], "search item " + str(item.get("id")))
     for shop in shops:
