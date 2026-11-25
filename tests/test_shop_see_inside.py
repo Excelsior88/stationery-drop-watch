@@ -199,6 +199,23 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertEqual(amazon.count("https://www.amazon.com/dp/B0HP9PXSR1"), 1)
         self.assertIn('class="inside-grid spreads"', mens)
 
+    def test_a5_habit_mood_tracker_replaces_the_6x9_card(self):
+        habit = card(self.shop, "Habit &amp; Mood Tracker Journal")
+        self.assertIn('href="https://www.amazon.com/dp/B0HSTYDQ8K"', habit)
+        self.assertEqual(habit.count("https://www.amazon.com/dp/B0HSTYDQ8K"), 2)
+        self.assertIn("data-own-product", habit)
+        self.assertNotIn("tag=", habit)
+        self.assertIn("5.83 x 8.27 in (A5) paperback, 168 pages", habit)
+        self.assertIn("/assets/books/B0HSTYDQ8K.jpg", habit.split("<details", 1)[0])
+        self.assertNotRegex(habit, r"b0nem0ther|Excelsior")
+        # The 6x9 edition is only the "Also available in 6x9" note link, like the 8.5x11 planners.
+        self.assertIn('Also available in <a href="https://www.amazon.com/dp/B0HQ5TLDK3" data-own-product', habit)
+        self.assertIn(">6x9 paperback</a>", habit)
+        amazon = self.shop.split("<h2>Printable PDFs on Etsy</h2>", 1)[0]
+        self.assertEqual(amazon.count("https://www.amazon.com/dp/B0HQ5TLDK3"), 1)
+        self.assertNotIn("/assets/books/B0HQ5TLDK3.jpg", amazon)
+        self.assertNotIn("/assets/shop/inside/B0HQ5TLDK3-", amazon)
+
     def test_hardcover_gift_pick_on_dotgrid_is_unchanged(self):
         # /shop no longer features the 8.5x11 hardcover; the existing dot-grid gift pick stays.
         self.assertNotIn("B0HRTLMZ1M", self.home)
@@ -221,8 +238,8 @@ class ShopSeeInsideTests(unittest.TestCase):
         expected = [
             "/assets/shop/inside/B0HRTLMZ1M-january-month-pages.jpg",
             "/assets/shop/inside/B0HRTLMZ1M-weekly-spread-dec28-2026-jan3-2027.jpg",
-            "/assets/shop/inside/B0HQ5TLDK3-habit-and-mood-tracker-spread-p6-7.jpg",
-            "/assets/shop/inside/B0HQ5TLDK3-weekly-checkin-spread-p8-9.jpg",
+            "/assets/shop/inside/B0HSTYDQ8K-habit-and-mood-tracker-spread-p6-7.jpg",
+            "/assets/shop/inside/B0HSTYDQ8K-weekly-checkin-spread-p8-9.jpg",
             "/assets/shop/inside/B0HQ5X3C7D-genre-tracker-books-read-log-spread-p12-13.jpg",
             "/assets/shop/inside/B0HQ5X3C7D-book-review-spread-p24-25.jpg",
             "/assets/shop/inside/B0HRTTCH4D-january-month-pages.jpg",

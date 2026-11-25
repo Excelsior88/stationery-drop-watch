@@ -10,7 +10,7 @@ import build_site as site
 
 OWN_ASINS = {
     "B0HP9PXSR1", "B0HPBDNS7F", "B0HQ5TLDK3", "B0HQ5X3C7D",
-    "B0HQW8273V", "B0HRTLMZ1M", "B0HRTTCH4D",
+    "B0HQW8273V", "B0HRTLMZ1M", "B0HRTTCH4D", "B0HSTYDQ8K",
 }
 AMAZON_HREF = re.compile(r'href="(https?://(?:www\.)?(?:amazon\.com|amzn\.to|a\.co)/[^"]*)"', re.I)
 
