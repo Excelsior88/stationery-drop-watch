@@ -14,7 +14,7 @@ ABOUT = (ROOT / "site" / "about" / "index.html").read_text()
 
 def _hub_card(html, name):
     m = re.search(
-        rf'<li class="hub-card">.*?<h3>{re.escape(name)}</h3><p>(.*?)</p>',
+        rf'<li class="hub-card">.*?<h3[^>]*>{re.escape(name)}</h3><p[^>]*>(.*?)</p>',
         html,
         flags=re.S,
     )
