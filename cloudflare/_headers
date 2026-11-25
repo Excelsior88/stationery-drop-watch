@@ -22,10 +22,15 @@ https://:version.:project.pages.dev/*
 # style-src-attr allows the three format-icon custom properties (--iw/--ih) on the comparison SVGs. style-src stays
 # 'self', so a <style> block on an HTML page is still reported. script-src hashes the filter forms' onsubmit="return false"
 # (sha256 of that source, with 'unsafe-hashes') so those pages do not report an inline-handler violation.
+# Pages keeps one rule per URL pattern: a second "/*" block replaces the first one (seen live Nov 25, 2026, when a
+# trailing "/*" detach block dropped HSTS, X-Frame-Options, Permissions-Policy and the CSP). So the CORS detach lives in
+# this block. Pages sends Access-Control-Allow-Origin: * on every static file by default; nothing on or off the site needs
+# it (our pages fetch only same-origin files; Relay, the checker and the alert routine read the site server-side).
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  ! Access-Control-Allow-Origin
   Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com 'unsafe-hashes' 'sha256-GZIcz60Uwd6wT3vaYke/atSr53TehbYAPepOa3d03Vw='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
 
 # Cache. HTML stays on Pages' default (public, max-age=0, must-revalidate), which is right for a page that changes every
@@ -54,12 +59,3 @@ https://:version.:project.pages.dev/*
   Cache-Control: public, max-age=86400
 /assets/shop/*
   Cache-Control: public, max-age=86400
-
-# No cross-origin reads of anything on the site. Pages sends Access-Control-Allow-Origin: * on every static file by
-# default (checked live Nov 24 and Nov 25, 2026: HTML, /data/*.json, /assets/*). Nothing needs it: our pages fetch only
-# same-origin files (search-index.json), same-origin fetches and same-origin font preloads don't need CORS, <img> and
-# <a> links from other sites don't need it, and the drop-alert routine, Relay and the checker read the site server-side,
-# where CORS doesn't apply. Pages Functions (/api/subscribe) never sent it. /data/stock.json was detached on Nov 24.
-# Detach rules must come after the broader rule, so this block stays at the end of the file.
-/*
-  ! Access-Control-Allow-Origin
