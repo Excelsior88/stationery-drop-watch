@@ -733,5 +733,7 @@
     el.scrollIntoView({ block: "start" });
   };
   openPenHash();
+  // Some browsers (WebKit) scroll to the fragment again once the page has loaded, before the fold opened; scroll once more.
+  if (document.readyState !== "complete") window.addEventListener("load", openPenHash, { once: true });
   window.addEventListener("hashchange", openPenHash);
 })();

@@ -492,6 +492,7 @@ nav a:focus-visible,button:focus-visible,.btn:focus-visible,.btn-ghost:focus-vis
 .filter-fields label{flex:1 1 140px}
 #filters{scroll-margin-top:calc(var(--mast) + 8px)}
 .shop-head,.group-sec,.fam-block,.group-fold,.compare{scroll-margin-top:calc(var(--mast) + 12px)}
+.lamy-entry{scroll-margin-top:calc(var(--mast, 0px) + 12px)}
 .filter-note{margin:-4px 0 12px}
 .group-toolbar{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap;flex:1 1 100%;margin:8px 0 0}
 .group-toolbar:not(:has([data-group-toggle]:not([hidden]))){display:none}
