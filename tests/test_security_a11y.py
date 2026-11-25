@@ -115,8 +115,7 @@ class CloudflareHeadersTests(unittest.TestCase):
         font = self.headers.split("/assets/fonts/*", 1)[1].split("/assets/", 1)[0]
         self.assertIn("Cache-Control: public, max-age=2592000", font)
         self.assertNotIn("immutable", font)
-        self.assertIn("Strict-Transport-Security: max-age=31536000\n", self.headers)
-        self.assertNotIn("includeSubDomains", self.headers)
+        self.assertIn("Strict-Transport-Security: max-age=31536000; includeSubDomains\n", self.headers)  # no preload
         # The only Access-Control-Allow-Origin line detaches Pages' default "*" from the public stock feed (Nov 24, 2026).
         acao = [line.strip() for line in self.headers.splitlines() if "Access-Control-Allow-Origin" in line and not line.lstrip().startswith("#")]
         self.assertEqual(acao, ["! Access-Control-Allow-Origin"])

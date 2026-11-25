@@ -44,7 +44,8 @@ class CspHeaderTests(unittest.TestCase):
 
     def test_existing_security_and_cache_headers_stay(self):
         self.assertIn("Strict-Transport-Security: max-age=31536000", self.headers)
-        self.assertNotIn("includeSubDomains", self.headers)
+        self.assertIn("Strict-Transport-Security: max-age=31536000; includeSubDomains\n", self.headers)  # owner yes Nov 25, 2026
+        self.assertNotIn("preload", self.headers.split("Strict-Transport-Security:", 1)[1].split("\n", 1)[0])
         self.assertIn("X-Frame-Options: SAMEORIGIN", self.headers)
         self.assertIn("Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()", self.headers)
         rules = {}
