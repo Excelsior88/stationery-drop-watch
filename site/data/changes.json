@@ -2599,5 +2599,14 @@
   "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-mega-colors-pink-sapphire",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-26T17:19:33+00:00",
+  "store_id": "journalshop",
+  "store": "The Journal Shop",
+  "label": "HON A5 · Slash (Navy)",
+  "url": "https://www.thejournalshop.com/products/hobonichi-2027-hon-a5-slash-navy",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
