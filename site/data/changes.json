@@ -2590,5 +2590,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_hon_tiesheep/",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-26T13:19:11+00:00",
+  "store_id": "atlas",
+  "store": "Atlas Stationers",
+  "label": "Weeks Mega · Colors: Pink Sapphire",
+  "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-mega-colors-pink-sapphire",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
