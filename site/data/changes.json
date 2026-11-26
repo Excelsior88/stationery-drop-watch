@@ -2581,5 +2581,14 @@
   "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_hon_tiesheep/",
   "from": "sold_out",
   "to": "in_stock"
+ },
+ {
+  "at": "2026-11-26T07:17:43+00:00",
+  "store_id": "1101",
+  "store": "Hobonichi Online Store (official)",
+  "label": "HON A6 · Bow & Tie: Sheep Sheep Sheep",
+  "url": "https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_hon_tiesheep/",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
