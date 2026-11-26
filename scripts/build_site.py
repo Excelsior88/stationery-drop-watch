@@ -1834,7 +1834,7 @@ def build_transparency():
 <h2 id="outstanding-requests">Outstanding requests</h2>
 <p>These shops are listed as link only. We do not check their stock until they give us written permission. We emailed each one to ask, and this table shows where each request stands.</p>
 <div class="table-wrap"><table class="tp-table">
-<thead><tr><th scope="col">Shop</th><th scope="col">What we asked</th><th scope="col">Sent</th><th scope="col">Status</th></tr></thead>
+<thead><tr><th scope="col">Brand/Shop</th><th scope="col">What we asked</th><th scope="col">Sent</th><th scope="col">Status</th></tr></thead>
 <tbody>
 {outstanding}
 </tbody></table></div>
