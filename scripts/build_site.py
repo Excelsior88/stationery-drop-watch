@@ -1804,10 +1804,25 @@ def build_transparency():
             "All stock checking and stock status for this shop.",
             "a link to the shop, marked &ldquo;link only&rdquo;.", "Nov 23, 2026"),
     ])
+    # Outstanding requests: permission emails to link-only shops (sent by the owner from admin@, Proton).
+    # Records: drop-watch-drafts/permission-emails/ and STATUS. Update a row when a shop replies.
+    ASK = "Written permission to check their stock."
+    def orow(name, sent, status):
+        return (f'<tr><th scope="row">{name}</th>\n'
+                f'<td data-label="What we asked">{ASK}</td>\n'
+                f'<td class="date" data-label="Sent">{sent}</td>\n'
+                f'<td data-label="Status">{status}</td></tr>')
+    outstanding = "\n".join([
+        orow("Blesket Canada", "Nov 23, 2026", "Waiting for reply"),
+        orow("Kinokuniya USA", "Nov 23, 2026", "Waiting for reply"),
+        orow("Laywine&rsquo;s", "Nov 23, 2026", "Waiting for reply"),
+        orow("Milligram", "Nov 23, 2026", "Waiting for reply"),
+        orow("Notebook Therapy", "Nov 23, 2026", "Waiting for reply"),
+    ])
     body = f"""
 <article class="prose">
 {crumbs((fname, "Transparency"))}
-{eyebrow("Transparency", "updated Nov 23, 2026")}
+{eyebrow("Transparency", "updated Nov 25, 2026")}
 <h1>Transparency</h1>
 <p class="lede">We value transparency, and we believe you have a right to know what is and is not on this site so you can make your own decisions. The businesses below have asked us to remove or change information on Stationery Drop Watch. We have listed each one here, with what they asked for, what we removed or changed, what remains, and when.</p>
 <div class="table-wrap"><table class="tp-table">
@@ -1816,9 +1831,16 @@ def build_transparency():
 {rows}
 </tbody></table></div>
 <p class="tp-foot">* Both requests came in a single email from Traveler&rsquo;s Company.</p>
+<h2 id="outstanding-requests">Outstanding requests</h2>
+<p>These shops are listed as link only. We do not check their stock until they give us written permission. We emailed each one to ask, and this table shows where each request stands.</p>
+<div class="table-wrap"><table class="tp-table">
+<thead><tr><th scope="col">Brand/Shop</th><th scope="col">What we asked</th><th scope="col">Sent</th><th scope="col">Status</th></tr></thead>
+<tbody>
+{outstanding}
+</tbody></table></div>
 <p>Dates are US Eastern Time. If you run a shop or brand and would like something removed, write to {mailto_email()}.</p>
 </article>"""
-    desc = "Businesses that asked Stationery Drop Watch to remove or change information, what they asked for, what we removed, what stayed, and when."
+    desc = "Businesses that asked Stationery Drop Watch to remove or change information, what we removed, and our open permission requests to link-only shops."
     return page(fname, "Transparency", desc, body, ld=(crumbs_ld((fname, "Transparency")),))
 
 # For shops page (/for-shops/): what our checker does on a shop's site, in plain words, for shop owners
@@ -2938,7 +2960,7 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23", "transparency/": "2026-11-23", TPT_PAGE_PATH: TPT_PAGE_DATE, FOR_SHOPS_SLUG + "/": FOR_SHOPS_DATE}
+STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23", "transparency/": "2026-11-25", TPT_PAGE_PATH: TPT_PAGE_DATE, FOR_SHOPS_SLUG + "/": FOR_SHOPS_DATE}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
