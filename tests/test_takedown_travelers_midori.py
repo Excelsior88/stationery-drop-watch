@@ -99,7 +99,7 @@ class NoticeTests(unittest.TestCase):
         self.assertTrue(site.HOME_NOTICE_LINE.startswith("We asked politely for permission to use their official product photos."))
 
     def test_old_urls_show_the_notice(self):
-        self.assertEqual(site.REDIRECTS[site.TN_GUIDE_SLUG], site.TN_SLUG + "/")
+        self.assertIn(site.TN_GUIDE_SLUG, site.GONE_PATHS)  # the old size guide is 410 Gone since Nov 27, 2026
         for slug, noindex in ((site.TN_SLUG, False),):
             fname, doc = site.build_takedown_notice(slug, noindex=noindex)
             text = html.unescape(doc)
@@ -122,15 +122,16 @@ class NoticeTests(unittest.TestCase):
             self.assertNotIn("og-travelers.png", doc)
             self.assertNotIn("og-midori.png", doc)
 
-    def test_item_pages_redirect_to_their_notice(self):
-        for parent, slugs in site.TAKEDOWN_ITEMS.items():
-            for slug in slugs:
-                self.assertEqual(site.REDIRECTS[f"{parent}/{slug}"], site.TN_SLUG + "/")
-        self.assertEqual(site.REDIRECTS["travelers-notebook-regular-size"], site.TN_SLUG + "/")
+    def test_item_pages_are_gone_not_redirected(self):
+        # Nov 27, 2026 (owner t2081u): the old item pages return 410 Gone instead of 301ing to the notice.
         cf = (ROOT / "cloudflare/_redirects").read_text()
         for parent, slugs in site.TAKEDOWN_ITEMS.items():
             for slug in slugs:
-                self.assertIn(f"/{parent}/{slug}/  /{site.TN_SLUG}/  301", cf)
+                self.assertIn(f"{parent}/{slug}", site.GONE_PATHS)
+                self.assertNotIn(f"{parent}/{slug}", site.REDIRECTS)
+                self.assertNotIn(f"/{parent}/{slug}", cf)
+        self.assertIn("travelers-notebook-regular-size", site.GONE_PATHS)
+        self.assertNotIn("travelers-notebook-regular-size", site.REDIRECTS)
         self.assertNotIn("#tracker", cf)
         # one canonical notice: the MIDORI duplicate 301s to it and is not in the sitemap
         self.assertEqual(site.REDIRECTS[site.MIDORI_SLUG], site.TN_SLUG + "/")

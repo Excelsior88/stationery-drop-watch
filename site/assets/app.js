@@ -63,10 +63,20 @@
   const safeHref = u => { const s = String(u ?? "").trim(); return /^(?:https:\/\/|\/(?![\/\\]))/i.test(s) ? s : "#"; };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const dataEl = document.getElementById("stock-data");
-  if (dataEl) {
+  // The tracker's rows are a separate, content-hashed file (data-src); older pages carry them inline.
+  // If the file can't be loaded, the server-rendered table from <noscript> is shown instead.
+  const showStaticRows = () => {
+    const ns = document.querySelector("#rows noscript");
+    if (ns && !document.getElementById("rows-static")) {
+      const box = document.createElement("div");
+      box.id = "rows-static";
+      box.innerHTML = ns.textContent;
+      ns.after(box);
+    }
+  };
+  const runTracker = raw => {
     // Rows come either as a plain list or packed ({k: keys, d: shared string tables, r: value rows}, see pack_rows in build_site.py).
     const rows = (() => {
-      const raw = JSON.parse(dataEl.textContent);
       if (Array.isArray(raw)) return raw;
       return raw.r.map(vals => {
         const row = {};
@@ -238,6 +248,16 @@
     });
     window.addEventListener("popstate", () => { readParams(); limit = PAGE; render(); });
     render();
+  };
+  if (dataEl) {
+    if (dataEl.dataset.src) {
+      fetch(dataEl.dataset.src, { credentials: "same-origin" })
+        .then(r => (r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status))))
+        .then(runTracker)
+        .catch(showStaticRows);
+    } else {
+      runTracker(JSON.parse(dataEl.textContent));
+    }
   }
   // Shop lists on family pages and design pages: search, store, and status, in place.
   const form = document.querySelector("form.page-filter");

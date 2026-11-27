@@ -202,7 +202,8 @@ class PageTests(unittest.TestCase):
 
     def test_tracker_data_rows_for_link_only_shops_carry_no_status_or_time(self):
         doc = dict(self.docs)["tracker"]
-        data = json.loads(re.search(r'<script id="stock-data" type="application/json">(.*?)</script>', doc, re.S).group(1).replace("<\\/", "</"))
+        src = re.search(r'<script id="stock-data" type="application/json" data-src="/([^"]+)"></script>', doc).group(1)
+        data = json.loads(site.TRACKER_DATA_FILES[src])
         rows = data if isinstance(data, list) else [dict(zip(data["k"], [data["d"][k][v] if v is not None and k in data["d"] else v for k, v in zip(data["k"], r)])) for r in data["r"]]
         link = [r for r in rows if r["sid"] in LINK_ONLY_IDS]
         self.assertEqual(len(link), 113 - sum(1 for r in site.LINK_ROWS if site.section_of(r) != "hobonichi"))  # Notebook Therapy's 5 rows (Nov 23) counted in; Laywine's 22 left Nov 26
