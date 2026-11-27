@@ -2698,5 +2698,23 @@
   "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-canaria-yellow",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-27T14:19:13+00:00",
+  "store_id": "papermouse",
+  "store": "The Paper Mouse",
+  "label": "Weeks Mega · Colors: Canaria Yellow",
+  "url": "https://www.thepapermouse.com/products/hobonichi-techo-2027-weeks-mega-planner-colors-canaria-yellow-english",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-27T14:19:56+00:00",
+  "store_id": "journalshop",
+  "store": "The Journal Shop",
+  "label": "A6 cover · Akiko Miyakoshi: An Airport at Night",
+  "url": "https://www.thejournalshop.com/products/hobonichi-2027-a6-planner-cover-akiko-miyakoshi-an-airport-at-night",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
