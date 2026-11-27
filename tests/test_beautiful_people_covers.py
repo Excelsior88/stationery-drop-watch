@@ -8,6 +8,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 import build_site as site  # noqa: E402
+sys.path.insert(0, str(ROOT / "tests"))
+import baseline  # noqa: E402
 import checker  # noqa: E402
 import new_in_stock  # noqa: E402
 
@@ -29,6 +31,18 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
         cls.stock = json.loads((ROOT / "data/stock.json").read_text())
         cls.changes = json.loads((ROOT / "data/changes.json").read_text())
         cls.by_store = {s["id"]: s for s in cls.cfg["stores"]}
+        # Rows as saved on the first check run with these covers (frozen; see tests/fixtures/make_baselines.py).
+        cls.first = baseline.load("beautiful_people")
+
+    def assert_live_rows_follow_the_baseline(self, cids):
+        """Live: one row per checked listing, none for link-only shops, and no logged
+        change at or before a row's first observation (later changes are real)."""
+        cfg_urls = {p["url"] for s in self.cfg["stores"] if not s.get("link_only")
+                    for p in s.get("products") or [] if p.get("canonical") in cids}
+        live = {r["url"]: r for r in self.stock["products"] if r.get("canonical") in cids}
+        self.assertEqual(set(live), cfg_urls)
+        for url, r in live.items():
+            self.assertFalse([c for c in self.changes if c.get("url") == url and c["at"] <= r["first_seen"]], url)
 
     def products(self, cid):
         return [p for s in self.cfg["stores"] for p in s.get("products") or [] if p.get("canonical") == cid]
@@ -79,14 +93,15 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
         self.assertIn("A5", site.design_about(pink))
 
     def test_baseline_does_not_invent_a_restock(self):
-        rows = [r for r in self.stock["products"] if r.get("canonical") in (A6, A5)]
+        rows = [r for r in self.first["products"] if r.get("canonical") in (A6, A5)]
         self.assertEqual(len(rows), 23)
         self.assertTrue(all(r["first_seen"] == r["status_since"] for r in rows))
         self.assertTrue(all(r["status"] != "unknown" for r in rows))
         urls = {r["url"] for r in rows}
-        self.assertFalse(any(c.get("url") in urls for c in self.changes))
+        self.assertFalse(any(c.get("url") in urls for c in self.first["changes"]))
         official = {r["canonical"]: r["status"] for r in rows if r["store_id"] == "1101"}
         self.assertEqual(official, {A6: "sold_out", A5: "sold_out"})
+        self.assert_live_rows_follow_the_baseline({A6, A5})
 
     def test_weeks_cover_is_a_weeks_design_not_a_second_language_row(self):
         labels = {c["id"]: c for c in self.cfg["canonical"]}
@@ -104,16 +119,17 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
         self.assertIn("4580812710121", about)
         self.assertIn("cover", about.lower())
         self.assertIn("not the Weeks planner", about)
-        rows = [r for r in self.stock["products"] if r.get("canonical") == WEEKS]
+        rows = [r for r in self.first["products"] if r.get("canonical") == WEEKS]
         self.assertEqual(len(rows), 11)
         self.assertTrue(all(r["first_seen"] == r["status_since"] for r in rows))
-        self.assertFalse(any(c.get("url") in {r["url"] for r in rows} for c in self.changes))
+        self.assertFalse(any(c.get("url") in {r["url"] for r in rows} for c in self.first["changes"]))
+        self.assert_live_rows_follow_the_baseline({WEEKS})
         self.assertNotIn("nothing-to-hide-yellow", site.UNCHECKED_LINKS)
 
     def test_later_in_stock_change_is_an_alert_for_every_new_row(self):
         """The first observation stays quiet. A later sold-out, preview, or preorder
         flip to in stock uses the same change and webhook path as every other listing."""
-        rows = [r for r in self.stock["products"] if r.get("canonical") in (A6, A5, WEEKS)]
+        rows = [r for r in self.first["products"] if r.get("canonical") in (A6, A5, WEEKS)]
         self.assertEqual(len(rows), 34)
         pages = {
             A6: "hobonichi-techo-2027-covers/nothing-to-hide-green/",
@@ -127,6 +143,10 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
             self.assertEqual(quiet, [], row["url"])
             rec = dict(row, status="in_stock", checked_at=when)
             changes = checker.note_transition(row, rec, [])
+            if row["store_id"] in checker.link_only_ids():
+                # The shop became link-only after this baseline: it never logs events.
+                self.assertEqual(changes, [], row["url"])
+                continue
             self.assertEqual(len(changes), 1, row["url"])
             event = changes[0]
             self.assertEqual(event["from"], row["status"])
@@ -137,7 +157,7 @@ class BeautifulPeopleCoverTests(unittest.TestCase):
             self.assertEqual(event["url"], row["url"])
             self.assertEqual(event["at"], when)
             self.assertEqual(site.design_page_for([row]), pages[row["canonical"]])
-            body = new_in_stock.webhook_body(new_in_stock.fresh_in_stock(self.changes, self.changes + changes), "2026-11-11T16:00:05+00:00")
+            body = new_in_stock.webhook_body(new_in_stock.fresh_in_stock(self.first["changes"], self.first["changes"] + changes), "2026-11-11T16:00:05+00:00")
             self.assertEqual(body["source"], "stationery-drop-watch")
             self.assertEqual(body["changes"], changes)
             self.assertNotIn("test", body)

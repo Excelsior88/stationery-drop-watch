@@ -984,11 +984,11 @@ def compare_product(ls):
     order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4, "link_only": 5}
     ls = sorted(ls, key=lambda r: (order.get(r["st"], 9), r["s"].lower()))
     h = ls[0]
-    name = f'<a href="{E(h["dp"])}">{E(h["gn"])}</a>' if h.get("dp") else E(h["gn"])
+    name = f'<a href="{E(h["dp"])}">{E(h["gn"])}</a>' if h.get("dp") and not h.get("dpl") else E(h["gn"])
     shops = len({r["sid"] for r in ls})
     bits = [E(h.get("t") or ""), f"{shops} {'shop' if shops == 1 else 'shops'}"]
     if h.get("dp"):
-        bits.append(f'<a href="{E(h["dp"])}">Design page</a>')
+        bits.append(f'<a href="{E(h["dp"])}">{E(h.get("dpl") or "Design page")}</a>')
     note = sold_everywhere_html(ls, "st", "sid")
     items = []
     for r in ls:
@@ -1092,7 +1092,7 @@ def tracker_rows(prods, out_everywhere=None, links=()):
         famn, fam = listing_family(p)
         rows.append(dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st=p["status"],
                  u=safe_href(p["url"], p.get("store_id", "")), at=p["checked_at"], since=p.get("status_since"), title=p.get("title") or "",
-                 va=p.get("available_variants"), tv=p.get("total_variants"),
+                 **{k: p[f] for k, f in (("va", "available_variants"), ("tv", "total_variants")) if p.get(f) is not None},  # left out when a shop doesn't report variants, so pack_rows can pack (no nulls)
                  sz=listing_size(p), lg=listing_language(p), famn=famn, fam=fam, fo=fam_index.get(fam, 99)))
         note = official_note(p)
         if note:
@@ -1101,6 +1101,8 @@ def tracker_rows(prods, out_everywhere=None, links=()):
         dp = design_page_for([p])
         if dp:
             r["dp"] = "/" + pretty(dp)
+        elif merged_parent_link([p]):  # merged design: the row stays, its link goes to the page it folded into
+            r["dp"], r["dpl"] = "/" + pretty(merged_parent_link([p])[0]), merged_parent_link([p])[1]
     for p in links:  # link-only listings: no status time, no variant counts (keys left out on purpose)
         famn, fam = listing_family(p)
         r = dict(g=product_key(p), p=p["label"], gn=canon.get(p.get("canonical") or "", p["label"]), c=p.get("canonical") or "", t=p["type"], s=p["store"], sid=p["store_id"], rg=REGION.get(p["store_id"], ""), st="link_only",
@@ -1108,6 +1110,8 @@ def tracker_rows(prods, out_everywhere=None, links=()):
         dp = design_page_for([p])
         if dp:
             r["dp"] = "/" + pretty(dp)
+        elif merged_parent_link([p]):
+            r["dp"], r["dpl"] = "/" + pretty(merged_parent_link([p])[0]), merged_parent_link([p])[1]
         rows.append(r)
     return rows
 
@@ -2398,6 +2402,12 @@ def build_group(g, oe=None):
         dp_link = f' · <a href="{dp}">{"Design page" if cid else "Design pages"}: {E(", ".join(d["name"] for d in DESIGNS if any(d["match"](l) for l in sl)))}</a>' if dp else ""
         if dp and not cid:  # "Other designs" card can hold several designed pages: link each
             dp_link = " · Design pages: " + ", ".join(f'<a href="{design_fname(d)}">{E(d["name"])}</a>' for d in DESIGNS if any(d["match"](l) for l in sl))
+        mpl = None if dp else merged_parent_link(sl, here=g["slug"])
+        if mpl:  # merged design (Nov 27, 2026): point at the page it folded into
+            dp_link = f' · <a href="{mpl[0]}">{E(mpl[1])}</a>'
+        md, md_to = merged_design_for(sl) if cid else (None, None)
+        merged_note = (f'<p class="muted small">{E(design_about(md))}</p>'
+                       if md and md_to == g["slug"] and not dp else "")
         sid = sl[0]["store_id"]
         hx = "h3" if per_shop else "h2"  # shop-by-shop pages: shop is the h2, its products are h3
         if per_shop and sid not in seen_shop:
@@ -2417,6 +2427,7 @@ def build_group(g, oe=None):
     <tbody>{status_rows(sl)}{link_status_rows(link_sections.get(cid, []))}</tbody>
   </table></div>
   {link_note(link_sections.get(cid, []))}
+  {merged_note}
   <p class="muted small">{g.get('open_hint', "Open a shop's name to go straight to its listing")}{tracker}{dp_link}</p>
   {"" if any("region-legend" in x for x in parts) else region_legend(l["store_id"] for l in ls)}
 </section></details>""")
@@ -2724,6 +2735,40 @@ def design_page_for(listings):
             return design_fname(d)
     return None
 
+# Nov 27, 2026 (owner, 2:02 AM ET; seo/thin-pages-plan-2026-11-27.md): single-shop design pages with fewer than
+# 3 recorded restocks and no impressions in the owner's GSC export (Oct 25 - Nov 24) fold into their parent page.
+# The listings stay as normal rows on every tracker; only the separate design URL goes (301 to the parent).
+# Held back (GSC impressions): Apothecary Shelf, Storybook in Navy and the three Scribbles That Matter pages.
+MERGED_DESIGN_TARGETS = {
+    **{f"{DOTGRID_SLUG}/archer-and-olive-{s}": AO_SLUG for s in
+       ("cozy-critters", "ice-castle", "songbird-beige", "stag", "storybook-olive", "winter-train")},
+    "hobonichi-techo-2027-covers/puppet-sunsun-s-a5": "hobonichi-techo-2027-covers",
+    "hobonichi-techo-2027-covers/puppet-sunsun-wa-a6": "hobonichi-techo-2027-covers",
+}
+MERGED_DESIGNS = [d for d in DESIGNS if f'{d["parent"]}/{d["slug"]}' in MERGED_DESIGN_TARGETS]
+assert len(MERGED_DESIGNS) == len(MERGED_DESIGN_TARGETS), "a merged design slug no longer exists"
+DESIGNS = [d for d in DESIGNS if d not in MERGED_DESIGNS]
+for _d in MERGED_DESIGNS:
+    _to = MERGED_DESIGN_TARGETS[f'{_d["parent"]}/{_d["slug"]}'] + "/"
+    REDIRECTS[f'{_d["parent"]}/{_d["slug"]}'] = _to
+    if _d["parent"] == DOTGRID_SLUG:  # the pre-Nov 21 URL goes straight to the parent too (no chain)
+        REDIRECTS[f'{AO_SLUG}/{_d["slug"]}'] = _to
+
+def merged_design_for(listings):
+    """(design, parent slug) of a merged design that covers these listings, or (None, None)."""
+    for d in MERGED_DESIGNS:
+        if any(d["match"](l) for l in listings):
+            return d, MERGED_DESIGN_TARGETS[f'{d["parent"]}/{d["slug"]}']
+    return None, None
+
+def merged_parent_link(listings, here=None):
+    """(href, label) pointing a merged design's rows at the page it folded into; None on that page itself."""
+    d, to = merged_design_for(listings)
+    if not d or to == here:
+        return None
+    g = next(x for x in GROUPS if x["slug"] == to)
+    return to + "/", f'{g["short"]} page'
+
 # The old tracker URL used to hold every dot grid design page. They moved under DOTGRID_SLUG.
 REDIRECTS.update({f"{AO_SLUG}/{d['slug']}": f"{DOTGRID_SLUG}/{d['slug']}/" for d in DESIGNS if d["parent"] == DOTGRID_SLUG})
 # Designs Archer and Olive took off its store (product page and catalog entry gone, checked Nov 22, 2026).
@@ -2735,6 +2780,185 @@ def designs_of(parent_slug):
     if parent_slug == AO_SLUG:  # the Archer and Olive page lists its own designs; the pages live under DOTGRID_SLUG
         return [d for d in DESIGNS if d["parent"] == DOTGRID_SLUG and d["slug"].startswith("archer-and-olive-")]
     return [d for d in DESIGNS if d["parent"] == parent_slug]
+
+# ---- Design-page enrichment (Nov 27, 2026; seo/thin-pages-plan-2026-11-27.md) ----
+# Every sentence below is computed from stock.json / changes.json / REGION at build time. No hand-written facts,
+# no predictions. A section is left out when its data is missing.
+_STATUS_LOW = {"in_stock": "in stock", "preorder": "preorder", "coming_soon": "not yet on sale", "sold_out": "sold out"}
+
+def _plural(n, one, many=None):
+    return f"{n} {one if n == 1 else (many or one + 's')}"
+
+def _minutes(a, b):
+    return round((dt.datetime.fromisoformat(b) - dt.datetime.fromisoformat(a)).total_seconds() / 60)
+
+def design_events(ls):
+    """Logged status changes for these listings, oldest first."""
+    urls = {l["url"] for l in ls}
+    return sorted((c for c in changes if c["url"] in urls), key=lambda c: c["at"])
+
+def restock_sellout_pairs(evs):
+    """(restock, sell-out) pairs: a restock and the next logged change at the same URL that took it out of stock."""
+    pairs = []
+    for i, c in enumerate(evs):
+        if not is_restock_event(c):
+            continue
+        nxt = next((x for x in evs[i + 1:] if x["url"] == c["url"]), None)
+        if nxt and nxt["from"] in BUYABLE and nxt["to"] in NOT_BUYABLE:
+            pairs.append((c, nxt))
+    return pairs
+
+def design_format_key(d):
+    """Same design in another format: drop the size or Weeks-cover marker from the slug."""
+    k = re.sub(r"^(a5|a6)-", "", d["slug"])
+    return re.sub(r"-(a5|a6|weeks-cover)$", "", k)
+
+def design_series(d):
+    """Artist or series exactly as the design name gives it ("tanakadaisuke: Starlight" -> "tanakadaisuke")."""
+    name = re.sub(r"^A[56] ", "", d["name"])
+    if ":" in name:
+        return name.split(":", 1)[0].strip()
+    for brand in ("Archer and Olive", "Leuchtturm1917", "Scribbles That Matter"):
+        if name.startswith(brand):
+            return brand
+    return None
+
+def related_designs(d):
+    """(other formats, same artist/series): indexable design pages only, never this one."""
+    pool = [x for x in DESIGNS if x is not d and not design_is_link_only(x) and design_listings(x)]
+    fmt = [x for x in pool if design_format_key(x) == design_format_key(d)]
+    ser = design_series(d)
+    same = [x for x in pool if ser and x not in fmt and (design_series(x) or "").lower() == ser.lower()]
+    return fmt, same, ser
+
+def design_history_html(d, ls, parent):
+    evs = design_events(ls)
+    shop_of = {l["url"]: l["store"] for l in ls}  # today's shop name (older log rows can carry an earlier spelling)
+    first = min((l for l in ls if l.get("first_seen")), key=lambda l: l["first_seen"], default=None)
+    out = []
+    if first:
+        out.append(f'<p>We started tracking {E(d["name"])} on {time_tag(first["first_seen"])} at {E(first["store"])}.</p>')
+    if evs:
+        rs = [c for c in evs if is_restock_event(c)]
+        so = [c for c in evs if c["from"] in BUYABLE and c["to"] in NOT_BUYABLE]
+        other = len(evs) - len(rs) - len(so)
+        shops_ = sorted({shop_of.get(c["url"], c["store"]) for c in evs})
+        bits = [_plural(len(rs), "restock"), _plural(len(so), "sell-out")] + ([_plural(other, "other change")] if other else [])
+        out.append(f'<p>Since then we\'ve recorded {_plural(len(evs), "status change")} at {E(names_and(shops_))}: {names_and(bits)}.</p>')
+        pairs = restock_sellout_pairs(evs)
+        if pairs:
+            mins = sorted(_minutes(a["at"], b["at"]) for a, b in pairs)
+            span = f"{mins[0]} minutes" if mins[0] == mins[-1] else f"{mins[0]} to {mins[-1]} minutes"
+            lead = ("Each time we recorded it coming back, we recorded it sold out again" if len(pairs) == len(rs)
+                    else f"For {len(pairs)} of the {_plural(len(rs), 'restock')}, we recorded it sold out again")
+            out.append(f'<p>{lead} {span} later (we check {CHECK_FREQ}).</p>')
+        per_shop = {}
+        for l in ls:
+            per_shop[l["store_id"]] = per_shop.get(l["store_id"], 0) + 1
+        label = {l["url"]: (l.get("title") or l["label"]) for l in ls}
+        who = lambda c: E(shop_of.get(c["url"], c["store"])) + (f' ({E(label.get(c["url"], c["label"]))})' if per_shop.get(c["store_id"], 0) > 1 else "")
+        items = "".join(
+            f'<li>{time_tag(c["at"])} · {who(c)}: {_STATUS_LOW.get(c["from"], c["from"])} → {_STATUS_LOW.get(c["to"], c["to"])}</li>'
+            for c in reversed(evs[-12:]))
+        more = f'<p class="muted small">The latest 12 of {len(evs)} changes.</p>' if len(evs) > 12 else ""
+        out.append(f'<ul class="link-list">{items}</ul>{more}')
+    elif first:
+        out.append(f'<p>We haven\'t recorded a status change at any shop we check since then.</p>')
+    # one comparison across the parent's design pages, from the same run
+    sibs = [x for x in designs_of(parent["slug"]) if not design_is_link_only(x) and design_listings(x)]
+    if len(sibs) > 1:
+        buyable = lambda x: any(l["status"] in BUYABLE for l in design_listings(x))
+        if any(l["status"] in BUYABLE for l in ls):
+            n = sum(buyable(x) for x in sibs)
+            out.append(f'<p class="muted small">At the last check, {n} of the {len(sibs)} designs with their own page under {E(parent["short"])} were in stock or on preorder at one or more shops, this one included.</p>')
+        else:
+            none_ = [x for x in sibs if not buyable(x)]
+            if len(none_) == 1:
+                out.append(f'<p class="muted small">At the last check, this was the only one of the {len(sibs)} designs with their own page under {E(parent["short"])} that no shop we could check had in stock or on preorder.</p>')
+            else:
+                others = names_and([x["name"] for x in none_ if x is not d])
+                out.append(f'<p class="muted small">At the last check, this was one of {len(none_)} designs (of {len(sibs)} with their own page under {E(parent["short"])}) that no shop we could check had in stock or on preorder. The {"other is" if len(none_) == 2 else "others are"} {E(others)}.</p>')
+    return f'<section class="card" id="history"><h2>Stock history</h2>{"".join(out)}</section>' if out else ""
+
+def design_where_html(ls, lsl):
+    by = {}
+    for l in ls:
+        by.setdefault(l["store_id"], []).append(l)
+    rows = []
+    for sid, xs in sorted(by.items(), key=lambda kv: (min(l["first_seen"] for l in kv[1] if l.get("first_seen")) if any(l.get("first_seen") for l in kv[1]) else "~", kv[1][0]["store"])):
+        since = min((l["first_seen"] for l in xs if l.get("first_seen")), default=None)
+        if len(xs) == 1:
+            l = xs[0]
+            if l["status"] == "unknown":
+                cur = "Couldn't check this run"
+            elif l.get("status_since") and l.get("status_since") == l.get("first_seen"):
+                cur = f'{STATUS[l["status"]]} at every check since we started tracking it'
+            elif l.get("status_since"):
+                cur = f'{STATUS[l["status"]]} at every check since {time_tag(l["status_since"])}'
+            else:
+                cur = STATUS[l["status"]]
+        else:
+            cur = E(count_line(xs).capitalize())
+        country = REGION_NAME.get(REGION.get(sid, ""), "")
+        rows.append(f'<tr><td>{E(xs[0]["store"])}</td><td>{E(country)}</td><td>{time_tag(since) if since else ""}</td><td>{cur}</td></tr>')
+    lo = sorted({l["store"] for l in lsl})
+    lo_html = f'<p class="muted small">Also linked, stock not checked: {E(names_and(lo))}.</p>' if lo else ""
+    return (f'<section class="card" id="where"><h2>Where we track it</h2><div class="table-wrap"><table class="stock">'
+            f'<thead><tr><th>Shop</th><th>Country</th><th>Tracking since</th><th>Status</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>{lo_html}</section>')
+
+def design_formats_html(ls):
+    def tally(fn, missing):
+        c = {}
+        for l in ls:
+            k = fn(l) or missing
+            c[k] = c.get(k, 0) + 1
+        return " · ".join(f"{E(k)} ({v})" for k, v in sorted(c.items(), key=lambda kv: (kv[0] == missing, -kv[1], kv[0])))
+    rows = [("Type", tally(lambda l: l.get("type"), "not stated")),
+            ("Size", tally(listing_size, "not stated")),
+            ("Language named in the listing", tally(listing_language, "not named"))]
+    lis = "".join(f"<li><strong>{k}:</strong> {v}</li>" for k, v in rows)
+    return (f'<section class="card" id="formats"><h2>Formats and versions</h2>'
+            f'<p class="muted small">From the {_plural(len(ls), "listing")} we track. Size and language come only from what each shop\'s own label or title says; each title is listed under Sources.</p>'
+            f'<ul class="link-list">{lis}</ul></section>')
+
+def design_related_html(d):
+    fmt, same, ser = related_designs(d)
+    def li(x):
+        return f'<li><a href="{design_fname(x)}">{E(x["full"])}</a> <span class="muted small">· {E(count_line(design_listings(x)))}</span></li>'
+    parts = []
+    if fmt:
+        parts.append(f'<h3>Same design, other formats</h3><ul class="link-list">{"".join(li(x) for x in fmt)}</ul>')
+    if same:
+        parts.append(f'<h3>More {E(ser)} designs we track</h3><ul class="link-list">{"".join(li(x) for x in same)}</ul>')
+    return f'<section class="card" id="related"><h2>Related designs</h2>{"".join(parts)}<p class="muted small">Counts are from the same check as this page.</p></section>' if parts else ""
+
+def design_extra_qa(d, ls):
+    """Two FAQ answers from the change log. The second only when at least 2 restock/sell-out pairs exist."""
+    evs = design_events(ls)
+    buy = [l for l in ls if l["status"] in BUYABLE]
+    run = fmt_et(stock["run_finished"])
+    if buy:
+        a = f"At the last check ({run}) it was in stock or on preorder at {names_and(sorted({l['store'] for l in buy}))}."
+    else:
+        out_ = [c for c in evs if c["from"] in BUYABLE]
+        if out_:
+            c = out_[-1]
+            back = next((x for x in reversed(evs) if x["url"] == c["url"] and x["at"] < c["at"] and is_restock_event(x)), None)
+            shop_now = next((l["store"] for l in ls if l["url"] == c["url"]), c["store"])
+            a = (f"The last time we recorded it in stock or on preorder was at {shop_now}"
+                 + (f", from {fmt_et(back['at'])}" if back else "")
+                 + f" until {fmt_et(c['at'])}, when it was {_STATUS_LOW.get(c['to'], c['to'])}.")
+        else:
+            start = tracking_start(ls)
+            a = f"We haven't recorded it in stock or on preorder at any shop we check since we started tracking it on {fmt_et(start)}."
+    qa = [(f'When was {d["full"]} last in stock?', a)]
+    pairs = restock_sellout_pairs(evs)
+    if len(pairs) >= 2:
+        mins = sorted(_minutes(x["at"], y["at"]) for x, y in pairs)
+        qa.append((f'How fast does {d["full"]} sell out?',
+                   f"The {len(pairs)} times we recorded it coming back and then selling out again, we recorded the sell-out {mins[0]} to {mins[-1]} minutes later. "
+                   f"We check {CHECK_FREQ}, so a faster sell-out shows up at the next check."))
+    return qa
 
 def build_design(d, oe=None):
     parent = next(g for g in GROUPS if g["slug"] == d["parent"])
@@ -2813,6 +3037,7 @@ def build_design(d, oe=None):
     qa = [(f'Is {d["full"]} in stock?', a1),
           (f'Which sizes and versions of {d["full"]} do you track?', a_v),
           (f'Where can I buy {d["full"]}?', a2),
+          *(design_extra_qa(d, ls) if ls else []),
           ("How often do you check?",
            f"Every shop is checked {CHECK_FREQ}. Each status is exactly what the shop's public product data said at that time. \"Not yet on sale\" means the shop has a preview page up but isn't taking orders yet, and \"Couldn't check\" means our check failed, so we don't guess."),
           ("Can I get restock alerts?",
@@ -2842,6 +3067,8 @@ def build_design(d, oe=None):
     eyebrow_html = eyebrow(ey, nshops(shops), f"checked {CHECK_FREQ}")
     facts_html = hero_facts(ls)
     restock_card = f'<section class="card"><h2>Recent restocks</h2>{restock_html}</section>'
+    enrich_html = (design_history_html(d, ls, parent) + design_where_html(ls, lsl) + design_formats_html(ls)
+                   + design_related_html(d)) if ls else ""
     if not ls and lsl:
         # Every shop that lists this design is link-only (Notebook Therapy since Nov 23, 2026): no stock claim at all.
         lo_shops = names_and(sorted({l["store"] for l in lsl}))
@@ -2852,6 +3079,7 @@ def build_design(d, oe=None):
                  f'Open the shop\'s page to see what it has. For the designs we do check, see the <a href="{parent["slug"]}/">{E(parent["short"])} restock page</a>.')
         facts_html = ""
         restock_card = ""
+        enrich_html = ""
         table = (f'<section class="card group-sec" id="stock"><h2>Where to find it</h2>{list_filter(lsl, "Shop name")}<div class="table-wrap"><table class="stock">'
                  f'<thead><tr><th>Shop</th><th>Status</th></tr></thead><tbody>{link_status_rows(lsl)}</tbody></table></div>{link_note(lsl)}'
                  f'<p class="muted small card-empty" hidden>Nothing on this page matches those filters.</p></section>')
@@ -2879,6 +3107,7 @@ def build_design(d, oe=None):
   <div class="main-col">
     <div class="m-lead">{table}</div>
     {restock_card}
+    {enrich_html}
     {faq_html}
     {sources_html}
   </div>
@@ -3691,14 +3920,14 @@ GIFT_PICKS = {
     # For the traveler (reworked Nov 19, 2026, after the Traveler's Company and MIDORI removal).
     "plannera6": ("planner-a6-en", None, "hobonichi-techo-2027-planner-a6/", "English Planner A6 book"),
     "tragen": ("cover-a6-tragen-black", None, "hobonichi-techo-2027-covers/#cover-a6-tragen-black", "A6 cover, Tragen: Black"),
-    "aostag": ("ao-stag", "pocket dot grid · ships now", DOTGRID_SLUG + "/archer-and-olive-stag/", "Archer and Olive Stag, pocket size"),
+    "aostag": ("ao-stag", "pocket dot grid · ships now", AO_SLUG + "/", "Archer and Olive Stag, pocket size"),
     "lta5": ("lt-hardcover-a5", None, DOTGRID_SLUG + "/leuchtturm1917-hardcover-a5-dotted/", "Leuchtturm1917 Hardcover Medium (A5), dotted"),
     "lted2": ("lt-bullet-journal-ed2", None, DOTGRID_SLUG + "/leuchtturm1917-edition-2/", "Leuchtturm1917 Bullet Journal Edition 2"),
     "aonavy": ("ao-storybook-navy", "A5 ", DOTGRID_SLUG + "/archer-and-olive-storybook-navy/", "Archer and Olive Storybook in Navy, A5"),
-    "aobeige": ("ao-songbird-beige", "B5 ", DOTGRID_SLUG + "/archer-and-olive-songbird-beige/", "Archer and Olive Songbird in Beige, B5"),  # B5 since Nov 22, 2026: the A5 dot grid sold out
+    "aobeige": ("ao-songbird-beige", "B5 ", AO_SLUG + "/", "Archer and Olive Songbird in Beige, B5"),  # B5 since Nov 22, 2026: the A5 dot grid sold out
     # Winter 2026 designs: only the ships-now A5 dot grid option (the Feb preorder option is a separate listing).
-    "aoice": ("ao-ice-castle", "A5 dot grid · ships now", DOTGRID_SLUG + "/archer-and-olive-ice-castle/", "Archer and Olive Ice Castle, A5"),
-    "aotrain": ("ao-winter-train", "A5 dot grid · ships now", DOTGRID_SLUG + "/archer-and-olive-winter-train/", "Archer and Olive Winter Train, A5"),
+    "aoice": ("ao-ice-castle", "A5 dot grid · ships now", AO_SLUG + "/", "Archer and Olive Ice Castle, A5"),
+    "aotrain": ("ao-winter-train", "A5 dot grid · ships now", AO_SLUG + "/", "Archer and Olive Winter Train, A5"),
 }
 GIFT_SRC = {  # (url, title, publisher)
     "h_moomin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moomintable/", "Moomin: At the Table, Weeks (ENG edition)", "Hobonichi (official)"),

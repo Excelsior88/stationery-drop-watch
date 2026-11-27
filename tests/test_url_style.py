@@ -105,7 +105,12 @@ class DotGridMoveTests(unittest.TestCase):
 
     def test_old_design_pages_301_to_their_new_home_and_new_pages_exist(self):
         moved = [d for d in site.DESIGNS if d["parent"] == NEW]
-        self.assertGreater(len(moved), 20)
+        self.assertGreater(len(moved), 12)
+        # Nov 27, 2026: designs folded into the A&O page skip the dot grid hop and go straight there (one hop)
+        for d in site.MERGED_DESIGNS:
+            if d["parent"] == NEW:
+                for src in (f"/{OLD}/{d['slug']}/", f"/{OLD}/{d['slug']}", f"/{NEW}/{d['slug']}/", f"/{NEW}/{d['slug']}"):
+                    self.assertEqual(RULES[src], (f"/{OLD}/", "301"))
         for d in moved:
             self.assertEqual(RULES[f"/{OLD}/{d['slug']}/"], (f"/{NEW}/{d['slug']}/", "301"))
             self.assertEqual(RULES[f"/{OLD}/{d['slug']}"], (f"/{NEW}/{d['slug']}/", "301"))

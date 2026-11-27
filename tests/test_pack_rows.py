@@ -38,7 +38,9 @@ class PackRowsTests(unittest.TestCase):
 
     def test_built_hobonichi_page_is_packed_and_smaller(self):
         html = (ROOT / "site/hobonichi-restock-tracker/index.html").read_text()
-        data = json.loads(re.search(r'<script id="stock-data" type="application/json">(.*?)</script>', html, re.S).group(1).replace("<\\/", "</"))
+        # Since Nov 27, 2026 the rows live in a cached data file the tag points to (data-src).
+        src = re.search(r'<script id="stock-data" type="application/json" data-src="/([^"]+)"></script>', html).group(1)
+        data = json.loads((ROOT / "site" / src).read_text())
         self.assertIsInstance(data, dict)
         self.assertGreater(len(unpack(data)), 400)
         self.assertLess(len(html), 750_000)  # Nov 23, 2026: 750_000 after Minimaru and Take Note (98 rows); 700_000 after 95 rows from four new Hobonichi shops; raised from 420_000 when Avec and 20+ popular covers were added (gzip ~47 KB)
