@@ -1006,6 +1006,134 @@
      "source_title": "Sailor Ink Bottle - Teatime Around the World Japanese Tea Ceremony Koicha - 20ml (Limited Edition)"
     }
    ]
+  },
+  {
+   "id": "robert-oster-atlas-exclusives",
+   "brand": "robert-oster",
+   "name": "Robert Oster Atlas Stationers exclusives (50ml)",
+   "kind": "Single bottles",
+   "added": "2026-11-27",
+   "display": "colors",
+   "note": "Robert Oster inks made only for Atlas Stationers, so Atlas is the only shop that sells them.",
+   "listings": [
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-bear-weather-50ml-bottled-ink-atlas-exclusive",
+     "source_title": "Robert Oster Bear Weather - 50ml Bottled Ink (Atlas Exclusive)",
+     "color": "Bear Weather"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-from-ashes-to-atlas-50ml-bottled-ink-atlas-exclusive",
+     "source_title": "Robert Oster From Ashes to Atlas - 50ml Bottled Ink (Atlas Exclusive)",
+     "color": "From Ashes to Atlas"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-golden-wish-50ml-bottled-ink-atlas-exclusive",
+     "source_title": "Robert Oster Golden Wish - 50ml Bottled Ink (Atlas Exclusive)",
+     "color": "Golden Wish"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-hollywoods-mullet-50ml-bottled-ink-atlas-exclusive",
+     "source_title": "Robert Oster Hollywood's Mullet - 50ml Bottled Ink (Atlas Exclusive)",
+     "color": "Hollywood's Mullet"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-izzy-monster-50ml-bottled-ink-atlas-exclusive",
+     "source_title": "Robert Oster Izzy Monster - 50ml Bottled Ink (Atlas Exclusive)",
+     "color": "Izzy Monster"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-50ml-bottled-ink-polar-vortex-atlas-exclusive",
+     "source_title": "Robert Oster Polar Vortex (Atlas Exclusive) - 50ml Bottled Ink",
+     "color": "Polar Vortex"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-sidewalk-chalk-50ml-bottled-ink-atlas-exclusive",
+     "source_title": "Robert Oster Sidewalk Chalk - 50ml Bottled Ink (Atlas Exclusive)",
+     "color": "Sidewalk Chalk"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-sidewalk-gum-50ml-bottled-ink-atlas-exclusive",
+     "source_title": "Robert Oster Sidewalk Gum - 50ml Bottled Ink (Atlas Exclusive)",
+     "color": "Sidewalk Gum"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-sugar-velvet-50ml-bottled-ink-atlas-exclusive",
+     "source_title": "Robert Oster Sugar Velvet - 50ml Bottled Ink (Atlas Exclusive)",
+     "color": "Sugar Velvet"
+    },
+    {
+     "store_id": "atlas",
+     "url": "https://www.atlasstationers.com/products/robert-oster-50ml-bottled-ink-vampire-pigeon-atlas-exclusive",
+     "source_title": "Robert Oster Vampire Pigeon (Atlas Exclusive) - 50ml Bottled Ink",
+     "color": "Vampire Pigeon"
+    }
+   ]
+  },
+  {
+   "id": "robert-oster-cultpens-shake-n-shimmy",
+   "brand": "robert-oster",
+   "name": "Robert Oster Shake 'n' Shimmy, Cult Pens exclusives (50ml)",
+   "kind": "Single bottles",
+   "added": "2026-11-27",
+   "display": "colors",
+   "note": "Robert Oster Shake 'n' Shimmy inks made only for Cult Pens, so Cult Pens is the only shop that sells them.",
+   "listings": [
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/cult-pens-exclusive-shake-n-shimmy-ink-by-robert-oster-50ml?variant=43587165356275",
+     "source_title": "Cult Pens Exclusive Shake n Shimmy Ink by Robert Oster 50ml",
+     "color": "Bantham Blue",
+     "variant_id": 43587165356275,
+     "variant_title": "Bantham Blue"
+    },
+    {
+     "store_id": "cultpens",
+     "url": "https://cultpens.com/products/cult-pens-exclusive-shake-n-shimmy-ink-by-robert-oster-50ml?variant=43587165323507",
+     "source_title": "Cult Pens Exclusive Shake n Shimmy Ink by Robert Oster 50ml",
+     "color": "Exmoor Dark Skies",
+     "variant_id": 43587165323507,
+     "variant_title": "Exmoor Dark Skies"
+    }
+   ]
+  },
+  {
+   "id": "sailor-voyage-20th",
+   "brand": "sailor",
+   "name": "Sailor's Voyage 20th Anniversary ink set (limited edition)",
+   "kind": "Ink set, 4 x 20ml",
+   "added": "2026-11-27",
+   "note": "Four inks Sailor's ink blenders made to mark 20 years of its Ink Blend events.",
+   "listings": [
+    {
+     "store_id": "dromgooles",
+     "url": "https://www.dromgooles.com/products/sailor-voyage-bottled-ink-set-20ml-set-of-4-20th-anniversary-edition-limited-edition",
+     "source_title": "Sailor Voyage Bottled Ink Set - 20ml (Set of 4 - 20th Anniversary Edition) (Limited Edition)"
+    },
+    {
+     "store_id": "penboutique",
+     "url": "https://www.penboutique.com/products/sailor-20th-anniversary-ink-set-voyage-limited-edition",
+     "source_title": "Sailor 20th Anniversary Ink Set - Voyage (Limited Edition)"
+    },
+    {
+     "store_id": "wonder",
+     "url": "https://wonderpens.ca/products/sailor-fountain-pen-ink-sailors-voyage-20th-anniversary-set",
+     "source_title": "Sailor Fountain Pen Ink - Sailor's Voyage 20th Anniversary Set"
+    },
+    {
+     "store_id": "yoseka",
+     "url": "https://yosekastationery.com/products/sailor-s-voyage-20th-anniversary-ink-set-limited-edition",
+     "source_title": "Sailor’s Voyage 20th Anniversary Ink Set - 20mL - Set of 4 - Limited Edition"
+    }
+   ]
   }
  ]
 }

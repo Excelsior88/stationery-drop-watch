@@ -2081,7 +2081,7 @@ def build_about():
 <p>Stationery Drop Watch is operated by Stationery Drop Watch LLC, a Michigan limited liability company.</p>
 </section>
 <h2>How it works</h2>
-<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine and Sailor, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}.{f' Separately, our <a href="{LAMY_SLUG}/">Lamy release calendar</a> lists Lamy&#x27;s special and limited edition pens, when each was first listed, and the authorized shops that sell them. It is not a tracker, and we don&#x27;t check stock on those links.' if LAMY_LIVE else ''} When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
+<p>A small script visits the public product pages of {n_checked} stores {CHECK_FREQ}, at a polite pace and following each store's robots.txt. It reads whether each listing can be bought right now. On a sold-out Hobonichi Store row, a short note passes on what Hobonichi's own store data says: a restock is planned, a restock is undecided, or sales have ended. Each brand family has its own section, never mixed: the <a href="{HOBO_TRACKER}">Hobonichi tracker</a> (the official store and independent shops){"".join(f', <a href="{SECTIONS[k]["slug"]}/">{E(SECTIONS[k]["name"])}</a> ({E(shop_names(k))})' for k in LIVE)}{f', and <a href="{INK_SLUG}/">limited-edition fountain pen inks</a> (Diamine, Sailor and Robert Oster, only at shops on each brand\'s own dealer list)' if INK_LIVE else ''}.{f' Separately, our <a href="{LAMY_SLUG}/">Lamy release calendar</a> lists Lamy&#x27;s special and limited edition pens, when each was first listed, and the authorized shops that sell them. It is not a tracker, and we don&#x27;t check stock on those links.' if LAMY_LIVE else ''} When a sold-out Hobonichi or dot grid listing becomes available again, it shows up in <a href="index.html#restocked">Recent restocks</a>. Restocks from all three trackers (Hobonichi, dot grid journals and limited-edition inks) also go out by email to the people who picked that tracker. Ink restocks show on the inks page.</p>
 <p>We only show what the stores report. If a check fails, we say so instead of guessing.</p>
 <p>Clip, the paper clip with the magnifying glass on our <a href="index.html">home page</a>, is the site's mascot.</p>
 <h2>Contact</h2>
@@ -5210,7 +5210,7 @@ def check_none_claim(fname, doc):
 # Rows come from data/inks/stock.json (scripts/ink_tracker.py), filtered to owner-approved inks in inks.json.
 # Only shop + brand pairs on each brand's own dealer list are tracked. Ink restock emails go to the Kit 'inks' tag.
 INK_HUB_LINE = "Diamine Inkvent, Sailor Manyo and other limited inks, at shops on each brand's own dealer list."
-INK_FAQ_TRACK = ("On a separate limited inks page, we track limited-edition fountain pen inks from Diamine and Sailor, "
+INK_FAQ_TRACK = ("On a separate limited inks page, we track limited-edition fountain pen inks from Diamine, Sailor and Robert Oster, "
                  "only at shops on each brand's own dealer list. Ink restocks show on that page, and you can get them by email.")
 INK_DEALER_LABEL = {"diamine": "Diamine's retailer list", "sailor": "Sailor's dealer list", "robert-oster": "Robert Oster's where-to-buy page"}
 INK_INTRO = ("Limited, seasonal and shop-exclusive fountain pen inks, checked at shops that each brand lists as its own dealer. "
@@ -5227,7 +5227,7 @@ def ink_lastmod():
     return latest(*[r.get("status_since") for r in INK_ROWS], *[r.get("first_seen") for r in INK_ROWS],
                   *[c["at"] for c in INK_CHANGES], INK_CONTENT_LASTMOD)
 
-INK_CONTENT_LASTMOD = "2026-11-22"
+INK_CONTENT_LASTMOD = "2026-11-27"
 
 def ink_hero_facts(ls):
     """Same five tiles as the other trackers. The check time is the ink checker's own run."""
