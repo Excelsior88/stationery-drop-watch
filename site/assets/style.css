@@ -634,6 +634,20 @@ table.stock.compare thead th{vertical-align:top}
   .made-by-us .shop-img{width:160px;margin:0 auto}
   .made-by-us .btn{display:block;text-align:center}
 }
+/* The Print Drop card: home page (below restocks and guides) and /shop (below the signup). */
+.print-drop-card{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;align-items:center;margin:0 0 24px}
+.print-drop-card .print-drop-thumb{display:block;line-height:0;max-width:100%}
+.print-drop-card .print-drop-thumb img{width:120px;height:120px;display:block;border-radius:26px}
+.print-drop-card .print-drop-body{min-width:0}
+.print-drop-card h2{font-size:1.45rem;margin:0 0 .3em}
+.print-drop-card .print-drop-body p{margin:.25em 0 .55em}
+.print-drop-card .btn{margin-top:.15em}
+@media(max-width:600px){
+  .print-drop-card{grid-template-columns:1fr;gap:12px;padding:16px 18px}
+  .print-drop-card .print-drop-thumb{margin:0 auto}
+  .print-drop-card .print-drop-thumb img{width:96px;height:96px;border-radius:21px}
+  .print-drop-card .btn{display:block;text-align:center}
+}
 /* Gift guide: the note in the traveler section about why Traveler's Company and MIDORI aren't in it */
 .gift-note{margin:0 0 16px;padding:14px 18px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px}
 .gift-note p{margin:0;color:var(--ink)}

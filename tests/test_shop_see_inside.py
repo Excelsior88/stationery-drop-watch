@@ -277,7 +277,7 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertIn("Paperback", card(self.shop, "Level Up! My 2027 Planner"))
         self.assertIn("Front cover of the Level Up! 2027 printable planner", self.shop)
         self.assertIn("25% off all listings, Cyber sale Nov 23 to Dec 1", card(self.shop, "Level Up! My 2027 Kids Planner"))
-        self.assertEqual(site.shop_lastmod(), "2026-11-22")
+        self.assertEqual(site.shop_lastmod(), "2026-11-26")
         grid = card(self.shop, "Lines for the Grid Page")
         self.assertIn("https://www.etsy.com/listing/4614089507/lines-for-the-grid-page-printable-tip-in", grid)
         self.assertIn("$6.99", grid)
@@ -335,7 +335,7 @@ class ShopSeeInsideTests(unittest.TestCase):
         self.assertNotIn("<details class=\"shop-inside\" open", holiday)
         self.assertNotIn("The Holiday Planner Pages", self.home)
         self.assertIn(
-            "https://stationerydropwatch.com/shop/</loc><lastmod>2026-11-22T00:00:00+00:00</lastmod>",
+            "https://stationerydropwatch.com/shop/</loc><lastmod>2026-11-26T00:00:00+00:00</lastmod>",
             site.build_sitemap())
 
     def test_happy_mail_and_seasonal_dashboards_follow_the_insert_card(self):

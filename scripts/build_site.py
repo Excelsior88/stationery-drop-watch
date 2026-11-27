@@ -1527,6 +1527,8 @@ def build_index():
   </section>
 </div>
 
+{print_drop_card()}
+
 {faq_html}
 """
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Stationery Drop Watch", "url": BASE,
@@ -4460,6 +4462,8 @@ def shop_cta_line():
     return "2027 planners and journals we make, printed on Amazon and printable on Etsy"
 
 def shop_lastmod():
+    if PRINT_DROP_URL:
+        return PRINT_DROP_LASTMOD  # Nov 26: The Print Drop card
     if any(e.get("id") in {"spin-lift-unfold", "a5-cozy"} and etsy_listing_url(e) for e in SHOP_ETSY):
         return "2026-11-22"
     # Shop facts changed 2026-11-18 (Happy Mail & Washi Club and Seasonal Reset Dashboards).
@@ -4478,6 +4482,38 @@ def shop_lastmod():
     if any(e.get("kind") == "insert" and etsy_listing_url(e) for e in SHOP_ETSY):
         return "2026-11-08"
     return "2026-11-03"
+
+# The Print Drop: the owner's sister site, a free beta planner page studio.
+# Every phrase below comes from https://theprintdrop.com/ or its beta studio,
+# read Nov 26, 2026. No prices, Pro features or monthly-drop promises.
+PRINT_DROP_URL = "https://theprintdrop.com/"
+PRINT_DROP_ICON = "/assets/brand/the-print-drop-icon.svg"
+PRINT_DROP_LASTMOD = "2026-11-26"
+PRINT_DROP_COPY = {
+    "eyebrow": "New from us · Free beta",
+    "title": "The Print Drop",
+    "body": ("A little studio for planner pages you make yourself and print at home. "
+             "Pick your size and a theme, add stickers, washi tape and templates, "
+             "then download a print-ready PDF."),
+    "note": "The free studio is open in beta. A Stationery Drop Watch creation.",
+    "button": "Try the free beta",
+}
+
+def print_drop_card(heading="h2"):
+    """A plain card pointing visitors to The Print Drop. One link target, no tracking."""
+    c = PRINT_DROP_COPY
+    return f"""<aside class="card print-drop-card" id="the-print-drop" aria-labelledby="print-drop-h">
+  <a class="print-drop-thumb" href="{PRINT_DROP_URL}" rel="noopener" target="_blank" tabindex="-1" aria-hidden="true">
+    <img src="{PRINT_DROP_ICON}" alt="" width="120" height="120" loading="lazy" decoding="async">
+  </a>
+  <div class="print-drop-body">
+    <p class="eyebrow">{E(c['eyebrow'])}</p>
+    <{heading} id="print-drop-h">{E(c['title'])}</{heading}>
+    <p>{E(c['body'])}</p>
+    <p class="muted small">{E(c['note'])}</p>
+    <a class="btn" href="{PRINT_DROP_URL}" rel="noopener" target="_blank">{E(c['button'])}</a>
+  </div>
+</aside>"""
 
 HOLIDAY_CARD_ENDS = dt.date(2026, 12, 31)  # last day the Hobonichi tracker shows The Holiday Planner Pages
 
@@ -4756,6 +4792,7 @@ def build_shop():
 <h1>{SHOP_NAME}</h1>
 <p class="lede">{E(lede)}</p>
 {signup("shop")}
+{print_drop_card()}
 <h2>Printed planners and journals on Amazon</h2>
 <ul class="shop-list">{amz}</ul>
 <h2>Printable PDFs on Etsy</h2>
