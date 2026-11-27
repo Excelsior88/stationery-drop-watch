@@ -2779,5 +2779,23 @@
   "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-liberty-fabrics-floral-remedy",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-27T21:49:57+00:00",
+  "store_id": "penboutique",
+  "store": "Pen Boutique",
+  "label": "Weeks cover · Tragen: Bitter Plaid",
+  "url": "https://www.penboutique.com/products/hobonichi-tragen-bitter-plaid-tall-and-slim-cover",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-27T21:50:35+00:00",
+  "store_id": "dromgooles",
+  "store": "Dromgoole's",
+  "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
+  "url": "https://www.dromgooles.com/products/hobonichi-2027-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
