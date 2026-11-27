@@ -2743,5 +2743,14 @@
   "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-2027-colors-pink-sapphire",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-27T18:18:17+00:00",
+  "store_id": "jennibick",
+  "store": "Jenni Bick",
+  "label": "Cousin A5 book (English)",
+  "url": "https://www.jennibick.com/products/hobonichi-techo-2027-english-cousin-book-a5-size-daily-jan-start-mon-start",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
