@@ -44,14 +44,14 @@ class CatalogTests(unittest.TestCase):
             self.assertNotIn(c.get("section"), ("travelers", "midori"), c["id"])
             self.assertFalse(c["id"].startswith(("tn-", "md-")), c["id"])
 
-    def test_checked_shop_count_is_27_with_the_replacements(self):
+    def test_checked_shop_count_is_28_with_the_replacements(self):
         checked = {s["id"] for s in self.cfg["stores"] if s["products"] and s["platform"] in ("shopify", "hobonichi") and not s.get("link_only")}  # Nov 23: link-only shops are not checked
-        self.assertEqual(len(checked), 27)
+        self.assertEqual(len(checked), 28)  # Laywine's checked again from Nov 26, 2026 (written permission)
         link_only = {s["id"] for s in self.cfg["stores"] if s.get("link_only")}
         self.assertTrue(NEW_STORES - link_only <= checked)  # Milligram is link-only since Nov 23
         self.assertTrue({"hunterpaper", "zakkajoy", "colorswatch", "greenstar"} <= checked)  # Nov 23 Hobonichi shops
         self.assertFalse(link_only & checked)
-        self.assertEqual(site.N_STORES, 27)
+        self.assertEqual(site.N_STORES, 28)
 
     def test_new_shops_track_only_products_we_already_track(self):
         canon = {c["id"] for c in self.cfg["canonical"]}
@@ -265,12 +265,12 @@ class SiteCopyTests(unittest.TestCase):
         self.assertNotIn(site.TN_GUIDE_SLUG, sitemap)
         self.assertNotIn("regular-black", sitemap)
 
-    def test_every_shop_total_on_the_home_page_is_27(self):
+    def test_every_shop_total_on_the_home_page_is_28(self):
         home = html.unescape(site.build_index())
         totals = set(re.findall(r"\b(\d+) shops\b", re.sub(r"<[^>]+>", " ", home)))
-        self.assertIn("27", totals)
-        self.assertIn("27 shops across all trackers", home)
-        self.assertIn("checks 27 shops", home)
+        self.assertIn("28", totals)
+        self.assertIn("28 shops across all trackers", home)
+        self.assertIn("checks 28 shops", home)
 
 
 if __name__ == "__main__":

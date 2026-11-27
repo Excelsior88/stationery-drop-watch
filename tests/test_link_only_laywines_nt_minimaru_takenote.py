@@ -22,8 +22,24 @@ class LinkOnlyAndNewShopsTests(unittest.TestCase):
         cls.stores = {s["id"]: s for s in cls.cfg["stores"]}
         cls.canon = {c["id"]: c for c in cls.cfg["canonical"]}
 
-    def test_laywines_and_notebook_therapy_are_link_only_and_never_requested(self):
-        for sid, host in (("laywines", "laywines.com"), ("notebooktherapy", "notebooktherapy.com")):
+    def test_laywines_is_checked_again_after_written_permission(self):
+        # Nov 26, 2026 (owner t2021u): Laywine's gave written permission, so it is checked like any other shop.
+        s = self.stores["laywines"]
+        self.assertNotIn("link_only", s)
+        self.assertNotIn("link_only_reason", s)
+        self.assertNotIn("laywines.com", checker.LINK_ONLY_HOSTS)
+        self.assertNotIn("laywines", checker.link_only_ids())
+        self.assertEqual(s["platform"], "shopify")
+
+    def test_laywines_first_rows_are_first_observations_not_restocks(self):
+        old = None
+        rec = dict(checked_at="2026-11-27T00:47:00+00:00", status="in_stock", store_id="laywines", store="Laywine's",
+                   label="x", url="https://laywines.com/products/x")
+        self.assertEqual(checker.note_transition(old, rec, []), [])
+        self.assertEqual(rec["first_seen"], rec["checked_at"])
+
+    def test_notebook_therapy_is_link_only_and_never_requested(self):
+        for sid, host in (("notebooktherapy", "notebooktherapy.com"),):
             s = self.stores[sid]
             self.assertTrue(s["link_only"])
             self.assertIn("written permission", s["link_only_reason"])
@@ -55,13 +71,13 @@ class LinkOnlyAndNewShopsTests(unittest.TestCase):
                     self.assertEqual(p["url"].split("?variant=")[1], str(p["variant_id"]))
         self.assertEqual({sid: len(self.stores[sid]["products"]) for sid in NEW}, {"minimaru": 58, "takenote": 40})
 
-    def test_checked_total_is_27_and_notebook_therapy_is_not_in_the_we_check_phrase(self):
+    def test_checked_total_is_28_and_notebook_therapy_is_not_in_the_we_check_phrase(self):
         self.assertFalse(site.COUNT_LINK_ONLY_IN_SHOP_TOTALS)
         checked = {s["id"] for s in self.cfg["stores"]
                    if s["products"] and s["platform"] in ("shopify", "hobonichi") and not s.get("link_only")}
-        self.assertEqual(len(checked), 27)
-        self.assertTrue({"minimaru", "takenote"} <= checked)
-        self.assertFalse({"laywines", "notebooktherapy"} & checked)
+        self.assertEqual(len(checked), 28)  # Laywine's checked again from Nov 26, 2026
+        self.assertTrue({"minimaru", "takenote", "laywines"} <= checked)
+        self.assertNotIn("notebooktherapy", checked)
         self.assertNotIn("Notebook Therapy", site.dotgrid_where_checked())
 
     def test_faq_and_guide_make_no_stock_claim_for_notebook_therapy(self):
