@@ -2752,5 +2752,23 @@
   "url": "https://www.jennibick.com/products/hobonichi-techo-2027-english-cousin-book-a5-size-daily-jan-start-mon-start",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-27T18:49:22+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "Weeks Mega · Colors: Pink Sapphire",
+  "url": "https://yosekastationery.com/products/hobonichi-techo-weeks-mega-2027-colors-pink-sapphire",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-27T18:49:37+00:00",
+  "store_id": "yoseka",
+  "store": "Yoseka Stationery",
+  "label": "A6 cover · Colors: Bordeaux Terracotta",
+  "url": "https://yosekastationery.com/products/hobonichi-original-cover-2027-colors-bordeaux-teracotta-a6",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
