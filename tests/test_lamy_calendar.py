@@ -126,8 +126,8 @@ class PageTests(unittest.TestCase):
         self.assertIn(f"/{site.LAMY_SLUG}/</loc>", site.build_sitemap())
         self.assertNotIn(site.LAMY_SLUG + "/", [h for h, _ in site.NAV_TRACKERS])
 
-    def test_shop_count_stays_27(self):
-        self.assertEqual(site.N_STORES, 27)
+    def test_shop_count_stays_28(self):
+        self.assertEqual(site.N_STORES, 28)  # 27 + Laywine's checked again (Nov 26, 2026)
 
 
 class LamyMentionTests(unittest.TestCase):
