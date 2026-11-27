@@ -2620,8 +2620,6 @@
    "url": "https://laywines.com/",
    "country": "CA",
    "platform": "shopify",
-   "link_only": true,
-   "link_only_reason": "Link only until the shop gives written permission to check stock. We do not request this shop's pages.",
    "indie": true,
    "sitemap": "laywines",
    "cols": [

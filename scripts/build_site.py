@@ -1815,14 +1815,13 @@ def build_transparency():
     outstanding = "\n".join([
         orow("Blesket Canada", "Nov 23, 2026", "Waiting for reply"),
         orow("Kinokuniya USA", "Nov 23, 2026", "Waiting for reply"),
-        orow("Laywine&rsquo;s", "Nov 23, 2026", "Waiting for reply"),
         orow("Milligram", "Nov 23, 2026", "Waiting for reply"),
         orow("Notebook Therapy", "Nov 23, 2026", "Waiting for reply"),
     ])
     body = f"""
 <article class="prose">
 {crumbs((fname, "Transparency"))}
-{eyebrow("Transparency", "updated Nov 25, 2026")}
+{eyebrow("Transparency", "updated Nov 26, 2026")}
 <h1>Transparency</h1>
 <p class="lede">We value transparency, and we believe you have a right to know what is and is not on this site so you can make your own decisions. The businesses below have asked us to remove or change information on Stationery Drop Watch. We have listed each one here, with what they asked for, what we removed or changed, what remains, and when.</p>
 <div class="table-wrap"><table class="tp-table">
