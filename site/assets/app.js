@@ -154,9 +154,9 @@
       const anchor = h.c && /^[A-Za-z][\w-]*$/.test(h.c) ? ` id="${esc(h.c)}"` : "";
       const shops = new Set(ls.map(r => r.sid)).size;
       const bits = [esc(h.t), shops + " " + (shops === 1 ? "shop" : "shops")];
-      if (h.dp) bits.push(`<a href="${esc(safeHref(h.dp))}">Design page</a>`);
+      if (h.dp) bits.push(`<a href="${esc(safeHref(h.dp))}">${esc(h.dpl || "Design page")}</a>`);
       const shopsHtml = ls.map(r => `<li><span class="compare-shop"><a href="${esc(safeHref(r.u))}" target="_blank" rel="noopener">${esc(r.s)}</a>${r.rg ? ` <span class="region" title="Shop's home country">${esc(r.rg)}</span> ` : ""}${r.p && r.p !== r.gn ? `<span class="sub variant">${esc(r.p)}</span>` : ""}${r.title && r.title !== r.gn && r.title !== r.p ? `<span class="sub">${esc(r.title)}</span>` : ""}</span>${statusBadge(r.st)}${r.on && r.st === "sold_out" ? `<span class="official-note">${esc(r.on)}</span>` : ""}</li>`).join("");
-      return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp ? `<a href="${esc(safeHref(h.dp))}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" \u00b7 ")}</p>${soldEverywhereNote(ls)}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
+      return `<article class="compare"${anchor}><header class="compare-head"><h3>${h.dp && !h.dpl ? `<a href="${esc(safeHref(h.dp))}">${esc(h.gn)}</a>` : esc(h.gn)}</h3><p class="compare-tally">${esc(shopTally(ls))}</p><p class="sub">${bits.join(" \u00b7 ")}</p>${soldEverywhereNote(ls)}</header><ul class="compare-shops">${shopsHtml}</ul></article>`;
     }
     let honorHash = true;
     const filtersActive = () => Object.values(f).some(el => (el.value || "").trim() !== "");

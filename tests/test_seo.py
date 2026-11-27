@@ -55,7 +55,7 @@ class SeoHeadTests(unittest.TestCase):
             self.assertNotIn("hourly", title.lower(), path)
             titles.append(title)
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 96)  # (Nov 22: -2 retired Archer and Olive design pages) (Nov 22: +24 cover design pages) 82, minus 12 Traveler's/MIDORI pages removed Nov 19, 2026, plus 3 Weeks design pages
+        self.assertEqual(len(titles), 88)  # (Nov 27: -8 design pages folded into their parent) (Nov 22: -2 retired Archer and Olive design pages) (Nov 22: +24 cover design pages) 82, minus 12 Traveler's/MIDORI pages removed Nov 19, 2026, plus 3 Weeks design pages
 
     def test_descriptions_match_social_tags_and_stay_under_155(self):
         descs = []
@@ -132,7 +132,7 @@ class SeoHeadTests(unittest.TestCase):
 
     def test_sitemap_lastmod_is_one_w3c_datetime(self):
         mods = LASTMOD_RE.findall(site.build_sitemap())
-        self.assertEqual(len(mods), 99 + 1 + 1 + 1 - 4 + (1 if site.INK_LIVE else 0) + (1 if site.LAMY_LIVE else 0))  # (Nov 27: -4 link-only Notebook Therapy design pages, noindex) (Nov 24: +1 Lamy release calendar) (Nov 24: +1 For shops page) (Nov 23: +1 Teachers Pay Teachers page) (Nov 23: +1 Transparency page) (Nov 23: +1 Terms of Use page) (Nov 22: -2 retired Archer and Olive design pages) (Nov 22: +24 cover design pages) (Nov 22: the MIDORI notice now 301s to the Traveler notice, so one fewer URL) 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide, plus 3 Weeks design pages (Sheep Sheep Sheep x2, Leather Forest Green), plus the old Archer and Olive URL page, plus the limited ink tracker
+        self.assertEqual(len(mods), 99 + 1 + 1 + 1 - 4 - 8 + (1 if site.INK_LIVE else 0) + (1 if site.LAMY_LIVE else 0))  # (Nov 27: -8 single-shop design pages folded into their parent) (Nov 27: -4 link-only Notebook Therapy design pages, noindex) (Nov 24: +1 Lamy release calendar) (Nov 24: +1 For shops page) (Nov 23: +1 Teachers Pay Teachers page) (Nov 23: +1 Transparency page) (Nov 23: +1 Terms of Use page) (Nov 22: -2 retired Archer and Olive design pages) (Nov 22: +24 cover design pages) (Nov 22: the MIDORI notice now 301s to the Traveler notice, so one fewer URL) 82, minus 12 Traveler's/MIDORI pages, plus the 2 takedown notices (Nov 19, 2026), plus the holiday gift guide, plus 3 Weeks design pages (Sheep Sheep Sheep x2, Leather Forest Green), plus the old Archer and Olive URL page, plus the limited ink tracker
         self.assertTrue(all(W3C.fullmatch(m) for m in mods), mods[:3])
 
     def test_favicon_is_the_existing_mark(self):

@@ -78,14 +78,16 @@ class AvecAndCoversTests(unittest.TestCase):
         new_canon = lambda c: c == AVEC or re.match(r"(cover-a5|weeks-cover)-", c) or (
             c.startswith("cover-a6-") and c not in {"cover-a6-moomin", "cover-a6-white-cat-house", "cover-a6-tragen-black",
                                                     "cover-a6-mina-felice", "cover-a6-beautiful-people-green"})
-        new_urls = {p["url"] for _, p in self.rows if new_canon(p["canonical"]) and p["canonical"] != "cover-a5-beautiful-people-pink"}
+        """Live check: one row per checked listing (link-only shops have none), and no
+        logged change at or before a row's first observation. Later changes are real."""
+        link_only = {s["id"] for s in self.cfg["stores"] if s.get("link_only")}
+        new_urls = {p["url"] for sid, p in self.rows if new_canon(p["canonical"]) and p["canonical"] != "cover-a5-beautiful-people-pink"}
+        checked = {p["url"] for sid, p in self.rows if sid not in link_only} & new_urls
         rows = [r for r in self.stock["products"] if r["url"] in new_urls]
-        self.assertEqual(len(rows), len(new_urls))
+        self.assertEqual({r["url"] for r in rows}, checked)
         for r in rows:
-            self.assertEqual(r["first_seen"], r["checked_at"], r["url"])
-            self.assertEqual(r["status_since"], r["checked_at"], r["url"])
-            self.assertIn(r["status"], ("in_stock", "sold_out"), r["url"])
-        self.assertFalse([c for c in self.changes if c["url"] in new_urls])
+            self.assertFalse([c for c in self.changes if c["url"] == r["url"] and c["at"] <= r["first_seen"]], r["url"])
+        self.assertFalse([c for c in self.changes if c["url"] in new_urls - checked])
 
 
 if __name__ == "__main__":

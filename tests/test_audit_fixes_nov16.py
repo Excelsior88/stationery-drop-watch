@@ -38,8 +38,9 @@ class BreadcrumbTests(unittest.TestCase):
         self.assertIn('<a href="/hobonichi-restock-tracker/">Hobonichi tracker</a>', star)
 
     def test_other_sections_stay_top_level(self):
-        stag = (SITE / "dot-grid-journal-restock-tracker/archer-and-olive-stag/index.html").read_text()
-        self.assertEqual(crumb_names(stag), ["Home", "Dot grid journals", "Archer and Olive Stag"])
+        # Stag folded into the A&O page on Nov 27, 2026; Storybook in Navy keeps its own page
+        navy = (SITE / "dot-grid-journal-restock-tracker/archer-and-olive-storybook-navy/index.html").read_text()
+        self.assertEqual(crumb_names(navy), ["Home", "Dot grid journals", "Archer and Olive Storybook in Navy"])
         tn = (SITE / "travelers-company-limited-edition/index.html").read_text()
         self.assertEqual(crumb_names(tn), ["Home", "Why Traveler's Company and MIDORI are gone"])
 

@@ -4,6 +4,7 @@ Fetch dedupe, robots.txt longest-match, the contact address, www to apex
 history, Pen Boutique HON labels, and Laywine's Planner A6 mapping.
 """
 import json
+import sys
 import tempfile
 import unittest
 from collections import defaultdict
@@ -14,6 +15,8 @@ import scripts.checker as checker
 import scripts.build_site as site
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import baseline  # noqa: E402
 UA = checker.UA
 OLD = "2026-10-25T21:40:49+00:00"
 LAY = "https://laywines.com/products/hobonichi-a6-planner-english-book-2027"
@@ -244,12 +247,22 @@ class CatalogFixTests(unittest.TestCase):
             "https://goldspot.com/products/leuchtturm-1917-black-hardcover-medium-dotted":
                 ("sold_out", "2026-11-20T03:04:51+00:00", "2026-11-20T03:04:51+00:00"),
         }
-        by_url = {p["url"]: p for p in self.stock["products"]}
+        # The rows as saved when they moved to apex URLs (frozen; see tests/fixtures/make_baselines.py).
+        first_run = {p["url"]: p for p in baseline.load("checker_politeness")["products"]}
         for url, (status, first, since) in expected.items():
-            row = by_url[url]
+            row = first_run[url]
             self.assertEqual(row["status"], status, url)
             self.assertEqual(row["first_seen"], first, url)
             self.assertEqual(row["status_since"], since, url)
+        # Live: Milligram is link-only now, so it has no rows; the others keep their first_seen.
+        link_only = {s["id"] for s in self.stores["stores"] if s.get("link_only")}
+        by_url = {p["url"]: p for p in self.stock["products"]}
+        for url, (status, first, since) in expected.items():
+            if "milligram.com" in url and "milligram" in link_only:
+                self.assertNotIn(url, by_url)
+                continue
+            self.assertEqual(by_url[url]["first_seen"], first, url)
+            self.assertFalse([c for c in self.changes if c["url"] == url and c["at"] <= first], url)
         for store in self.stores["stores"]:
             if store["id"] in ("milligram", "cultpens", "goldspot"):
                 self.assertFalse(store["url"].startswith("https://www."))

@@ -185,15 +185,21 @@ class HonSheepWeeksDesignsTests(unittest.TestCase):
         self.assertFalse(meteor["match"](weeks_sheep))
 
     def test_new_rows_are_first_observations_only(self):
+        """Live check. These rows were added on different runs, and some have changed
+        status since (logged, real), so the first observation is checked as: no
+        logged change at or before first_seen. Link-only shops have no rows or events."""
         saved = {p["url"]: p for p in self.stock["products"]}
-        event_urls = {c["url"] for c in self.changes}
-        cfg_urls = [p["url"] for s in self.cfg["stores"] for p in s["products"]]
+        lo_urls = {p["url"] for s in self.cfg["stores"] if s.get("link_only") for p in s["products"]}
+        cfg_urls = [p["url"] for s in self.cfg["stores"] if not s.get("link_only") for p in s["products"]]
         self.assertEqual(set(saved), set(cfg_urls))
         for url in NEW_URLS:
+            events = [c for c in self.changes if c["url"] == url]
+            if url in lo_urls:
+                self.assertNotIn(url, saved)
+                self.assertEqual(events, [], url)
+                continue
             row = saved[url]
-            self.assertEqual(row["first_seen"], row["status_since"])
-            self.assertNotEqual(row["status"], "unknown")
-            self.assertNotIn(url, event_urls)
+            self.assertFalse([c for c in events if c["at"] <= row["first_seen"]], url)
 
     def test_footer_hosts_the_saashub_badge(self):
         badge = ROOT / "site" / "assets" / "badges" / "saashub_v2_300x100.png"

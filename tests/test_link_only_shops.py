@@ -222,8 +222,13 @@ class PageTests(unittest.TestCase):
 
     def test_hero_and_totals_count_only_checked_listings(self):
         home = site.build_index()
-        n = len(site.stock["products"]) + len([r for r in site.INK_ROWS])
-        self.assertIn(f"{n} of {n}", home)
+        rows = site.stock["products"] + list(site.INK_ROWS)
+        n = len(rows)
+        ok = n - sum(r["status"] == "unknown" for r in rows)  # a failed check this run is not "checked successfully"
+        self.assertIn(f"<b>{ok} of {n}</b> <span>listings checked successfully</span>", home)
+        cfg = json.loads((ROOT / "stores.json").read_text())
+        link_only = {s["id"] for s in cfg["stores"] if s.get("link_only")}
+        self.assertFalse([r["url"] for r in site.stock["products"] if r["store_id"] in link_only])
 
 
 if __name__ == "__main__":

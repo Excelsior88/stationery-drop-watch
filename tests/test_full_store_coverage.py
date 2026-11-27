@@ -25,13 +25,17 @@ class FullStoreCoverageTests(unittest.TestCase):
         urls = [p["url"] for s in self.cfg["stores"] for p in s["products"]]
         self.assertEqual(len(urls), len(set(urls)))
         saved = {p["url"]: p for p in self.stock["products"]}
-        self.assertEqual(set(saved), set(urls))
+        # Link-only shops (Nov 23, 2026 on) are never fetched, so they have no saved row or history.
+        lo = {s["id"] for s in self.cfg["stores"] if s.get("link_only")}
+        checked = {p["url"] for s in self.cfg["stores"] if s["id"] not in lo for p in s["products"]}
+        self.assertEqual(set(saved), checked)
         fresh = [p for p in self.stock["products"] if p["first_seen"] == p["status_since"] and p["first_seen"] >= "2026-11-10T01"]
         self.assertGreaterEqual(len(fresh), 200)
         event_urls = {c["url"] for c in self.changes}
         for row in fresh:
             self.assertEqual(row["first_seen"], row["status_since"])
-            self.assertNotEqual(row["status"], "unknown")
+            # "unknown" is allowed now: a later failed check keeps the clock (checker.note_transition), so a
+            # row can still be on its first real status while today's check failed. Unknown never logs an event.
             self.assertNotIn(row["url"], event_urls)
         # A first observation writes no event. A later restock moves status_since, so the
         # event list may grow; a row still on its first status never appears in it.

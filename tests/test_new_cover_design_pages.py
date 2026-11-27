@@ -37,6 +37,8 @@ NEW = {
     "weeks-cover-alettone-sweets": (WK, "alettone-sweets-cover"),
     "weeks-cover-mina-perhonen-felice-blue": (WK, "mina-perhonen-felice-blue-weeks-cover"),
 }
+# Nov 27, 2026: the two single-shop PUPPET SUNSUN pages folded into the Covers page (301); their rows stay there.
+MERGED = {"cover-a6-puppet-sunsun-wa", "cover-a5-puppet-sunsun-s"}
 FORBIDDEN = re.compile(r"midori|traveler|designphil|bullet journal", re.I)
 
 
@@ -47,7 +49,8 @@ class NewCoverDesignPages(unittest.TestCase):
         cls.rows = [(s["id"], p) for s in cls.cfg["stores"] for p in s["products"]]
         cls.designs = {}
         for cid in NEW:
-            ds = [d for d in site.DESIGNS if d["match"]({"canonical": cid, "type": "Cover", "label": "", "url": ""})]
+            pool = site.MERGED_DESIGNS if cid in MERGED else site.DESIGNS
+            ds = [d for d in pool if d["match"]({"canonical": cid, "type": "Cover", "label": "", "url": ""})]
             cls.designs[cid] = ds
 
     def test_count_is_24_and_split(self):
@@ -102,18 +105,34 @@ class NewCoverDesignPages(unittest.TestCase):
             page = ROOT / "site" / parent / slug / "index.html"
             self.assertTrue(page.exists(), slug)
             html = page.read_text()
+            if cid in MERGED:  # a redirect stub to the Covers page; the rows and their links live there now
+                self.assertIn(f'<link rel="canonical" href="https://stationerydropwatch.com/{COV}/">', html)
+                self.assertNotIn(f"/{parent}/{slug}/", sitemap)
+                self.assertEqual(site.REDIRECTS[f"{parent}/{slug}"], COV + "/")
+                self.assertNotIn(f"/{parent}/{slug}/", tracker)
+                self.assertNotIn(f'href="{parent}/{slug}/"', covers)
+                self.assertIn(site.E(site.design_about(self.designs[cid][0])), covers)
+                continue
             self.assertIn(f"https://stationerydropwatch.com/{parent}/{slug}/", sitemap)
             self.assertIn(f'<link rel="canonical" href="https://stationerydropwatch.com/{parent}/{slug}/">', html)
             self.assertRegex(html, r'id="alerts-tag-hobonichi"[^>]* checked')
             self.assertNotRegex(html, FORBIDDEN)
-            self.assertIn("No restocks spotted yet", html)  # first observations only: no invented history
+            # first observations are never a restock: the feed shows exactly the logged restocks, or says there are none
+            d = self.designs[cid][0]
+            urls = {l["url"] for l in site.design_listings(d)}
+            logged = [c for c in site.changes if c["url"] in urls and site.is_restock_event(c)]
+            if logged:
+                self.assertNotIn("No restocks spotted yet", html)
+                self.assertIn(f'datetime="{max(c["at"] for c in logged)}"', html)
+            else:
+                self.assertIn("No restocks spotted yet", html)
             self.assertIn("/assets/brand/og-image.png", html)
             self.assertIn(f"/{parent}/{slug}/", tracker)
             self.assertIn(f"/{parent}/{slug}/", covers if parent == COV else weeks)
 
     def test_page_lists_every_shop_row_with_exact_url(self):
         for cid, (parent, slug) in NEW.items():
-            html = (ROOT / "site" / parent / slug / "index.html").read_text()
+            html = (ROOT / "site" / (COV if cid in MERGED else f"{parent}/{slug}") / "index.html").read_text()
             for sid, p in self.rows:
                 if p["canonical"] == cid:
                     self.assertIn(p["url"].replace("&", "&amp;"), html, f"{slug} {sid}")

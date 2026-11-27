@@ -97,7 +97,9 @@ class SearchIndexTests(unittest.TestCase):
                 self.assertEqual(item["s"], expected, item["id"])
                 if rows and links:
                     counted = int(re.match(r"(\d+) of (\d+)", item["s"]).group(2))
-                    self.assertEqual(counted, len(rows), item["id"])
+                    # count_line leaves out listings whose check failed this run ("· 1 couldn't be checked")
+                    checked = len(rows) - sum(r["status"] == "unknown" for r in rows)
+                    self.assertEqual(counted, checked, item["id"])
                     self.assertNotEqual(counted, len(rows) + len(links), item["id"])
 
     def test_group_and_ink_summaries_match_their_pages(self):
