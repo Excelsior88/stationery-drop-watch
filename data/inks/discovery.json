@@ -1003,49 +1003,49 @@
  },
  "shops": {
   "atlas": {
-   "last_ok": "2026-11-26T20:15:52+00:00",
-   "products_scanned": 8708,
+   "last_ok": "2026-11-27T20:02:17+00:00",
+   "products_scanned": 8709,
    "candidates": 115,
    "baseline_at": "2026-11-22T03:27:08+00:00"
   },
   "dromgooles": {
-   "last_ok": "2026-11-26T20:15:52+00:00",
-   "products_scanned": 11471,
+   "last_ok": "2026-11-27T20:02:17+00:00",
+   "products_scanned": 11470,
    "candidates": 36,
    "baseline_at": "2026-11-22T03:27:08+00:00"
   },
   "goldspot": {
-   "last_ok": "2026-11-26T20:15:52+00:00",
-   "products_scanned": 8039,
+   "last_ok": "2026-11-27T20:02:17+00:00",
+   "products_scanned": 8036,
    "candidates": 171,
    "baseline_at": "2026-11-22T03:27:08+00:00"
   },
   "penboutique": {
-   "last_ok": "2026-11-26T20:15:52+00:00",
-   "products_scanned": 11231,
+   "last_ok": "2026-11-27T20:02:17+00:00",
+   "products_scanned": 11227,
    "candidates": 524,
    "baseline_at": "2026-11-22T03:27:08+00:00"
   },
   "goulet": {
-   "last_ok": "2026-11-26T20:15:52+00:00",
-   "products_scanned": 3539,
+   "last_ok": "2026-11-27T20:02:17+00:00",
+   "products_scanned": 3536,
    "candidates": 22,
    "baseline_at": "2026-11-22T03:27:08+00:00"
   },
   "cultpens": {
-   "last_ok": "2026-11-26T20:15:52+00:00",
-   "products_scanned": 11155,
+   "last_ok": "2026-11-27T20:02:17+00:00",
+   "products_scanned": 11152,
    "candidates": 53,
    "baseline_at": "2026-11-22T03:27:08+00:00"
   },
   "yoseka": {
-   "last_ok": "2026-11-26T20:15:52+00:00",
-   "products_scanned": 15855,
+   "last_ok": "2026-11-27T20:02:17+00:00",
+   "products_scanned": 15880,
    "candidates": 17,
    "baseline_at": "2026-11-22T03:27:08+00:00"
   },
   "wonder": {
-   "last_ok": "2026-11-26T20:15:52+00:00",
+   "last_ok": "2026-11-27T20:02:17+00:00",
    "products_scanned": 9747,
    "candidates": 11,
    "baseline_at": "2026-11-22T03:27:08+00:00"
@@ -1057,5 +1057,5 @@
    "baseline_at": "2026-11-22T03:27:08+00:00"
   }
  },
- "last_run": "2026-11-26T20:15:52+00:00"
+ "last_run": "2026-11-27T20:02:17+00:00"
 }
