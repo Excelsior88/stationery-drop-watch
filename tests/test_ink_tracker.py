@@ -194,5 +194,25 @@ class PageTests(unittest.TestCase):
         self.assertEqual(s.N_STORES, len(ids))
 
 
+class AddedNov27Tests(unittest.TestCase):
+    """Robert Oster shop exclusives and Sailor's Voyage set (owner yes, Nov 27, 2026)."""
+    def setUp(self):
+        self.inks = {i["id"]: i for i in json.loads((ROOT / "inks.json").read_text())["inks"]}
+
+    def test_shop_exclusives_list_only_their_own_shop(self):
+        atlas = self.inks["robert-oster-atlas-exclusives"]["listings"]
+        self.assertEqual({l["store_id"] for l in atlas}, {"atlas"})
+        self.assertEqual(len({l["color"] for l in atlas}), 10)
+        self.assertTrue(all("atlas-exclusive" in l["url"] for l in atlas))
+        cult = self.inks["robert-oster-cultpens-shake-n-shimmy"]["listings"]
+        self.assertEqual({l["store_id"] for l in cult}, {"cultpens"})
+        for l in cult:
+            self.assertIn(f"variant={l['variant_id']}", l["url"])
+
+    def test_voyage_set_covers_every_verified_sailor_shop_that_sells_it(self):
+        shops = {l["store_id"] for l in self.inks["sailor-voyage-20th"]["listings"]}
+        self.assertEqual(shops, {"dromgooles", "penboutique", "wonder", "yoseka"})
+
+
 if __name__ == "__main__":
     unittest.main()
