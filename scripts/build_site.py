@@ -421,11 +421,12 @@ TAKEDOWN_ITEMS = {TN_SLUG: ("regular-black", "regular-blue", "regular-brown", "r
 # Old slugs that now redirect (meta refresh + canonical) to their new page. Never listed in the sitemap.
 REDIRECTS = {"archer-and-olive-bullet-journal": AO_SLUG + "/",
              MIDORI_SLUG: TN_SLUG + "/",  # duplicate of the Traveler's notice: one canonical page, the other 301s
-             "travelers-notebook-regular-size": TN_SLUG + "/",  # takedown notice
-             TN_GUIDE_SLUG: TN_SLUG + "/",  # old size guide, retired with the takedown
              "faq": "#good-to-know"}  # /faq -> the homepage FAQ ("Good to know")
-# Old Traveler's Company and MIDORI item pages point at their brand's takedown notice.
-REDIRECTS.update({f"{parent}/{slug}": TN_SLUG + "/" for parent, slugs in TAKEDOWN_ITEMS.items() for slug in slugs})
+# Old Traveler's Company and MIDORI pages are gone for good (owner t2081u, Nov 27, 2026): the item pages, the old
+# Regular-size page and the old size guide return HTTP 410 from site/functions/_middleware.js (Pages _redirects can't
+# send 410). The takedown notice (TN_SLUG) and the MIDORI_SLUG 301 to it stay. Never in the sitemap or linked.
+GONE_PATHS = tuple([f"{parent}/{slug}" for parent, slugs in TAKEDOWN_ITEMS.items() for slug in slugs]
+                   + ["travelers-notebook-regular-size", TN_GUIDE_SLUG])
 # Home is a hub; the Hobonichi tracker (the old homepage content) lives on its own page.
 HOBO_TRACKER = "hobonichi-restock-tracker/"
 # Header: one link per restock tracker, then the rest of the site. Wraps on narrow screens; nothing is hidden.
@@ -1219,8 +1220,18 @@ def pack_rows(rows):
         out.append([(d[k].index(r[k]) if k in d else r[k]) if k in r else None for k in keys])
     return {"k": keys, "d": d, "r": out}
 
-def stock_data(rows):
-    return f'<script id="stock-data" type="application/json">{json.dumps(pack_rows(rows), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")}</script>'
+# Listing rows for the interactive tracker live in their own file, named by content hash, so the page HTML stays
+# small and the file can be cached for good (cloudflare/_headers: /data/tracker/*). Every status the page shows is
+# still in the HTML (the Recent restocks card and the <noscript> table), so readers without JS and crawlers see it.
+TRACKER_DATA_DIR = "data/tracker"
+TRACKER_DATA_FILES = {}  # site-relative path -> JSON text; written by main()
+
+def stock_data(rows, name="hobonichi"):
+    import hashlib as _h
+    payload = json.dumps(pack_rows(rows), ensure_ascii=False, separators=(",", ":"))
+    path = f"{TRACKER_DATA_DIR}/{name}-{_h.sha256(payload.encode()).hexdigest()[:12]}.json"
+    TRACKER_DATA_FILES[path] = payload
+    return f'<script id="stock-data" type="application/json" data-src="/{path}"></script>'
 
 def soon_block():
     """Sections we plan to track but don't have listings for yet. Disappears once every one is live."""
@@ -5715,6 +5726,13 @@ def main():
     (SITE / "index.html").write_text(build_index())
     (SITE / HOBO_TRACKER).mkdir(parents=True, exist_ok=True)
     (SITE / HOBO_TRACKER / "index.html").write_text(build_hobo_tracker())
+    tdir = SITE / TRACKER_DATA_DIR
+    tdir.mkdir(parents=True, exist_ok=True)
+    for old in tdir.glob("*.json"):  # only the files the pages built this run point at
+        if f"{TRACKER_DATA_DIR}/{old.name}" not in TRACKER_DATA_FILES:
+            old.unlink()
+    for rel, text in TRACKER_DATA_FILES.items():
+        (SITE / rel).write_text(text)
     for fname, doc in (("hobonichi-2027/", build_hobonichi()), ("about/", build_about()), ("privacy/", build_privacy()), ("terms/", build_terms()), ("transparency/", build_transparency())):
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
@@ -5756,6 +5774,8 @@ def main():
             old.unlink()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
+    for gone in GONE_PATHS:  # no file is left behind for a 410 path (the middleware answers before assets)
+        shutil.rmtree(SITE / gone, ignore_errors=True)
     for old, new in REDIRECTS.items():
         (SITE / old).mkdir(parents=True, exist_ok=True)
         (SITE / old / "index.html").write_text(redirect_page(new))

@@ -3,6 +3,7 @@
 The note never changes a row's status, the changes log or drop alerts. Fixtures copy the real feed's shape
 (Nov 19, 2026): message_lineup is {"en", "ja"} or 0, sales_termination is 0 on every live item.
 """
+import re
 import copy
 import json
 import sys
@@ -147,8 +148,10 @@ class RenderTests(unittest.TestCase):
             doc = site.build_hobo_tracker()
         li = next(x for x in doc.split("<li>") if f'href="{STARLIGHT_URL}"' in x.split("</li>")[0]).split("</li>")[0]
         self.assertIn(f'<span class="official-note">{note}</span>', li)
-        self.assertIn('"on"', doc)  # packed JSON rows app.js re-renders from: "on" is one of the keys,
-        self.assertIn(f'"{note}"', doc)  # and the note sits in the row data
+        src = re.search(r'<script id="stock-data" type="application/json" data-src="/([^"]+)"></script>', doc).group(1)
+        rows_json = site.TRACKER_DATA_FILES[src]  # the separate rows file app.js re-renders from
+        self.assertIn('"on"', rows_json)  # "on" is one of the packed keys,
+        self.assertIn(f'"{note}"', rows_json)  # and the note sits in the row data
         js = (ROOT / "site/assets/app.js").read_text()
         self.assertIn('r.on && r.st === "sold_out"', js)
         with mock.patch.object(site, "stock", self.stock_with(None)):

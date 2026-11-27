@@ -236,7 +236,8 @@ class NotFoundStatusTests(unittest.TestCase):
         src = (ROOT / "site/functions/_middleware.js").read_text()
         for path in ("/404", "/404/", "/404.html"):
             self.assertIn(f'"{path}"', src)
-        self.assertIn("status: 404", src)
+        self.assertIn("notFoundPage(context, 404)", src)
+        self.assertIn("{ status, headers }", src)
         self.assertIn('pathname = "/404.html"', src)
         self.assertIn("noindex", src)
         page = site.build_404()

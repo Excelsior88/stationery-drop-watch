@@ -4,30 +4,9 @@
 # site/functions/_middleware.js, which serves 404.html with HTTP 404. Unknown paths still use 404.html.
 /archer-and-olive-bullet-journal/  /archer-and-olive-dot-grid-journal/  301
 /archer-and-olive-bullet-journal   /archer-and-olive-dot-grid-journal/  301
-/travelers-notebook-regular-size/  /travelers-company-limited-edition/  301
-/travelers-notebook-regular-size   /travelers-company-limited-edition/  301
-/travelers-notebook-regular-vs-passport-vs-card-size/  /travelers-company-limited-edition/  301
-/travelers-notebook-regular-vs-passport-vs-card-size   /travelers-company-limited-edition/  301
-# Traveler's Company and MIDORI item pages -> their brand's takedown notice (Nov 19, 2026).
-/travelers-company-limited-edition/regular-black/  /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/regular-black   /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/regular-blue/  /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/regular-blue   /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/regular-brown/  /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/regular-brown   /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/regular-camel/  /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/regular-camel   /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/regular-olive/  /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/regular-olive   /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/road-trip-brown/  /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/road-trip-brown   /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/card-size-20th-anniversary-black/  /travelers-company-limited-edition/  301
-/travelers-company-limited-edition/card-size-20th-anniversary-black   /travelers-company-limited-edition/  301
+# Old Traveler's Company and MIDORI item pages, the old Regular-size page and the old size guide return 410 Gone
+# from site/functions/_middleware.js since Nov 27, 2026 (owner t2081u). _redirects can't send 410, so they are not listed here.
 # The MIDORI notice page duplicated the Traveler's notice word for word. One canonical page: /travelers-company-limited-edition/.
-/midori-md-limited-edition/md-diary-2027-a5/  /travelers-company-limited-edition/  301
-/midori-md-limited-edition/md-diary-2027-a5   /travelers-company-limited-edition/  301
-/midori-md-limited-edition/md-diary-1-day-1-page-2027-a5/  /travelers-company-limited-edition/  301
-/midori-md-limited-edition/md-diary-1-day-1-page-2027-a5   /travelers-company-limited-edition/  301
 /midori-md-limited-edition/  /travelers-company-limited-edition/  301
 /midori-md-limited-edition   /travelers-company-limited-edition/  301
 /faq/  /#good-to-know  301
