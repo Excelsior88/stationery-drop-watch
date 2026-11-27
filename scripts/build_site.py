@@ -454,7 +454,7 @@ BRAND_SHORT = " · Drop Watch"
 # pages are applied here, so the guide functions themselves stay byte-for-byte and the date does not move.
 TITLE_OVERRIDES = {
     "Stationery gifts that are actually in stock: holiday gift guide 2026": "Stationery gifts in stock: holiday gift guide 2026",
-    "Hobonichi Techo 2027 launch & restock calendar": "Hobonichi Techo 2027 calendar",
+    "Hobonichi Techo 2027 launch & restock calendar": "Hobonichi 2027 restock calendar: when stock comes back",
     "Hobonichi Techo vs Cousin vs Weeks (2027): sizes, layouts, who each suits": "Hobonichi Techo vs Cousin vs Weeks",
     "Best dot grid journals compared: Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy": "Best dot grid journals compared",
     "Hobonichi Techo January-start vs April-start: which one should you buy?": "Hobonichi Techo January-start vs April-start",
@@ -1357,8 +1357,8 @@ def build_hobo_tracker():
 {stock_data(rows)}
 """
     n_shops = len({p['store_id'] for p in prods if p['store_id'] in HOBO_SHOPS} | ({r['store_id'] for r in LINK_ROWS if section_of(r) == "hobonichi"} if COUNT_LINK_ONLY_IN_SHOP_TOTALS else set()))
-    return page(HOBO_TRACKER, "Hobonichi 2027 restock tracker",
-                f"Hobonichi 2027 restock tracker. Live status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, plus separate trackers for other brands.",
+    return page(HOBO_TRACKER, "Hobonichi Techo 2027 restock tracker",
+                f"Is your Hobonichi Techo 2027 back in stock? Live restock status for Original A6, Cousin A5, Weeks and covers at {n_shops} shops, checked {CHECK_FREQ}.",
                 body, ld=(faq_ld, crumbs_ld((HOBO_TRACKER, "Hobonichi tracker"))))
 
 HUB_TRACKERS = {  # one line per tracker card on the hub homepage
@@ -1544,7 +1544,6 @@ def build_hobonichi():
 """ + crumbs(("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar")) + eyebrow("Guide", "Hobonichi Techo 2027", guide_updated(build_hobonichi)) + """
 <h1>Hobonichi Techo 2027 launch &amp; restock calendar</h1>
 <p class="lede">Hobonichi sells its planners in two big drops a year, and popular covers can sell out within minutes. Here's how the 2027 season has gone so far and when stock usually comes back.</p>
-""" + signup() + """
 
 <h2 class="sr">2027 timeline</h2>
 <ol class="timeline">
@@ -1554,6 +1553,7 @@ def build_hobonichi():
   <li><time>Early–mid Oct 2026</time><div><h3 class="tl">First restocks land at indie shops</h3><p>Atlas expected its first restock in early October. Paper Mouse's shipment arrived October 15 and preorders began shipping. <a href="#s-atlas">[Atlas]</a> <a href="#s-papermouse">[Paper Mouse]</a></p></div></li>
   <li><time>Feb 1, 2027</time><div><h3 class="tl">Spring launch (April-start planners)</h3><p>The official Hobonichi Store launches April-start planners on February 1, 2027 at 11:00 AM Japan time (January 31, 2027 at 9:00 PM ET) <a href="#s-1101">[Hobonichi]</a>. Other shops start at their own opening hours. Hobonichi has not published the Spring 2027 cover and book lineup yet.</p></div></li>
 </ol>
+""" + signup() + """
 
 <h2>Which 2027 books have an April-start</h2>
 <p>April-start is only available for the Japanese Original (A6), the Japanese Cousin (A5), and the Japanese Weeks <a href="#s-faq-april">[Hobonichi]</a> <a href="#s-hon">[Hobonichi]</a>.</p>
@@ -1571,7 +1571,7 @@ def build_hobonichi():
 </ul>
 <p>Many January-start products return for April-start. Sold-out January-start items may be restocked for the April-start launch, some items are April-only, and fabric availability can change the lineup <a href="#s-faq-spring">[Hobonichi]</a>. Choosing between the two: <a href="hobonichi-january-start-vs-april-start/">January-start vs April-start</a>.</p>
 
-<h2>Will it come back?</h2>
+<h2>When will Hobonichi 2027 restock?</h2>
 <p>Usually, but not always. While some standard planners and accessories may be replenished, special or limited collaborations may only be available during the initial launch <a href="#s-atlas">[Atlas]</a>. Paper Mouse says almost every item has been restocked at least once after launch in past years <a href="#s-papermouse">[Paper Mouse]</a>.</p>
 <p>Hobonichi posts restock decisions on each product page. "If there is no notice, a restock has not been decided or is under consideration" <a href="#s-faq-restock">[Hobonichi]</a>. Restock notification emails apply only to Techo books and Drawer Pouches, not accessories or stationery, and they do not guarantee a purchase <a href="#s-faq-restock">[Hobonichi]</a>.</p>
 <p>Sold-out official Hobonichi Store rows on our <a href=\"""" + HOBO_TRACKER + """#tracker">tracker</a> show that product-page note directly: "Official store notes a restock is planned," "Restock undecided at official store," or "Sales ended at official store."</p>
@@ -1610,7 +1610,7 @@ def build_hobonichi():
 """ + design_links_block() + related_block("hobonichi-2027/") + """
 </article>"""
     return page("hobonichi-2027/", "Hobonichi Techo 2027 launch & restock calendar · Stationery Drop Watch",
-                "When Hobonichi Techo 2027 planners launch, sell out and restock: launch times, the October wave, and when restocks usually land, with sources.",
+                "When will Hobonichi Techo 2027 restock? Launch dates, the October wave, and when restocks usually land, with sources.",
                 body, ld=(crumbs_ld(("guides/", "Guides"), ("hobonichi-2027/", "2027 calendar")),))
 
 def related_block(current):
@@ -2269,13 +2269,16 @@ def list_filter(ls, hint):
     {lang_note}"""
 
 def group_seo_title(g):
-    """Short document title. The visible H1 stays the longer product name."""
+    """Document title: the H1 ("<product> restock tracker") when it fits, so the title keeps the words
+    people search for ("restock", and "2027" on the Hobonichi pages). A shorter fallback keeps both."""
     sec = g_sec(g)
     if g.get("seo_title"):
         return g["seo_title"]
+    if len(g["h1"]) <= TITLE_LIMIT:
+        return g["h1"]
     if sec == "dotgrid":
-        return "Dot grid journal tracker"
-    return f'Hobonichi {g["short"]} tracker'
+        return "Dot grid journal restock tracker"
+    return f'Hobonichi {g["short"]} 2027 restock tracker'
 
 def design_family(parent_slug):
     return {
@@ -2288,8 +2291,43 @@ def design_family(parent_slug):
         DOTGRID_SLUG: "dot grid",
     }.get(parent_slug, "stock")
 
+# Search-title lead for each design family. "{name}" is the design's short name.
+DESIGN_TITLE_PATTERNS = {
+    "hobonichi-weeks-2027": "Hobonichi Weeks 2027 {name} restock tracker",
+    "hobonichi-weeks-mega-2027": "Hobonichi Weeks Mega 2027 {name} restock tracker",
+    "hobonichi-techo-2027-covers": "Hobonichi 2027 {name} cover restock tracker",
+    "hobonichi-techo-2027-hon": "Hobonichi HON 2027 {name} restock tracker",
+    "hobonichi-techo-2027-original-a6": "Hobonichi Techo 2027 {name} restock tracker",
+    "hobonichi-techo-2027-cousin-a5": "Hobonichi Cousin 2027 {name} restock tracker",
+    DOTGRID_SLUG: "{name} dot grid restock tracker",
+}
+
 def design_seo_title(d):
-    return f'{d["name"]} · {design_family(d["parent"])} stock'
+    """Search title that keeps "restock" (and "2027" on Hobonichi pages) within TITLE_LIMIT.
+    Tries the full design name, then without an artist or brand prefix ("tanakadaisuke: "),
+    then without the word "tracker", then the short family wording."""
+    pat = DESIGN_TITLE_PATTERNS.get(d["parent"], "{name} restock tracker")
+    name = d["name"]
+    short = name
+    if ": " in name:  # keep a leading size ("A5 Bow & Tie: …" -> "A5 …") so A5 and A6 pages stay distinct
+        head, rest = name.split(": ", 1)
+        size = re.match(r"(A\d|B\d)\b", head)
+        short = (size.group(1) + " " if size else "") + rest
+    tries = [pat.format(name=name), pat.format(name=short),
+             pat.format(name=name).replace(" restock tracker", " restock"),
+             pat.format(name=short).replace(" restock tracker", " restock")]
+    if d["parent"] != DOTGRID_SLUG:  # drop the leading "Hobonichi " before giving up the family name
+        tries += [t.replace("Hobonichi ", "", 1) for t in tries[:4]]
+        tries.append(f'{short} 2027 restock')
+    for t in tries:
+        if len(t) <= TITLE_LIMIT:
+            return t
+    return tries[-1]
+
+def design_is_link_only(d):
+    """Every shop that lists this design is link-only, so the page makes no stock claim.
+    These pages stay up and linked, but are noindex and left out of the sitemap."""
+    return not design_listings(d) and bool(link_listings(d["match"]))
 
 def design_seo_desc(d, shops):
     word = "shop" if shops == 1 else "shops"
@@ -2850,7 +2888,7 @@ def build_design(d, oe=None):
         title = f'{d["name"]} · link only'
         desc = f"{d['name']}: we list it as a link only and don't check its stock. Open the shop's own page to see what it has."[:DESC_LIMIT]
     return fname, page(fname, title, desc, body, ld=(crumbs_ld(*hub_trail(parent), (parent["slug"] + "/", parent["short"]), (fname, d["name"])), items, faq_ld),
-                       og_image=parent.get("og_image", OG_IMAGE), og_alt=parent.get("og_alt", OG_ALT))
+                       og_image=parent.get("og_image", OG_IMAGE), og_alt=parent.get("og_alt", OG_ALT), noindex=design_is_link_only(d))
 
 def design_lastmod(d):
     ls = design_listings(d)
@@ -2961,13 +2999,13 @@ def hobo_design_nav():
     return (f'<details class="design-fold" id="by-product"><summary>Design pages ({len(links)})</summary>'
             f'<ul class="link-list">{"".join(links)}</ul></details>')
 
-STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-22", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23", "transparency/": "2026-11-25", TPT_PAGE_PATH: TPT_PAGE_DATE, FOR_SHOPS_SLUG + "/": FOR_SHOPS_DATE}
+STATIC_LASTMOD = {"hobonichi-2027/": "2026-11-27", "about/": "2026-11-22", "privacy/": "2026-11-22", "terms/": "2026-11-23", "transparency/": "2026-11-25", TPT_PAGE_PATH: TPT_PAGE_DATE, FOR_SHOPS_SLUG + "/": FOR_SHOPS_DATE}
 
 def build_sitemap():
     home_mod = latest(*[p.get("status_since") for p in stock["products"]], *[c["at"] for c in changes], CONTENT_LASTMOD)
     urls = [(url_for("index.html"), home_mod), (url_for(HOBO_TRACKER), latest(*[p.get("status_since") for p in hobo_products()], *[c["at"] for c in changes], CONTENT_LASTMOD))]
     urls += [(url_for(g["slug"] + "/"), group_lastmod(g)) for g in GROUPS]
-    urls += [(url_for(design_fname(d)), design_lastmod(d)) for d in DESIGNS]
+    urls += [(url_for(design_fname(d)), design_lastmod(d)) for d in DESIGNS if not design_is_link_only(d)]
     if INK_LIVE:
         urls.append((url_for(INK_SLUG + "/"), ink_lastmod()))
     if LAMY_LIVE:
