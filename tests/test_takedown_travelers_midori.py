@@ -265,12 +265,14 @@ class SiteCopyTests(unittest.TestCase):
         self.assertNotIn(site.TN_GUIDE_SLUG, sitemap)
         self.assertNotIn("regular-black", sitemap)
 
-    def test_every_shop_total_on_the_home_page_is_28(self):
+    def test_every_shop_total_on_the_home_page_matches_the_checked_shop_count(self):
+        # The count comes from the build data (site.N_STORES), so adding or pausing a shop doesn't break this test.
+        n = str(site.N_STORES)
         home = html.unescape(site.build_index())
         totals = set(re.findall(r"\b(\d+) shops\b", re.sub(r"<[^>]+>", " ", home)))
-        self.assertIn("28", totals)
-        self.assertIn("28 shops across all trackers", home)
-        self.assertIn("checks 28 shops", home)
+        self.assertIn(n, totals)
+        self.assertIn(f"{n} shops across all trackers", home)
+        self.assertIn(f"checks {n} shops", home)
 
 
 if __name__ == "__main__":
