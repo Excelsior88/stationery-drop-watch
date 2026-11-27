@@ -2644,5 +2644,23 @@
   "url": "https://www.atlasstationers.com/products/hobonichi-techo-weeks-cover-mina-perhonen-felice-blue",
   "from": "in_stock",
   "to": "sold_out"
+ },
+ {
+  "at": "2026-11-27T02:52:07+00:00",
+  "store_id": "minimaru",
+  "store": "Minimaru",
+  "label": "Weeks Mega · Colors: Poppy Red",
+  "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-colours-poppy-red-4580812710077",
+  "from": "in_stock",
+  "to": "sold_out"
+ },
+ {
+  "at": "2026-11-27T02:51:36+00:00",
+  "store_id": "archerolive",
+  "store": "Archer and Olive (official)",
+  "label": "Majestic Skies · B5 dot grid",
+  "url": "https://www.archerandolive.com/products/majestic-skies-dot-grid-notebook?variant=47314844057755",
+  "from": "in_stock",
+  "to": "sold_out"
  }
 ]
