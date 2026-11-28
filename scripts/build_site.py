@@ -5069,7 +5069,6 @@ def build_shop():
 {eyebrow("Shop", "made by Stationery Drop Watch")}
 <h1>{SHOP_NAME}</h1>
 <p class="lede">{E(lede)}</p>
-{signup("shop")}
 {print_drop_card()}
 <h2>Printed planners and journals on Amazon</h2>
 <ul class="shop-list">{amz}</ul>
@@ -5079,6 +5078,7 @@ def build_shop():
 <p class="muted">{E(tpt_intro)}</p>
 <ul class="shop-list">{tpt}</ul>
 <p class="tpt-all"><a href="{TPT_PAGE_PATH}">See all our Teachers Pay Teachers resources</a></p>
+{signup("shop")}
 </article>"""
     return fname, page(fname, title, desc, body, ld=(crumbs_ld((fname, "Shop")),))
 

@@ -54,6 +54,16 @@ class PrintDropCardTests(unittest.TestCase):
         pos = self.shop.find('id="the-print-drop"')
         self.assertLess(pos, self.shop.find("Printed planners and journals on Amazon"))
 
+    def test_shop_card_is_first_and_signup_is_last(self):
+        """Owner, Nov 27: the beta invite is the first thing on /shop; the email signup sits at the bottom."""
+        doc = self.shop
+        card, lede, signup = doc.find('id="the-print-drop"'), doc.find('class="lede"'), doc.find('id="alerts"')
+        self.assertTrue(0 < lede < card < signup)
+        self.assertNotIn("<h2", doc[lede:card])
+        self.assertLess(doc.find("See all our Teachers Pay Teachers resources"), signup)
+        self.assertLess(signup, doc.find("</article>", signup))
+        self.assertEqual(doc.count('class="signup-strip'), 1)
+
     def test_icon_is_local(self):
         self.assertTrue((site.SITE / site.PRINT_DROP_ICON.lstrip("/")).is_file())
 
