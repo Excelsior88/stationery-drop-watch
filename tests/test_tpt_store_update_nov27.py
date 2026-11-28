@@ -1,5 +1,6 @@
 """TpT catalog on /shop/teachers-pay-teachers/ matches the live store as of Nov 27, 2026."""
 import json
+from pathlib import Path
 import re
 import unittest
 
@@ -84,3 +85,27 @@ class TptStoreUpdateNov27(unittest.TestCase):
         self.assertIn('id="cute-pastel-collection"', self.shop)
         self.assertIn("See all our Teachers Pay Teachers resources", self.shop)
         self.assertIn("classroom jobs, morning meeting, feelings and calm-down tools", self.doc)
+
+
+    def test_catalog_cover_srcset_urls_are_root_relative(self):
+        # A leading slash on only the first srcset URL left the 600w candidate page-relative,
+        # so retina phones requested /shop/teachers-pay-teachers/assets/tpt/... and got a 404.
+        srcsets = re.findall(r'srcset="([^"]*assets/tpt/[^"]*)"', self.doc)
+        self.assertEqual(len(srcsets), 19)
+        for val in srcsets:
+            for part in val.split(","):
+                url = part.strip().split()[0]
+                self.assertTrue(url.startswith("/assets/tpt/"), val)
+
+    def test_every_catalog_cover_has_300_and_600_webp(self):
+        from PIL import Image
+        root = Path(__file__).resolve().parent.parent
+        slugs = [p["slug"] for p in site.TPT_PRODUCTS]
+        self.assertEqual(len(slugs), 19)
+        for slug in slugs:
+            for size in (300, 600):
+                path = root / f"site/assets/tpt/{slug}-{size}.webp"
+                self.assertTrue(path.is_file(), path.name)
+                with Image.open(path) as im:
+                    self.assertEqual(im.size, (size, size), path.name)
+                    self.assertEqual(im.format, "WEBP", path.name)

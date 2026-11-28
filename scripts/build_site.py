@@ -2059,7 +2059,7 @@ def build_tpt_page():
             mem = '<p class="small"><b>Part of:</b> ' + "; ".join(E(m) for m in p["member_of"]) + ".</p>"
         kind = "Bundle" if p["bundle"] else "Resource"
         return (f'<li><article class="shop-card" id="{p["slug"]}">'
-                f'<div class="shop-img"><img src="{asset(p["slug"], 600)}" srcset="{asset(p["slug"], 300)} 300w, {asset(p["slug"], 600)} 600w" sizes="(max-width:600px) 240px, 150px" '
+                f'<div class="shop-img"><img src="{asset(p["slug"], 600)}" srcset="/{asset(p["slug"], 300)} 300w, /{asset(p["slug"], 600)} 600w" sizes="(max-width:600px) 240px, 150px" '
                 f'width="600" height="600" alt="Cover image of {E(p["title"])}" loading="lazy" decoding="async"></div>'
                 f'<div><p class="eyebrow">{kind}</p><h3>{E(p["title"])}</h3><ul>{fl}</ul>'
                 f'<p>{E(p["desc"])}</p>{mem}'
