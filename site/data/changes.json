@@ -1737,15 +1737,6 @@
   "to": "sold_out"
  },
  {
-  "at": "2026-11-20T15:20:16+00:00",
-  "store_id": "archerolive",
-  "store": "Archer and Olive (official)",
-  "label": "Storybook in Plum · pocket dot grid",
-  "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636147044507",
-  "from": "in_stock",
-  "to": "sold_out"
- },
- {
   "at": "2026-11-20T15:50:07+00:00",
   "store_id": "archerolive",
   "store": "Archer and Olive (official)",
@@ -2277,15 +2268,6 @@
   "to": "sold_out"
  },
  {
-  "at": "2026-11-24T00:20:42+00:00",
-  "store_id": "colorswatch",
-  "store": "ColorSwatch",
-  "label": "Weeks · V&A: Leicester",
-  "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",
-  "from": "in_stock",
-  "to": "sold_out"
- },
- {
   "at": "2026-11-24T02:16:01+00:00",
   "store_id": "1101",
   "store": "Hobonichi Online Store (official)",
@@ -2300,15 +2282,6 @@
   "store": "Minimaru",
   "label": "Weeks · Colors: Sea Glass",
   "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-colours-sea-glass-4580812709743",
-  "from": "in_stock",
-  "to": "sold_out"
- },
- {
-  "at": "2026-11-24T08:51:55+00:00",
-  "store_id": "minimaru",
-  "store": "Minimaru",
-  "label": "Weeks Mega · Colors: Sea Glass",
-  "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-colours-sea-glass-4580812710084",
   "from": "in_stock",
   "to": "sold_out"
  },
