@@ -87,7 +87,7 @@ class MergeTests(unittest.TestCase):
                 self.assertNotIn(f'id="{sid}"', doc, slug)
 
     def test_sitemap_count(self):
-        self.assertEqual(self.sitemap.count("<loc>"), 92)
+        self.assertEqual(self.sitemap.count("<loc>"), 93)
 
     def test_tracker_rows_point_merged_designs_at_the_parent(self):
         hob = (ROOT / "site/hobonichi-restock-tracker/index.html").read_text()
