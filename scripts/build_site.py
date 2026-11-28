@@ -3920,14 +3920,14 @@ GIFT_PICKS = {
     # For the traveler (reworked Nov 19, 2026, after the Traveler's Company and MIDORI removal).
     "plannera6": ("planner-a6-en", None, "hobonichi-techo-2027-planner-a6/", "English Planner A6 book"),
     "tragen": ("cover-a6-tragen-black", None, "hobonichi-techo-2027-covers/#cover-a6-tragen-black", "A6 cover, Tragen: Black"),
-    "aostag": ("ao-stag", "pocket dot grid · ships now", AO_SLUG + "/", "Archer and Olive Stag, pocket size"),
+    "aostag": ("ao-stag", "pocket dot grid · ships now", AO_SLUG + "/#ao-stag", "Archer and Olive Stag, pocket size"),
     "lta5": ("lt-hardcover-a5", None, DOTGRID_SLUG + "/leuchtturm1917-hardcover-a5-dotted/", "Leuchtturm1917 Hardcover Medium (A5), dotted"),
     "lted2": ("lt-bullet-journal-ed2", None, DOTGRID_SLUG + "/leuchtturm1917-edition-2/", "Leuchtturm1917 Bullet Journal Edition 2"),
     "aonavy": ("ao-storybook-navy", "A5 ", DOTGRID_SLUG + "/archer-and-olive-storybook-navy/", "Archer and Olive Storybook in Navy, A5"),
-    "aobeige": ("ao-songbird-beige", "B5 ", AO_SLUG + "/", "Archer and Olive Songbird in Beige, B5"),  # B5 since Nov 22, 2026: the A5 dot grid sold out
+    "aobeige": ("ao-songbird-beige", "B5 ", AO_SLUG + "/#ao-songbird-beige", "Archer and Olive Songbird in Beige, B5"),  # B5 since Nov 22, 2026: the A5 dot grid sold out
     # Winter 2026 designs: only the ships-now A5 dot grid option (the Feb preorder option is a separate listing).
-    "aoice": ("ao-ice-castle", "A5 dot grid · ships now", AO_SLUG + "/", "Archer and Olive Ice Castle, A5"),
-    "aotrain": ("ao-winter-train", "A5 dot grid · ships now", AO_SLUG + "/", "Archer and Olive Winter Train, A5"),
+    "aoice": ("ao-ice-castle", "A5 dot grid · ships now", AO_SLUG + "/#ao-ice-castle", "Archer and Olive Ice Castle, A5"),
+    "aotrain": ("ao-winter-train", "A5 dot grid · ships now", AO_SLUG + "/#ao-winter-train", "Archer and Olive Winter Train, A5"),
 }
 GIFT_SRC = {  # (url, title, publisher)
     "h_moomin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/wb27_moomintable/", "Moomin: At the Table, Weeks (ENG edition)", "Hobonichi (official)"),
