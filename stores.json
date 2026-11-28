@@ -6837,25 +6837,11 @@
    ],
    "products": [
     {
-     "canonical": "weeks-canaria-yellow",
-     "label": "Weeks · Colors: Canaria Yellow",
-     "type": "Weeks",
-     "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-colors-canaria-yellow",
-     "source_title": "Hobonichi Techo Weeks 2027 - Colors - Canaria Yellow"
-    },
-    {
      "canonical": "weeks-white-cat",
      "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
      "type": "Weeks",
      "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-yumu-katagishi-white-cat-wallpaper",
      "source_title": "Hobonichi Techo Weeks 2027 - Yumi Katagishi - White Cat Wallpaper"
-    },
-    {
-     "canonical": "weeks-starlight",
-     "label": "Weeks · tanakadaisuke: Starlight",
-     "type": "Weeks",
-     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-tanakadaisuke-starlight",
-     "source_title": "Hobonichi Techo 2027 Weeks - Tanakadaisuke: Starlight"
     },
     {
      "canonical": "weeks-pink-sapphire",
@@ -6870,13 +6856,6 @@
      "type": "Weeks",
      "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-welcome-to-the-v-and-a",
      "source_title": "Hobonichi Techo 2027 Weeks - V-A Series: Welcome to the V and A"
-    },
-    {
-     "canonical": "weeks-va-leicester",
-     "label": "Weeks · V&A: Leicester",
-     "type": "Weeks",
-     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",
-     "source_title": "Hobonichi Techo 2027 Weeks - V-A Series: Leicester"
     },
     {
      "canonical": "weeks-paper-frosty-jade",
@@ -6898,20 +6877,6 @@
      "type": "Weeks",
      "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-akiko-miyakoshi-once-in-spring",
      "source_title": "Hobonichi Techo 2027 Weeks - Akiko Miyakoshi - Once, in spring"
-    },
-    {
-     "canonical": "weeks-meteor-shower",
-     "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
-     "type": "Weeks",
-     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
-     "source_title": "Hobonichi Techo 2027 Weeks - Hiroko Kubota - Meteor Shower in the light blue forest"
-    },
-    {
-     "canonical": "hon-a5-slash-navy",
-     "label": "HON A5 · Slash (Navy)",
-     "type": "HON",
-     "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-hon-a5-slash-navy",
-     "source_title": "Hobonichi Techo 2027 HON - A5 - Slash (Navy)"
     },
     {
      "canonical": "hon-a6-slash-navy",
@@ -7074,13 +7039,6 @@
      "source_title": "Hobonichi Techo 2027 Weeks ENG - Colours: Sea Glass"
     },
     {
-     "canonical": "weeks-va-welcome",
-     "label": "Weeks · V&A: Welcome to the V&A",
-     "type": "Weeks",
-     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-v-a-series-welcome-to-the-v-a-4580812709880",
-     "source_title": "Hobonichi Techo 2027 Weeks ENG - V&A Series: Welcome to the V&A"
-    },
-    {
      "canonical": "weeks-va-leicester",
      "label": "Weeks · V&A: Leicester",
      "type": "Weeks",
@@ -7184,13 +7142,6 @@
      "type": "Weeks",
      "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-leather-forest-green-4580812709996",
      "source_title": "Hobonichi Techo 2027 Weeks ENG - Leather: Forest Green"
-    },
-    {
-     "canonical": "weeks-mega-sea-glass",
-     "label": "Weeks Mega · Colors: Sea Glass",
-     "type": "Weeks Mega",
-     "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-colours-sea-glass-4580812710084",
-     "source_title": "Hobonichi Techo 2027 Weeks MEGA ENG - Colours: Sea Glass"
     },
     {
      "canonical": "weeks-mega-canaria-yellow",
@@ -8075,14 +8026,6 @@
      "source_title": "Songbird in Blue Notebook · B6: 112 Pages / Dot Grid"
     },
     {
-     "canonical": "ao-songbird-blue",
-     "label": "Songbird in Blue · pocket dot grid",
-     "type": "Dot grid notebook",
-     "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128957026459",
-     "variant_id": 47128957026459,
-     "source_title": "Songbird in Blue Notebook · PS: 112 Pages / Dot Grid"
-    },
-    {
      "canonical": "ao-storybook-navy",
      "label": "Storybook in Navy · B5 kraft dot grid",
      "type": "Dot grid notebook",
@@ -8564,14 +8507,6 @@
     },
     {
      "canonical": "ao-storybook-plum",
-     "label": "Storybook in Plum · letter dot grid",
-     "type": "Dot grid notebook",
-     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146749595",
-     "variant_id": 47636146749595,
-     "source_title": "Storybook in Plum: Notebook · LS: 160 Pages / Dot Grid"
-    },
-    {
-     "canonical": "ao-storybook-plum",
      "label": "Storybook in Plum · B5 dot grid",
      "type": "Dot grid notebook",
      "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146782363",
@@ -8596,27 +8531,11 @@
     },
     {
      "canonical": "ao-storybook-plum",
-     "label": "Storybook in Plum · TN dot grid",
-     "type": "Dot grid notebook",
-     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146978971",
-     "variant_id": 47636146978971,
-     "source_title": "Storybook in Plum: Notebook · TN: 144 Pages / Dot Grid"
-    },
-    {
-     "canonical": "ao-storybook-plum",
      "label": "Storybook in Plum · B6 dot grid",
      "type": "Dot grid notebook",
      "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636147011739",
      "variant_id": 47636147011739,
      "source_title": "Storybook in Plum: Notebook · B6: 112 Pages / Dot Grid"
-    },
-    {
-     "canonical": "ao-storybook-plum",
-     "label": "Storybook in Plum · pocket dot grid",
-     "type": "Dot grid notebook",
-     "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636147044507",
-     "variant_id": 47636147044507,
-     "source_title": "Storybook in Plum: Notebook · PS: 112 Pages / Dot Grid"
     },
     {
      "canonical": "ao-storybook-olive",
