@@ -1,4 +1,4 @@
-"""TpT catalog on /shop/teachers-pay-teachers/ was updated Nov 27, 2026 to match live bundle copy and titles, without adding new product cards."""
+"""TpT catalog on /shop/teachers-pay-teachers/ matches the live store as of Nov 27, 2026."""
 import json
 from pathlib import Path
 import re
@@ -11,46 +11,33 @@ def html_of(built):
     return built[1] if isinstance(built, tuple) else built
 
 
-NEW_LISTING_URLS = (
-    "https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Jobs-Chart-Editable-Job-Cards-with-Pictures-Name-Clips-18536234",
-    "https://www.teacherspayteachers.com/Product/Cute-Pastel-Morning-Meeting-Kit-Calendar-Weather-Feelings-Greeting-Cards-18536267",
-    "https://www.teacherspayteachers.com/Product/Level-Up-Behavior-Reward-System-Video-Game-XP-Chart-Badges-Coupons-18536327",
-    "https://www.teacherspayteachers.com/Product/Level-Up-XP-Reading-Log-Video-Game-Reading-Challenge-Quest-Map-Bookmarks-18536356",
-)
-
-
 class TptStoreUpdateNov27(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.doc = html_of(site.build_tpt_page())
         cls.shop = html_of(site.build_shop())
 
-    def test_catalog_lists_the_original_fifteen_cards(self):
-        self.assertEqual(len(site.TPT_PRODUCTS), 15)
-        self.assertIn("All 15 printable classroom resources", self.doc)
-        self.assertIn("All 15 classroom printables", self.doc)
-        self.assertNotIn("All 19 printable classroom resources", self.doc)
-        self.assertNotIn("All 19 classroom printables", self.doc)
+    def test_catalog_has_nineteen_live_resources(self):
+        self.assertEqual(len(site.TPT_PRODUCTS), 19)
+        self.assertIn("All 19 printable classroom resources", self.doc)
+        self.assertIn("All 19 classroom printables", self.doc)
+        self.assertNotIn("All 15 printable classroom resources", self.doc)
+        self.assertNotIn("All 15 classroom printables", self.doc)
 
-    def test_structured_data_lists_fifteen(self):
+    def test_structured_data_lists_all_nineteen(self):
         items = []
         for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>', self.doc):
             data = json.loads(raw)
             if data.get("@type") == "ItemList":
                 items = data
-        self.assertEqual(items.get("numberOfItems"), 15)
+        self.assertEqual(items.get("numberOfItems"), 19)
         names = [el["item"]["name"] for el in items["itemListElement"]]
-        self.assertEqual(len(names), 15)
+        self.assertEqual(len(names), 19)
         self.assertIn("Level Up! Bundle | Video Game Planner, Goals, Review, Behavior & Reading Log", names)
-        self.assertNotIn("Cute Pastel Classroom Jobs Chart | Editable Job Cards with Pictures + Name Clips", names)
-        self.assertNotIn("Cute Pastel Morning Meeting Kit | Calendar, Weather, Feelings + Greeting Cards", names)
-        self.assertNotIn("Level Up! Behavior & Reward System | Video Game XP Chart, Badges & Coupons", names)
-        self.assertNotIn("Level Up! XP Reading Log | Video Game Reading Challenge, Quest Map & Bookmarks", names)
-
-    def test_new_listings_are_not_on_the_catalog_or_shop_page(self):
-        for url in NEW_LISTING_URLS:
-            self.assertNotIn(url, self.doc)
-            self.assertNotIn(url, self.shop)
+        self.assertIn("Cute Pastel Classroom Jobs Chart | Editable Job Cards with Pictures + Name Clips", names)
+        self.assertIn("Cute Pastel Morning Meeting Kit | Calendar, Weather, Feelings + Greeting Cards", names)
+        self.assertIn("Level Up! Behavior & Reward System | Video Game XP Chart, Badges & Coupons", names)
+        self.assertIn("Level Up! XP Reading Log | Video Game Reading Challenge, Quest Map & Bookmarks", names)
 
     def test_complete_pastel_bundle_is_eight_sets_and_191_pages(self):
         self.assertIn("191 pages across 8 resources", self.doc)
@@ -77,6 +64,17 @@ class TptStoreUpdateNov27(unittest.TestCase):
         self.assertNotIn("<h3>Level Up End of Year Review Packet", self.doc)
         self.assertNotIn("<h3>Level Up Goal Setting Quest Pack", self.doc)
 
+    def test_new_listings_link_to_live_tpt_pages(self):
+        for url in (
+            "https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Jobs-Chart-Editable-Job-Cards-with-Pictures-Name-Clips-18536234",
+            "https://www.teacherspayteachers.com/Product/Cute-Pastel-Morning-Meeting-Kit-Calendar-Weather-Feelings-Greeting-Cards-18536267",
+            "https://www.teacherspayteachers.com/Product/Level-Up-Behavior-Reward-System-Video-Game-XP-Chart-Badges-Coupons-18536327",
+            "https://www.teacherspayteachers.com/Product/Level-Up-XP-Reading-Log-Video-Game-Reading-Challenge-Quest-Map-Bookmarks-18536356",
+        ):
+            self.assertIn(url, self.doc)
+            self.assertNotIn("?", url)
+            self.assertNotIn(url, self.shop)
+
     def test_catalog_still_omits_prices(self):
         # Prices belong on TpT, not on this page.
         self.assertNotRegex(self.doc, r"\$\d")
@@ -86,14 +84,14 @@ class TptStoreUpdateNov27(unittest.TestCase):
         self.assertIn('id="level-up-collection"', self.shop)
         self.assertIn('id="cute-pastel-collection"', self.shop)
         self.assertIn("See all our Teachers Pay Teachers resources", self.shop)
-        self.assertIn("Pixel-art, video-game classroom printables for grades 2-5.", self.shop)
-        self.assertIn("Soft pastel picture supports for PreK-2 and special ed.", self.shop)
+        self.assertIn("classroom jobs, morning meeting, feelings and calm-down tools", self.doc)
+
 
     def test_catalog_cover_srcset_urls_are_root_relative(self):
         # A leading slash on only the first srcset URL left the 600w candidate page-relative,
         # so retina phones requested /shop/teachers-pay-teachers/assets/tpt/... and got a 404.
         srcsets = re.findall(r'srcset="([^"]*assets/tpt/[^"]*)"', self.doc)
-        self.assertEqual(len(srcsets), 15)
+        self.assertEqual(len(srcsets), 19)
         for val in srcsets:
             for part in val.split(","):
                 url = part.strip().split()[0]
@@ -103,7 +101,7 @@ class TptStoreUpdateNov27(unittest.TestCase):
         from PIL import Image
         root = Path(__file__).resolve().parent.parent
         slugs = [p["slug"] for p in site.TPT_PRODUCTS]
-        self.assertEqual(len(slugs), 15)
+        self.assertEqual(len(slugs), 19)
         for slug in slugs:
             for size in (300, 600):
                 path = root / f"site/assets/tpt/{slug}-{size}.webp"

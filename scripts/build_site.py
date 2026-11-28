@@ -1915,7 +1915,7 @@ def build_for_shops():
     return fname, page(fname, title, desc, body, ld=(crumbs_ld((fname, title)),))
 
 # Teachers Pay Teachers products page (/shop/teachers-pay-teachers/). Titles, grades, formats, page counts and
-# bundle membership are copied from each product's own TpT page (checked Nov 27, 2026, 15 products listed).
+# bundle membership are copied from each product's own TpT page (checked Nov 27, 2026, 19 products).
 # Page counts are the ones the TpT description states. The Complete Classroom Bundle Highlights field
 # still showed 148 pages on that date; the description, cover and itemized list state 191 pages across 8 resources.
 # No prices or availability anywhere on the page.
@@ -1928,6 +1928,12 @@ TPT_PRODUCTS = [
          grades='PreK-2', fmt='PDF', count='16 pages',
          desc='A calm corner kit: corner signs, breathing cards, a My Calm Choices board, break passes, a timer card and a Body Check poster. Learners notice the feeling, choose a tool, set the timer, check the body and head back to learning.',
          member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Feelings & Behavior Mini Bundle']),
+    dict(line='cp', bundle=False, slug='cute-pastel-classroom-jobs-chart',
+         title='Cute Pastel Classroom Jobs Chart | Editable Job Cards with Pictures + Name Clips',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Jobs-Chart-Editable-Job-Cards-with-Pictures-Name-Clips-18536234',
+         grades='PreK-2', fmt='PDF and editable PowerPoint', count='19 pages',
+         desc='24 classroom jobs, each with a picture, in two sizes, plus matching How to Do My Job cards, name cards and clips, two header banners and an editable PowerPoint.',
+         member_of=['Cute Pastel Complete Classroom Bundle']),
     dict(line='cp', bundle=False, slug='cute-pastel-classroom-labels',
          title='Cute Pastel Classroom Labels | Editable Kawaii Supply Bin Labels with Pictures',
          url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Labels-Editable-Kawaii-Supply-Bin-Labels-with-Pictures-18381372',
@@ -1958,6 +1964,12 @@ TPT_PRODUCTS = [
          grades='PreK-2', fmt='PDF', count='37 pages',
          desc='First / Then and Now / Next boards with bold labels, a clear arrow and drop zones that show what comes next. Includes 12 boards, 3 reward boards, desk strips and 32 reward and behavior cards.',
          member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Routines & Visuals Mini Bundle']),
+    dict(line='cp', bundle=False, slug='cute-pastel-morning-meeting-kit',
+         title='Cute Pastel Morning Meeting Kit | Calendar, Weather, Feelings + Greeting Cards',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Morning-Meeting-Kit-Calendar-Weather-Feelings-Greeting-Cards-18536267',
+         grades='PreK-2', fmt='PDF', count='24 pages',
+         desc='A matching morning meeting set: calendar and weather pieces, feelings and greeting cards, a days-in-school tracker and a 4-step morning meeting poster.',
+         member_of=['Cute Pastel Complete Classroom Bundle']),
     dict(line='cp', bundle=True, slug='cute-pastel-routines-visuals-mini-bundle',
          title='Cute Pastel Routines & Visuals Mini Bundle | Visual Schedule, First Then, Labels',
          url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Routines-Visuals-Mini-Bundle-Visual-Schedule-First-Then-Labels-18381644',
@@ -1988,6 +2000,12 @@ TPT_PRODUCTS = [
          grades='2-5', fmt='PDF', count='170 pages',
          desc='A printable planner for 2027 where every month is a new Level with its own world, Main Quests, Side Quests and a Boss Battle. Dated 2027, Monday start; students plan their week, color their habits and earn XP up to Level 12.',
          member_of=['Level Up! Bundle']),
+    dict(line='lu', bundle=False, slug='level-up-behavior-reward-system',
+         title='Level Up! Behavior & Reward System | Video Game XP Chart, Badges & Coupons',
+         url='https://www.teacherspayteachers.com/Product/Level-Up-Behavior-Reward-System-Video-Game-XP-Chart-Badges-Coupons-18536327',
+         grades='2-5', fmt='PDF', count='24 pages, plus a low-ink version',
+         desc='Students earn XP for kind choices, teamwork and trying their best, climb a 10-level ladder, collect badges and trade XP for power-up coupons. Includes an XP Menu, posters, class and player trackers, 18 badges and 24 coupons.',
+         member_of=['Level Up! Bundle']),
     dict(line='lu', bundle=True, slug='level-up-bundle',
          title='Level Up! Bundle | Video Game Planner, Goals, Review, Behavior & Reading Log',
          url='https://www.teacherspayteachers.com/Product/Level-Up-Bundle-Video-Game-Planner-Goals-Review-Classroom-Kit-18365866',
@@ -2012,9 +2030,15 @@ TPT_PRODUCTS = [
          grades='2-5', fmt='PDF', count='18 pages, plus a low-ink version',
          desc='Students pick a big goal (their Boss Challenge), break it into quest steps, earn XP as they practice and level up when they reach it. Includes habit trackers, a Quest Map, XP trackers and 12 achievement badges.',
          member_of=['Level Up! Bundle']),
+    dict(line='lu', bundle=False, slug='level-up-xp-reading-log',
+         title='Level Up! XP Reading Log | Video Game Reading Challenge, Quest Map & Bookmarks',
+         url='https://www.teacherspayteachers.com/Product/Level-Up-XP-Reading-Log-Video-Game-Reading-Challenge-Quest-Map-Bookmarks-18536356',
+         grades='2-5', fmt='PDF', count='20 pages, plus a low-ink version',
+         desc='Readers earn XP for minutes or pages, explore genres on a quest map, write a Boss Battle book review and level up from Book Rookie to Super Reader. Includes weekly and monthly logs, a streak tracker, 16 bookmarks, a certificate and awards.',
+         member_of=['Level Up! Bundle']),
 ]
 TPT_LINES = (("lu", "Level Up!", "Pixel-art, video-game classroom printables for grades 2-5. Original pixel art, no characters from real games."),
-             ("cp", "Cute Pastel", "Kawaii picture supports for PreK-2 and special education: visual schedules, First / Then boards, labels, feelings and calm-down tools, and token boards."))
+             ("cp", "Cute Pastel", "Kawaii picture supports for PreK-2 and special education: visual schedules, First / Then boards, labels, classroom jobs, morning meeting, feelings and calm-down tools, and token boards."))
 
 
 
