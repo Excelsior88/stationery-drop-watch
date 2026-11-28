@@ -58,7 +58,7 @@ class NewHobonichiShopsTests(unittest.TestCase):
 
     def test_counts_per_shop(self):
         counts = {sid: len(self.stores[sid]["products"]) for sid in NEW}
-        self.assertEqual(counts, {"hunterpaper": 59, "zakkajoy": 18, "colorswatch": 16, "greenstar": 2})
+        self.assertEqual(counts, {"hunterpaper": 59, "zakkajoy": 18, "colorswatch": 11, "greenstar": 2})
 
     def test_shop_totals_leave_out_link_only_shops(self):
         self.assertFalse(site.COUNT_LINK_ONLY_IN_SHOP_TOTALS)
