@@ -1915,10 +1915,12 @@ def build_for_shops():
     return fname, page(fname, title, desc, body, ld=(crumbs_ld((fname, title)),))
 
 # Teachers Pay Teachers products page (/shop/teachers-pay-teachers/). Titles, grades, formats, page counts and
-# bundle membership are copied from each product's own TpT page (checked Nov 23, 2026, 15 products).
-# Page counts are the ones the TpT description states. No prices or availability anywhere on the page.
+# bundle membership are copied from each product's own TpT page (checked Nov 27, 2026, 19 products).
+# Page counts are the ones the TpT description states. The Complete Classroom Bundle Highlights field
+# still showed 148 pages on that date; the description, cover and itemized list state 191 pages across 8 resources.
+# No prices or availability anywhere on the page.
 TPT_PAGE_PATH = "shop/teachers-pay-teachers/"
-TPT_PAGE_DATE = "2026-11-23"
+TPT_PAGE_DATE = "2026-11-27"
 TPT_PRODUCTS = [
     dict(line='cp', bundle=False, slug='cute-pastel-calm-down-corner-kit',
          title='Cute Pastel Calm Down Corner Kit | Kawaii Breathing Cards + Calm Choices SEL',
@@ -1926,6 +1928,12 @@ TPT_PRODUCTS = [
          grades='PreK-2', fmt='PDF', count='16 pages',
          desc='A calm corner kit: corner signs, breathing cards, a My Calm Choices board, break passes, a timer card and a Body Check poster. Learners notice the feeling, choose a tool, set the timer, check the body and head back to learning.',
          member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Feelings & Behavior Mini Bundle']),
+    dict(line='cp', bundle=False, slug='cute-pastel-classroom-jobs-chart',
+         title='Cute Pastel Classroom Jobs Chart | Editable Job Cards with Pictures + Name Clips',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Jobs-Chart-Editable-Job-Cards-with-Pictures-Name-Clips-18536234',
+         grades='PreK-2', fmt='PDF and editable PowerPoint', count='19 pages',
+         desc='24 classroom jobs, each with a picture, in two sizes, plus matching How to Do My Job cards, name cards and clips, two header banners and an editable PowerPoint.',
+         member_of=['Cute Pastel Complete Classroom Bundle']),
     dict(line='cp', bundle=False, slug='cute-pastel-classroom-labels',
          title='Cute Pastel Classroom Labels | Editable Kawaii Supply Bin Labels with Pictures',
          url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Classroom-Labels-Editable-Kawaii-Supply-Bin-Labels-with-Pictures-18381372',
@@ -1935,8 +1943,8 @@ TPT_PRODUCTS = [
     dict(line='cp', bundle=True, slug='cute-pastel-complete-classroom-bundle',
          title='Cute Pastel Complete Classroom Bundle | Visual Schedule, Labels, SEL & Behavior',
          url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Complete-Classroom-Bundle-Visual-Schedule-Labels-SEL-Behavior-18381628',
-         grades='PreK-2', fmt='', count='148 pages across 6 resources',
-         desc='Six matching Cute Pastel sets for a PreK-2 classroom: Visual Schedule Cards, First / Then & Now / Next Boards, Classroom Labels, Emotions & Feelings Check-In, Token Boards & Reward Charts and the Calm-Down Corner Kit.',
+         grades='PreK-2', fmt='', count='191 pages across 8 resources',
+         desc='Eight matching Cute Pastel sets for a PreK-2 classroom: Visual Schedule Cards, First / Then & Now / Next Boards, Classroom Labels, Emotions & Feelings Check-In, Token Boards & Reward Charts, the Calm-Down Corner Kit, Classroom Jobs Chart and Morning Meeting Kit.',
          member_of=[]),
     dict(line='cp', bundle=True, slug='cute-pastel-feelings-behavior-mini-bundle',
          title='Cute Pastel Feelings & Behavior Mini Bundle | Emotions, Calm Corner & Tokens',
@@ -1956,6 +1964,12 @@ TPT_PRODUCTS = [
          grades='PreK-2', fmt='PDF', count='37 pages',
          desc='First / Then and Now / Next boards with bold labels, a clear arrow and drop zones that show what comes next. Includes 12 boards, 3 reward boards, desk strips and 32 reward and behavior cards.',
          member_of=['Cute Pastel Complete Classroom Bundle', 'Cute Pastel Routines & Visuals Mini Bundle']),
+    dict(line='cp', bundle=False, slug='cute-pastel-morning-meeting-kit',
+         title='Cute Pastel Morning Meeting Kit | Calendar, Weather, Feelings + Greeting Cards',
+         url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Morning-Meeting-Kit-Calendar-Weather-Feelings-Greeting-Cards-18536267',
+         grades='PreK-2', fmt='PDF', count='24 pages',
+         desc='A matching morning meeting set: calendar and weather pieces, feelings and greeting cards, a days-in-school tracker and a 4-step morning meeting poster.',
+         member_of=['Cute Pastel Complete Classroom Bundle']),
     dict(line='cp', bundle=True, slug='cute-pastel-routines-visuals-mini-bundle',
          title='Cute Pastel Routines & Visuals Mini Bundle | Visual Schedule, First Then, Labels',
          url='https://www.teacherspayteachers.com/Product/Cute-Pastel-Routines-Visuals-Mini-Bundle-Visual-Schedule-First-Then-Labels-18381644',
@@ -1981,38 +1995,52 @@ TPT_PRODUCTS = [
          desc='Six Cute Pastel visual schedule cards (Lunch, Art, Music, Reading, Recess and Bathroom) plus a blank card, in the same size, style and print quality as the full Visual Schedule Cards set.',
          member_of=[]),
     dict(line='lu', bundle=False, slug='level-up-2027-student-planner',
-         title='Level Up 2027 Student Planner | Video Game Theme Printable Planner Grades 2-5',
+         title='Level Up! 2027 Student Planner | Video Game Theme Printable Planner Grades 2-5',
          url='https://www.teacherspayteachers.com/Product/Level-Up-2027-Student-Planner-Video-Game-Theme-Printable-Planner-Grades-2-5-18365192',
          grades='2-5', fmt='PDF', count='170 pages',
          desc='A printable planner for 2027 where every month is a new Level with its own world, Main Quests, Side Quests and a Boss Battle. Dated 2027, Monday start; students plan their week, color their habits and earn XP up to Level 12.',
          member_of=['Level Up! Bundle']),
+    dict(line='lu', bundle=False, slug='level-up-behavior-reward-system',
+         title='Level Up! Behavior & Reward System | Video Game XP Chart, Badges & Coupons',
+         url='https://www.teacherspayteachers.com/Product/Level-Up-Behavior-Reward-System-Video-Game-XP-Chart-Badges-Coupons-18536327',
+         grades='2-5', fmt='PDF', count='24 pages, plus a low-ink version',
+         desc='Students earn XP for kind choices, teamwork and trying their best, climb a 10-level ladder, collect badges and trade XP for power-up coupons. Includes an XP Menu, posters, class and player trackers, 18 badges and 24 coupons.',
+         member_of=['Level Up! Bundle']),
     dict(line='lu', bundle=True, slug='level-up-bundle',
-         title='Level Up! Bundle | Video Game Planner, Goals, Review & Classroom Kit',
+         title='Level Up! Bundle | Video Game Planner, Goals, Review, Behavior & Reading Log',
          url='https://www.teacherspayteachers.com/Product/Level-Up-Bundle-Video-Game-Planner-Goals-Review-Classroom-Kit-18365866',
          grades='2-5', fmt='PDF', count='',
-         desc='The complete Level Up! set in one download: the 2027 Student Planner, Goal Setting Quest Pack, End of Year & Summer Review Packet and Classroom Quest Kit, all in the same original pixel-art video game world.',
+         desc='The complete Level Up! set in one download: the 2027 Student Planner, Goal Setting Quest Pack, End of Year & Summer Review Packet, Classroom Quest Kit, Behavior & Reward System and XP Reading Log, all in the same original pixel-art video game world.',
          member_of=[]),
     dict(line='lu', bundle=False, slug='level-up-classroom-quest-kit',
-         title='Level Up Classroom Quest Kit | Video Game Reading Log, XP Chart & Brag Tags',
+         title='Level Up! Classroom Quest Kit | Video Game Reading Log, XP Chart & Brag Tags',
          url='https://www.teacherspayteachers.com/Product/Level-Up-Classroom-Quest-Kit-Video-Game-Reading-Log-XP-Chart-Brag-Tags-18365332',
          grades='2-5', fmt='PDF', count='21 pages',
          desc='Students earn XP for reading, homework, kindness and teamwork and climb the rank ladder from Rookie to Legend. Includes a reading quest log and map, brag tags, certificates and a pennant banner.',
          member_of=['Level Up! Bundle']),
     dict(line='lu', bundle=False, slug='level-up-end-of-year-review',
-         title='Level Up End of Year Review Packet | Video Game Theme Summer Review Puzzles',
+         title='Level Up! End of Year Review Packet | Video Game Theme Summer Review Puzzles',
          url='https://www.teacherspayteachers.com/Product/Level-Up-End-of-Year-Review-Packet-Video-Game-Theme-Summer-Review-Puzzles-18365295',
          grades='2-5', fmt='PDF', count='31 pages',
          desc='A review packet where students travel through 5 worlds of 4 challenges each: a word search, a math power-up, a maze and a logic grid. Includes a Level Map progress tracker and a 4-page answer key.',
          member_of=['Level Up! Bundle']),
     dict(line='lu', bundle=False, slug='level-up-goal-setting-quest-pack',
-         title='Level Up Goal Setting Quest Pack | Video Game Theme Goal & Habit Trackers',
+         title='Level Up! Goal Setting Quest Pack | Video Game Theme Goal & Habit Trackers',
          url='https://www.teacherspayteachers.com/Product/Level-Up-Goal-Setting-Quest-Pack-Video-Game-Theme-Goal-Habit-Trackers-18365256',
          grades='2-5', fmt='PDF', count='18 pages, plus a low-ink version',
          desc='Students pick a big goal (their Boss Challenge), break it into quest steps, earn XP as they practice and level up when they reach it. Includes habit trackers, a Quest Map, XP trackers and 12 achievement badges.',
          member_of=['Level Up! Bundle']),
+    dict(line='lu', bundle=False, slug='level-up-xp-reading-log',
+         title='Level Up! XP Reading Log | Video Game Reading Challenge, Quest Map & Bookmarks',
+         url='https://www.teacherspayteachers.com/Product/Level-Up-XP-Reading-Log-Video-Game-Reading-Challenge-Quest-Map-Bookmarks-18536356',
+         grades='2-5', fmt='PDF', count='20 pages, plus a low-ink version',
+         desc='Readers earn XP for minutes or pages, explore genres on a quest map, write a Boss Battle book review and level up from Book Rookie to Super Reader. Includes weekly and monthly logs, a streak tracker, 16 bookmarks, a certificate and awards.',
+         member_of=['Level Up! Bundle']),
 ]
 TPT_LINES = (("lu", "Level Up!", "Pixel-art, video-game classroom printables for grades 2-5. Original pixel art, no characters from real games."),
-             ("cp", "Cute Pastel", "Kawaii picture supports for PreK-2 and special education: visual schedules, First / Then boards, labels, feelings and calm-down tools, and token boards."))
+             ("cp", "Cute Pastel", "Kawaii picture supports for PreK-2 and special education: visual schedules, First / Then boards, labels, classroom jobs, morning meeting, feelings and calm-down tools, and token boards."))
+
+
 
 def build_tpt_page():
     """Low-prominence index of every product in our Teachers Pay Teachers store, with cover cards and plain TpT links."""
@@ -2031,7 +2059,7 @@ def build_tpt_page():
             mem = '<p class="small"><b>Part of:</b> ' + "; ".join(E(m) for m in p["member_of"]) + ".</p>"
         kind = "Bundle" if p["bundle"] else "Resource"
         return (f'<li><article class="shop-card" id="{p["slug"]}">'
-                f'<div class="shop-img"><img src="{asset(p["slug"], 600)}" srcset="{asset(p["slug"], 300)} 300w, {asset(p["slug"], 600)} 600w" sizes="(max-width:600px) 240px, 150px" '
+                f'<div class="shop-img"><img src="{asset(p["slug"], 600)}" srcset="/{asset(p["slug"], 300)} 300w, /{asset(p["slug"], 600)} 600w" sizes="(max-width:600px) 240px, 150px" '
                 f'width="600" height="600" alt="Cover image of {E(p["title"])}" loading="lazy" decoding="async"></div>'
                 f'<div><p class="eyebrow">{kind}</p><h3>{E(p["title"])}</h3><ul>{fl}</ul>'
                 f'<p>{E(p["desc"])}</p>{mem}'
