@@ -6,7 +6,7 @@
   "preorder": 4,
   "coming_soon": 0,
   "sold_out": 612,
-  "unknown": 11
+  "unknown": 0
  },
  "not_checked": [
   {
@@ -11505,20 +11505,6 @@
   {
    "store_id": "colorswatch",
    "store": "ColorSwatch",
-   "canonical": "weeks-canaria-yellow",
-   "label": "Weeks · Colors: Canaria Yellow",
-   "type": "Weeks",
-   "url": "https://mycolorswatch.com/products/hobonichi-techo-weeks-2027-colors-canaria-yellow",
-   "checked_at": "2026-11-28T01:50:33+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Hobonichi Techo Weeks 2027 - Colors - Canaria Yellow",
-   "first_seen": "2026-11-23T08:57:34+00:00",
-   "status_since": "2026-11-23T08:57:34+00:00"
-  },
-  {
-   "store_id": "colorswatch",
-   "store": "ColorSwatch",
    "canonical": "weeks-white-cat",
    "label": "Weeks · Yumi Kitagishi: White Cat Wallpaper",
    "type": "Weeks",
@@ -11529,20 +11515,6 @@
    "title": "Hobonichi Techo Weeks 2027 - Yumi Katagishi - White Cat Wallpaper",
    "first_seen": "2026-11-23T08:57:37+00:00",
    "status_since": "2026-11-23T08:57:37+00:00"
-  },
-  {
-   "store_id": "colorswatch",
-   "store": "ColorSwatch",
-   "canonical": "weeks-starlight",
-   "label": "Weeks · tanakadaisuke: Starlight",
-   "type": "Weeks",
-   "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-tanakadaisuke-starlight",
-   "checked_at": "2026-11-28T01:50:41+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Hobonichi Techo 2027 Weeks - Tanakadaisuke: Starlight",
-   "first_seen": "2026-11-23T08:57:40+00:00",
-   "status_since": "2026-11-23T08:57:40+00:00"
   },
   {
    "store_id": "colorswatch",
@@ -11571,20 +11543,6 @@
    "title": "Hobonichi Techo 2027 Weeks - V-A Series: Welcome to the V and A",
    "first_seen": "2026-11-23T08:57:45+00:00",
    "status_since": "2026-11-23T08:57:45+00:00"
-  },
-  {
-   "store_id": "colorswatch",
-   "store": "ColorSwatch",
-   "canonical": "weeks-va-leicester",
-   "label": "Weeks · V&A: Leicester",
-   "type": "Weeks",
-   "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-v-a-series-leicester",
-   "checked_at": "2026-11-28T01:50:52+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Hobonichi Techo 2027 Weeks - V-A Series: Leicester",
-   "first_seen": "2026-11-23T08:57:47+00:00",
-   "status_since": "2026-11-24T00:20:42+00:00"
   },
   {
    "store_id": "colorswatch",
@@ -11627,34 +11585,6 @@
    "title": "Hobonichi Techo 2027 Weeks - Akiko Miyakoshi - Once, in spring",
    "first_seen": "2026-11-23T08:57:55+00:00",
    "status_since": "2026-11-23T08:57:55+00:00"
-  },
-  {
-   "store_id": "colorswatch",
-   "store": "ColorSwatch",
-   "canonical": "weeks-meteor-shower",
-   "label": "Weeks · Hiroko Kubota: Meteor Shower in the Light Blue Forest",
-   "type": "Weeks",
-   "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-weeks-hiroko-kubota-meteor-shower-in-the-light-blue-forest",
-   "checked_at": "2026-11-28T01:51:05+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Hobonichi Techo 2027 Weeks - Hiroko Kubota - Meteor Shower in the light blue forest",
-   "first_seen": "2026-11-23T08:57:58+00:00",
-   "status_since": "2026-11-23T08:57:58+00:00"
-  },
-  {
-   "store_id": "colorswatch",
-   "store": "ColorSwatch",
-   "canonical": "hon-a5-slash-navy",
-   "label": "HON A5 · Slash (Navy)",
-   "type": "HON",
-   "url": "https://mycolorswatch.com/products/hobonichi-techo-2027-hon-a5-slash-navy",
-   "checked_at": "2026-11-28T01:51:10+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Hobonichi Techo 2027 HON - A5 - Slash (Navy)",
-   "first_seen": "2026-11-23T08:58:00+00:00",
-   "status_since": "2026-11-23T08:58:00+00:00"
   },
   {
    "store_id": "colorswatch",
@@ -11929,20 +11859,6 @@
   {
    "store_id": "minimaru",
    "store": "Minimaru",
-   "canonical": "weeks-va-welcome",
-   "label": "Weeks · V&A: Welcome to the V&A",
-   "type": "Weeks",
-   "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-eng-v-a-series-welcome-to-the-v-a-4580812709880",
-   "checked_at": "2026-11-28T01:51:19+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Hobonichi Techo 2027 Weeks ENG - V&A Series: Welcome to the V&A",
-   "first_seen": "2026-11-23T09:58:31+00:00",
-   "status_since": "2026-11-23T09:58:31+00:00"
-  },
-  {
-   "store_id": "minimaru",
-   "store": "Minimaru",
    "canonical": "weeks-va-leicester",
    "label": "Weeks · V&A: Leicester",
    "type": "Weeks",
@@ -12149,20 +12065,6 @@
    "title": "Hobonichi Techo 2027 Weeks ENG - Leather: Forest Green",
    "first_seen": "2026-11-23T09:59:09+00:00",
    "status_since": "2026-11-23T09:59:09+00:00"
-  },
-  {
-   "store_id": "minimaru",
-   "store": "Minimaru",
-   "canonical": "weeks-mega-sea-glass",
-   "label": "Weeks Mega · Colors: Sea Glass",
-   "type": "Weeks Mega",
-   "url": "https://minimaru.com/products/hobonichi-techo-2027-weeks-mega-eng-colours-sea-glass-4580812710084",
-   "checked_at": "2026-11-28T01:52:04+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Hobonichi Techo 2027 Weeks MEGA ENG - Colours: Sea Glass",
-   "first_seen": "2026-11-23T09:59:12+00:00",
-   "status_since": "2026-11-24T08:51:55+00:00"
   },
   {
    "store_id": "minimaru",
@@ -13645,20 +13547,6 @@
   {
    "store_id": "archerolive",
    "store": "Archer and Olive (official)",
-   "canonical": "ao-songbird-blue",
-   "label": "Songbird in Blue · pocket dot grid",
-   "type": "Dot grid notebook",
-   "url": "https://www.archerandolive.com/products/songbird-in-blue?variant=47128957026459",
-   "checked_at": "2026-11-28T01:51:31+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Songbird in Blue Notebook · PS: 112 Pages / Dot Grid",
-   "first_seen": "2026-11-13T02:05:17+00:00",
-   "status_since": "2026-11-13T02:05:17+00:00"
-  },
-  {
-   "store_id": "archerolive",
-   "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-navy",
    "label": "Storybook in Navy · B5 kraft dot grid",
    "type": "Dot grid notebook",
@@ -14620,20 +14508,6 @@
    "store_id": "archerolive",
    "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-plum",
-   "label": "Storybook in Plum · letter dot grid",
-   "type": "Dot grid notebook",
-   "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146749595",
-   "checked_at": "2026-11-28T01:51:47+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Storybook in Plum: Notebook · LS: 160 Pages / Dot Grid",
-   "first_seen": "2026-11-13T02:05:17+00:00",
-   "status_since": "2026-11-13T02:05:17+00:00"
-  },
-  {
-   "store_id": "archerolive",
-   "store": "Archer and Olive (official)",
-   "canonical": "ao-storybook-plum",
    "label": "Storybook in Plum · B5 dot grid",
    "type": "Dot grid notebook",
    "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146782363",
@@ -14682,20 +14556,6 @@
    "store_id": "archerolive",
    "store": "Archer and Olive (official)",
    "canonical": "ao-storybook-plum",
-   "label": "Storybook in Plum · TN dot grid",
-   "type": "Dot grid notebook",
-   "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636146978971",
-   "checked_at": "2026-11-28T01:51:47+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Storybook in Plum: Notebook · TN: 144 Pages / Dot Grid",
-   "first_seen": "2026-11-13T02:05:17+00:00",
-   "status_since": "2026-11-13T02:05:17+00:00"
-  },
-  {
-   "store_id": "archerolive",
-   "store": "Archer and Olive (official)",
-   "canonical": "ao-storybook-plum",
    "label": "Storybook in Plum · B6 dot grid",
    "type": "Dot grid notebook",
    "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636147011739",
@@ -14707,20 +14567,6 @@
    "price_cents": 2900,
    "first_seen": "2026-11-13T02:05:17+00:00",
    "status_since": "2026-11-23T16:15:25+00:00"
-  },
-  {
-   "store_id": "archerolive",
-   "store": "Archer and Olive (official)",
-   "canonical": "ao-storybook-plum",
-   "label": "Storybook in Plum · pocket dot grid",
-   "type": "Dot grid notebook",
-   "url": "https://www.archerandolive.com/products/storybook-in-plum-notebook?variant=47636147044507",
-   "checked_at": "2026-11-28T01:51:47+00:00",
-   "status": "unknown",
-   "method": null,
-   "title": "Storybook in Plum: Notebook · PS: 112 Pages / Dot Grid",
-   "first_seen": "2026-11-13T02:05:17+00:00",
-   "status_since": "2026-11-20T15:20:16+00:00"
   },
   {
    "store_id": "archerolive",
