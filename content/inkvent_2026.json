@@ -1,0 +1,161 @@
+{
+ "_note": "Hand-entered snapshot for /where-to-buy-diamine-inkvent-2026/. Read from each shop's public product data (.js) and Diamine's own shop (products.json, /pages/retailers) on Nov 27, 2026 between 8:36 and 8:42 PM ET. Prices are not tracked by the checker; they only change when this file is edited. Statuses on the page are live from data/inks/stock.json.",
+ "prices_as_of": "2026-11-28T01:41:34+00:00",
+ "diamine_read_at": "2026-11-28T01:40:12+00:00",
+ "diamine_calendar_gbp_ex_vat": "82.58",
+ "diamine_calendar_url": "https://www.diamineinks.co.uk/products/diamine-inkvent-calendar-2026-burgundy-edition",
+ "diamine_teal_calendar_url": "https://www.diamineinks.co.uk/products/diamine-inkvent-calendar-2025-teal-edition",
+ "diamine_teal_calendar_available": false,
+ "diamine_retailers_url": "https://www.diamineinks.co.uk/pages/retailers",
+ "calendar_prices": {
+  "dromgooles": {
+   "currency": "USD",
+   "cents": 13000
+  },
+  "cultpens": {
+   "currency": "GBP",
+   "cents": 8910,
+   "was_cents": 9900
+  },
+  "goldspot": {
+   "currency": "USD",
+   "cents": 13000
+  },
+  "penboutique": {
+   "currency": "USD",
+   "cents": 13000
+  },
+  "goulet": {
+   "currency": "USD",
+   "cents": 13000
+  },
+  "atlas": {
+   "currency": "USD",
+   "cents": 13000
+  }
+ },
+ "teal_price_by_type_usd_cents": {
+  "Standard": 1800,
+  "Sheen": 2000,
+  "Scent": 2000,
+  "Shimmer": 2400,
+  "Extreme Sheen": 2400,
+  "Chameleon": 2500,
+  "Pigment": 2200,
+  "Pigment Shimmer": 2400,
+  "Pigment Chameleon": 2500
+ },
+ "teal_price_by_type_gbp_cents": {
+  "Standard": 855,
+  "Sheen": 990,
+  "Scent": 990,
+  "Shimmer": 1170,
+  "Extreme Sheen": 1305,
+  "Chameleon": 1305,
+  "Pigment": 1305,
+  "Pigment Shimmer": 1305,
+  "Pigment Chameleon": 1305
+ },
+ "teal_inks": [
+  {
+   "name": "Ambience",
+   "type": "Chameleon"
+  },
+  {
+   "name": "Antler",
+   "type": "Pigment"
+  },
+  {
+   "name": "Bittersweet",
+   "type": "Standard"
+  },
+  {
+   "name": "Blush",
+   "type": "Standard"
+  },
+  {
+   "name": "Brrr!",
+   "type": "Pigment Shimmer"
+  },
+  {
+   "name": "Bubbly",
+   "type": "Shimmer"
+  },
+  {
+   "name": "Carousel",
+   "type": "Pigment"
+  },
+  {
+   "name": "Celestial Skies",
+   "type": "Shimmer"
+  },
+  {
+   "name": "Chaos",
+   "type": "Extreme Sheen"
+  },
+  {
+   "name": "Dream Catcher",
+   "type": "Extreme Sheen"
+  },
+  {
+   "name": "Energy",
+   "type": "Sheen"
+  },
+  {
+   "name": "Fir & Fog",
+   "type": "Chameleon"
+  },
+  {
+   "name": "Frostbite",
+   "type": "Shimmer"
+  },
+  {
+   "name": "Gala",
+   "type": "Standard"
+  },
+  {
+   "name": "Laurel",
+   "type": "Extreme Sheen"
+  },
+  {
+   "name": "Let It Snow",
+   "type": "Chameleon"
+  },
+  {
+   "name": "Marie Rose",
+   "type": "Standard"
+  },
+  {
+   "name": "Mittens",
+   "type": "Pigment"
+  },
+  {
+   "name": "Molten Basalt",
+   "type": "Standard"
+  },
+  {
+   "name": "Myrrh the Merrier",
+   "type": "Shimmer"
+  },
+  {
+   "name": "Nostalgia",
+   "type": "Chameleon"
+  },
+  {
+   "name": "Overcast",
+   "type": "Standard"
+  },
+  {
+   "name": "Pineapple Spritz",
+   "type": "Pigment Chameleon"
+  },
+  {
+   "name": "Ruby Taffeta",
+   "type": "Chameleon"
+  },
+  {
+   "name": "Smoky Tobacco",
+   "type": "Scent"
+  }
+ ]
+}

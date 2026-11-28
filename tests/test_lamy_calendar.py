@@ -149,7 +149,7 @@ class LamyMentionTests(unittest.TestCase):
                       "Lamy&#x27;s special and limited edition pens, when each was first listed, and the authorized shops that sell them.",
                       html)
         self.assertIn(f"{len(site.GUIDES)} guides", html)
-        self.assertEqual(len(site.GUIDES), 6)
+        self.assertEqual(len(site.GUIDES), 7)
         self.assertNotIn(site.LAMY_SLUG, [h.strip("/") for h, _ in site.GUIDES])
         self.assertNotIn(site.LAMY_SLUG, html[html.index('<ul class="guide-list">'):html.index("</ul>", html.index('<ul class="guide-list">'))])
 

@@ -577,7 +577,7 @@ def _page(fname, title, desc, body, ld=(), og_type="website", og_image=OG_IMAGE,
     if len(raw_desc) > DESC_LIMIT:  # the template ran long, so seo_desc() will cut it on a word
         seo_warn("description", fname, raw_desc, DESC_LIMIT)
     desc = seo_desc(desc)
-    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "hobonichi-january-start-vs-april-start/", "best-dot-grid-journals/", GIFT_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
+    guide_page = fname in ("where-to-buy-hobonichi-2027/", "hobonichi-techo-vs-cousin-vs-weeks/", "hobonichi-january-start-vs-april-start/", "best-dot-grid-journals/", GIFT_SLUG + "/", INKVENT_SLUG + "/")  # guides sit under Guides (the calendar keeps its own nav item)
     # Hobonichi product pages sit under the tracker. The Techo vs Cousin vs Weeks guide
     # starts with hobonichi-techo-, but it is a guide, so only Guides is current.
     hobo_page = fname.startswith(("hobonichi-techo-", "hobonichi-weeks-")) and not guide_page
@@ -3253,7 +3253,7 @@ def build_sitemap():
     urls += [(url_for(f), d) for f, d in STATIC_LASTMOD.items()]
     urls += [(url_for(slug + "/"), TAKEDOWN_DATE) for slug in (TN_SLUG,)]  # the indexed takedown notices
     hobo_mod = latest(*[p.get("status_since") for p in hobo_products()], GUIDES_LASTMOD)
-    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD, guide_modified(build_vs))), (url_for(JAN_APR_SLUG + "/"), latest(JAN_APR_MODIFIED, guide_modified(build_january_april))), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD, guide_modified(build_dotgrid_guide))), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], guide_modified(build_gift_guide))), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-20"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
+    urls += [(url_for(WTB_SLUG + "/"), latest(hobo_mod, CONTENT_LASTMOD)), (url_for(VS_SLUG + "/"), latest(GUIDES_LASTMOD, CONTENT_LASTMOD, guide_modified(build_vs))), (url_for(JAN_APR_SLUG + "/"), latest(JAN_APR_MODIFIED, guide_modified(build_january_april))), (url_for(DG_GUIDE_SLUG + "/"), latest(*[p.get("status_since") for p in section_products("dotgrid")], DG_GUIDE_LASTMOD, CONTENT_LASTMOD, guide_modified(build_dotgrid_guide))), (url_for(GIFT_SLUG + "/"), latest(*[p.get("status_since") for k in GIFT_PICKS for p in gift_listings(k)], guide_modified(build_gift_guide))), (url_for(INKVENT_SLUG + "/"), latest(*[r.get("status_since") for r in INK_ROWS if r["brand"] == "diamine"], INKVENT_PUBLISHED, guide_modified(build_inkvent))), (url_for("guides/"), latest(DG_GUIDE_LASTMOD, TAKEDOWN_DATE, CONTENT_LASTMOD, INKVENT_PUBLISHED)), (url_for("shop/"), shop_lastmod()), (url_for("follow/"), "2026-11-12"), (url_for("contact/"), "2026-11-20"), (url_for(SOLDOUT_SLUG + "/"), latest(*[p.get("status_since") for p in stock["products"]], CONTENT_LASTMOD))]
     def w3c(iso):
         """Every sitemap lastmod is a full W3C datetime, including dates that were stored as YYYY-MM-DD."""
         if len(iso) == 10:
@@ -3320,8 +3320,11 @@ JAN_APR_PUBLISHED = "2026-11-12"  # owner-approved publication date
 JAN_APR_MODIFIED = "2026-11-19"  # official 2027 Spring launch date added from the shopping guide
 DG_GUIDE_SLUG = "best-dot-grid-journals"
 HOBO_GUIDES = [(WTB_SLUG + "/", "Where to buy the Techo 2027"), (VS_SLUG + "/", "Techo vs Cousin vs Weeks"), (JAN_APR_SLUG + "/", "January-start vs April-start"), ("hobonichi-2027/", "2027 launch & restock calendar")]
+INKVENT_SLUG = "where-to-buy-diamine-inkvent-2026"
+INKVENT_PUBLISHED = "2026-11-28"  # planned live date; move it if the PR merges later
 GUIDES = HOBO_GUIDES + [(DG_GUIDE_SLUG + "/", "Best dot grid journals compared"),
-                        ("holiday-stationery-gift-guide-2026/", "Holiday gift guide 2026")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
+                        ("holiday-stationery-gift-guide-2026/", "Holiday gift guide 2026"),
+                        (INKVENT_SLUG + "/", "Where to buy Diamine Inkvent 2026")]  # footer, /guides/, 404, related block; Hobonichi pages use HOBO_GUIDES
 GUIDES_LASTMOD = "2026-10-29"
 GIFT_PUBLISHED = "2026-11-20"  # PR #52 merged Fri Nov 20, 2026, 9:13 AM ET
 DG_GUIDE_LASTMOD = "2026-11-20"  # STM Pro sizes, Leuchtturm formats, and TN wording (America/Detroit)
@@ -3330,7 +3333,8 @@ GUIDE_BLURBS = {WTB_SLUG + "/": "Which shops have each 2027 Original A6, Cousin 
                 JAN_APR_SLUG + "/": "Hobonichi's April-start (Spring) techo comes in fewer versions than the January-start edition and goes on sale on February 1.",
                 "hobonichi-2027/": "When the 2027 planners launched, the October wave, and when restocks usually land, with sources.",
                 DG_GUIDE_SLUG + "/": "Archer and Olive vs Leuchtturm1917 vs Scribbles That Matter vs Notebook Therapy: paper gsm, pages, size and features from each maker's own page, with live stock where we check it.",
-                "holiday-stationery-gift-guide-2026/": "Hobonichi, Leuchtturm1917, Archer and Olive and other dot grid gifts, each with live stock from our last check, plus planners and printables we make."}  # last copy change on the guide pages (sitemap lastmod floor)
+                "holiday-stationery-gift-guide-2026/": "Hobonichi, Leuchtturm1917, Archer and Olive and other dot grid gifts, each with live stock from our last check, plus planners and printables we make.",
+                INKVENT_SLUG + "/": "Which shops have Diamine's 2026 Inkvent calendar and last year's Teal Edition 50 ml bottles right now, with what's inside, prices and pen-care notes."}  # last copy change on the guide pages (sitemap lastmod floor)
 H_SRC = {  # official Hobonichi pages used for product facts
     "orig": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/ob27_jan_en/", "English Original Book A6 (2027), specifications"),
     "cousin": ("https://www.1101.com/store/techo/en/2027/pc/detail_cover/cb27_jan_en/", "English Cousin Book A5 (2027), specifications"),
@@ -4258,6 +4262,196 @@ def build_gift_guide():
     return fname, doc
 
 
+# --- Where to buy Diamine Inkvent 2026 (guide) ---------------------------------------------------------
+# Statuses come from the ink rows (data/inks/stock.json, rebuilt about every 30 minutes). Prices, ink types and
+# Diamine's own page facts are a hand-entered snapshot in content/inkvent_2026.json with its as-of time; the checker
+# does not track prices, so they change only when that file is edited. Shops are only those on Diamine's retailer list.
+INKVENT_DATA = json.loads((ROOT / "content/inkvent_2026.json").read_text())
+INKVENT_CAL = "diamine-inkvent-2026"
+INKVENT_TEAL = "diamine-inkvent-teal-singles"
+INKVENT_JETPENS = "https://www.jetpens.com/blog/How-to-Clean-a-Fountain-Pen/pt/259"
+
+def _inkvent_money(cur, cents):
+    sym = {"USD": "$", "GBP": "£"}[cur]
+    return f"{sym}{cents / 100:,.2f}".replace(".00", "") if cur == "USD" and cents % 100 == 0 else f"{sym}{cents / 100:,.2f}"
+
+def _inkvent_norm(name):
+    return re.sub(r"[^a-z]", "", name.lower())
+
+def _inkvent_shop_order(rows):
+    rank = {x["id"]: i for i, x in enumerate(stores["stores"])}
+    order = {"in_stock": 0, "preorder": 1, "coming_soon": 2, "sold_out": 3, "unknown": 4}
+    by = {}
+    for r in rows:
+        by.setdefault(r["store_id"], []).append(r)
+    return sorted(by, key=lambda sid: (min(order[r["status"]] for r in by[sid]), rank.get(sid, 99))), by
+
+def build_inkvent():
+    fname = INKVENT_SLUG + "/"
+    d = INKVENT_DATA
+    cal = [r for r in INK_ROWS if r["ink_id"] == INKVENT_CAL]
+    teal = [r for r in INK_ROWS if r["ink_id"] == INKVENT_TEAL]
+    last = time_tag(INK_STOCK["run_finished"])
+    asof = time_tag(d["prices_as_of"])
+    diamine_read = time_tag(d["diamine_read_at"])
+    cal_order, cal_by = _inkvent_shop_order(cal)
+    teal_order, teal_by = _inkvent_shop_order(teal)
+    cal_buy = [cal_by[x][0]["store"] for x in cal_order if cal_by[x][0]["status"] in BUYABLE]
+    teal_buy = [teal_by[x][0]["store"] for x in teal_order if any(r["status"] in BUYABLE for r in teal_by[x])]
+    teal_soon = [teal_by[x][0]["store"] for x in teal_order if all(r["status"] == "coming_soon" for r in teal_by[x])]
+    n_cal, n_teal = len(cal_by), len(teal_by)
+    n_teal_buy = sum(r["status"] in BUYABLE for r in teal)
+    # Shop table for the calendar: live status plus the snapshot price.
+    def price_cell(sid):
+        pr = d["calendar_prices"].get(sid)
+        if not pr:
+            return '<span class="muted small">See the shop</span>'
+        out = f'<strong>{E(_inkvent_money(pr["currency"], pr["cents"]))}</strong>'
+        if pr.get("was_cents"):
+            out += f' <span class="muted small">(marked down from {E(_inkvent_money(pr["currency"], pr["was_cents"]))})</span>'
+        return out
+    cal_rows = "".join(
+        f'<tr><td>{E(cal_by[sid][0]["store"])}{region_tag(sid)}</td>'
+        f'<td><a href="{E(cal_by[sid][0]["url"])}" rel="noopener" target="_blank">2026 calendar, Burgundy Edition</a> {status_badge(cal_by[sid][0]["status"])}</td>'
+        f'<td>{price_cell(sid)}</td></tr>' for sid in cal_order)
+    cal_table = (f'<div class="table-wrap"><table class="stock"><thead><tr><th>Shop</th><th>Listing · status at last check</th><th>Price on {fmt_et(d["prices_as_of"]).split(",")[0]}</th></tr></thead>'
+                 f'<tbody>{cal_rows}</tbody></table></div>') if cal_rows else '<p class="muted">We aren\'t checking this calendar right now.</p>'
+    # Teal table: one row per ink, one column per shop.
+    names = {x["id"]: x["name"] for x in stores["stores"]}
+    by_cell = {(_inkvent_norm(r.get("color") or r["label"]), r["store_id"]): r for r in teal}
+    usd, gbp = d["teal_price_by_type_usd_cents"], d["teal_price_by_type_gbp_cents"]
+    head = "".join(f'<th>{E(names[sid])}{region_tag(sid)}</th>' for sid in teal_order)
+    body = []
+    for ink in d["teal_inks"]:
+        cells = []
+        for sid in teal_order:
+            r = by_cell.get((_inkvent_norm(ink["name"]), sid))
+            cells.append('<td><span class="muted small">Not listed</span></td>' if not r else
+                         f'<td><a href="{E(r["url"])}" rel="noopener" target="_blank" aria-label="{E(ink["name"])} at {E(r["store"])}">'
+                         f'<span class="badge {E(r["status"])}">{E(STATUS[r["status"]])}</span></a></td>')
+        price = _inkvent_money("USD", usd[ink["type"]])
+        body.append(f'<tr><td>{E(ink["name"])}</td><td>{E(ink["type"])}</td><td>{E(price)}</td>{"".join(cells)}</tr>')
+    teal_table = (f'<div class="table-wrap"><table class="stock ink-colors"><thead><tr><th>Ink</th><th>Type</th><th>US price</th>{head}</tr></thead>'
+                  f'<tbody>{"".join(body)}</tbody></table></div>'
+                  '<p class="muted small">Open a status to go straight to that shop\'s listing. The type is the one in Diamine\'s product title.</p>') if teal_order else '<p class="muted">We aren\'t checking these bottles right now.</p>'
+    # Price tiers, from the same snapshot.
+    def tier(types, cents):
+        return f'{_inkvent_money("USD", cents)} for {names_and([t.lower() for t in types])}'
+    tiers = {}
+    for t, c in usd.items():
+        tiers.setdefault(c, []).append(t)
+    tier_line = "; ".join(tier(ts, c) for c, ts in sorted(tiers.items()))
+    gbp_lo, gbp_hi = min(gbp.values()), max(gbp.values())
+    n_goulet = len(teal_by.get("goulet", []))
+    goulet_line = f" We found {n_goulet} of the 25 at {E(names['goulet'])}." if 0 < n_goulet < 25 else ""
+    soon_line = (f" {E(names_and(teal_soon))} lists all 25 as not yet on sale." if len(teal_soon) == 1 else
+                 f" {E(names_and(teal_soon))} list all 25 as not yet on sale." if teal_soon else "")
+    quick = []
+    if cal_by:
+        if cal_buy:
+            quick.append(f'<li><a href="#calendar">2026 Burgundy Edition calendar</a>: in stock or on preorder at <strong>{len(cal_buy)} of {n_cal}</strong> shops we check ({E(names_and(cal_buy))}).</li>')
+        else:
+            quick.append(f'<li><a href="#calendar">2026 Burgundy Edition calendar</a>: not in stock or on preorder at any of the {n_cal} shops we check right now.</li>')
+    if teal_by:
+        quick.append(f'<li><a href="#teal">Teal Edition 50 ml bottles</a> (last year\'s colors): at least one in stock at <strong>{len(teal_buy)} of {n_teal}</strong> shops ({n_teal_buy} of {len(teal)} listings).{soon_line}</li>')
+    quick.append('<li>They are different inks. The 2026 calendar holds 25 colors Diamine says are all new to its range. The Teal bottles are the 25 colors from the 2025 calendar, sold one at a time <a href="#src-diamine">[1]</a> <a href="#src-teal">[3]</a>.</li>')
+    care_href = "#care"
+    teal_cal_line = ("Diamine's own listing for the 2025 Teal calendar showed sold out when we read it on " + fmt_et(d["diamine_read_at"]).split(",")[0] + ".") if not d["diamine_teal_calendar_available"] else ""
+    pbuy_cal = cal_by.get("cultpens") and cal_by["cultpens"][0]["status"] == "preorder"
+    tip_split = (f" Right now the calendar is sold out at {sum(cal_by[x][0]['status'] == 'sold_out' for x in cal_by)} of {n_cal} shops and available at {len(cal_buy)}." if cal_by else "")
+    faq = [
+        ("Where can I buy the Diamine Inkvent 2026 calendar?",
+         f"At the shops on Diamine's retailer list, or at Diamine's own UK shop. At our last check ({fmt_et(INK_STOCK['run_finished'])}), "
+         + (f"{len(cal_buy)} of the {n_cal} shops we check had it in stock or on preorder: {names_and(cal_buy)}." if cal_buy else f"none of the {n_cal} shops we check had it in stock or on preorder.")
+         + " The table above lists each shop."),
+        ("What is in the Diamine Inkvent 2026 calendar?",
+         "Diamine's page says 24 bottles of 12 ml ink, one 30 ml bottle, a swatch card set and a collectable pin. All 25 colors are new to Diamine's range, in standard, sheen, extreme sheen, scented, shimmer, shimmer and sheen, shimmer and scent, chameleon, pigment, pigment shimmer and pigment chameleon types."),
+        ("Are the Inkvent inks waterproof?",
+         "Diamine says all of its pigment inks, including the shimmer and chameleon versions, are permanent, waterproof and lightfast. Its Inkvent page makes that claim for pigment inks only, so check the type of each ink."),
+        ("What are the Teal Edition 50 ml bottles?",
+         "Diamine sells the 25 inks from its 2025 Inkvent calendar, the Teal Edition, as 50 ml bottles. They are not the inks in the 2026 calendar."),
+        ("Do pigment and shimmer inks need special care?",
+         "JetPens says pigment-based and shimmering inks clearly labeled for fountain pen use are not harmful to pens, but recommends flushing a pen you won't use for a week or longer. It also suggests cleaning the nib section when you use high-maintenance inks."),
+        ("How do I get told when it restocks?",
+         "Sign up for Stationery Drop Watch alerts and tick Limited-edition inks. We'll email you a confirmation link. Once you confirm, we send a free restock email when a tracked ink comes back. We check the shops about every 30 minutes. You can unsubscribe anytime."),
+    ]
+    checked_at = fmt_et(INK_STOCK["run_finished"])
+    faq_html = "".join(
+        f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a).replace(E(checked_at), time_tag(INK_STOCK["run_finished"]), 1)}</p></details>' for q, a in faq)
+    desc = (f"Where to buy the Diamine Inkvent 2026 calendar and last year's Teal 50 ml bottles: live stock at {n_cal} shops, what's inside, prices and pen care.")
+    guide_updated(build_inkvent)  # records the template date that guide_modified() and the sitemap read
+    published = INKVENT_PUBLISHED
+    modified = max(published, guide_modified(build_inkvent))
+    body = f"""
+<article class="prose guide">
+{crumbs(("guides/", "Guides"), (fname, "Where to buy Diamine Inkvent 2026"))}
+{eyebrow("Guide", "Diamine Inkvent 2026", f"live stock from {nshops(len({r['store_id'] for r in cal + teal}))}")}
+<h1>Where to buy Diamine Inkvent 2026</h1>
+<p class="lede">Which shops have Diamine's 2026 Inkvent calendar, the Burgundy Edition, and the 50 ml Teal Edition bottles from last year's calendar. Every status below is what the shop's own product data said at our last ink check, {last}. Prices are a snapshot from {asof}.</p>
+{signup_for(section="inks")}
+<section class="card" id="quick">
+  <h2>Quick answer</h2>
+  <ul>{"".join(quick)}</ul>
+  <p class="muted small">"Not yet on sale" means the shop has a page up but isn't taking orders. "Couldn't check" means our check failed, so we don't know. Always confirm on the shop's page before you buy.</p>
+</section>
+{region_legend(list(cal_by) + list(teal_by))}
+<section class="card" id="calendar">
+  <h2>The 2026 Burgundy Edition calendar</h2>
+  <p>What Diamine says is inside <a href="#src-diamine">[1]</a>:</p>
+  <ul>
+    <li>25 inks, every color new to Diamine's range: 24 bottles of 12 ml and one bottle of 30 ml.</li>
+    <li>A swatch card set and a collectable pin.</li>
+    <li>Eleven ink types: standard, sheen, extreme sheen, scented, shimmer, shimmer and sheen, shimmer and scent, chameleon, pigment, pigment shimmer and pigment chameleon.</li>
+    <li>Diamine says all of its pigment inks, shimmer and chameleon versions included, are permanent, waterproof and lightfast. Its page says this about pigment inks only.</li>
+    <li>Diamine's page doesn't say which day each door opens. Dromgoole's and Pen Boutique both say the 30 ml bottle is for Christmas Day <a href="#src-shops">[5]</a>.</li>
+    <li>Diamine's own UK shop lists it at £{E(d["diamine_calendar_gbp_ex_vat"])} ex VAT, and says it is excluded from discounts (read {diamine_read}). <a href="{E(d["diamine_calendar_url"])}" rel="noopener" target="_blank">Diamine's listing</a>.</li>
+  </ul>
+  {cal_table}
+  <p class="muted small">Prices are what each shop's product data listed on the date shown. They can change, and Cult Pens is a UK shop that lists in pounds, so check the shop for tax, shipping and your total.</p>
+</section>
+<section class="card" id="teal">
+  <h2>Teal Edition 50 ml bottles</h2>
+  <p>Diamine sells the 25 inks from its 2025 Inkvent calendar, the Teal Edition, as 50 ml bottles <a href="#src-teal">[3]</a>. {E(teal_cal_line)}</p>
+  <p>At the US shops the price follows the ink type: {E(tier_line)}. Cult Pens lists the same inks in pounds, from {E(_inkvent_money("GBP", gbp_lo))} to {E(_inkvent_money("GBP", gbp_hi))} a bottle.{goulet_line} Prices are from {asof}.</p>
+  {teal_table}
+</section>
+<section class="card" id="care">
+  <h2>Pen care for pigment and shimmer inks</h2>
+  <p>The 2026 calendar includes pigment, shimmer and chameleon inks. JetPens says pigment-based and shimmering inks clearly labeled for fountain pen use are not harmful to pens, but if you won't use a pen filled with one for a week or longer, it recommends flushing the pen. It also says it's a good idea to clean the nib section when you use high-maintenance inks like pigment-based or shimmer inks <a href="#src-care">[4]</a>. <a href="{INKVENT_JETPENS}" rel="noopener" target="_blank">JetPens: how to clean a fountain pen</a>.</p>
+</section>
+<section class="card" id="tips">
+  <h2>Tips for catching a restock</h2>
+  <ul>
+    <li><strong>Check more than one shop.</strong> When one shop sells out, another often still has it.{tip_split} The <a href="{INK_SLUG}/#ink-{INKVENT_CAL}">ink tracker</a> shows every shop side by side.</li>
+    <li><strong>Watch for preorders.</strong>{" Cult Pens' calendar listing is on preorder at our last check." if pbuy_cal else ""} We count preorders as available. A preorder isn't a delivery date, so read the shop's page.</li>
+    <li><strong>Don't mistake "not yet on sale" for sold out.</strong> A shop can put a page up before it takes orders.</li>
+    <li><strong>Get our alerts.</strong> We check about every 30 minutes and send a free email when a tracked ink comes back. <a href="#alerts">Sign up above</a>; Limited-edition inks is already ticked.</li>
+  </ul>
+</section>
+<h2>How we pick shops</h2>
+<p>We check only shops that appear on Diamine's own retailer list <a href="#src-list">[2]</a>, which we read on {diamine_read}. We don't check Diamine's own shop; it's linked above.</p>
+<section class="card faq" id="faq"><h2>Questions</h2>{faq_html}</section>
+<h2>Sources</h2>
+<ol class="sources">
+  <li id="src-diamine"><a href="{E(d["diamine_calendar_url"])}" rel="noopener" target="_blank">Diamine Inkvent Calendar 2026, Burgundy Edition</a>, Diamine (maker). Contents, ink types, pigment ink claim, price, read {diamine_read}.</li>
+  <li id="src-list"><a href="{E(d["diamine_retailers_url"])}" rel="noopener" target="_blank">Diamine retailers</a>, Diamine (maker). Our six shops are all on it.</li>
+  <li id="src-teal"><a href="{E(d["diamine_teal_calendar_url"])}" rel="noopener" target="_blank">Diamine Inkvent Calendar 2025, Teal Edition</a> and Diamine's 50 ml Teal Edition bottle pages, Diamine (maker). Ink names and types as named in each product title; read {diamine_read}.</li>
+  <li id="src-care"><a href="{INKVENT_JETPENS}" rel="noopener" target="_blank">How to Clean a Fountain Pen</a>, JetPens (a shop on Diamine's retailer list). Care for pigment-based and shimmer inks.</li>
+  <li id="src-shops">Shop listings for the 2026 calendar at Dromgoole's and Pen Boutique (Christmas Day for the 30 ml bottle). Stock and prices: each shop's public product data, read by our checker; see <a href="about/">how it works</a>.</li>
+</ol>
+{related_block(fname)}
+</article>"""
+    art = {"@context": "https://schema.org", "@type": "Article", "headline": "Where to buy Diamine Inkvent 2026",
+           "datePublished": published, "dateModified": modified, "url": url_for(fname), "image": OG_IMAGE,
+           "author": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE},
+           "publisher": {"@type": "Organization", "name": "Stationery Drop Watch", "url": BASE, "logo": {"@type": "ImageObject", "url": BASE + "assets/brand/icon-512.png"}}}
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
+    doc = page(fname, "Where to buy Diamine Inkvent 2026", desc, body,
+               ld=(crumbs_ld(("guides/", "Guides"), (fname, "Where to buy Diamine Inkvent 2026")), art, faq_ld), og_type="article")
+    check_none_claim(fname, doc)
+    return fname, doc
+
 LAMY_SEE_ALSO_TAIL = "Lamy's special and limited edition pens, when each was first listed, and the authorized shops that sell them."
 
 
@@ -4285,7 +4479,7 @@ def build_guides_index():
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": t, "url": url_for(h)} for i, (h, t) in enumerate(GUIDES)]}
     return fname, page(fname, "Stationery buying guides",
-                       "Guides on where to buy Hobonichi 2027, Techo vs Cousin vs Weeks, the launch calendar, dot grid journals compared and holiday gifts.",
+                       "Guides on where to buy Hobonichi 2027 and Diamine Inkvent, Techo vs Cousin vs Weeks, the launch calendar, dot grid journals and holiday gifts.",
                        body, ld=(crumbs_ld((fname, "Guides")), lst))
 
 # Soft Days listing confirmed by the owner on 2026-11-06.
@@ -5375,6 +5569,7 @@ def build_inks():
   <p class="lede">{E(INK_INTRO)}</p>
   {ink_hero_facts(ls)}
   {also_tracked(fname)}
+  <p class="small section-switch ink-guide-line">Guide: <a href="{INKVENT_SLUG}/">where to buy Diamine Inkvent 2026</a>, shop by shop.</p>
   {signup_for(section="inks")}
 </section>
 <div class="layout solo">
@@ -5993,7 +6188,7 @@ def main():
         fname, doc = build_lamy()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
-    for build in (build_where_to_buy, build_vs, build_january_april, build_dotgrid_guide, build_gift_guide, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):
+    for build in (build_where_to_buy, build_vs, build_january_april, build_dotgrid_guide, build_gift_guide, build_inkvent, build_guides_index, build_shop, build_follow, build_contact, build_sold_out):
         fname, doc = build()
         (SITE / fname).mkdir(parents=True, exist_ok=True)
         (SITE / fname / "index.html").write_text(doc)
