@@ -69,7 +69,7 @@ class LinkOnlyAndNewShopsTests(unittest.TestCase):
                     self.assertNotRegex(p["source_title"], r"(?i)\b(jpn|japanese)\b", p["url"])
                 if "?variant=" in p["url"]:
                     self.assertEqual(p["url"].split("?variant=")[1], str(p["variant_id"]))
-        self.assertEqual({sid: len(self.stores[sid]["products"]) for sid in NEW}, {"minimaru": 58, "takenote": 40})
+        self.assertEqual({sid: len(self.stores[sid]["products"]) for sid in NEW}, {"minimaru": 56, "takenote": 40})
 
     def test_checked_total_is_28_and_notebook_therapy_is_not_in_the_we_check_phrase(self):
         self.assertFalse(site.COUNT_LINK_ONLY_IN_SHOP_TOTALS)

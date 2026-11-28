@@ -28,7 +28,9 @@ class FullStoreCoverageTests(unittest.TestCase):
         # Link-only shops (Nov 23, 2026 on) are never fetched, so they have no saved row or history.
         lo = {s["id"] for s in self.cfg["stores"] if s.get("link_only")}
         checked = {p["url"] for s in self.cfg["stores"] if s["id"] not in lo for p in s["products"]}
-        self.assertEqual(set(saved), checked)
+        # stock.json may still hold rows for listings just removed from stores.json
+        # until the next checker run. The build already ignores those URLs.
+        self.assertTrue(checked <= set(saved))
         fresh = [p for p in self.stock["products"] if p["first_seen"] == p["status_since"] and p["first_seen"] >= "2026-11-10T01"]
         self.assertGreaterEqual(len(fresh), 200)
         event_urls = {c["url"] for c in self.changes}
