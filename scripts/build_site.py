@@ -4269,8 +4269,6 @@ def build_gift_guide():
 INKVENT_DATA = json.loads((ROOT / "content/inkvent_2026.json").read_text())
 INKVENT_CAL = "diamine-inkvent-2026"
 INKVENT_TEAL = "diamine-inkvent-teal-singles"
-INKVENT_JETPENS = "https://www.jetpens.com/blog/How-to-Clean-a-Fountain-Pen/pt/259"
-
 def _inkvent_money(cur, cents):
     sym = {"USD": "$", "GBP": "£"}[cur]
     return f"{sym}{cents / 100:,.2f}".replace(".00", "") if cur == "USD" and cents % 100 == 0 else f"{sym}{cents / 100:,.2f}"
@@ -4367,25 +4365,25 @@ def build_inkvent():
         ("What is in the Diamine Inkvent 2026 calendar?",
          "Diamine's page says 24 bottles of 12 ml ink, one 30 ml bottle, a swatch card set and a collectable pin. All 25 colors are new to Diamine's range, in standard, sheen, extreme sheen, scented, shimmer, shimmer and sheen, shimmer and scent, chameleon, pigment, pigment shimmer and pigment chameleon types."),
         ("Are the Inkvent inks waterproof?",
-         "Diamine says all of its pigment inks, including the shimmer and chameleon versions, are permanent, waterproof and lightfast. Its Inkvent page makes that claim for pigment inks only, so check the type of each ink."),
+         "Diamine says all of its pigment inks, including the shimmer and chameleon versions, are permanent, waterproof and lightfast. Its Inkvent page makes that claim for pigment inks only, so check the type of each ink. Diamine does not say the other types are waterproof."),
         ("What are the Teal Edition 50 ml bottles?",
          "Diamine sells the 25 inks from its 2025 Inkvent calendar, the Teal Edition, as 50 ml bottles. They are not the inks in the 2026 calendar."),
         ("Do pigment and shimmer inks need special care?",
-         "JetPens says pigment-based and shimmering inks clearly labeled for fountain pen use are not harmful to pens, but recommends flushing a pen you won't use for a week or longer. It also suggests cleaning the nib section when you use high-maintenance inks."),
+         "Yes. Goldspot's listing for a Teal Edition pigment bottle says regular cleaning is required. Cult Pens says Diamine inks, including the shimmer and sheen ones, are safe in fountain pens, and suggests rinsing the pen after use. Dromgoole's says specialty inks with shimmer or other effects work best with broader nibs and should be shaken gently before filling."),
         ("How do I get told when it restocks?",
          "Sign up for Stationery Drop Watch alerts and tick Limited-edition inks. We'll email you a confirmation link. Once you confirm, we send a free restock email when a tracked ink comes back. We check the shops about every 30 minutes. You can unsubscribe anytime."),
     ]
     checked_at = fmt_et(INK_STOCK["run_finished"])
     faq_html = "".join(
         f'<details class="faq-item"><summary>{E(q)}</summary><p>{E(a).replace(E(checked_at), time_tag(INK_STOCK["run_finished"]), 1)}</p></details>' for q, a in faq)
-    desc = (f"Where to buy the Diamine Inkvent 2026 calendar and last year's Teal 50 ml bottles: live stock at {n_cal} shops, what's inside, prices and pen care.")
+    desc = (f"Where to buy the Diamine Inkvent 2026 calendar ({n_cal} shops) and Teal 50 ml bottles ({n_teal} shops): live stock, what's inside, prices and pen care.")
     guide_updated(build_inkvent)  # records the template date that guide_modified() and the sitemap read
     published = INKVENT_PUBLISHED
     modified = max(published, guide_modified(build_inkvent))
     body = f"""
 <article class="prose guide">
 {crumbs(("guides/", "Guides"), (fname, "Where to buy Diamine Inkvent 2026"))}
-{eyebrow("Guide", "Diamine Inkvent 2026", f"live stock from {nshops(len({r['store_id'] for r in cal + teal}))}")}
+{eyebrow("Guide", "Diamine Inkvent 2026", f"calendar at {n_cal} shops, Teal bottles at {n_teal}")}
 <h1>Where to buy Diamine Inkvent 2026</h1>
 <p class="lede">Which shops have Diamine's 2026 Inkvent calendar, the Burgundy Edition, and the 50 ml Teal Edition bottles from last year's calendar. Every status below is what the shop's own product data said at our last ink check, {last}. Prices are a snapshot from {asof}.</p>
 {signup_for(section="inks")}
@@ -4403,21 +4401,21 @@ def build_inkvent():
     <li>A swatch card set and a collectable pin.</li>
     <li>Eleven ink types: standard, sheen, extreme sheen, scented, shimmer, shimmer and sheen, shimmer and scent, chameleon, pigment, pigment shimmer and pigment chameleon.</li>
     <li>Diamine says all of its pigment inks, shimmer and chameleon versions included, are permanent, waterproof and lightfast. Its page says this about pigment inks only.</li>
-    <li>Diamine's page doesn't say which day each door opens. Dromgoole's and Pen Boutique both say the 30 ml bottle is for Christmas Day <a href="#src-shops">[5]</a>.</li>
-    <li>Diamine's own UK shop lists it at £{E(d["diamine_calendar_gbp_ex_vat"])} ex VAT, and says it is excluded from discounts (read {diamine_read}). <a href="{E(d["diamine_calendar_url"])}" rel="noopener" target="_blank">Diamine's listing</a>.</li>
+    <li>Diamine's page doesn't say which day each door opens. Dromgoole's and Pen Boutique both say the 30 ml bottle is for Christmas Day <a href="#src-shops">[7]</a>.</li>
+    <li>Diamine's own UK shop listed it on Oct 26, 2026, and lists it at £{E(d["diamine_calendar_gbp_ex_vat"])} ex VAT, excluded from discounts (read {diamine_read}). <a href="{E(d["diamine_calendar_url"])}" rel="noopener" target="_blank">Diamine's listing</a>.</li>
   </ul>
   {cal_table}
   <p class="muted small">Prices are what each shop's product data listed on the date shown. They can change, and Cult Pens is a UK shop that lists in pounds, so check the shop for tax, shipping and your total.</p>
 </section>
 <section class="card" id="teal">
   <h2>Teal Edition 50 ml bottles</h2>
-  <p>Diamine sells the 25 inks from its 2025 Inkvent calendar, the Teal Edition, as 50 ml bottles <a href="#src-teal">[3]</a>. {E(teal_cal_line)}</p>
-  <p>At the US shops the price follows the ink type: {E(tier_line)}. Cult Pens lists the same inks in pounds, from {E(_inkvent_money("GBP", gbp_lo))} to {E(_inkvent_money("GBP", gbp_hi))} a bottle.{goulet_line} Prices are from {asof}.</p>
+  <p>Diamine sells the 25 inks from its 2025 Inkvent calendar, the Teal Edition, as 50 ml bottles <a href="#src-teal">[3]</a>. {E(teal_cal_line)} Diamine's own shop listed these 50 ml bottles on Nov 4, 2026. If that timing holds, the 2026 calendar colors could appear as 50 ml bottles around fall 2027; Diamine hasn't announced it.</p>
+  <p>At the US shops we check, prices run from $18 to $25 by finish, as of {asof}: {E(tier_line)}. Cult Pens lists the same inks in pounds, from {E(_inkvent_money("GBP", gbp_lo))} to {E(_inkvent_money("GBP", gbp_hi))} a bottle.{goulet_line}</p>
   {teal_table}
 </section>
 <section class="card" id="care">
   <h2>Pen care for pigment and shimmer inks</h2>
-  <p>The 2026 calendar includes pigment, shimmer and chameleon inks. JetPens says pigment-based and shimmering inks clearly labeled for fountain pen use are not harmful to pens, but if you won't use a pen filled with one for a week or longer, it recommends flushing the pen. It also says it's a good idea to clean the nib section when you use high-maintenance inks like pigment-based or shimmer inks <a href="#src-care">[4]</a>. <a href="{INKVENT_JETPENS}" rel="noopener" target="_blank">JetPens: how to clean a fountain pen</a>.</p>
+  <p>The 2026 calendar includes pigment, shimmer and chameleon inks. Goldspot's listing for a Teal Edition pigment bottle (Mittens) says regular cleaning is required <a href="#src-goldspot">[4]</a>. Cult Pens says Diamine inks, including the shimmer and sheen ones, are safe in fountain pens, and suggests rinsing the pen after use <a href="#src-cultpens">[5]</a>. Dromgoole's says specialty inks with shimmer or other effects work best with broader nibs, and should be shaken gently before filling <a href="#src-drom">[6]</a>.</p>
 </section>
 <section class="card" id="tips">
   <h2>Tips for catching a restock</h2>
@@ -4435,8 +4433,10 @@ def build_inkvent():
 <ol class="sources">
   <li id="src-diamine"><a href="{E(d["diamine_calendar_url"])}" rel="noopener" target="_blank">Diamine Inkvent Calendar 2026, Burgundy Edition</a>, Diamine (maker). Contents, ink types, pigment ink claim, price, read {diamine_read}.</li>
   <li id="src-list"><a href="{E(d["diamine_retailers_url"])}" rel="noopener" target="_blank">Diamine retailers</a>, Diamine (maker). Our six shops are all on it.</li>
-  <li id="src-teal"><a href="{E(d["diamine_teal_calendar_url"])}" rel="noopener" target="_blank">Diamine Inkvent Calendar 2025, Teal Edition</a> and Diamine's 50 ml Teal Edition bottle pages, Diamine (maker). Ink names and types as named in each product title; read {diamine_read}.</li>
-  <li id="src-care"><a href="{INKVENT_JETPENS}" rel="noopener" target="_blank">How to Clean a Fountain Pen</a>, JetPens (a shop on Diamine's retailer list). Care for pigment-based and shimmer inks.</li>
+  <li id="src-teal"><a href="{E(d["diamine_teal_calendar_url"])}" rel="noopener" target="_blank">Diamine Inkvent Calendar 2025, Teal Edition</a> and Diamine's 50 ml Teal Edition bottle pages, Diamine (maker). Ink names and types as named in each product title; all 25 of the 50 ml bottles were listed on Nov 4, 2026; read {diamine_read}.</li>
+  <li id="src-goldspot"><a href="{E(d["goldspot_mittens_url"])}" rel="noopener" target="_blank">Diamine Inkvent Teal Edition pigment bottled ink, Mittens</a>, Goldspot Pens (a shop we check). "Maintenance: Regular cleaning required"; read {time_tag(d["care_read_at"])}.</li>
+  <li id="src-cultpens"><a href="{E(d["cultpens_teal_url"])}" rel="noopener" target="_blank">Diamine Inkvent Teal Edition 50 ml ink</a>, Cult Pens (a shop we check). Safe in fountain pens, including shimmer and sheen; rinse after use; read {time_tag(d["care_read_at"])}.</li>
+  <li id="src-drom"><a href="{E(d["dromgooles_mittens_url"])}" rel="noopener" target="_blank">Diamine Mittens 50 ml, Teal Edition</a>, Dromgoole's (a shop we check). Broader nibs and a gentle shake before filling for specialty inks; read {time_tag(d["care_read_at"])}.</li>
   <li id="src-shops">Shop listings for the 2026 calendar at Dromgoole's and Pen Boutique (Christmas Day for the 30 ml bottle). Stock and prices: each shop's public product data, read by our checker; see <a href="about/">how it works</a>.</li>
 </ol>
 {related_block(fname)}

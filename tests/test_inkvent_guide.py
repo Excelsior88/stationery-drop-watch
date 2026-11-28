@@ -11,7 +11,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import build_site as site
 
 SLUG = "where-to-buy-diamine-inkvent-2026"
-BANNED = re.compile(r"designphil|midori|traveler|yoseka|pen heaven|amazon\.|amzn\.|[?&]tag=", re.I)
+BANNED = re.compile(r"designphil|midori|traveler|yoseka|pen heaven|appelboom|oblation|pen chalet|amazon\.|amzn\.|[?&]tag=", re.I)
+# JetPens may appear in site-wide Hobonichi link-only notes; it must not be a source on this guide.
+GUIDE_BANNED_SOURCES = re.compile(r"jetpens", re.I)
 
 
 def doc():
@@ -50,6 +52,8 @@ class InkventGuideTests(unittest.TestCase):
         self.assertNotIn("\u2013", text)  # nor en dashes in the visible text
         self.assertNotIn(" bullet journal", text.lower())
         self.assertNotRegex(html, BANNED)
+        article = re.search(r"<article.*?</article>", html, re.S).group(0)
+        self.assertNotRegex(article, GUIDE_BANNED_SOURCES)
 
     def test_json_ld_parses(self):
         html = doc()
@@ -88,12 +92,28 @@ class InkventGuideTests(unittest.TestCase):
         self.assertIn(site.fmt_et(d["prices_as_of"]).replace("'", "&#x27;"), html)
 
     def test_pigment_and_pen_care_lines_are_sourced(self):
-        text = visible(doc())
+        html = doc()
+        text = visible(html)
         self.assertIn("permanent, waterproof and lightfast", text)
         self.assertIn("Its page says this about pigment inks only", text)
-        self.assertIn("flush", text)
-        self.assertIn("a week or longer", text)
-        self.assertIn(site.INKVENT_JETPENS, doc())
+        self.assertIn("regular cleaning is required", text)
+        self.assertIn("rinsing the pen after use", text)
+        self.assertIn(site.INKVENT_DATA["goldspot_mittens_url"], html)
+        self.assertIn(site.INKVENT_DATA["cultpens_teal_url"], html)
+        self.assertIn(site.INKVENT_DATA["dromgooles_mittens_url"], html)
+        self.assertNotIn("once dry", text.lower())  # Diamine doesn't say this
+        self.assertNotIn("not vintage", text.lower())  # Diamine and Dromgoole's say the inks can be used in vintage pens
+        self.assertIn("fall 2027", text)
+        self.assertIn("Nov 4, 2026", text)
+        self.assertIn("hasn't announced", text)
+        self.assertIn("$18 to $25", text)
+        self.assertNotIn("June 12", text)
+        self.assertNotIn("July 28", text)
+        self.assertNotIn("sell out first", text)
+        self.assertNotIn("delayed dealer", text)
+        self.assertNotIn("first-ever pigment", text.lower())
+        self.assertNotIn("first ever pigment", text.lower())
+        self.assertIn("calendar at 6 shops, Teal bottles at 5", text.replace("\xa0"," "))
 
 
 if __name__ == "__main__":
